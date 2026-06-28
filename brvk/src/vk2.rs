@@ -9590,6 +9590,14 @@ unsafe impl crate::PFN for PFN_vkCreateInstance {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateInstance {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -9610,6 +9618,14 @@ unsafe impl crate::PFN for PFN_vkDestroyInstance {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroyInstance {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -9634,6 +9650,14 @@ unsafe impl crate::PFN for PFN_vkEnumeratePhysicalDevices {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkEnumeratePhysicalDevices {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -9654,6 +9678,14 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceFeatures {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceFeatures {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -9678,6 +9710,14 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceFormatProperties {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceFormatProperties {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -9698,6 +9738,14 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceImageFormatProperties {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceImageFormatProperties {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -9722,6 +9770,14 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceProperties {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceProperties {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -9742,6 +9798,14 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceQueueFamilyProperties {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceQueueFamilyProperties {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -9766,6 +9830,14 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceMemoryProperties {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceMemoryProperties {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -9786,6 +9858,14 @@ unsafe impl crate::PFN for PFN_vkGetInstanceProcAddr {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetInstanceProcAddr {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -9810,6 +9890,14 @@ unsafe impl crate::PFN for PFN_vkGetDeviceProcAddr {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDeviceProcAddr {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -9830,6 +9918,14 @@ unsafe impl crate::PFN for PFN_vkCreateDevice {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateDevice {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -9854,6 +9950,14 @@ unsafe impl crate::PFN for PFN_vkDestroyDevice {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroyDevice {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -9874,6 +9978,14 @@ unsafe impl crate::PFN for PFN_vkEnumerateInstanceExtensionProperties {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkEnumerateInstanceExtensionProperties {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -9898,6 +10010,14 @@ unsafe impl crate::PFN for PFN_vkEnumerateDeviceExtensionProperties {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkEnumerateDeviceExtensionProperties {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -9918,6 +10038,14 @@ unsafe impl crate::PFN for PFN_vkEnumerateInstanceLayerProperties {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkEnumerateInstanceLayerProperties {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -9942,6 +10070,14 @@ unsafe impl crate::PFN for PFN_vkEnumerateDeviceLayerProperties {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkEnumerateDeviceLayerProperties {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -9962,6 +10098,14 @@ unsafe impl crate::PFN for PFN_vkGetDeviceQueue {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDeviceQueue {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -9986,6 +10130,14 @@ unsafe impl crate::PFN for PFN_vkQueueSubmit {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkQueueSubmit {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -10006,6 +10158,14 @@ unsafe impl crate::PFN for PFN_vkQueueWaitIdle {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkQueueWaitIdle {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -10030,6 +10190,14 @@ unsafe impl crate::PFN for PFN_vkDeviceWaitIdle {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDeviceWaitIdle {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -10050,6 +10218,14 @@ unsafe impl crate::PFN for PFN_vkAllocateMemory {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkAllocateMemory {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -10074,6 +10250,14 @@ unsafe impl crate::PFN for PFN_vkFreeMemory {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkFreeMemory {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -10094,6 +10278,14 @@ unsafe impl crate::PFN for PFN_vkMapMemory {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkMapMemory {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -10118,6 +10310,14 @@ unsafe impl crate::PFN for PFN_vkUnmapMemory {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkUnmapMemory {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -10138,6 +10338,14 @@ unsafe impl crate::PFN for PFN_vkFlushMappedMemoryRanges {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkFlushMappedMemoryRanges {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -10162,6 +10370,14 @@ unsafe impl crate::PFN for PFN_vkInvalidateMappedMemoryRanges {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkInvalidateMappedMemoryRanges {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -10182,6 +10398,14 @@ unsafe impl crate::PFN for PFN_vkGetDeviceMemoryCommitment {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDeviceMemoryCommitment {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -10206,6 +10430,14 @@ unsafe impl crate::PFN for PFN_vkBindBufferMemory {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkBindBufferMemory {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -10226,6 +10458,14 @@ unsafe impl crate::PFN for PFN_vkBindImageMemory {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkBindImageMemory {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -10250,6 +10490,14 @@ unsafe impl crate::PFN for PFN_vkGetBufferMemoryRequirements {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetBufferMemoryRequirements {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -10270,6 +10518,14 @@ unsafe impl crate::PFN for PFN_vkGetImageMemoryRequirements {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetImageMemoryRequirements {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -10294,6 +10550,14 @@ unsafe impl crate::PFN for PFN_vkGetImageSparseMemoryRequirements {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetImageSparseMemoryRequirements {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -10314,6 +10578,14 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceSparseImageFormatProperties {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceSparseImageFormatProperties {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -10338,6 +10610,14 @@ unsafe impl crate::PFN for PFN_vkQueueBindSparse {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkQueueBindSparse {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -10358,6 +10638,14 @@ unsafe impl crate::PFN for PFN_vkCreateFence {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateFence {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -10382,6 +10670,14 @@ unsafe impl crate::PFN for PFN_vkDestroyFence {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroyFence {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -10402,6 +10698,14 @@ unsafe impl crate::PFN for PFN_vkResetFences {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkResetFences {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -10426,6 +10730,14 @@ unsafe impl crate::PFN for PFN_vkGetFenceStatus {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetFenceStatus {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -10446,6 +10758,14 @@ unsafe impl crate::PFN for PFN_vkWaitForFences {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkWaitForFences {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -10470,6 +10790,14 @@ unsafe impl crate::PFN for PFN_vkCreateSemaphore {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateSemaphore {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -10490,6 +10818,14 @@ unsafe impl crate::PFN for PFN_vkDestroySemaphore {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroySemaphore {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -10514,6 +10850,14 @@ unsafe impl crate::PFN for PFN_vkCreateEvent {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateEvent {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -10534,6 +10878,14 @@ unsafe impl crate::PFN for PFN_vkDestroyEvent {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroyEvent {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -10558,6 +10910,14 @@ unsafe impl crate::PFN for PFN_vkGetEventStatus {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetEventStatus {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -10578,6 +10938,14 @@ unsafe impl crate::PFN for PFN_vkSetEvent {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkSetEvent {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -10602,6 +10970,14 @@ unsafe impl crate::PFN for PFN_vkResetEvent {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkResetEvent {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -10622,6 +10998,14 @@ unsafe impl crate::PFN for PFN_vkCreateQueryPool {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateQueryPool {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -10646,6 +11030,14 @@ unsafe impl crate::PFN for PFN_vkDestroyQueryPool {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroyQueryPool {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -10666,6 +11058,14 @@ unsafe impl crate::PFN for PFN_vkGetQueryPoolResults {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetQueryPoolResults {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -10690,6 +11090,14 @@ unsafe impl crate::PFN for PFN_vkCreateBuffer {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateBuffer {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -10710,6 +11118,14 @@ unsafe impl crate::PFN for PFN_vkDestroyBuffer {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroyBuffer {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -10734,6 +11150,14 @@ unsafe impl crate::PFN for PFN_vkCreateBufferView {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateBufferView {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -10754,6 +11178,14 @@ unsafe impl crate::PFN for PFN_vkDestroyBufferView {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroyBufferView {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -10778,6 +11210,14 @@ unsafe impl crate::PFN for PFN_vkCreateImage {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateImage {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -10798,6 +11238,14 @@ unsafe impl crate::PFN for PFN_vkDestroyImage {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroyImage {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -10822,6 +11270,14 @@ unsafe impl crate::PFN for PFN_vkGetImageSubresourceLayout {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetImageSubresourceLayout {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -10842,6 +11298,14 @@ unsafe impl crate::PFN for PFN_vkCreateImageView {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateImageView {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -10866,6 +11330,14 @@ unsafe impl crate::PFN for PFN_vkDestroyImageView {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroyImageView {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -10886,6 +11358,14 @@ unsafe impl crate::PFN for PFN_vkCreateShaderModule {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateShaderModule {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -10910,6 +11390,14 @@ unsafe impl crate::PFN for PFN_vkDestroyShaderModule {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroyShaderModule {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -10930,6 +11418,14 @@ unsafe impl crate::PFN for PFN_vkCreatePipelineCache {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreatePipelineCache {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -10954,6 +11450,14 @@ unsafe impl crate::PFN for PFN_vkDestroyPipelineCache {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroyPipelineCache {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -10974,6 +11478,14 @@ unsafe impl crate::PFN for PFN_vkGetPipelineCacheData {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPipelineCacheData {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -10998,6 +11510,14 @@ unsafe impl crate::PFN for PFN_vkMergePipelineCaches {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkMergePipelineCaches {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -11018,6 +11538,14 @@ unsafe impl crate::PFN for PFN_vkCreateGraphicsPipelines {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateGraphicsPipelines {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -11042,6 +11570,14 @@ unsafe impl crate::PFN for PFN_vkCreateComputePipelines {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateComputePipelines {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -11062,6 +11598,14 @@ unsafe impl crate::PFN for PFN_vkDestroyPipeline {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroyPipeline {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -11086,6 +11630,14 @@ unsafe impl crate::PFN for PFN_vkCreatePipelineLayout {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreatePipelineLayout {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -11106,6 +11658,14 @@ unsafe impl crate::PFN for PFN_vkDestroyPipelineLayout {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroyPipelineLayout {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -11130,6 +11690,14 @@ unsafe impl crate::PFN for PFN_vkCreateSampler {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateSampler {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -11150,6 +11718,14 @@ unsafe impl crate::PFN for PFN_vkDestroySampler {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroySampler {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -11174,6 +11750,14 @@ unsafe impl crate::PFN for PFN_vkCreateDescriptorSetLayout {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateDescriptorSetLayout {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -11194,6 +11778,14 @@ unsafe impl crate::PFN for PFN_vkDestroyDescriptorSetLayout {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroyDescriptorSetLayout {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -11218,6 +11810,14 @@ unsafe impl crate::PFN for PFN_vkCreateDescriptorPool {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateDescriptorPool {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -11238,6 +11838,14 @@ unsafe impl crate::PFN for PFN_vkDestroyDescriptorPool {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroyDescriptorPool {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -11262,6 +11870,14 @@ unsafe impl crate::PFN for PFN_vkResetDescriptorPool {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkResetDescriptorPool {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -11282,6 +11898,14 @@ unsafe impl crate::PFN for PFN_vkAllocateDescriptorSets {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkAllocateDescriptorSets {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -11306,6 +11930,14 @@ unsafe impl crate::PFN for PFN_vkFreeDescriptorSets {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkFreeDescriptorSets {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -11326,6 +11958,14 @@ unsafe impl crate::PFN for PFN_vkUpdateDescriptorSets {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkUpdateDescriptorSets {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -11350,6 +11990,14 @@ unsafe impl crate::PFN for PFN_vkCreateFramebuffer {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateFramebuffer {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -11370,6 +12018,14 @@ unsafe impl crate::PFN for PFN_vkDestroyFramebuffer {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroyFramebuffer {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -11394,6 +12050,14 @@ unsafe impl crate::PFN for PFN_vkCreateRenderPass {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateRenderPass {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -11414,6 +12078,14 @@ unsafe impl crate::PFN for PFN_vkDestroyRenderPass {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroyRenderPass {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -11438,6 +12110,14 @@ unsafe impl crate::PFN for PFN_vkGetRenderAreaGranularity {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetRenderAreaGranularity {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -11458,6 +12138,14 @@ unsafe impl crate::PFN for PFN_vkCreateCommandPool {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateCommandPool {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -11482,6 +12170,14 @@ unsafe impl crate::PFN for PFN_vkDestroyCommandPool {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroyCommandPool {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -11502,6 +12198,14 @@ unsafe impl crate::PFN for PFN_vkResetCommandPool {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkResetCommandPool {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -11526,6 +12230,14 @@ unsafe impl crate::PFN for PFN_vkAllocateCommandBuffers {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkAllocateCommandBuffers {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -11546,6 +12258,14 @@ unsafe impl crate::PFN for PFN_vkFreeCommandBuffers {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkFreeCommandBuffers {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -11570,6 +12290,14 @@ unsafe impl crate::PFN for PFN_vkBeginCommandBuffer {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkBeginCommandBuffer {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -11590,6 +12318,14 @@ unsafe impl crate::PFN for PFN_vkEndCommandBuffer {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkEndCommandBuffer {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -11614,6 +12350,14 @@ unsafe impl crate::PFN for PFN_vkResetCommandBuffer {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkResetCommandBuffer {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -11636,6 +12380,15 @@ unsafe impl crate::PFN for PFN_vkEnumerateInstanceVersion {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkEnumerateInstanceVersion {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -11663,6 +12416,15 @@ unsafe impl crate::PFN for PFN_vkDestroySurfaceKHR {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_surface")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroySurfaceKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_surface")]
@@ -11686,6 +12448,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceSurfaceSupportKHR {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_surface")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceSurfaceSupportKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -11713,6 +12484,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_surface")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_surface")]
@@ -11736,6 +12516,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceSurfaceFormatsKHR {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_surface")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceSurfaceFormatsKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -11763,6 +12552,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceSurfacePresentModesKHR {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_surface")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceSurfacePresentModesKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_surface")]
@@ -11786,6 +12584,15 @@ unsafe impl crate::PFN for PFN_vkCreateSwapchainKHR {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_swapchain")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateSwapchainKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -11813,6 +12620,15 @@ unsafe impl crate::PFN for PFN_vkDestroySwapchainKHR {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_swapchain")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroySwapchainKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_swapchain")]
@@ -11836,6 +12652,15 @@ unsafe impl crate::PFN for PFN_vkGetSwapchainImagesKHR {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_swapchain")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetSwapchainImagesKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -11863,6 +12688,15 @@ unsafe impl crate::PFN for PFN_vkAcquireNextImageKHR {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_swapchain")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkAcquireNextImageKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_swapchain")]
@@ -11886,6 +12720,15 @@ unsafe impl crate::PFN for PFN_vkQueuePresentKHR {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_swapchain")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkQueuePresentKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -11913,6 +12756,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceDisplayPropertiesKHR {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceDisplayPropertiesKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
@@ -11936,6 +12788,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -11963,6 +12824,15 @@ unsafe impl crate::PFN for PFN_vkGetDisplayPlaneSupportedDisplaysKHR {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDisplayPlaneSupportedDisplaysKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
@@ -11986,6 +12856,15 @@ unsafe impl crate::PFN for PFN_vkGetDisplayModePropertiesKHR {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDisplayModePropertiesKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -12013,6 +12892,15 @@ unsafe impl crate::PFN for PFN_vkCreateDisplayModeKHR {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateDisplayModeKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
@@ -12036,6 +12924,15 @@ unsafe impl crate::PFN for PFN_vkGetDisplayPlaneCapabilitiesKHR {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDisplayPlaneCapabilitiesKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -12063,6 +12960,15 @@ unsafe impl crate::PFN for PFN_vkCreateDisplayPlaneSurfaceKHR {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateDisplayPlaneSurfaceKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
@@ -12088,6 +12994,15 @@ unsafe impl crate::PFN for PFN_vkCreateSharedSwapchainKHR {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display_swapchain")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateSharedSwapchainKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_xlib_surface")]
@@ -12104,6 +13019,15 @@ unsafe impl crate::PFN for PFN_vkCreateXlibSurfaceKHR {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_xlib_surface")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateXlibSurfaceKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -12131,6 +13055,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_xlib_surface")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_xlib_surface")]
@@ -12154,6 +13087,15 @@ unsafe impl crate::PFN for PFN_vkCreateXcbSurfaceKHR {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_xcb_surface")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateXcbSurfaceKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -12181,6 +13123,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_xcb_surface")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_xcb_surface")]
@@ -12204,6 +13155,15 @@ unsafe impl crate::PFN for PFN_vkCreateWaylandSurfaceKHR {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_wayland_surface")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateWaylandSurfaceKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -12231,6 +13191,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR 
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_wayland_surface")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_wayland_surface")]
@@ -12254,6 +13223,15 @@ unsafe impl crate::PFN for PFN_vkCreateAndroidSurfaceKHR {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_android_surface")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateAndroidSurfaceKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -12281,6 +13259,15 @@ unsafe impl crate::PFN for PFN_vkCreateWin32SurfaceKHR {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_win32_surface")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateWin32SurfaceKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_win32_surface")]
@@ -12304,6 +13291,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_win32_surface")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -12331,6 +13327,15 @@ unsafe impl crate::PFN for PFN_vkCreateMetalSurfaceEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_metal_surface")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateMetalSurfaceEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_metal_surface")]
@@ -12356,6 +13361,15 @@ unsafe impl crate::PFN for PFN_vkGetMemoryWin32HandleKHR {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_memory_win32")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetMemoryWin32HandleKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_memory_win32")]
@@ -12372,6 +13386,15 @@ unsafe impl crate::PFN for PFN_vkGetMemoryWin32HandlePropertiesKHR {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_memory_win32")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetMemoryWin32HandlePropertiesKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -12392,6 +13415,15 @@ unsafe impl crate::PFN for PFN_vkGetMemoryFdKHR {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_memory_fd")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetMemoryFdKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_memory_fd")]
@@ -12408,6 +13440,15 @@ unsafe impl crate::PFN for PFN_vkGetMemoryFdPropertiesKHR {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_memory_fd")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetMemoryFdPropertiesKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -12428,6 +13469,15 @@ unsafe impl crate::PFN for PFN_vkImportSemaphoreWin32HandleKHR {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_semaphore_win32")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkImportSemaphoreWin32HandleKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_semaphore_win32")]
@@ -12444,6 +13494,15 @@ unsafe impl crate::PFN for PFN_vkGetSemaphoreWin32HandleKHR {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_semaphore_win32")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetSemaphoreWin32HandleKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -12464,6 +13523,15 @@ unsafe impl crate::PFN for PFN_vkImportSemaphoreFdKHR {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_semaphore_fd")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkImportSemaphoreFdKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_semaphore_fd")]
@@ -12480,6 +13548,15 @@ unsafe impl crate::PFN for PFN_vkGetSemaphoreFdKHR {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_semaphore_fd")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetSemaphoreFdKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -12500,6 +13577,15 @@ unsafe impl crate::PFN for PFN_vkImportFenceWin32HandleKHR {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_fence_win32")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkImportFenceWin32HandleKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_fence_win32")]
@@ -12516,6 +13602,15 @@ unsafe impl crate::PFN for PFN_vkGetFenceWin32HandleKHR {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_fence_win32")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetFenceWin32HandleKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -12536,6 +13631,15 @@ unsafe impl crate::PFN for PFN_vkImportFenceFdKHR {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_fence_fd")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkImportFenceFdKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_fence_fd")]
@@ -12552,6 +13656,15 @@ unsafe impl crate::PFN for PFN_vkGetFenceFdKHR {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_fence_fd")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetFenceFdKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -12572,6 +13685,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_get_surface_capabilities2")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
@@ -12588,6 +13710,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceSurfaceFormats2KHR {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_get_surface_capabilities2")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceSurfaceFormats2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -12608,6 +13739,15 @@ unsafe impl crate::PFN for PFN_vkCreateDebugReportCallbackEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_report")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateDebugReportCallbackEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_report")]
@@ -12624,6 +13764,15 @@ unsafe impl crate::PFN for PFN_vkDestroyDebugReportCallbackEXT {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_report")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroyDebugReportCallbackEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -12644,6 +13793,15 @@ unsafe impl crate::PFN for PFN_vkDebugReportMessageEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_report")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDebugReportMessageEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
@@ -12660,6 +13818,15 @@ unsafe impl crate::PFN for PFN_vkSetDebugUtilsObjectNameEXT {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkSetDebugUtilsObjectNameEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -12680,6 +13847,15 @@ unsafe impl crate::PFN for PFN_vkSetDebugUtilsObjectTagEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkSetDebugUtilsObjectTagEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
@@ -12696,6 +13872,15 @@ unsafe impl crate::PFN for PFN_vkQueueBeginDebugUtilsLabelEXT {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkQueueBeginDebugUtilsLabelEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -12716,6 +13901,15 @@ unsafe impl crate::PFN for PFN_vkQueueEndDebugUtilsLabelEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkQueueEndDebugUtilsLabelEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
@@ -12732,6 +13926,15 @@ unsafe impl crate::PFN for PFN_vkQueueInsertDebugUtilsLabelEXT {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkQueueInsertDebugUtilsLabelEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -12752,6 +13955,15 @@ unsafe impl crate::PFN for PFN_vkCreateDebugUtilsMessengerEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateDebugUtilsMessengerEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
@@ -12770,6 +13982,15 @@ unsafe impl crate::PFN for PFN_vkDestroyDebugUtilsMessengerEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroyDebugUtilsMessengerEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
@@ -12786,6 +14007,15 @@ unsafe impl crate::PFN for PFN_vkSubmitDebugUtilsMessageEXT {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkSubmitDebugUtilsMessageEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -12807,6 +14037,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceExternalBufferPropertiesKHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_memory_capabilities")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceExternalBufferPropertiesKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -12821,6 +14060,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceExternalBufferProperties {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceExternalBufferProperties {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -12849,6 +14097,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -12863,6 +14120,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceExternalSemaphoreProperties {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceExternalSemaphoreProperties {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -12891,6 +14157,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_fence_capabilities")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -12905,6 +14180,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceExternalFenceProperties {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceExternalFenceProperties {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -12933,6 +14217,15 @@ unsafe impl crate::PFN for PFN_vkGetDeviceGroupPeerMemoryFeaturesKHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_device_group")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDeviceGroupPeerMemoryFeaturesKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -12947,6 +14240,15 @@ unsafe impl crate::PFN for PFN_vkGetDeviceGroupPeerMemoryFeatures {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDeviceGroupPeerMemoryFeatures {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -12976,6 +14278,16 @@ unsafe impl crate::PFN for PFN_vkGetDeviceGroupPresentCapabilitiesKHR {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_device_group")]
+#[cfg(feature = "VK_KHR_surface")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDeviceGroupPresentCapabilitiesKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_device_group")]
@@ -12994,6 +14306,16 @@ unsafe impl crate::PFN for PFN_vkGetDeviceGroupSurfacePresentModesKHR {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_device_group")]
+#[cfg(feature = "VK_KHR_surface")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDeviceGroupSurfacePresentModesKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -13016,6 +14338,16 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDevicePresentRectanglesKHR {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_device_group")]
+#[cfg(feature = "VK_KHR_surface")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDevicePresentRectanglesKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_device_group")]
@@ -13034,6 +14366,16 @@ unsafe impl crate::PFN for PFN_vkAcquireNextImage2KHR {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_device_group")]
+#[cfg(feature = "VK_KHR_swapchain")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkAcquireNextImage2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -13055,6 +14397,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceFeatures2KHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceFeatures2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -13069,6 +14420,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceFeatures2 {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceFeatures2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -13097,6 +14457,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceProperties2KHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceProperties2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -13111,6 +14480,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceProperties2 {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceProperties2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -13139,6 +14517,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceFormatProperties2KHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceFormatProperties2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -13153,6 +14540,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceFormatProperties2 {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceFormatProperties2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -13181,6 +14577,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceImageFormatProperties2KHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceImageFormatProperties2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -13195,6 +14600,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceImageFormatProperties2 {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceImageFormatProperties2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -13223,6 +14637,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -13237,6 +14660,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceQueueFamilyProperties2 {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceQueueFamilyProperties2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -13265,6 +14697,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceMemoryProperties2KHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceMemoryProperties2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -13279,6 +14720,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceMemoryProperties2 {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceMemoryProperties2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -13307,6 +14757,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KH
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -13321,6 +14780,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceSparseImageFormatProperties2 {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceSparseImageFormatProperties2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -13349,6 +14817,15 @@ unsafe impl crate::PFN for PFN_vkEnumeratePhysicalDeviceGroupKHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_device_group_creation")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkEnumeratePhysicalDeviceGroupKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -13363,6 +14840,15 @@ unsafe impl crate::PFN for PFN_vkEnumeratePhysicalDeviceGroup {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkEnumeratePhysicalDeviceGroup {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -13391,6 +14877,15 @@ unsafe impl crate::PFN for PFN_vkGetImageMemoryRequirements2KHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_get_memory_requirements2")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetImageMemoryRequirements2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -13405,6 +14900,15 @@ unsafe impl crate::PFN for PFN_vkGetImageMemoryRequirements2 {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetImageMemoryRequirements2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -13433,6 +14937,15 @@ unsafe impl crate::PFN for PFN_vkGetBufferMemoryRequirements2KHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_get_memory_requirements2")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetBufferMemoryRequirements2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -13447,6 +14960,15 @@ unsafe impl crate::PFN for PFN_vkGetBufferMemoryRequirements2 {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetBufferMemoryRequirements2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -13475,6 +14997,15 @@ unsafe impl crate::PFN for PFN_vkGetImageSparseMemoryRequirements2KHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_get_memory_requirements2")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetImageSparseMemoryRequirements2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -13489,6 +15020,15 @@ unsafe impl crate::PFN for PFN_vkGetImageSparseMemoryRequirements2 {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetImageSparseMemoryRequirements2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -13517,6 +15057,15 @@ unsafe impl crate::PFN for PFN_vkBindBufferMemory2KHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_bind_memory2")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkBindBufferMemory2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -13531,6 +15080,15 @@ unsafe impl crate::PFN for PFN_vkBindBufferMemory2 {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkBindBufferMemory2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -13559,6 +15117,15 @@ unsafe impl crate::PFN for PFN_vkBindImageMemory2KHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_bind_memory2")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkBindImageMemory2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -13573,6 +15140,15 @@ unsafe impl crate::PFN for PFN_vkBindImageMemory2 {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkBindImageMemory2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -13601,6 +15177,15 @@ unsafe impl crate::PFN for PFN_vkCreateDescriptorUpdateTemplateKHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_descriptor_update_template")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateDescriptorUpdateTemplateKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -13615,6 +15200,15 @@ unsafe impl crate::PFN for PFN_vkCreateDescriptorUpdateTemplate {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateDescriptorUpdateTemplate {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -13643,6 +15237,15 @@ unsafe impl crate::PFN for PFN_vkDestroyDescriptorUpdateTemplateKHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_descriptor_update_template")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroyDescriptorUpdateTemplateKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -13657,6 +15260,15 @@ unsafe impl crate::PFN for PFN_vkDestroyDescriptorUpdateTemplate {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroyDescriptorUpdateTemplate {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -13685,6 +15297,15 @@ unsafe impl crate::PFN for PFN_vkUpdateDescriptorSetWithTemplateKHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_descriptor_update_template")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkUpdateDescriptorSetWithTemplateKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -13699,6 +15320,15 @@ unsafe impl crate::PFN for PFN_vkUpdateDescriptorSetWithTemplate {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkUpdateDescriptorSetWithTemplate {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -13727,6 +15357,15 @@ unsafe impl crate::PFN for PFN_vkCreateSamplerYcbcrConversionKHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateSamplerYcbcrConversionKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -13741,6 +15380,15 @@ unsafe impl crate::PFN for PFN_vkCreateSamplerYcbcrConversion {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateSamplerYcbcrConversion {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -13769,6 +15417,15 @@ unsafe impl crate::PFN for PFN_vkDestroySamplerYcbcrConversionKHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroySamplerYcbcrConversionKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -13783,6 +15440,15 @@ unsafe impl crate::PFN for PFN_vkDestroySamplerYcbcrConversion {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroySamplerYcbcrConversion {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -13811,6 +15477,15 @@ unsafe impl crate::PFN for PFN_vkTrimCommandPoolKHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance1")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkTrimCommandPoolKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -13825,6 +15500,15 @@ unsafe impl crate::PFN for PFN_vkTrimCommandPool {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkTrimCommandPool {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -13853,6 +15537,15 @@ unsafe impl crate::PFN for PFN_vkGetDescriptorSetLayoutSupportKHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance3")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDescriptorSetLayoutSupportKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -13867,6 +15560,15 @@ unsafe impl crate::PFN for PFN_vkGetDescriptorSetLayoutSupport {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDescriptorSetLayoutSupport {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -13895,6 +15597,15 @@ unsafe impl crate::PFN for PFN_vkQueueSubmit2KHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkQueueSubmit2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_3APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -13909,6 +15620,15 @@ unsafe impl crate::PFN for PFN_vkQueueSubmit2 {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkQueueSubmit2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -13934,6 +15654,14 @@ unsafe impl crate::PFN for PFN_vkCmdBindPipeline {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdBindPipeline {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -13954,6 +15682,14 @@ unsafe impl crate::PFN for PFN_vkCmdSetViewport {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdSetViewport {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -13978,6 +15714,14 @@ unsafe impl crate::PFN for PFN_vkCmdSetScissor {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdSetScissor {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -13998,6 +15742,14 @@ unsafe impl crate::PFN for PFN_vkCmdSetLineWidth {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdSetLineWidth {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -14022,6 +15774,14 @@ unsafe impl crate::PFN for PFN_vkCmdSetDepthBias {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdSetDepthBias {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -14042,6 +15802,14 @@ unsafe impl crate::PFN for PFN_vkCmdSetBlendConstants {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdSetBlendConstants {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -14066,6 +15834,14 @@ unsafe impl crate::PFN for PFN_vkCmdSetDepthBounds {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdSetDepthBounds {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -14086,6 +15862,14 @@ unsafe impl crate::PFN for PFN_vkCmdSetStencilCompareMask {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdSetStencilCompareMask {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -14110,6 +15894,14 @@ unsafe impl crate::PFN for PFN_vkCmdSetStencilWriteMask {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdSetStencilWriteMask {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -14130,6 +15922,14 @@ unsafe impl crate::PFN for PFN_vkCmdSetStencilReference {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdSetStencilReference {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -14154,6 +15954,14 @@ unsafe impl crate::PFN for PFN_vkCmdBindDescriptorSets {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdBindDescriptorSets {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -14174,6 +15982,14 @@ unsafe impl crate::PFN for PFN_vkCmdBindIndexBuffer {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdBindIndexBuffer {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -14198,6 +16014,14 @@ unsafe impl crate::PFN for PFN_vkCmdBindVertexBuffers {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdBindVertexBuffers {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -14218,6 +16042,14 @@ unsafe impl crate::PFN for PFN_vkCmdDraw {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdDraw {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -14242,6 +16074,14 @@ unsafe impl crate::PFN for PFN_vkCmdDrawIndexed {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdDrawIndexed {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -14262,6 +16102,14 @@ unsafe impl crate::PFN for PFN_vkCmdDrawIndirect {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdDrawIndirect {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -14286,6 +16134,14 @@ unsafe impl crate::PFN for PFN_vkCmdDrawIndexedIndirect {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdDrawIndexedIndirect {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -14306,6 +16162,14 @@ unsafe impl crate::PFN for PFN_vkCmdDispatch {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdDispatch {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -14330,6 +16194,14 @@ unsafe impl crate::PFN for PFN_vkCmdDispatchIndirect {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdDispatchIndirect {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -14350,6 +16222,14 @@ unsafe impl crate::PFN for PFN_vkCmdCopyBuffer {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdCopyBuffer {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -14374,6 +16254,14 @@ unsafe impl crate::PFN for PFN_vkCmdCopyImage {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdCopyImage {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -14394,6 +16282,14 @@ unsafe impl crate::PFN for PFN_vkCmdBlitImage {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdBlitImage {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -14418,6 +16314,14 @@ unsafe impl crate::PFN for PFN_vkCmdCopyBufferToImage {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdCopyBufferToImage {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -14438,6 +16342,14 @@ unsafe impl crate::PFN for PFN_vkCmdCopyImageToBuffer {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdCopyImageToBuffer {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -14462,6 +16374,14 @@ unsafe impl crate::PFN for PFN_vkCmdUpdateBuffer {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdUpdateBuffer {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -14482,6 +16402,14 @@ unsafe impl crate::PFN for PFN_vkCmdFillBuffer {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdFillBuffer {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -14506,6 +16434,14 @@ unsafe impl crate::PFN for PFN_vkCmdClearColorImage {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdClearColorImage {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -14526,6 +16462,14 @@ unsafe impl crate::PFN for PFN_vkCmdClearDepthStencilImage {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdClearDepthStencilImage {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -14550,6 +16494,14 @@ unsafe impl crate::PFN for PFN_vkCmdClearAttachments {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdClearAttachments {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -14570,6 +16522,14 @@ unsafe impl crate::PFN for PFN_vkCmdResolveImage {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdResolveImage {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -14594,6 +16554,14 @@ unsafe impl crate::PFN for PFN_vkCmdSetEvent {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdSetEvent {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -14614,6 +16582,14 @@ unsafe impl crate::PFN for PFN_vkCmdResetEvent {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdResetEvent {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -14638,6 +16614,14 @@ unsafe impl crate::PFN for PFN_vkCmdWaitEvents {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdWaitEvents {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -14658,6 +16642,14 @@ unsafe impl crate::PFN for PFN_vkCmdPipelineBarrier {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdPipelineBarrier {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -14682,6 +16674,14 @@ unsafe impl crate::PFN for PFN_vkCmdBeginQuery {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdBeginQuery {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -14702,6 +16702,14 @@ unsafe impl crate::PFN for PFN_vkCmdEndQuery {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdEndQuery {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -14726,6 +16734,14 @@ unsafe impl crate::PFN for PFN_vkCmdResetQueryPool {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdResetQueryPool {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -14746,6 +16762,14 @@ unsafe impl crate::PFN for PFN_vkCmdWriteTimestamp {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdWriteTimestamp {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -14770,6 +16794,14 @@ unsafe impl crate::PFN for PFN_vkCmdCopyQueryPoolResults {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdCopyQueryPoolResults {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -14790,6 +16822,14 @@ unsafe impl crate::PFN for PFN_vkCmdPushConstants {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdPushConstants {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -14814,6 +16854,14 @@ unsafe impl crate::PFN for PFN_vkCmdBeginRenderPass {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdBeginRenderPass {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -14834,6 +16882,14 @@ unsafe impl crate::PFN for PFN_vkCmdNextSubpass {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdNextSubpass {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -14858,6 +16914,14 @@ unsafe impl crate::PFN for PFN_vkCmdEndRenderPass {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdEndRenderPass {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
@@ -14878,6 +16942,14 @@ unsafe impl crate::PFN for PFN_vkCmdExecuteCommands {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdExecuteCommands {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -14904,6 +16976,15 @@ unsafe impl crate::PFN for PFN_vkCmdBeginDebugUtilsLabelEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdBeginDebugUtilsLabelEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
@@ -14922,6 +17003,15 @@ unsafe impl crate::PFN for PFN_vkCmdEndDebugUtilsLabelEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdEndDebugUtilsLabelEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
@@ -14938,6 +17028,15 @@ unsafe impl crate::PFN for PFN_vkCmdInsertDebugUtilsLabelEXT {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdInsertDebugUtilsLabelEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -14959,6 +17058,15 @@ unsafe impl crate::PFN for PFN_vkCmdSetDeviceMaskKHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_device_group")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdSetDeviceMaskKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -14973,6 +17081,15 @@ unsafe impl crate::PFN for PFN_vkCmdSetDeviceMask {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdSetDeviceMask {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -15001,6 +17118,15 @@ unsafe impl crate::PFN for PFN_vkCmdDispatchBaseKHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_device_group")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdDispatchBaseKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15015,6 +17141,15 @@ unsafe impl crate::PFN for PFN_vkCmdDispatchBase {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdDispatchBase {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -15043,6 +17178,15 @@ unsafe impl crate::PFN for PFN_vkCmdSetEvent2KHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdSetEvent2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_3APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15057,6 +17201,15 @@ unsafe impl crate::PFN for PFN_vkCmdSetEvent2 {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdSetEvent2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -15085,6 +17238,15 @@ unsafe impl crate::PFN for PFN_vkCmdResetEvent2KHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdResetEvent2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_3APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15099,6 +17261,15 @@ unsafe impl crate::PFN for PFN_vkCmdResetEvent2 {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdResetEvent2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -15127,6 +17298,15 @@ unsafe impl crate::PFN for PFN_vkCmdWaitEvents2KHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdWaitEvents2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_3APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15141,6 +17321,15 @@ unsafe impl crate::PFN for PFN_vkCmdWaitEvents2 {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdWaitEvents2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -15169,6 +17358,15 @@ unsafe impl crate::PFN for PFN_vkCmdPipelineBarrier2KHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdPipelineBarrier2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_3APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15183,6 +17381,15 @@ unsafe impl crate::PFN for PFN_vkCmdPipelineBarrier2 {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdPipelineBarrier2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -15211,6 +17418,15 @@ unsafe impl crate::PFN for PFN_vkCmdWriteTimestamp2KHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdWriteTimestamp2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_3APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15225,6 +17441,15 @@ unsafe impl crate::PFN for PFN_vkCmdWriteTimestamp2 {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdWriteTimestamp2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -16151,6 +18376,15 @@ unsafe impl crate::PFN for PFN_vkGetBufferDeviceAddressKHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_buffer_device_address")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetBufferDeviceAddressKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_2APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -16165,6 +18399,15 @@ unsafe impl crate::PFN for PFN_vkGetBufferDeviceAddress {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetBufferDeviceAddress {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -16193,6 +18436,15 @@ unsafe impl crate::PFN for PFN_vkGetBufferOpaqueCaptureAddressKHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_buffer_device_address")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetBufferOpaqueCaptureAddressKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_2APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -16207,6 +18459,15 @@ unsafe impl crate::PFN for PFN_vkGetBufferOpaqueCaptureAddress {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetBufferOpaqueCaptureAddress {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -16235,6 +18496,15 @@ unsafe impl crate::PFN for PFN_vkGetDeviceMemoryOpaqueCaptureAddressKHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_buffer_device_address")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDeviceMemoryOpaqueCaptureAddressKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_2APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -16249,6 +18519,15 @@ unsafe impl crate::PFN for PFN_vkGetDeviceMemoryOpaqueCaptureAddress {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDeviceMemoryOpaqueCaptureAddress {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -16277,6 +18556,15 @@ unsafe impl crate::PFN for PFN_vkGetSemaphoreCounterValueKHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetSemaphoreCounterValueKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_2APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -16291,6 +18579,15 @@ unsafe impl crate::PFN for PFN_vkGetSemaphoreCounterValue {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetSemaphoreCounterValue {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -16319,6 +18616,15 @@ unsafe impl crate::PFN for PFN_vkSignalSemaphoreKHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkSignalSemaphoreKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_2APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -16333,6 +18639,15 @@ unsafe impl crate::PFN for PFN_vkSignalSemaphore {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkSignalSemaphore {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -16361,6 +18676,15 @@ unsafe impl crate::PFN for PFN_vkWaitSemaphoresKHR {
     }
 }
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkWaitSemaphoresKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_2APIs")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -16375,6 +18699,15 @@ unsafe impl crate::PFN for PFN_vkWaitSemaphores {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkWaitSemaphores {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 #[cfg(feature = "Implements")]
@@ -17292,6 +19625,15 @@ unsafe impl crate::PFN for PFN_vkAcquireDrmDisplayEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_acquire_drm_display")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkAcquireDrmDisplayEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_NV_acquire_winrt_display")]
@@ -17308,6 +19650,15 @@ unsafe impl crate::PFN for PFN_vkAcquireWinrtDisplayNV {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NV_acquire_winrt_display")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkAcquireWinrtDisplayNV {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -17328,6 +19679,15 @@ unsafe impl crate::PFN for PFN_vkAcquireXlibDisplayEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_acquire_xlib_display")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkAcquireXlibDisplayEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_validation_cache")]
@@ -17344,6 +19704,15 @@ unsafe impl crate::PFN for PFN_vkCreateValidationCacheEXT {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_validation_cache")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateValidationCacheEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -17364,6 +19733,15 @@ unsafe impl crate::PFN for PFN_vkDestroyValidationCacheEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_validation_cache")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroyValidationCacheEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_acquire_drm_display")]
@@ -17380,6 +19758,15 @@ unsafe impl crate::PFN for PFN_vkGetDrmDisplayEXT {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_acquire_drm_display")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDrmDisplayEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -17400,6 +19787,15 @@ unsafe impl crate::PFN for PFN_vkGetRandROutputDisplayEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_acquire_xlib_display")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetRandROutputDisplayEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_validation_cache")]
@@ -17416,6 +19812,15 @@ unsafe impl crate::PFN for PFN_vkGetValidationCacheDataEXT {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_validation_cache")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetValidationCacheDataEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -17436,6 +19841,15 @@ unsafe impl crate::PFN for PFN_vkGetWinrtDisplayNV {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NV_acquire_winrt_display")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetWinrtDisplayNV {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_validation_cache")]
@@ -17454,6 +19868,15 @@ unsafe impl crate::PFN for PFN_vkMergeValidationCachesEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_validation_cache")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkMergeValidationCachesEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_AMD_buffer_marker")]
@@ -17470,6 +19893,15 @@ unsafe impl crate::PFN for PFN_vkCmdWriteBufferMarkerAMD {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_AMD_buffer_marker")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdWriteBufferMarkerAMD {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -17970,6 +20402,15 @@ unsafe impl crate::PFN for PFN_vkGetDescriptorSetLayoutSizeEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDescriptorSetLayoutSizeEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_descriptor_buffer")]
@@ -17986,6 +20427,15 @@ unsafe impl crate::PFN for PFN_vkGetDescriptorSetLayoutBindingOffsetEXT {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDescriptorSetLayoutBindingOffsetEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -18006,6 +20456,15 @@ unsafe impl crate::PFN for PFN_vkGetDescriptorEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDescriptorEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_descriptor_buffer")]
@@ -18022,6 +20481,15 @@ unsafe impl crate::PFN for PFN_vkCmdBindDescriptorBuffersEXT {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdBindDescriptorBuffersEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -18042,6 +20510,15 @@ unsafe impl crate::PFN for PFN_vkCmdSetDescriptorBufferOffsetsEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdSetDescriptorBufferOffsetsEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_descriptor_buffer")]
@@ -18058,6 +20535,15 @@ unsafe impl crate::PFN for PFN_vkCmdBindDescriptorBufferEmbeddedSamplersEXT {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdBindDescriptorBufferEmbeddedSamplersEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -18078,6 +20564,15 @@ unsafe impl crate::PFN for PFN_vkGetBufferOpaqueCaptureDescriptorDataEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetBufferOpaqueCaptureDescriptorDataEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_descriptor_buffer")]
@@ -18094,6 +20589,15 @@ unsafe impl crate::PFN for PFN_vkGetImageOpaqueCaptureDescriptorDataEXT {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetImageOpaqueCaptureDescriptorDataEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -18114,6 +20618,15 @@ unsafe impl crate::PFN for PFN_vkGetImageViewOpaqueCaptureDescriptorDataEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetImageViewOpaqueCaptureDescriptorDataEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_descriptor_buffer")]
@@ -18130,6 +20643,15 @@ unsafe impl crate::PFN for PFN_vkGetSamplerOpaqueCaptureDescriptorDataEXT {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetSamplerOpaqueCaptureDescriptorDataEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -18244,6 +20766,15 @@ unsafe impl crate::PFN for PFN_vkGetMemoryHostPointerPropertiesEXT {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_external_memory_host")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetMemoryHostPointerPropertiesEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -18521,6 +21052,15 @@ unsafe impl crate::PFN for PFN_vkCmdSampleLocationsEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdSampleLocationsEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_sample_locations")]
@@ -18537,6 +21077,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -19041,6 +21590,15 @@ unsafe impl crate::PFN for PFN_vkDisplayPowerControlEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDisplayPowerControlEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_display_control")]
@@ -19057,6 +21615,15 @@ unsafe impl crate::PFN for PFN_vkRegisterDeviceEventEXT {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkRegisterDeviceEventEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -19077,6 +21644,15 @@ unsafe impl crate::PFN for PFN_vkRegisterDisplayEventEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkRegisterDisplayEventEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_display_control")]
@@ -19093,6 +21669,15 @@ unsafe impl crate::PFN for PFN_vkGetSwapchainCounterEXT {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetSwapchainCounterEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -19179,6 +21764,15 @@ unsafe impl crate::PFN for PFN_vkGetRefreshCycleDurationGOOGLE {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_GOOGLE_display_timing")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetRefreshCycleDurationGOOGLE {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_GOOGLE_display_timing")]
@@ -19195,6 +21789,15 @@ unsafe impl crate::PFN for PFN_vkGetPastPresentationTimingGOOGLE {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_GOOGLE_display_timing")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPastPresentationTimingGOOGLE {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -19249,6 +21852,15 @@ unsafe impl crate::PFN for PFN_vkGetSwapchainStatusKHR {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_shared_presentable_image")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetSwapchainStatusKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -19391,6 +22003,15 @@ unsafe impl crate::PFN for PFN_vkCreateViSurfaceNN {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NN_vi_surface")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateViSurfaceNN {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_NN_vi_surface")]
@@ -19466,6 +22087,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_display_surface_counter")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -19587,6 +22217,15 @@ unsafe impl crate::PFN for PFN_vkDebugMarkerSetObjectTagEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDebugMarkerSetObjectTagEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_marker")]
@@ -19603,6 +22242,15 @@ unsafe impl crate::PFN for PFN_vkDebugMarkerSetObjectNameEXT {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDebugMarkerSetObjectNameEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -19623,6 +22271,15 @@ unsafe impl crate::PFN for PFN_vkCmdDebugMarkerBeginEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdDebugMarkerBeginEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_marker")]
@@ -19641,6 +22298,15 @@ unsafe impl crate::PFN for PFN_vkCmdDebugMarkerEndEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdDebugMarkerEndEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_marker")]
@@ -19657,6 +22323,15 @@ unsafe impl crate::PFN for PFN_vkCmdDebugMarkerInsertEXT {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdDebugMarkerInsertEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -20110,6 +22785,15 @@ unsafe impl crate::PFN for PFN_vkCmdProcessCommandsNVX {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdProcessCommandsNVX {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_NVX_device_generated_commands")]
@@ -20126,6 +22810,15 @@ unsafe impl crate::PFN for PFN_vkCmdReserveSpaceForCommandsNVX {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdReserveSpaceForCommandsNVX {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -20146,6 +22839,15 @@ unsafe impl crate::PFN for PFN_vkCreateIndirectCommandsLayoutNVX {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateIndirectCommandsLayoutNVX {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_NVX_device_generated_commands")]
@@ -20162,6 +22864,15 @@ unsafe impl crate::PFN for PFN_vkDestroyIndirectCommandsLayoutNVX {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroyIndirectCommandsLayoutNVX {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -20182,6 +22893,15 @@ unsafe impl crate::PFN for PFN_vkCreateObjectTableNVX {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateObjectTableNVX {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_NVX_device_generated_commands")]
@@ -20198,6 +22918,15 @@ unsafe impl crate::PFN for PFN_vkDestroyObjectTableNVX {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroyObjectTableNVX {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -20218,6 +22947,15 @@ unsafe impl crate::PFN for PFN_vkRegisterObjectsNVX {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkRegisterObjectsNVX {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_NVX_device_generated_commands")]
@@ -20236,6 +22974,15 @@ unsafe impl crate::PFN for PFN_vkUnregisterObjectsNVX {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkUnregisterObjectsNVX {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_NVX_device_generated_commands")]
@@ -20252,6 +22999,15 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceGeneratedCommandsPropertiesNVX
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceGeneratedCommandsPropertiesNVX {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -20377,6 +23133,15 @@ unsafe impl crate::PFN for PFN_vkCmdSetViewportWScalingNV {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NV_clip_space_w_scaling")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdSetViewportWScalingNV {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 
@@ -20614,6 +23379,15 @@ unsafe impl crate::PFN for PFN_vkCmdSetDiscardRectangleEXT {
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_discard_rectangles")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdSetDiscardRectangleEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
 

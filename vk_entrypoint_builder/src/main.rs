@@ -187,10 +187,9 @@ unsafe extern "system" fn {}({})"#,
         }
         sink.write_str(" {\n")?;
 
-        writeln!(sink, "    use crate::resolver::ResolverInterface;")?;
         writeln!(
             sink,
-            r#"    let fp: {pfn} = unsafe {{ crate::resolver::get_resolver().load_function_unconstrainted() }};"#,
+            r#"    let fp: {pfn} = unsafe {{ crate::resolver::current_resolver().load_function_unconstrainted() }};"#,
             pfn = PFNNameWriter(self)
         )?;
         writeln!(sink, r#"    unsafe {{ FPTBL.{} = fp; }}"#, ExportNameWriter(self))?;
@@ -2188,7 +2187,7 @@ fn main() {
     let mut fptbl_init = String::with_capacity(8192);
     function_pointer_table.push_str(
         r#"#[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
-struct FunctionPointerTable {
+pub(crate) struct FunctionPointerTable {
 "#,
     );
     fptbl_init.push_str(
@@ -2221,9 +2220,9 @@ static mut FPTBL: FunctionPointerTable = FunctionPointerTable::INIT;
 "#,
     );
     fptbl_init
-        .push_str("\n    };\n    #[inline(always)] #[rustfmt::skip] pub(crate) fn reset() { unsafe { FPTBL = Self::INIT; } }\n}\n");
+        .push_str("\n    };\n    #[inline(always)] #[rustfmt::skip] #[allow(dead_code)] pub(crate) fn reset() { unsafe { FPTBL = Self::INIT; } }\n}\n");
 
-    println!("use crate::vk::*;\nuse core::ffi::*;\n");
+    println!("use crate::*;\nuse core::ffi::*;\n");
     println!("{eps}");
     println!("{function_pointer_table}");
     println!("{fptbl_init}");

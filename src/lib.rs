@@ -16,19 +16,10 @@
 // Platform Extras
 #[cfg(feature = "VK_KHR_android_surface")]
 extern crate android;
-#[cfg(feature = "DynamicLoaded")]
-extern crate libloading;
 #[cfg(any(feature = "VK_KHR_xlib_surface", feature = "VK_EXT_acquire_xlib_display"))]
 extern crate x11;
 #[cfg(feature = "VK_KHR_xcb_surface")]
 extern crate xcb;
-
-#[cfg(feature = "DynamicLoaded")]
-#[cfg(unix)]
-mod libdl;
-#[cfg(feature = "DynamicLoaded")]
-#[cfg(windows)]
-mod libloaderapi;
 
 pub use bedrock_vk::{
     self as vk, VkDeviceSize as DeviceSize, VkExtent2D as Extent2D, VkExtent3D as Extent3D, VkFormat as Format,
@@ -37,12 +28,14 @@ pub use bedrock_vk::{
 use cfg_if::cfg_if;
 use derives::*;
 
+#[cfg(feature = "CustomResolver")]
+pub use bedrock_vk::set_resolver;
+#[cfg(feature = "DynamicLoaded")]
+pub use bedrock_vk::{ResolvedFnCell, ResolverInterface};
+
 pub use derives::SpecializationConstants;
 
 pub mod error;
-mod resolver;
-#[cfg(feature = "Implements")]
-pub use resolver::ResolverInterface;
 
 #[cfg(feature = "Implements")]
 pub mod vkfn_wrapper;

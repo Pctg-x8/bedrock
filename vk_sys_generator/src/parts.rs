@@ -1321,6 +1321,21 @@ impl Command {
         Ok(())
     }
 
+    fn emit_from_ptr(w: &mut impl std::io::Write, type_name: &str) -> std::io::Result<()> {
+        writeln!(w, "#[rustfmt::skip]")?;
+        writeln!(w, "unsafe impl crate::FromPtr for {type_name} {{")?;
+        writeln!(w, "    #[inline(always)]")?;
+        writeln!(w, "    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {{")?;
+        writeln!(
+            w,
+            "        unsafe {{ core::mem::transmute::<*const core::ffi::c_void, Self>(p) }}"
+        )?;
+        writeln!(w, "    }}")?;
+        writeln!(w, "}}")?;
+
+        Ok(())
+    }
+
     fn emit_feature_gate(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
         w.write_all(b"#[cfg(feature = \"Implements\")]\n")?;
         if let Some((tag, name)) = self.extension {
@@ -1384,6 +1399,8 @@ impl Command {
 
         self.emit_feature_gate(w)?;
         Self::emit_pfn(w, &type_name, &org_fn_name)?;
+        self.emit_feature_gate(w)?;
+        Self::emit_from_ptr(w, &type_name)?;
 
         if self.static_callable {
             w.write_all(b"#[cfg(not(feature = \"DynamicLoaded\"))]\n")?;
@@ -1435,6 +1452,9 @@ impl Command {
             writeln!(w, "#[cfg(feature = \"Implements\")]")?;
             writeln!(w, "#[cfg(feature = \"Allow{p}APIs\")]")?;
             Self::emit_pfn(w, &type_name, &org_fn_name)?;
+            writeln!(w, "#[cfg(feature = \"Implements\")]")?;
+            writeln!(w, "#[cfg(feature = \"Allow{p}APIs\")]")?;
+            Self::emit_from_ptr(w, &type_name)?;
 
             // promoted symbols always static callable
             writeln!(w, "#[cfg(feature = \"Implements\")]")?;

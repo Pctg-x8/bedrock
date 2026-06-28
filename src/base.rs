@@ -99,22 +99,33 @@ pub fn instance_version() -> crate::Result<Version> {
 }
 
 #[implements]
-type InstanceResolvedFn<F> = crate::resolver::ResolvedFnCell<F, brvk::VkInstance>;
+type InstanceResolvedFn<F> = brvk::ResolvedFnCell<F, InstanceResolverImpl>;
 #[implements]
-impl crate::resolver::ResolverInterface for brvk::VkInstance {
-    #[inline(always)]
-    unsafe fn load_symbol_unconstrainted<T: brvk::FromPtr>(&self, name: &core::ffi::CStr) -> T {
-        unsafe {
-            T::from_ptr(core::mem::transmute::<Option<brvk::PFN_vkVoidFunction>, *const _>(
-                brvk::fns::get_instance_proc_addr(*self, name.as_ptr() as _),
-            ))
+#[repr(transparent)]
+struct InstanceResolverImpl(brvk::VkInstance);
+#[implements]
+impl brvk::ResolverInterface for InstanceResolverImpl {
+    #[tracing::instrument(
+        name = "<brvk::VkInstance as ResolverInterface>::load_symbol_unconstrainted",
+        skip(self)
+    )]
+    unsafe fn load_symbol_unconstrainted(&self, name: &core::ffi::CStr) -> core::ptr::NonNull<core::ffi::c_void> {
+        match unsafe { brvk::fns::get_instance_proc_addr(self.0, name.as_ptr().cast()) } {
+            Some(x) => unsafe { core::ptr::NonNull::new_unchecked(x as _) },
+            None => {
+                tracing::error!("instance function not found, bedrock could not continue");
+                std::process::abort();
+            }
         }
     }
 
-    #[tracing::instrument(name = "<brvk::VkInstance as ResolverInterface>::load_function_unconstrainted", skip(self), fields(name = ?F::NAME_CSTR))]
-    unsafe fn load_function_unconstrainted<F: brvk::PFN>(&self) -> F {
-        match unsafe { brvk::fns::get_instance_proc_addr(*self, F::NAME_CSTR.as_ptr() as _) } {
-            Some(x) => unsafe { F::from_void_fn(x) },
+    #[tracing::instrument(
+        name = "<brvk::VkInstance as ResolverInterface>::load_function_unconstrainted",
+        skip(self)
+    )]
+    unsafe fn load_function_unconstrainted(&self, name: &core::ffi::CStr) -> brvk::PFN_vkVoidFunction {
+        match unsafe { brvk::fns::get_instance_proc_addr(self.0, name.as_ptr().cast()) } {
+            Some(x) => x,
             None => {
                 tracing::error!("instance function not found, bedrock could not continue");
                 std::process::abort();
@@ -533,37 +544,37 @@ impl InstanceExtFunctions {
     const fn new(r: brvk::VkInstance) -> Self {
         Self {
             #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-            get_physical_device_properties2_khr: InstanceResolvedFn::new(r),
+            get_physical_device_properties2_khr: InstanceResolvedFn::new(InstanceResolverImpl(r)),
             #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-            get_physical_device_features2_khr: InstanceResolvedFn::new(r),
+            get_physical_device_features2_khr: InstanceResolvedFn::new(InstanceResolverImpl(r)),
             #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-            get_physical_device_format_properties2_khr: InstanceResolvedFn::new(r),
+            get_physical_device_format_properties2_khr: InstanceResolvedFn::new(InstanceResolverImpl(r)),
             #[cfg(feature = "VK_EXT_debug_report")]
-            create_debug_report_callback_ext: InstanceResolvedFn::new(r),
+            create_debug_report_callback_ext: InstanceResolvedFn::new(InstanceResolverImpl(r)),
             #[cfg(feature = "VK_EXT_debug_report")]
-            destroy_debug_report_callback_ext: InstanceResolvedFn::new(r),
+            destroy_debug_report_callback_ext: InstanceResolvedFn::new(InstanceResolverImpl(r)),
             #[cfg(feature = "VK_EXT_debug_report")]
-            debug_report_message_ext: InstanceResolvedFn::new(r),
+            debug_report_message_ext: InstanceResolvedFn::new(InstanceResolverImpl(r)),
             #[cfg(feature = "VK_EXT_debug_utils")]
-            create_debug_utils_messenger_ext: InstanceResolvedFn::new(r),
+            create_debug_utils_messenger_ext: InstanceResolvedFn::new(InstanceResolverImpl(r)),
             #[cfg(feature = "VK_EXT_debug_utils")]
-            destroy_debug_utils_messenger_ext: InstanceResolvedFn::new(r),
+            destroy_debug_utils_messenger_ext: InstanceResolvedFn::new(InstanceResolverImpl(r)),
             #[cfg(feature = "VK_EXT_debug_utils")]
-            set_debug_utils_object_name_ext: InstanceResolvedFn::new(r),
+            set_debug_utils_object_name_ext: InstanceResolvedFn::new(InstanceResolverImpl(r)),
             #[cfg(feature = "VK_KHR_external_fence_capabilities")]
-            get_physical_device_external_fence_properties_khr: InstanceResolvedFn::new(r),
+            get_physical_device_external_fence_properties_khr: InstanceResolvedFn::new(InstanceResolverImpl(r)),
             #[cfg(feature = "VK_EXT_acquire_xlib_display")]
-            get_randr_output_display_ext: InstanceResolvedFn::new(r),
+            get_randr_output_display_ext: InstanceResolvedFn::new(InstanceResolverImpl(r)),
             #[cfg(feature = "VK_EXT_acquire_xlib_display")]
-            acquire_xlib_display_ext: InstanceResolvedFn::new(r),
+            acquire_xlib_display_ext: InstanceResolvedFn::new(InstanceResolverImpl(r)),
             #[cfg(feature = "VK_EXT_full_screen_exclusive")]
-            get_physical_device_surface_present_modes_2_ext: InstanceResolvedFn::new(r),
+            get_physical_device_surface_present_modes_2_ext: InstanceResolvedFn::new(InstanceResolverImpl(r)),
             #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
-            get_physical_device_surface_capabilities_2_khr: InstanceResolvedFn::new(r),
+            get_physical_device_surface_capabilities_2_khr: InstanceResolvedFn::new(InstanceResolverImpl(r)),
             #[cfg(feature = "VK_EXT_direct_mode_display")]
-            release_display_ext: InstanceResolvedFn::new(r),
+            release_display_ext: InstanceResolvedFn::new(InstanceResolverImpl(r)),
             #[cfg(feature = "VK_EXT_sample_locations")]
-            get_physical_device_multisample_properties_ext: InstanceResolvedFn::new(r),
+            get_physical_device_multisample_properties_ext: InstanceResolvedFn::new(InstanceResolverImpl(r)),
         }
     }
 }

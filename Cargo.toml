@@ -372,6 +372,8 @@ android = { git = "https://github.com/Pctg-x8/android-defs-rs" }
 libloading = { version = "0.5" }
 widestring = { version = "1.1" }
 windows = { version = "0.62" }
+parking_lot = "0.12.1"
+tracing = "0.1"
 
 [dependencies]
 x11 = { workspace = true, optional = true }
@@ -379,10 +381,10 @@ xcb = { workspace = true, optional = true }
 android = { workspace = true, optional = true }
 libloading = { workspace = true, optional = true }
 widestring = { workspace = true, optional = true }
-tracing = "0.1"
 
+tracing.workspace = true
 derives = { path = "./derives" }
-parking_lot = "0.12.1"
+parking_lot.workspace = true
 cfg-if = "1.0.0"
 bedrock-vk.path = "./brvk"
 

@@ -6,8 +6,14 @@ pub use vk2::*;
 
 #[cfg(feature = "Implements")]
 pub mod fns;
+#[cfg(feature = "Implements")]
+mod resolver;
+#[cfg(feature = "CustomResolver")]
+pub use resolver::set_resolver;
+#[cfg(feature = "Implements")]
+pub use resolver::{ResolvedFnCell, ResolverInterface};
 
-pub mod result_str;
+mod result_str;
 pub use result_str::*;
 pub mod extensions;
 

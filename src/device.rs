@@ -8,22 +8,33 @@ use derives::implements;
 
 #[implements]
 #[allow(dead_code)]
-type DeviceResolvedFn<F> = crate::resolver::ResolvedFnCell<F, brvk::VkDevice>;
+type DeviceResolvedFn<F> = brvk::ResolvedFnCell<F, DeviceResolverImpl>;
 #[implements]
-impl crate::resolver::ResolverInterface for brvk::VkDevice {
-    #[inline(always)]
-    unsafe fn load_symbol_unconstrainted<T: brvk::FromPtr>(&self, name: &core::ffi::CStr) -> T {
-        unsafe {
-            T::from_ptr(core::mem::transmute::<Option<brvk::PFN_vkVoidFunction>, *const _>(
-                brvk::fns::get_device_proc_addr(*self, name.as_ptr() as _),
-            ))
+#[repr(transparent)]
+struct DeviceResolverImpl(brvk::VkDevice);
+#[implements]
+impl brvk::ResolverInterface for DeviceResolverImpl {
+    #[tracing::instrument(
+        name = "<brvk::VkDevice as ResolverInterface>::load_symbol_unconstrainted",
+        skip(self)
+    )]
+    unsafe fn load_symbol_unconstrainted(&self, name: &core::ffi::CStr) -> core::ptr::NonNull<core::ffi::c_void> {
+        match unsafe { brvk::fns::get_device_proc_addr(self.0, name.as_ptr().cast()) } {
+            Some(x) => unsafe { core::ptr::NonNull::new_unchecked(x as _) },
+            None => {
+                tracing::error!("device function not found, bedrock could not continue");
+                std::process::abort();
+            }
         }
     }
 
-    #[tracing::instrument(name = "<brvk::VkDevice as ResolverInterface>::load_function_unconstrainted", skip(self), fields(name = ?F::NAME_CSTR))]
-    unsafe fn load_function_unconstrainted<F: brvk::PFN>(&self) -> F {
-        match unsafe { brvk::fns::get_device_proc_addr(*self, F::NAME_CSTR.as_ptr() as _) } {
-            Some(x) => unsafe { F::from_void_fn(x) },
+    #[tracing::instrument(
+        name = "<brvk::VkDevice as ResolverInterface>::load_function_unconstrainted",
+        skip(self)
+    )]
+    unsafe fn load_function_unconstrainted(&self, name: &core::ffi::CStr) -> brvk::PFN_vkVoidFunction {
+        match unsafe { brvk::fns::get_device_proc_addr(self.0, name.as_ptr().cast()) } {
+            Some(x) => x,
             None => {
                 tracing::error!("device function not found, bedrock could not continue");
                 std::process::abort();
@@ -1185,69 +1196,69 @@ impl DeviceExtFunctions {
     const fn new(handle: brvk::VkDevice) -> Self {
         Self {
             #[cfg(feature = "VK_KHR_maintenance1")]
-            trim_command_pool_khr: DeviceResolvedFn::new(handle),
+            trim_command_pool_khr: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_descriptor_update_template")]
-            create_descriptor_update_template_khr: DeviceResolvedFn::new(handle),
+            create_descriptor_update_template_khr: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_descriptor_update_template")]
-            destroy_descriptor_update_template_khr: DeviceResolvedFn::new(handle),
+            destroy_descriptor_update_template_khr: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_descriptor_update_template")]
-            update_descriptor_set_with_template_khr: DeviceResolvedFn::new(handle),
+            update_descriptor_set_with_template_khr: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_bind_memory2")]
-            bind_buffer_memory2_khr: DeviceResolvedFn::new(handle),
+            bind_buffer_memory2_khr: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_bind_memory2")]
-            bind_image_memory2_khr: DeviceResolvedFn::new(handle),
+            bind_image_memory2_khr: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_EXT_image_drm_format_modifier")]
-            get_image_drm_format_modifier_properties_ext: DeviceResolvedFn::new(handle),
+            get_image_drm_format_modifier_properties_ext: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_external_fence_fd")]
-            get_fence_fd_khr: DeviceResolvedFn::new(handle),
+            get_fence_fd_khr: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_external_fence_fd")]
-            import_fence_fd_khr: DeviceResolvedFn::new(handle),
+            import_fence_fd_khr: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_EXT_full_screen_exclusive")]
-            acquire_full_screen_exclusive_mode_ext: DeviceResolvedFn::new(handle),
+            acquire_full_screen_exclusive_mode_ext: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_EXT_full_screen_exclusive")]
-            release_full_screen_exclusive_mode_ext: DeviceResolvedFn::new(handle),
+            release_full_screen_exclusive_mode_ext: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_external_memory_fd")]
-            get_memory_fd_khr: DeviceResolvedFn::new(handle),
+            get_memory_fd_khr: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_external_memory_fd")]
-            get_memory_fd_properties_khr: DeviceResolvedFn::new(handle),
+            get_memory_fd_properties_khr: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_EXT_external_memory_host")]
-            get_memory_host_pointer_properties_ext: DeviceResolvedFn::new(handle),
+            get_memory_host_pointer_properties_ext: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_external_semaphore_win32")]
-            import_semaphore_win32_handle_khr: DeviceResolvedFn::new(handle),
+            import_semaphore_win32_handle_khr: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_external_semaphore_win32")]
-            get_semaphore_win32_handle_khr: DeviceResolvedFn::new(handle),
+            get_semaphore_win32_handle_khr: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_external_memory_win32")]
-            get_memory_win32_handle_khr: DeviceResolvedFn::new(handle),
+            get_memory_win32_handle_khr: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_external_memory_win32")]
-            get_memory_win32_handle_properties_khr: DeviceResolvedFn::new(handle),
+            get_memory_win32_handle_properties_khr: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_get_memory_requirements2")]
-            get_buffer_memory_requirements_2_khr: DeviceResolvedFn::new(handle),
+            get_buffer_memory_requirements_2_khr: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_get_memory_requirements2")]
-            get_image_memory_requirements_2_khr: DeviceResolvedFn::new(handle),
+            get_image_memory_requirements_2_khr: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_get_memory_requirements2")]
-            get_image_sparse_memory_requirements_2_khr: DeviceResolvedFn::new(handle),
+            get_image_sparse_memory_requirements_2_khr: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_create_renderpass2")]
-            create_render_pass_2_khr: DeviceResolvedFn::new(handle),
+            create_render_pass_2_khr: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_create_renderpass2")]
-            cmd_begin_render_pass_2_khr: DeviceResolvedFn::new(handle),
+            cmd_begin_render_pass_2_khr: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_create_renderpass2")]
-            cmd_end_render_pass_2_khr: DeviceResolvedFn::new(handle),
+            cmd_end_render_pass_2_khr: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_create_renderpass2")]
-            cmd_next_subpass_2_khr: DeviceResolvedFn::new(handle),
+            cmd_next_subpass_2_khr: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_synchronization2")]
-            queue_submit2_khr: DeviceResolvedFn::new(handle),
+            queue_submit2_khr: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_synchronization2")]
-            cmd_pipeline_barrier_2_khr: DeviceResolvedFn::new(handle),
+            cmd_pipeline_barrier_2_khr: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_push_descriptor")]
-            cmd_push_descriptor_set_khr: DeviceResolvedFn::new(handle),
+            cmd_push_descriptor_set_khr: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_EXT_sample_locations")]
-            cmd_set_sample_locations_ext: DeviceResolvedFn::new(handle),
+            cmd_set_sample_locations_ext: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_timeline_semaphore")]
-            get_semaphore_counter_value_ext: DeviceResolvedFn::new(handle),
+            get_semaphore_counter_value_ext: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_timeline_semaphore")]
-            signal_semaphore_ext: DeviceResolvedFn::new(handle),
+            signal_semaphore_ext: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
             #[cfg(feature = "VK_KHR_timeline_semaphore")]
-            wait_semaphores_ext: DeviceResolvedFn::new(handle),
+            wait_semaphores_ext: DeviceResolvedFn::new(DeviceResolverImpl(handle)),
         }
     }
 }
