@@ -10,7 +10,7 @@ pub enum ExternalMemoryHandleTypeHost {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone)]
 pub struct ImportMemoryHostPointerInfo<'d>(
     brvk::VkImportMemoryHostPointerInfoEXT,
     core::marker::PhantomData<Option<&'d dyn brvk::VulkanStructure>>,

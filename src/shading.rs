@@ -1143,7 +1143,7 @@ pub enum ConservativeRasterizationMode {
 /// Structure specifying conservative raster state
 #[cfg(feature = "VK_EXT_conservative_rasterization")]
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub struct PipelineRasterizationConservativeStateCreateInfo<'d>(
     brvk::VkPipelineRasterizationConservativeStateCreateInfoEXT,
     core::marker::PhantomData<Option<&'d dyn brvk::VulkanStructure>>,
