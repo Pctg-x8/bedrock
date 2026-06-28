@@ -163,7 +163,6 @@ ExportExtensions!("VK_KHR_incremental_present": incremental_present_khr);
 ExportExtensions!("VK_NV_glsl_shader": glsl_shader_nv);
 ExportExtensions!("VK_EXT_depth_range_unrestricted": depth_range_unrestricted_ext);
 ExportExtensions!("VK_IMG_filter_cubic": filter_cubic_img);
-ExportExtensions!("VK_AMD_rasterization_order": rasterization_order_amd);
 ExportExtensions!("VK_EXT_debug_marker": debug_marker_ext);
 ExportExtensions!("VK_AMD_gcn_shader": gcn_shader_amd);
 ExportExtensions!("VK_AMD_draw_indirect_count": draw_indirect_count_amd);

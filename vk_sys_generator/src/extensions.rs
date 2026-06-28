@@ -1304,4 +1304,27 @@ pub const ELEMENTS: &[Element] = &[
         .failable()
         .extension("KHR", "shared_presentable_image"),
     ),
+    // VK_AMD_rasterization_order
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_AMD_rasterization_order", 1)),
+    Element::Enum(
+        Enum::new(
+            "RasterizationOrder",
+            "RASTERIZATION_ORDER",
+            &[
+                Enum::member("STRICT", 0).extension("AMD", "rasterization_order"),
+                Enum::member("RELAXED", 1).extension("AMD", "rasterization_order"),
+            ],
+        )
+        .extension("AMD", "rasterization_order"),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "PipelineRasterizationStateRasterizationOrder",
+            "PIPELINE_RASTERIZATION_STATE_RASTERIZATION_ORDER",
+            vk_ext_enum(19, 0) as _,
+            StructUsage::Source,
+            &[Struct::member("rasterizationOrder", "VkRasterizationOrderAMD")],
+        )
+        .extensions(&[("AMD", "rasterization_order")]),
+    ),
 ];
