@@ -118,8 +118,6 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_
     100_0148_001;
 pub const VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_ADVANCED_STATE_CREATE_INFO_EXT: crate::vk2::VkStructureType =
     100_0148_002;
-pub const VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_MODULATION_STATE_CREATE_INFO_NV: crate::vk2::VkStructureType =
-    100_0152_000;
 pub const VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_EXT: crate::vk2::VkStructureType = 100_0174_000;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_EXT: crate::vk2::VkStructureType =
     100_0190_000;
@@ -216,7 +214,6 @@ ExportExtensions!("VK_EXT_sampler_filter_minmax": sampler_filter_minmax_ext);
 ExportExtensions!("VK_AMD_gpu_shader_int16": gpu_shader_int16_amd);
 ExportExtensions!("VK_AMD_mixed_attachment_samples": mixed_attachment_samples_amd);
 ExportExtensions!("VK_AMD_shader_fragment_mask": shader_fragment_mask_amd);
-ExportExtensions!("VK_NV_framebuffer_mixed_samples": framebuffer_mixed_samples_nv);
 ExportExtensions!("VK_NV_fill_rectangle": fill_rectangle_nv);
 ExportExtensions!("VK_EXT_post_depth_coverage": post_depth_coverage_ext);
 ExportExtensions!("VK_EXT_shader_viewport_index_layer": shader_viewport_index_layer_ext);

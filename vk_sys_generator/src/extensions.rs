@@ -926,4 +926,44 @@ pub const ELEMENTS: &[Element] = &[
         )
         .extensions(&[("NV", "fragment_coverage_to_color")]),
     ),
+    // VK_NV_framebuffer_mixed_samples
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_NV_framebuffer_mixed_samples", 1)),
+    Element::Enum(
+        Enum::new(
+            "CoverageModulationMode",
+            "COVERAGE_MODULATION_MODE",
+            &[
+                Enum::member("NONE", 0).extension("VK_NV_framebuffer_mixed_samples", "NV"),
+                Enum::member("RGB", 1).extension("VK_NV_framebuffer_mixed_samples", "NV"),
+                Enum::member("ALPHA", 2).extension("VK_NV_framebuffer_mixed_samples", "NV"),
+                Enum::member("RGBA", 3).extension("VK_NV_framebuffer_mixed_samples", "NV"),
+            ],
+        )
+        .extension("framebuffer_mixed_samples", "NV"),
+    ),
+    Element::Bitmask(
+        Bitmask::new(
+            "PipelineCoverageModulationStateCreateFlags",
+            "PipelineCoverageModulationStateCreateFlagBits",
+            "PIPELINE_COVERAGE_MODULATION_STATE_CREATE",
+            &[],
+        )
+        .extension("NV", "framebuffer_mixed_samples"),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "PipelineCoverageModulationStateCreateInfo",
+            "PIPELINE_COVERAGE_MODULATION_STATE_CREATE_INFO",
+            vk_ext_enum(153, 0) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("flags", "VkPipelineCoverageModulationStateCreateFlagsNV"),
+                Struct::member("coverageModulationMode", "VkCoverageModulationModeNV"),
+                Struct::member("coverageModulationTableEnable", TY_VK_BOOL),
+                Struct::member("coverageModulationTableCount", "u32"),
+                Struct::member("pCoverageModulationTable", "*const core::ffi::c_float"),
+            ],
+        )
+        .extensions(&[("NV", "framebuffer_mixed_samples")]),
+    ),
 ];

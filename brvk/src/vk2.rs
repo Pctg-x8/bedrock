@@ -18303,6 +18303,73 @@ unsafe impl crate::VulkanStructure for VkPipelineCoverageToColorStateCreateInfoN
 #[rustfmt::skip]
 impl crate::TypedVulkanStructure for VkPipelineCoverageToColorStateCreateInfoNV { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_TO_COLOR_STATE_CREATE_INFO_NV; }
 
+#[cfg(feature = "VK_NV_framebuffer_mixed_samples")]
+#[rustfmt::skip]
+pub const VK_NV_FRAMEBUFFER_MIXED_SAMPLES_EXTENSION_NAME: &str = "VK_NV_framebuffer_mixed_samples";
+#[cfg(feature = "VK_NV_framebuffer_mixed_samples")]
+#[rustfmt::skip]
+pub const VK_NV_FRAMEBUFFER_MIXED_SAMPLES_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "framebuffer_mixed_samples")]
+#[rustfmt::skip]
+pub type VkCoverageModulationModeNV = i32;
+#[cfg(feature = "framebuffer_mixed_samples")]
+#[cfg(feature = "VK_NV_framebuffer_mixed_samples")]
+#[rustfmt::skip]
+pub const VK_COVERAGE_MODULATION_MODE_NONE_NV: VkCoverageModulationModeNV = 0;
+#[cfg(feature = "framebuffer_mixed_samples")]
+#[cfg(feature = "VK_NV_framebuffer_mixed_samples")]
+#[rustfmt::skip]
+pub const VK_COVERAGE_MODULATION_MODE_RGB_NV: VkCoverageModulationModeNV = 1;
+#[cfg(feature = "framebuffer_mixed_samples")]
+#[cfg(feature = "VK_NV_framebuffer_mixed_samples")]
+#[rustfmt::skip]
+pub const VK_COVERAGE_MODULATION_MODE_ALPHA_NV: VkCoverageModulationModeNV = 2;
+#[cfg(feature = "framebuffer_mixed_samples")]
+#[cfg(feature = "VK_NV_framebuffer_mixed_samples")]
+#[rustfmt::skip]
+pub const VK_COVERAGE_MODULATION_MODE_RGBA_NV: VkCoverageModulationModeNV = 3;
+
+#[cfg(feature = "VK_NV_framebuffer_mixed_samples")]
+#[rustfmt::skip]
+pub type VkPipelineCoverageModulationStateCreateFlagsNV = VkFlags;
+#[cfg(feature = "VK_NV_framebuffer_mixed_samples")]
+#[rustfmt::skip]
+pub type VkPipelineCoverageModulationStateCreateFlagBitsNV = VkFlags;
+
+#[cfg(feature = "VK_NV_framebuffer_mixed_samples")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPipelineCoverageModulationStateCreateInfoNV {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkPipelineCoverageModulationStateCreateFlagsNV,
+    pub coverageModulationMode: VkCoverageModulationModeNV,
+    pub coverageModulationTableEnable: VkBool32,
+    pub coverageModulationTableCount: u32,
+    pub pCoverageModulationTable: *const core::ffi::c_float,
+}
+#[cfg(feature = "VK_NV_framebuffer_mixed_samples")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_MODULATION_STATE_CREATE_INFO_NV: VkStructureType = 1000152000;
+#[cfg(feature = "VK_NV_framebuffer_mixed_samples")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPipelineCoverageModulationStateCreateInfoNV {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_NV_framebuffer_mixed_samples")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPipelineCoverageModulationStateCreateInfoNV { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_MODULATION_STATE_CREATE_INFO_NV; }
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]
