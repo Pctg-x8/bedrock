@@ -18036,6 +18036,228 @@ unsafe impl crate::VulkanStructure for VkPipelineVertexInputDivisorStateCreateIn
 #[rustfmt::skip]
 impl crate::TypedVulkanStructure for VkPipelineVertexInputDivisorStateCreateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_EXT; }
 
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip]
+pub const VK_EXT_SAMPLE_LOCATIONS_EXTENSION_NAME: &str = "VK_EXT_sample_locations";
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip]
+pub const VK_EXT_SAMPLE_LOCATIONS_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip]
+pub const VK_IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT: VkImageCreateFlagBits = 0x00001000;
+
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkSampleLocationEXT {
+    pub x: core::ffi::c_float,
+    pub y: core::ffi::c_float,
+}
+
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkSampleLocationsInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub sampleLocationsPerPixel: VkSampleCountFlags,
+    pub sampleLocationGridSize: VkExtent2D,
+    pub sampleLocationsCount: u32,
+    pub pSampleLocations: *const VkSampleLocationEXT,
+}
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SAMPLE_LOCATIONS_INFO_EXT: VkStructureType = 1000143000;
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkSampleLocationsInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkSampleLocationsInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SAMPLE_LOCATIONS_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkAttachmentSampleLocationsEXT {
+    pub attachmentIndex: u32,
+    pub sampleLocationsInfo: VkSampleLocationsInfoEXT,
+}
+
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkSubpassSampleLocationsEXT {
+    pub subpassIndex: u32,
+    pub sampleLocationsInfo: VkSampleLocationsInfoEXT,
+}
+
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkRenderPassSampleLocationsBeginInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub attachmentInitialSampleLocationsCount: u32,
+    pub pAttachmentInitialSampleLocations: *const VkAttachmentSampleLocationsEXT,
+    pub postSubpassSampleLocationsCount: u32,
+    pub pPostSubpassSampleLocations: *const VkSubpassSampleLocationsEXT,
+}
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT: VkStructureType = 1000143001;
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkRenderPassSampleLocationsBeginInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkRenderPassSampleLocationsBeginInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPipelineSampleLocationsStateCreateInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub sampleLocationsEnable: VkBool32,
+    pub sampleLocationsInfo: VkSampleLocationsInfoEXT,
+}
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PIPELINE_SAMPLE_LOCATIONS_STATE_CREATE_INFO_EXT: VkStructureType = 1000143002;
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPipelineSampleLocationsStateCreateInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPipelineSampleLocationsStateCreateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_SAMPLE_LOCATIONS_STATE_CREATE_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceSampleLocationsPropertiesEXT {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub sampleLocationSampleCounts: VkSampleCountFlags,
+    pub maxSampleLocationGridSize: VkExtent2D,
+    pub sampleLocationCoordinateRange: [c_float; 2],
+    pub sampleLocationSubpixelBits: u32,
+    pub variableSampleLocations: VkBool32,
+}
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT: VkStructureType = 1000143003;
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceSampleLocationsPropertiesEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceSampleLocationsPropertiesEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT; }
+
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkMultisamplePropertiesEXT {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub maxSampleLocationGridSize: VkExtent2D,
+}
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_MULTISAMPLE_PROPERTIES_EXT: VkStructureType = 1000143004;
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkMultisamplePropertiesEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkMultisamplePropertiesEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MULTISAMPLE_PROPERTIES_EXT; }
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdSampleLocationsEXT(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pSampleLocationsInfo: *const VkSampleLocationsInfoEXT));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdSampleLocationsEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSampleLocationsEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, samples: VkSampleCountFlags, pMultisampleProperties: *mut VkMultisamplePropertiesEXT));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceMultisamplePropertiesEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]

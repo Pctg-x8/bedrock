@@ -774,4 +774,131 @@ pub const ELEMENTS: &[Element] = &[
         )
         .extensions(&[("EXT", "vertex_attribute_divisor")]),
     ),
+    // VK_EXT_sample_locations
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_sample_locations", 1)),
+    Element::Bitmask(Bitmask::extending(
+        "ImageCreateFlagBits",
+        "IMAGE_CREATE",
+        &[Bitmask::entry("SAMPLE_LOCATIONS_COMPATIBLE_DEPTH", 12).extension("EXT", "sample_locations")],
+    )),
+    Element::Struct(
+        Struct::new(
+            "SampleLocation",
+            &[
+                Struct::member("x", "core::ffi::c_float"),
+                Struct::member("y", "core::ffi::c_float"),
+            ],
+        )
+        .extensions(&[ex_ext("sample_locations")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "SampleLocationsInfo",
+            "SAMPLE_LOCATIONS_INFO",
+            vk_ext_enum(144, 0) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("sampleLocationsPerPixel", "VkSampleCountFlags"),
+                Struct::member("sampleLocationGridSize", "VkExtent2D"),
+                Struct::member("sampleLocationsCount", "u32"),
+                Struct::member("pSampleLocations", "*const VkSampleLocationEXT"),
+            ],
+        )
+        .extensions(&[ex_ext("sample_locations")]),
+    ),
+    Element::Struct(
+        Struct::new(
+            "AttachmentSampleLocations",
+            &[
+                Struct::member("attachmentIndex", "u32"),
+                Struct::member("sampleLocationsInfo", "VkSampleLocationsInfoEXT"),
+            ],
+        )
+        .extensions(&[ex_ext("sample_locations")]),
+    ),
+    Element::Struct(
+        Struct::new(
+            "SubpassSampleLocations",
+            &[
+                Struct::member("subpassIndex", "u32"),
+                Struct::member("sampleLocationsInfo", "VkSampleLocationsInfoEXT"),
+            ],
+        )
+        .extensions(&[ex_ext("sample_locations")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "RenderPassSampleLocationsBeginInfo",
+            "RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO",
+            vk_ext_enum(144, 1) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("attachmentInitialSampleLocationsCount", "u32"),
+                Struct::member(
+                    "pAttachmentInitialSampleLocations",
+                    "*const VkAttachmentSampleLocationsEXT",
+                ),
+                Struct::member("postSubpassSampleLocationsCount", "u32"),
+                Struct::member("pPostSubpassSampleLocations", "*const VkSubpassSampleLocationsEXT"),
+            ],
+        )
+        .extensions(&[ex_ext("sample_locations")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "PipelineSampleLocationsStateCreateInfo",
+            "PIPELINE_SAMPLE_LOCATIONS_STATE_CREATE_INFO",
+            vk_ext_enum(144, 2) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("sampleLocationsEnable", TY_VK_BOOL),
+                Struct::member("sampleLocationsInfo", "VkSampleLocationsInfoEXT"),
+            ],
+        )
+        .extensions(&[ex_ext("sample_locations")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "PhysicalDeviceSampleLocationsProperties",
+            "PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES",
+            vk_ext_enum(144, 3) as _,
+            StructUsage::Sink,
+            &[
+                Struct::member("sampleLocationSampleCounts", "VkSampleCountFlags"),
+                Struct::member("maxSampleLocationGridSize", "VkExtent2D"),
+                Struct::member("sampleLocationCoordinateRange", "[c_float; 2]"),
+                Struct::member("sampleLocationSubpixelBits", "u32"),
+                Struct::member("variableSampleLocations", TY_VK_BOOL),
+            ],
+        )
+        .extensions(&[ex_ext("sample_locations")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "MultisampleProperties",
+            "MULTISAMPLE_PROPERTIES",
+            vk_ext_enum(144, 4) as _,
+            StructUsage::Sink,
+            &[Struct::member("maxSampleLocationGridSize", "VkExtent2D")],
+        )
+        .extensions(&[ex_ext("sample_locations")]),
+    ),
+    Element::Command(
+        Command::inst(
+            "SampleLocations",
+            &[("pSampleLocationsInfo", "*const VkSampleLocationsInfoEXT")],
+        )
+        .extension("EXT", "sample_locations"),
+    ),
+    Element::Command(
+        Command::new(
+            "GetPhysicalDeviceMultisampleProperties",
+            &[
+                ("physicalDevice", "VkPhysicalDevice"),
+                ("samples", "VkSampleCountFlags"),
+                ("pMultisampleProperties", "*mut VkMultisamplePropertiesEXT"),
+            ],
+        )
+        .extension("EXT", "sample_locations"),
+    ),
 ];

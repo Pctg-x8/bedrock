@@ -5,6 +5,9 @@ pub const TY_VK_BOOL: &str = "VkBool32";
 pub const fn ex_khr(name: &'static str) -> (&'static str, &'static str) {
     ("KHR", name)
 }
+pub const fn ex_ext(name: &'static str) -> (&'static str, &'static str) {
+    ("EXT", name)
+}
 
 pub fn emit_type_alias(w: &mut impl std::io::Write, name: &str, alias_type: &str) -> std::io::Result<()> {
     writeln!(w, "#[rustfmt::skip]")?;
