@@ -1,6 +1,5 @@
 //! VK_KHR_create_renderpass2
 
-use crate::vk2::*;
 use crate::*;
 use derives::*;
 

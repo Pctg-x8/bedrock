@@ -4,7 +4,7 @@ pub const VK_KHR_COPY_COMMANDS_2_SPEC_VERSION: usize = 1;
 pub const VK_KHR_COPY_COMMANDS_2_EXTENSION_NAME: &str = "VK_KHR_copy_commands2";
 
 use crate::*;
-use derives::{TypedVulkanStructure, promote_1_3, vk_ext_command};
+use derives::*;
 
 #[promote_1_3]
 pub const VK_STRUCTURE_TYPE_COPY_BUFFER_INFO_2_KHR: VkStructureType = ext_enum_value(338, 0) as _;

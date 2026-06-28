@@ -369,4 +369,315 @@ pub const ELEMENTS: &[Element] = &[
         )
         .extensions(&[("EXT", "layer_settings")]),
     ),
+    // VK_EXT_descriptor_buffer
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_descriptor_buffer", 1)),
+    Element::Struct(
+        Struct::typed(
+            "PhysicalDeviceDescriptorBufferProperties",
+            "PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_PROPERTIES",
+            vk_ext_enum(317, 0) as _,
+            StructUsage::Sink,
+            &[
+                Struct::member("combinedImageSamplerDescriptorSingleArray", "VkBool32"),
+                Struct::member("bufferlessPushDescriptors", "VkBool32"),
+                Struct::member("allowSamplerImageViewPostSubmitCreation", "VkBool32"),
+                Struct::member("descriptorBufferOffsetAlignment", "VkDeviceSize"),
+                Struct::member("maxDescriptorBufferBindings", "u32"),
+                Struct::member("maxResourceDescriptorBufferBindings", "u32"),
+                Struct::member("maxSamplerDescriptorBufferBindings", "u32"),
+                Struct::member("maxEmbeddedImmutableSamplerBindings", "u32"),
+                Struct::member("maxEmbeddedImmutableSamplers", "u32"),
+                Struct::member("bufferCaptureReplayDescriptorDataSize", "usize"),
+                Struct::member("imageCaptureReplayDescriptorDataSize", "usize"),
+                Struct::member("imageViewCaptureReplayDescriptorDataSize", "usize"),
+                Struct::member("samplerCaptureReplayDescriptorDataSize", "usize"),
+                Struct::member("accelerationStructureCaptureReplayDescriptorDataSize", "usize"),
+                Struct::member("samplerDescriptorSize", "usize"),
+                Struct::member("combinedImageSamplerDescriptorSize", "usize"),
+                Struct::member("sampledImageDescriptorSize", "usize"),
+                Struct::member("storageImageDescriptorSize", "usize"),
+                Struct::member("uniformTexelBufferDescriptorSize", "usize"),
+                Struct::member("robustUniformTexelBufferDescriptorSize", "usize"),
+                Struct::member("storageTexelBufferDescriptorSize", "usize"),
+                Struct::member("robustStorageTexelBufferDescriptorSize", "usize"),
+                Struct::member("uniformBufferDescriptorSize", "usize"),
+                Struct::member("robustUniformBufferDescriptorSize", "usize"),
+                Struct::member("storageBufferDescriptorSize", "usize"),
+                Struct::member("robustStorageBufferDescriptorSize", "usize"),
+                Struct::member("inputAttachmentDescriptorSize", "usize"),
+                Struct::member("accelerationStructureDescriptorSize", "usize"),
+                Struct::member("maxSamplerDescriptorBufferRange", "VkDeviceSize"),
+                Struct::member("maxResourceDescriptorBufferRange", "VkDeviceSize"),
+                Struct::member("samplerDescriptorBufferAddressSpaceSize", "VkDeviceSize"),
+                Struct::member("resourceDescriptorBufferAddressSpaceSize", "VkDeviceSize"),
+                Struct::member("descriptorBufferAddressSpaceSize", "VkDeviceSize"),
+            ],
+        )
+        .extensions(&[("EXT", "descriptor_buffer")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "PhysicalDeviceDescriptorBuferDensityMapProperties",
+            "PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_DENSITY_MAP_PROPERTIES",
+            vk_ext_enum(317, 1) as _,
+            StructUsage::Sink,
+            &[Struct::member("combinedImageSamplerDensityMapDescriptorSize", "usize")],
+        )
+        .extensions(&[("EXT", "descriptor_buffer")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "PhysicalDeviceDescriptorBufferFeatures",
+            "PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_FEATURES",
+            vk_ext_enum(317, 2) as _,
+            StructUsage::Both,
+            &[
+                Struct::member("descriptorBuffer", "VkBool32"),
+                Struct::member("descriptorBufferCaptureReplay", "VkBool32"),
+                Struct::member("descriptorBufferImageLayoutIgnored", "VkBool32"),
+                Struct::member("descriptorBufferPushDescriptors", "VkBool32"),
+            ],
+        )
+        .extensions(&[("EXT", "descriptor_buffer")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "DescriptorAddressInfo",
+            "DESCRIPTOR_ADDRESS_INFO",
+            vk_ext_enum(317, 3) as _,
+            StructUsage::Sink,
+            &[
+                Struct::member("address", "VkDeviceAddress"),
+                Struct::member("range", "VkDeviceSize"),
+                Struct::member("format", "VkFormat"),
+            ],
+        )
+        .extensions(&[("EXT", "descriptor_buffer")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "DescriptorBufferBindingInfo",
+            "DESCRIPTOR_BUFFER_BINDING_INFO",
+            vk_ext_enum(317, 11) as _,
+            StructUsage::Sink,
+            &[
+                Struct::member("address", "VkDeviceAddress"),
+                Struct::member("usage", "VkBufferUsageFlags"),
+            ],
+        )
+        .extensions(&[("EXT", "descriptor_buffer")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "DescriptorBufferBindingPushDescriptorBufferHandle",
+            "DESCRIPTOR_BUFFER_BINDING_PUSH_DESCRIPTOR_BUFFER_HANDLE",
+            vk_ext_enum(317, 12) as _,
+            StructUsage::Sink,
+            &[Struct::member("buffer", "VkBuffer")],
+        )
+        .extensions(&[("EXT", "descriptor_buffer")]),
+    ),
+    Element::Union(
+        Union::new(
+            "DescriptorData",
+            &[
+                Union::member("pSampler", "*const VkSampler"),
+                Union::member("pCombinedImageSampler", "*const VkDescriptorImageInfo"),
+                Union::member("pInputAttachmentImage", "*const VkDescriptorImageInfo"),
+                Union::member("pSampledImage", "*const VkDescriptorImageInfo"),
+                Union::member("pStorageImage", "*const VkDescriptorImageInfo"),
+                Union::member("pUniformTexelBuffer", "*const VkDescriptorAddressInfoEXT"),
+                Union::member("pStorageTexelBuffer", "*const VkDescriptorAddressInfoEXT"),
+                Union::member("pUniformBuffer", "*const VkDescriptorAddressInfoEXT"),
+                Union::member("pStorageBuffer", "*const VkDescriptorAddressInfoEXT"),
+                Union::member("accelerationStructure", "VkDeviceAddress"),
+            ],
+        )
+        .extension("EXT", "descriptor_buffer"),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "DescriptorGetInfo",
+            "DESCRIPTOR_GET_INFO",
+            vk_ext_enum(317, 4) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("r#type", "VkDescriptorType"),
+                Struct::member("data", "VkDescriptorDataEXT"),
+            ],
+        )
+        .extensions(&[("EXT", "descriptor_buffer")])
+        .non_debuggable(),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "BufferCaptureDescriptorDataInfo",
+            "BUFFER_CAPTURE_DESCRIPTOR_DATA_INFO",
+            vk_ext_enum(317, 5) as _,
+            StructUsage::Source,
+            &[Struct::member("buffer", "VkBuffer")],
+        )
+        .extensions(&[("EXT", "descriptor_buffer")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "ImageCaptureDescriptorDataInfo",
+            "IMAGE_CAPTURE_DESCRIPTOR_DATA_INFO",
+            vk_ext_enum(317, 6) as _,
+            StructUsage::Source,
+            &[Struct::member("image", "VkImage")],
+        )
+        .extensions(&[("EXT", "descriptor_buffer")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "ImageViewCaptureDescriptorDataInfo",
+            "IMAGE_VIEW_CAPTURE_DESCRIPTOR_DATA_INFO",
+            vk_ext_enum(317, 7) as _,
+            StructUsage::Source,
+            &[Struct::member("imageView", "VkImageView")],
+        )
+        .extensions(&[("EXT", "descriptor_buffer")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "SamplerCaptureDescriptorDataInfo",
+            "SAMPLER_CAPTURE_DESCRIPTOR_DATA_INFO",
+            vk_ext_enum(317, 8) as _,
+            StructUsage::Source,
+            &[Struct::member("sampler", "VkSampler")],
+        )
+        .extensions(&[("EXT", "descriptor_buffer")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "OpaqueCaptureDescriptorDataCreateInfo",
+            "OPAQUE_CAPTURE_DESCRIPTOR_DATA_CREATE_INFO",
+            vk_ext_enum(317, 10) as _,
+            StructUsage::Source,
+            &[Struct::member(
+                "opaqueCaptureDescriptorData",
+                "*const core::ffi::c_void",
+            )],
+        )
+        .extensions(&[("EXT", "descriptor_buffer")]),
+    ),
+    Element::Command(
+        Command::new(
+            "GetDescriptorSetLayoutSize",
+            &[
+                ("device", "VkDevice"),
+                ("layout", "VkDescriptorSetLayout"),
+                ("pLayoutSizeInBytes", "*mut VkDeviceSize"),
+            ],
+        )
+        .extension("EXT", "descriptor_buffer"),
+    ),
+    Element::Command(
+        Command::new(
+            "GetDescriptorSetLayoutBindingOffset",
+            &[
+                ("device", "VkDevice"),
+                ("layout", "VkDescriptorSetLayout"),
+                ("binding", "u32"),
+                ("pOffset", "*mut VkDeviceSize"),
+            ],
+        )
+        .extension("EXT", "descriptor_buffer"),
+    ),
+    Element::Command(
+        Command::new(
+            "GetDescriptor",
+            &[
+                ("device", "VkDevice"),
+                ("pDescriptorInfo", "*const VkDescriptorGetInfoEXT"),
+                ("dataSize", "usize"),
+                ("pDescriptor", "*mut core::ffi::c_void"),
+            ],
+        )
+        .extension("EXT", "descriptor_buffer"),
+    ),
+    Element::Command(
+        Command::inst(
+            "BindDescriptorBuffers",
+            &[
+                ("bufferCount", "u32"),
+                ("pBindingInfos", "*const VkDescriptorBufferBindingInfoEXT"),
+            ],
+        )
+        .extension("EXT", "descriptor_buffer"),
+    ),
+    Element::Command(
+        Command::inst(
+            "SetDescriptorBufferOffsets",
+            &[
+                ("pipelineBindPoint", "VkPipelineBindPoint"),
+                ("layout", "VkPipelineLayout"),
+                ("firstSet", "u32"),
+                ("setCount", "u32"),
+                ("pBufferIndices", "*const u32"),
+                ("pOffsets", "*const VkDeviceSize"),
+            ],
+        )
+        .extension("EXT", "descriptor_buffer"),
+    ),
+    Element::Command(
+        Command::inst(
+            "BindDescriptorBufferEmbeddedSamplers",
+            &[
+                ("pipelineBindPoint", "VkPipelineBindPoint"),
+                ("layout", "VkPipelineLayout"),
+                ("set", "u32"),
+            ],
+        )
+        .extension("EXT", "descriptor_buffer"),
+    ),
+    Element::Command(
+        Command::new(
+            "GetBufferOpaqueCaptureDescriptorData",
+            &[
+                ("device", "VkDevice"),
+                ("pInfo", "*const VkBufferCaptureDescriptorDataInfoEXT"),
+                ("pData", "*mut core::ffi::c_void"),
+            ],
+        )
+        .failable()
+        .extension("EXT", "descriptor_buffer"),
+    ),
+    Element::Command(
+        Command::new(
+            "GetImageOpaqueCaptureDescriptorData",
+            &[
+                ("device", "VkDevice"),
+                ("pInfo", "*const VkImageCaptureDescriptorDataInfoEXT"),
+                ("pData", "*mut core::ffi::c_void"),
+            ],
+        )
+        .failable()
+        .extension("EXT", "descriptor_buffer"),
+    ),
+    Element::Command(
+        Command::new(
+            "GetImageViewOpaqueCaptureDescriptorData",
+            &[
+                ("device", "VkDevice"),
+                ("pInfo", "*const VkImageViewCaptureDescriptorDataInfoEXT"),
+                ("pData", "*mut core::ffi::c_void"),
+            ],
+        )
+        .failable()
+        .extension("EXT", "descriptor_buffer"),
+    ),
+    Element::Command(
+        Command::new(
+            "GetSamplerOpaqueCaptureDescriptorData",
+            &[
+                ("device", "VkDevice"),
+                ("pInfo", "*const VkSamplerCaptureDescriptorDataInfoEXT"),
+                ("pData", "*mut core::ffi::c_void"),
+            ],
+        )
+        .failable()
+        .extension("EXT", "descriptor_buffer"),
+    ),
 ];

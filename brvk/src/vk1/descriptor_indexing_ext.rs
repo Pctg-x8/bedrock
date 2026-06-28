@@ -4,7 +4,7 @@ pub const VK_EXT_DESCRIPTOR_INDEXING_SPEC_VERSION: usize = 2;
 pub const VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME: &str = "VK_EXT_descriptor_indexing";
 
 use crate::*;
-use derives::{TypedVulkanSinkStructure, TypedVulkanStructure, promote_1_2};
+use derives::*;
 
 #[promote_1_2]
 pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT: VkStructureType =

@@ -236,7 +236,6 @@ ExportExtensions!("VK_EXT_full_screen_exclusive": full_screen_exclusive_ext);
 ExportExtensions!("VK_KHR_image_format_list": image_format_list_khr);
 ExportExtensions!("VK_EXT_image_drm_format_modifier": image_drm_format_modifier);
 ExportExtensions!("VK_EXT_metal_objects": metal_objects_ext);
-ExportExtensions!("VK_EXT_descriptor_buffer": descriptor_buffer_ext);
 ExportExtensions!("VK_KHR_maintenance7": maintenance7_khr);
 ExportExtensions!("VK_KHR_maintenance8": maintenance8_khr);
 

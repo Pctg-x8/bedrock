@@ -1154,10 +1154,10 @@ impl Union {
     }
 
     // いまのところない
-    // pub const fn extension(mut self, name: &'static str, suffix: &'static str) -> Self {
-    //     self.extension = Some((name, suffix));
-    //     self
-    // }
+    pub const fn extension(mut self, suffix: &'static str, name: &'static str) -> Self {
+        self.extension = Some((suffix, name));
+        self
+    }
 
     pub const fn member(name: &'static str, r#type: &'static str) -> StructMember {
         StructMember::new(name, r#type)
@@ -1166,7 +1166,7 @@ impl Union {
     fn emit_ident(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
         w.write_all(b"Vk")?;
         w.write_all(self.name.as_bytes())?;
-        if let Some((_, suffix)) = self.extension {
+        if let Some((suffix, _)) = self.extension {
             w.write_all(suffix.as_bytes())?;
         }
 
@@ -1174,8 +1174,8 @@ impl Union {
     }
 
     fn emit_extension_gate(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
-        if let Some((name, _)) = self.extension {
-            writeln!(w, "#[cfg(feature = \"{name}\")]")?;
+        if let Some((suffix, name)) = self.extension {
+            writeln!(w, "#[cfg(feature = \"VK_{suffix}_{name}\")]")?;
         }
 
         Ok(())

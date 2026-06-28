@@ -3,9 +3,8 @@
 pub const VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION: usize = 1;
 pub static VK_EXT_DISCARD_RECTANGLES_EXTENSION_NAME: &'static str = "VK_EXT_discard_rectangles";
 
-use super::*;
-use crate::vk2::*;
-use derives::vk_ext_command;
+use crate::*;
+use derives::*;
 
 pub const VK_DYNAMIC_STATE_DISCARD_RECTANGLE_EXT: VkDynamicState = ext_enum_value(100, 0) as _;
 

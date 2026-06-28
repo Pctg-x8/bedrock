@@ -17090,6 +17090,589 @@ unsafe impl crate::VulkanStructure for VkLayerSettingsCreateInfoEXT {
 #[rustfmt::skip]
 impl crate::TypedVulkanStructure for VkLayerSettingsCreateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_LAYER_SETTINGS_CREATE_INFO_EXT; }
 
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+pub const VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME: &str = "VK_EXT_descriptor_buffer";
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+pub const VK_EXT_DESCRIPTOR_BUFFER_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceDescriptorBufferPropertiesEXT {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub combinedImageSamplerDescriptorSingleArray: VkBool32,
+    pub bufferlessPushDescriptors: VkBool32,
+    pub allowSamplerImageViewPostSubmitCreation: VkBool32,
+    pub descriptorBufferOffsetAlignment: VkDeviceSize,
+    pub maxDescriptorBufferBindings: u32,
+    pub maxResourceDescriptorBufferBindings: u32,
+    pub maxSamplerDescriptorBufferBindings: u32,
+    pub maxEmbeddedImmutableSamplerBindings: u32,
+    pub maxEmbeddedImmutableSamplers: u32,
+    pub bufferCaptureReplayDescriptorDataSize: usize,
+    pub imageCaptureReplayDescriptorDataSize: usize,
+    pub imageViewCaptureReplayDescriptorDataSize: usize,
+    pub samplerCaptureReplayDescriptorDataSize: usize,
+    pub accelerationStructureCaptureReplayDescriptorDataSize: usize,
+    pub samplerDescriptorSize: usize,
+    pub combinedImageSamplerDescriptorSize: usize,
+    pub sampledImageDescriptorSize: usize,
+    pub storageImageDescriptorSize: usize,
+    pub uniformTexelBufferDescriptorSize: usize,
+    pub robustUniformTexelBufferDescriptorSize: usize,
+    pub storageTexelBufferDescriptorSize: usize,
+    pub robustStorageTexelBufferDescriptorSize: usize,
+    pub uniformBufferDescriptorSize: usize,
+    pub robustUniformBufferDescriptorSize: usize,
+    pub storageBufferDescriptorSize: usize,
+    pub robustStorageBufferDescriptorSize: usize,
+    pub inputAttachmentDescriptorSize: usize,
+    pub accelerationStructureDescriptorSize: usize,
+    pub maxSamplerDescriptorBufferRange: VkDeviceSize,
+    pub maxResourceDescriptorBufferRange: VkDeviceSize,
+    pub samplerDescriptorBufferAddressSpaceSize: VkDeviceSize,
+    pub resourceDescriptorBufferAddressSpaceSize: VkDeviceSize,
+    pub descriptorBufferAddressSpaceSize: VkDeviceSize,
+}
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_PROPERTIES_EXT: VkStructureType = 1000316000;
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceDescriptorBufferPropertiesEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceDescriptorBufferPropertiesEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_PROPERTIES_EXT; }
+
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceDescriptorBuferDensityMapPropertiesEXT {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub combinedImageSamplerDensityMapDescriptorSize: usize,
+}
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_DENSITY_MAP_PROPERTIES_EXT: VkStructureType = 1000316001;
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceDescriptorBuferDensityMapPropertiesEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceDescriptorBuferDensityMapPropertiesEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_DENSITY_MAP_PROPERTIES_EXT; }
+
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceDescriptorBufferFeaturesEXT {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub descriptorBuffer: VkBool32,
+    pub descriptorBufferCaptureReplay: VkBool32,
+    pub descriptorBufferImageLayoutIgnored: VkBool32,
+    pub descriptorBufferPushDescriptors: VkBool32,
+}
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_FEATURES_EXT: VkStructureType = 1000316002;
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPhysicalDeviceDescriptorBufferFeaturesEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPhysicalDeviceDescriptorBufferFeaturesEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_FEATURES_EXT; }
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceDescriptorBufferFeaturesEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceDescriptorBufferFeaturesEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_FEATURES_EXT; }
+
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkDescriptorAddressInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub address: VkDeviceAddress,
+    pub range: VkDeviceSize,
+    pub format: VkFormat,
+}
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DESCRIPTOR_ADDRESS_INFO_EXT: VkStructureType = 1000316003;
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkDescriptorAddressInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkDescriptorAddressInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_ADDRESS_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkDescriptorBufferBindingInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub address: VkDeviceAddress,
+    pub usage: VkBufferUsageFlags,
+}
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DESCRIPTOR_BUFFER_BINDING_INFO_EXT: VkStructureType = 1000316011;
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkDescriptorBufferBindingInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkDescriptorBufferBindingInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_BUFFER_BINDING_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkDescriptorBufferBindingPushDescriptorBufferHandleEXT {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub buffer: VkBuffer,
+}
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DESCRIPTOR_BUFFER_BINDING_PUSH_DESCRIPTOR_BUFFER_HANDLE_EXT: VkStructureType = 1000316012;
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkDescriptorBufferBindingPushDescriptorBufferHandleEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkDescriptorBufferBindingPushDescriptorBufferHandleEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_BUFFER_BINDING_PUSH_DESCRIPTOR_BUFFER_HANDLE_EXT; }
+
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[derive(Clone, Copy)]
+#[repr(C)]
+#[rustfmt::skip]
+pub union VkDescriptorDataEXT {
+    pub pSampler: *const VkSampler,
+    pub pCombinedImageSampler: *const VkDescriptorImageInfo,
+    pub pInputAttachmentImage: *const VkDescriptorImageInfo,
+    pub pSampledImage: *const VkDescriptorImageInfo,
+    pub pStorageImage: *const VkDescriptorImageInfo,
+    pub pUniformTexelBuffer: *const VkDescriptorAddressInfoEXT,
+    pub pStorageTexelBuffer: *const VkDescriptorAddressInfoEXT,
+    pub pUniformBuffer: *const VkDescriptorAddressInfoEXT,
+    pub pStorageBuffer: *const VkDescriptorAddressInfoEXT,
+    pub accelerationStructure: VkDeviceAddress,
+}
+
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[derive(Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkDescriptorGetInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub r#type: VkDescriptorType,
+    pub data: VkDescriptorDataEXT,
+}
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DESCRIPTOR_GET_INFO_EXT: VkStructureType = 1000316004;
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkDescriptorGetInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkDescriptorGetInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_GET_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkBufferCaptureDescriptorDataInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub buffer: VkBuffer,
+}
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_BUFFER_CAPTURE_DESCRIPTOR_DATA_INFO_EXT: VkStructureType = 1000316005;
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkBufferCaptureDescriptorDataInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkBufferCaptureDescriptorDataInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BUFFER_CAPTURE_DESCRIPTOR_DATA_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkImageCaptureDescriptorDataInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub image: VkImage,
+}
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_IMAGE_CAPTURE_DESCRIPTOR_DATA_INFO_EXT: VkStructureType = 1000316006;
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkImageCaptureDescriptorDataInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkImageCaptureDescriptorDataInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_CAPTURE_DESCRIPTOR_DATA_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkImageViewCaptureDescriptorDataInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub imageView: VkImageView,
+}
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_IMAGE_VIEW_CAPTURE_DESCRIPTOR_DATA_INFO_EXT: VkStructureType = 1000316007;
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkImageViewCaptureDescriptorDataInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkImageViewCaptureDescriptorDataInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CAPTURE_DESCRIPTOR_DATA_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkSamplerCaptureDescriptorDataInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub sampler: VkSampler,
+}
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SAMPLER_CAPTURE_DESCRIPTOR_DATA_INFO_EXT: VkStructureType = 1000316008;
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkSamplerCaptureDescriptorDataInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkSamplerCaptureDescriptorDataInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_CAPTURE_DESCRIPTOR_DATA_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkOpaqueCaptureDescriptorDataCreateInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub opaqueCaptureDescriptorData: *const core::ffi::c_void,
+}
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_OPAQUE_CAPTURE_DESCRIPTOR_DATA_CREATE_INFO_EXT: VkStructureType = 1000316010;
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkOpaqueCaptureDescriptorDataCreateInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkOpaqueCaptureDescriptorDataCreateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_OPAQUE_CAPTURE_DESCRIPTOR_DATA_CREATE_INFO_EXT; }
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetDescriptorSetLayoutSizeEXT(pub unsafe extern "system" fn(device: VkDevice, layout: VkDescriptorSetLayout, pLayoutSizeInBytes: *mut VkDeviceSize));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetDescriptorSetLayoutSizeEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDescriptorSetLayoutSizeEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetDescriptorSetLayoutBindingOffsetEXT(pub unsafe extern "system" fn(device: VkDevice, layout: VkDescriptorSetLayout, binding: u32, pOffset: *mut VkDeviceSize));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetDescriptorSetLayoutBindingOffsetEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDescriptorSetLayoutBindingOffsetEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetDescriptorEXT(pub unsafe extern "system" fn(device: VkDevice, pDescriptorInfo: *const VkDescriptorGetInfoEXT, dataSize: usize, pDescriptor: *mut core::ffi::c_void));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetDescriptorEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDescriptorEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdBindDescriptorBuffersEXT(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, bufferCount: u32, pBindingInfos: *const VkDescriptorBufferBindingInfoEXT));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdBindDescriptorBuffersEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdBindDescriptorBuffersEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdSetDescriptorBufferOffsetsEXT(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, layout: VkPipelineLayout, firstSet: u32, setCount: u32, pBufferIndices: *const u32, pOffsets: *const VkDeviceSize));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdSetDescriptorBufferOffsetsEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetDescriptorBufferOffsetsEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdBindDescriptorBufferEmbeddedSamplersEXT(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, layout: VkPipelineLayout, set: u32));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdBindDescriptorBufferEmbeddedSamplersEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdBindDescriptorBufferEmbeddedSamplersEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetBufferOpaqueCaptureDescriptorDataEXT(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkBufferCaptureDescriptorDataInfoEXT, pData: *mut core::ffi::c_void) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetBufferOpaqueCaptureDescriptorDataEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetBufferOpaqueCaptureDescriptorDataEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetImageOpaqueCaptureDescriptorDataEXT(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkImageCaptureDescriptorDataInfoEXT, pData: *mut core::ffi::c_void) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetImageOpaqueCaptureDescriptorDataEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetImageOpaqueCaptureDescriptorDataEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetImageViewOpaqueCaptureDescriptorDataEXT(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkImageViewCaptureDescriptorDataInfoEXT, pData: *mut core::ffi::c_void) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetImageViewOpaqueCaptureDescriptorDataEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetImageViewOpaqueCaptureDescriptorDataEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetSamplerOpaqueCaptureDescriptorDataEXT(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkSamplerCaptureDescriptorDataInfoEXT, pData: *mut core::ffi::c_void) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetSamplerOpaqueCaptureDescriptorDataEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetSamplerOpaqueCaptureDescriptorDataEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]
