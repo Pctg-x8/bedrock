@@ -1982,4 +1982,11 @@ pub const ELEMENTS: &[Element] = &[
             Enum::member("PVRTC2_4BPP_SRGB_BLOCK", vk_ext_enum(55, 7) as _).extension("IMG", "format_pvrtc"),
         ],
     )),
+    // VK_NV_fill_rectangle
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_NV_fill_rectangle", 1)),
+    Element::Enum(Enum::extending(
+        "PolygonMode",
+        "POLYGON_MODE",
+        &[Enum::member("FILL_RECTANGLE", vk_ext_enum(154, 0) as _).extension("NV", "fill_rectangle")],
+    )),
 ];

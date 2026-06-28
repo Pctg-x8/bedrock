@@ -20412,6 +20412,17 @@ pub const VK_FORMAT_PVRTC2_2BPP_SRGB_BLOCK_IMG: VkFormat = 1000054006;
 #[rustfmt::skip]
 pub const VK_FORMAT_PVRTC2_4BPP_SRGB_BLOCK_IMG: VkFormat = 1000054007;
 
+#[cfg(feature = "VK_NV_fill_rectangle")]
+#[rustfmt::skip]
+pub const VK_NV_FILL_RECTANGLE_EXTENSION_NAME: &str = "VK_NV_fill_rectangle";
+#[cfg(feature = "VK_NV_fill_rectangle")]
+#[rustfmt::skip]
+pub const VK_NV_FILL_RECTANGLE_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_NV_fill_rectangle")]
+#[rustfmt::skip]
+pub const VK_POLYGON_MODE_FILL_RECTANGLE_NV: VkPolygonMode = 1000153000;
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]
