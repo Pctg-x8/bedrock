@@ -1,3 +1,5 @@
+use bedrock_vk::{self as brvk, TypedVulkanStructure};
+
 use crate::*;
 
 #[repr(u32)]
@@ -10,25 +12,25 @@ pub enum ExternalMemoryHandleTypeHost {
 #[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ImportMemoryHostPointerInfo<'d>(
-    VkImportMemoryHostPointerInfoEXT,
-    core::marker::PhantomData<Option<&'d dyn VulkanStructure>>,
+    brvk::VkImportMemoryHostPointerInfoEXT,
+    core::marker::PhantomData<Option<&'d dyn brvk::VulkanStructure>>,
 );
-unsafe impl VulkanStructure for ImportMemoryHostPointerInfo<'_> {
+unsafe impl brvk::VulkanStructure for ImportMemoryHostPointerInfo<'_> {
     #[inline(always)]
-    fn as_generic(&self) -> &GenericVulkanStructure {
+    fn as_generic(&self) -> &brvk::GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
     }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+    fn as_generic_mut(&mut self) -> &mut brvk::GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
     }
 }
 impl<'d> ImportMemoryHostPointerInfo<'d> {
     pub const fn new(ty: ExternalMemoryHandleTypeHost, ptr: *mut core::ffi::c_void) -> Self {
         Self(
-            VkImportMemoryHostPointerInfoEXT {
-                sType: VkImportMemoryHostPointerInfoEXT::TYPE,
+            brvk::VkImportMemoryHostPointerInfoEXT {
+                sType: brvk::VkImportMemoryHostPointerInfoEXT::TYPE,
                 pNext: core::ptr::null(),
                 handleType: ty as _,
                 pHostPointer: ptr,
@@ -37,20 +39,20 @@ impl<'d> ImportMemoryHostPointerInfo<'d> {
         )
     }
 
-    pub const unsafe fn from_raw(raw: VkImportMemoryHostPointerInfoEXT) -> Self {
+    pub const unsafe fn from_raw(raw: brvk::VkImportMemoryHostPointerInfoEXT) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkImportMemoryHostPointerInfoEXT {
+    pub const fn into_raw(self) -> brvk::VkImportMemoryHostPointerInfoEXT {
         self.0
     }
 
-    pub const fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
+    pub const fn with_next(mut self, next: &'d (impl brvk::VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next as *const _ as _;
         self
     }
 
-    pub const unsafe fn next_sink<T: VulkanStructure>(&mut self) -> &mut *const T {
+    pub const unsafe fn next_sink<T: brvk::VulkanStructure>(&mut self) -> &mut *const T {
         unsafe { core::mem::transmute(&mut self.0.pNext) }
     }
 }
