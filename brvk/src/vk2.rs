@@ -17673,6 +17673,120 @@ unsafe impl crate::PFN for PFN_vkGetSamplerOpaqueCaptureDescriptorDataEXT {
     }
 }
 
+#[cfg(feature = "VK_EXT_external_memory_host")]
+#[rustfmt::skip]
+pub const VK_EXT_EXTERNAL_MEMORY_HOST_EXTENSION_NAME: &str = "VK_EXT_external_memory_host";
+#[cfg(feature = "VK_EXT_external_memory_host")]
+#[rustfmt::skip]
+pub const VK_EXT_EXTERNAL_MEMORY_HOST_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_EXT_external_memory_host")]
+#[cfg(feature = "VK_KHR_external_memory")]
+#[rustfmt::skip]
+pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT_BIT_EXT: VkExternalMemoryHandleTypeFlagBitsKHR = 0x00000080;
+#[cfg(feature = "VK_EXT_external_memory_host")]
+#[cfg(feature = "VK_KHR_external_memory")]
+#[rustfmt::skip]
+pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT: VkExternalMemoryHandleTypeFlagBitsKHR = 0x00000100;
+
+#[cfg(feature = "VK_EXT_external_memory_host")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkImportMemoryHostPointerInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub handleType: VkExternalMemoryHandleTypeFlagsKHR,
+    pub pHostPointer: *mut core::ffi::c_void,
+}
+#[cfg(feature = "VK_EXT_external_memory_host")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT: VkStructureType = 1000178000;
+#[cfg(feature = "VK_EXT_external_memory_host")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkImportMemoryHostPointerInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_external_memory_host")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkImportMemoryHostPointerInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_external_memory_host")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkMemoryHostPointerPropertiesEXT {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub memoryTypeBits: u32,
+}
+#[cfg(feature = "VK_EXT_external_memory_host")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT: VkStructureType = 1000178001;
+#[cfg(feature = "VK_EXT_external_memory_host")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkMemoryHostPointerPropertiesEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_EXT_external_memory_host")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkMemoryHostPointerPropertiesEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT; }
+
+#[cfg(feature = "VK_EXT_external_memory_host")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceExternalMemoryHostPropertiesEXT {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub minImportedHostPointerAlignment: VkDeviceSize,
+}
+#[cfg(feature = "VK_EXT_external_memory_host")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT: VkStructureType = 1000178002;
+#[cfg(feature = "VK_EXT_external_memory_host")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceExternalMemoryHostPropertiesEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_EXT_external_memory_host")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceExternalMemoryHostPropertiesEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT; }
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_external_memory_host")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetMemoryHostPointerPropertiesEXT(pub unsafe extern "system" fn(device: VkDevice, handleType: VkExternalMemoryHandleTypeFlagsKHR, pHostPointer: *const core::ffi::c_void, pMemoryHostPointerProperties: *mut VkMemoryHostPointerPropertiesEXT) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_external_memory_host")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetMemoryHostPointerPropertiesEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetMemoryHostPointerPropertiesEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]

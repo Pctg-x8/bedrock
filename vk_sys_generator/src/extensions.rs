@@ -680,4 +680,63 @@ pub const ELEMENTS: &[Element] = &[
         .failable()
         .extension("EXT", "descriptor_buffer"),
     ),
+    // VK_EXT_external_memory_host
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_external_memory_host", 1)),
+    Element::Bitmask(
+        Bitmask::extending(
+            "ExternalMemoryHandleTypeFlagBits",
+            "EXTERNAL_MEMORY_HANDLE_TYPE",
+            &[
+                Bitmask::entry("HOST_ALLOCATION_BIT_EXT", 7).extension("EXT", "external_memory_host"),
+                Bitmask::entry("HOST_MAPPED_FOREIGN_MEMORY", 8).extension("EXT", "external_memory_host"),
+            ],
+        )
+        .extension("KHR", "external_memory"),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "ImportMemoryHostPointerInfo",
+            "IMPORT_MEMORY_HOST_POINTER_INFO",
+            vk_ext_enum(179, 0) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("handleType", "VkExternalMemoryHandleTypeFlagsKHR"),
+                Struct::member("pHostPointer", "*mut core::ffi::c_void"),
+            ],
+        )
+        .extensions(&[("EXT", "external_memory_host")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "MemoryHostPointerProperties",
+            "MEMORY_HOST_POINTER_PROPERTIES",
+            vk_ext_enum(179, 1) as _,
+            StructUsage::Sink,
+            &[Struct::member("memoryTypeBits", "u32")],
+        )
+        .extensions(&[("EXT", "external_memory_host")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "PhysicalDeviceExternalMemoryHostProperties",
+            "PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES",
+            vk_ext_enum(179, 2) as _,
+            StructUsage::Sink,
+            &[Struct::member("minImportedHostPointerAlignment", "VkDeviceSize")],
+        )
+        .extensions(&[("EXT", "external_memory_host")]),
+    ),
+    Element::Command(
+        Command::new(
+            "GetMemoryHostPointerProperties",
+            &[
+                ("device", "VkDevice"),
+                ("handleType", "VkExternalMemoryHandleTypeFlagsKHR"),
+                ("pHostPointer", "*const core::ffi::c_void"),
+                ("pMemoryHostPointerProperties", "*mut VkMemoryHostPointerPropertiesEXT"),
+            ],
+        )
+        .failable()
+        .extension("EXT", "external_memory_host"),
+    ),
 ];
