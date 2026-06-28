@@ -217,7 +217,6 @@ ExportExtensions!("VK_AMD_shader_fragment_mask": shader_fragment_mask_amd);
 ExportExtensions!("VK_NV_fill_rectangle": fill_rectangle_nv);
 ExportExtensions!("VK_EXT_post_depth_coverage": post_depth_coverage_ext);
 ExportExtensions!("VK_EXT_shader_viewport_index_layer": shader_viewport_index_layer_ext);
-ExportExtensions!("VK_EXT_global_priority": global_priority_ext);
 ExportExtensions!("VK_EXT_full_screen_exclusive": full_screen_exclusive_ext);
 ExportExtensions!("VK_EXT_image_drm_format_modifier": image_drm_format_modifier);
 ExportExtensions!("VK_EXT_metal_objects": metal_objects_ext);
@@ -238,7 +237,6 @@ ExportExtensions!("VK_KHR_format_feature_flags2": format_feature_flags2_khr);
 
 // Promoted Extensions (1.4)
 ExportExtensions!("VK_KHR_dynamic_rendering_local_read": dynamic_rendering_local_read_khr);
-ExportExtensions!("VK_KHR_global_priority": global_priority_khr);
 ExportExtensions!("VK_KHR_index_type_uint8": index_type_uint8_khr);
 ExportExtensions!("VK_KHR_line_rasterization": line_rasterization_khr);
 ExportExtensions!("VK_KHR_load_store_op_none": load_store_op_none_khr);

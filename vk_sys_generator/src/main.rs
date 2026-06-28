@@ -101,6 +101,11 @@ fn main() -> std::io::Result<()> {
     o.write_all(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
     emit_const(&mut o, "VK_MAX_DEVICE_GROUP_SIZE", "usize", "32")?;
 
+    o.write_all(b"#[cfg(feature = \"VK_KHR_global_priority\")]\n")?;
+    emit_const(&mut o, "VK_MAX_GLOBAL_PRIORITY_SIZE_KHR", "usize", "16")?;
+    o.write_all(b"#[cfg(feature = \"Allow1_4APIs\")]\n")?;
+    emit_const(&mut o, "VK_MAX_GLOBAL_PRIORITY_SIZE", "usize", "16")?;
+
     o.write_all(b"\n")?;
 
     emit_result_type(&mut o)?;

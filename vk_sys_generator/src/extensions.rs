@@ -966,4 +966,29 @@ pub const ELEMENTS: &[Element] = &[
         )
         .extensions(&[("NV", "framebuffer_mixed_samples")]),
     ),
+    // VK_EXT_global_priority
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_global_priority", 2)),
+    Element::Enum(
+        Enum::new(
+            "QueueGlobalPriority",
+            "QUEUE_GLOBAL_PRIORITY",
+            &[
+                Enum::member("LOW", 128).extension("VK_EXT_global_priority", "EXT"),
+                Enum::member("MEDIUM", 256).extension("VK_EXT_global_priority", "EXT"),
+                Enum::member("HIGH", 512).extension("VK_EXT_global_priority", "EXT"),
+                Enum::member("REALTIME", 1024).extension("VK_EXT_global_priority", "EXT"),
+            ],
+        )
+        .extension("global_priority", "EXT"),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "DeviceQueueGlobalPriorityCreateInfo",
+            "DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO",
+            vk_ext_enum(175, 0) as _,
+            StructUsage::Source,
+            &[Struct::member("globalPriority", "VkQueueGlobalPriorityEXT")],
+        )
+        .extensions(&[ex_ext("global_priority")]),
+    ),
 ];

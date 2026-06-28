@@ -2322,6 +2322,12 @@ pub const VK_MAX_DEVICE_GROUP_SIZE_KHR: usize = 32;
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_MAX_DEVICE_GROUP_SIZE: usize = 32;
+#[cfg(feature = "VK_KHR_global_priority")]
+#[rustfmt::skip]
+pub const VK_MAX_GLOBAL_PRIORITY_SIZE_KHR: usize = 16;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_MAX_GLOBAL_PRIORITY_SIZE: usize = 16;
 
 #[repr(transparent)]
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -16557,6 +16563,173 @@ pub type VkPhysicalDeviceVertexAttributeDivisorFeatures = VkPhysicalDeviceVertex
 #[rustfmt::skip]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_KHR;
 
+#[cfg(feature = "VK_KHR_global_priority")]
+#[rustfmt::skip]
+pub const VK_KHR_GLOBAL_PRIORITY_EXTENSION_NAME: &str = "VK_KHR_global_priority";
+#[cfg(feature = "VK_KHR_global_priority")]
+#[rustfmt::skip]
+pub const VK_KHR_GLOBAL_PRIORITY_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_global_priority")]
+#[rustfmt::skip]
+pub const VK_ERROR_NOT_PERMITTED_KHR_KHR: VkResult = VkResult(-1000174001);
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_ERROR_NOT_PERMITTED_KHR: VkResult = VkResult(-1000174001);
+
+#[cfg(feature = "KHR")]
+#[rustfmt::skip]
+pub type VkQueueGlobalPriorityglobal_priority = i32;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkQueueGlobalPriority = i32;
+#[cfg(feature = "KHR")]
+#[cfg(feature = "VK_KHR_global_priority")]
+#[rustfmt::skip]
+pub const VK_QUEUE_GLOBAL_PRIORITY_LOW_KHR: VkQueueGlobalPriorityglobal_priority = 128;
+#[cfg(feature = "KHR")]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_QUEUE_GLOBAL_PRIORITY_LOW: VkQueueGlobalPriorityglobal_priority = 128;
+#[cfg(feature = "KHR")]
+#[cfg(feature = "VK_KHR_global_priority")]
+#[rustfmt::skip]
+pub const VK_QUEUE_GLOBAL_PRIORITY_MEDIUM_KHR: VkQueueGlobalPriorityglobal_priority = 256;
+#[cfg(feature = "KHR")]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_QUEUE_GLOBAL_PRIORITY_MEDIUM: VkQueueGlobalPriorityglobal_priority = 256;
+#[cfg(feature = "KHR")]
+#[cfg(feature = "VK_KHR_global_priority")]
+#[rustfmt::skip]
+pub const VK_QUEUE_GLOBAL_PRIORITY_HIGH_KHR: VkQueueGlobalPriorityglobal_priority = 512;
+#[cfg(feature = "KHR")]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_QUEUE_GLOBAL_PRIORITY_HIGH: VkQueueGlobalPriorityglobal_priority = 512;
+#[cfg(feature = "KHR")]
+#[cfg(feature = "VK_KHR_global_priority")]
+#[rustfmt::skip]
+pub const VK_QUEUE_GLOBAL_PRIORITY_REALTIME_KHR: VkQueueGlobalPriorityglobal_priority = 1024;
+#[cfg(feature = "KHR")]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_QUEUE_GLOBAL_PRIORITY_REALTIME: VkQueueGlobalPriorityglobal_priority = 1024;
+
+#[cfg(feature = "VK_KHR_global_priority")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkDeviceQueueGlobalPriorityCreateInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub globalPriority: VkQueueGlobalPriorityKHR,
+}
+#[cfg(feature = "VK_KHR_global_priority")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_KHR: VkStructureType = 1000174000;
+#[cfg(feature = "VK_KHR_global_priority")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkDeviceQueueGlobalPriorityCreateInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_global_priority")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkDeviceQueueGlobalPriorityCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_KHR; }
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkDeviceQueueGlobalPriorityCreateInfo = VkDeviceQueueGlobalPriorityCreateInfoKHR;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_KHR;
+
+#[cfg(feature = "VK_KHR_global_priority")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceGlobalPriorityQueryFeaturesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub globalPriorityQuery: VkBool32,
+}
+#[cfg(feature = "VK_KHR_global_priority")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GLOBAL_PRIORITY_QUERY_FEATURES_KHR: VkStructureType = 1000388000;
+#[cfg(feature = "VK_KHR_global_priority")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPhysicalDeviceGlobalPriorityQueryFeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_global_priority")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPhysicalDeviceGlobalPriorityQueryFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GLOBAL_PRIORITY_QUERY_FEATURES_KHR; }
+#[cfg(feature = "VK_KHR_global_priority")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceGlobalPriorityQueryFeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_global_priority")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceGlobalPriorityQueryFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GLOBAL_PRIORITY_QUERY_FEATURES_KHR; }
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkPhysicalDeviceGlobalPriorityQueryFeatures = VkPhysicalDeviceGlobalPriorityQueryFeaturesKHR;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GLOBAL_PRIORITY_QUERY_FEATURES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GLOBAL_PRIORITY_QUERY_FEATURES_KHR;
+
+#[cfg(feature = "VK_KHR_global_priority")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkQueueFamilyGlobalPriorityPropertiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub priorityCount: u32,
+    pub priorities: [VkQueueGlobalPriorityKHR; VK_MAX_GLOBAL_PRIORITY_SIZE_KHR],
+}
+#[cfg(feature = "VK_KHR_global_priority")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_QUEUE_FAMILY_GLOBAL_PRIORITY_PROPERTIES_KHR: VkStructureType = 1000388001;
+#[cfg(feature = "VK_KHR_global_priority")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkQueueFamilyGlobalPriorityPropertiesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_global_priority")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkQueueFamilyGlobalPriorityPropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_GLOBAL_PRIORITY_PROPERTIES_KHR; }
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkQueueFamilyGlobalPriorityProperties = VkQueueFamilyGlobalPriorityPropertiesKHR;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_QUEUE_FAMILY_GLOBAL_PRIORITY_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_GLOBAL_PRIORITY_PROPERTIES_KHR;
+
 #[cfg(feature = "VK_EXT_acquire_drm_display")]
 #[rustfmt::skip]
 pub const VK_EXT_ACQUIRE_DRM_DISPLAY_EXTENSION_NAME: &str = "VK_EXT_acquire_drm_display";
@@ -18369,6 +18542,62 @@ unsafe impl crate::VulkanStructure for VkPipelineCoverageModulationStateCreateIn
 #[cfg(feature = "VK_NV_framebuffer_mixed_samples")]
 #[rustfmt::skip]
 impl crate::TypedVulkanStructure for VkPipelineCoverageModulationStateCreateInfoNV { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_MODULATION_STATE_CREATE_INFO_NV; }
+
+#[cfg(feature = "VK_EXT_global_priority")]
+#[rustfmt::skip]
+pub const VK_EXT_GLOBAL_PRIORITY_EXTENSION_NAME: &str = "VK_EXT_global_priority";
+#[cfg(feature = "VK_EXT_global_priority")]
+#[rustfmt::skip]
+pub const VK_EXT_GLOBAL_PRIORITY_SPEC_VERSION: usize = 2;
+
+#[cfg(feature = "global_priority")]
+#[rustfmt::skip]
+pub type VkQueueGlobalPriorityEXT = i32;
+#[cfg(feature = "global_priority")]
+#[cfg(feature = "VK_EXT_global_priority")]
+#[rustfmt::skip]
+pub const VK_QUEUE_GLOBAL_PRIORITY_LOW_EXT: VkQueueGlobalPriorityEXT = 128;
+#[cfg(feature = "global_priority")]
+#[cfg(feature = "VK_EXT_global_priority")]
+#[rustfmt::skip]
+pub const VK_QUEUE_GLOBAL_PRIORITY_MEDIUM_EXT: VkQueueGlobalPriorityEXT = 256;
+#[cfg(feature = "global_priority")]
+#[cfg(feature = "VK_EXT_global_priority")]
+#[rustfmt::skip]
+pub const VK_QUEUE_GLOBAL_PRIORITY_HIGH_EXT: VkQueueGlobalPriorityEXT = 512;
+#[cfg(feature = "global_priority")]
+#[cfg(feature = "VK_EXT_global_priority")]
+#[rustfmt::skip]
+pub const VK_QUEUE_GLOBAL_PRIORITY_REALTIME_EXT: VkQueueGlobalPriorityEXT = 1024;
+
+#[cfg(feature = "VK_EXT_global_priority")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkDeviceQueueGlobalPriorityCreateInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub globalPriority: VkQueueGlobalPriorityEXT,
+}
+#[cfg(feature = "VK_EXT_global_priority")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_EXT: VkStructureType = 1000174000;
+#[cfg(feature = "VK_EXT_global_priority")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkDeviceQueueGlobalPriorityCreateInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_global_priority")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkDeviceQueueGlobalPriorityCreateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_EXT; }
 
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
