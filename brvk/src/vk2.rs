@@ -19079,13 +19079,13 @@ unsafe impl crate::PFN for PFN_vkRegisterDisplayEventEXT {
 }
 
 #[cfg(feature = "Implements")]
-#[cfg(feature = "VK_EXT_swapchain_counter")]
+#[cfg(feature = "VK_EXT_display_control")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetSwapchainCounterEXT(pub unsafe extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR, counter: VkSurfaceCounterFlagsEXT, pCounterValue: *mut u64) -> VkResult);
 #[cfg(feature = "Implements")]
-#[cfg(feature = "VK_EXT_swapchain_counter")]
+#[cfg(feature = "VK_EXT_display_control")]
 #[rustfmt::skip]
 unsafe impl crate::PFN for PFN_vkGetSwapchainCounterEXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetSwapchainCounterEXT";

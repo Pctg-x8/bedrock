@@ -1210,7 +1210,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("EXT", "swapchain_counter"),
+        .extension("EXT", "display_control"),
     ),
     // VK_GOOGLE_display_timing
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_GOOGLE_display_timing", 1)),
