@@ -1339,4 +1339,87 @@ pub const ELEMENTS: &[Element] = &[
         )
         .extensions(&[("AMD", "texture_gather_bias_lod")]),
     ),
+    // VK_NN_vi_surface
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_NN_vi_surface", 1)),
+    Element::Bitmask(
+        Bitmask::new(
+            "ViSurfaceCreateFlags",
+            "ViSurfaceCreateFlagBits",
+            "VI_SURFACE_CREATE",
+            &[],
+        )
+        .extension("NN", "vi_surface"),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "ViSurfaceCreateInfo",
+            "VI_SURFACE_CREATE_INFO",
+            vk_ext_enum(63, 0) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("flags", "VkViSurfaceCreateFlagsNN"),
+                Struct::member("window", "*mut core::ffi::c_void"),
+            ],
+        )
+        .extensions(&[("NN", "vi_surface")]),
+    ),
+    Element::Command(
+        Command::new(
+            "CreateViSurface",
+            &[
+                ("instance", "VkInstance"),
+                ("pCreateInfo", "*const VkViSurfaceCreateInfoNN"),
+                ("pAllocator", "*const VkAllocationCallbacks"),
+                ("pSurface", "*mut VkSurfaceKHR"),
+            ],
+        )
+        .failable()
+        .static_callable()
+        .extension("NN", "vi_surface"),
+    ),
+    // VK_EXT_display_surface_counter
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_display_surface_counter", 1)),
+    Element::Bitmask(
+        Bitmask::new(
+            "SurfaceCounterFlags",
+            "SurfaceCounterFlagBits",
+            "SURFACE_COUNTER",
+            &[Bitmask::entry("VBLANK", 0).extension("EXT", "display_surface_counter")],
+        )
+        .extension("EXT", "display_surface_counter"),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "SurfaceCapabilities2",
+            "SURFACE_CAPABILITIES2",
+            vk_ext_enum(91, 0) as _,
+            StructUsage::Sink,
+            &[
+                Struct::member("minImageCount", "u32"),
+                Struct::member("maxImageCount", "u32"),
+                Struct::member("currentExtent", "VkExtent2D"),
+                Struct::member("minImageExtent", "VkExtent2D"),
+                Struct::member("maxImageExtent", "VkExtent2D"),
+                Struct::member("maxImageArrayLayers", "u32"),
+                Struct::member("supportedTransforms", "VkSurfaceTransformFlagsKHR"),
+                Struct::member("currentTransform", "VkSurfaceTransformFlagsKHR"),
+                Struct::member("supportedCompositeAlpha", "VkCompositeAlphaFlagsKHR"),
+                Struct::member("supportedUsageFlags", "VkImageUsageFlags"),
+                Struct::member("supportedSurfaceCounters", "VkSurfaceCounterFlagsEXT"),
+            ],
+        )
+        .extensions(&[ex_ext("display_surface_counter")]),
+    ),
+    Element::Command(
+        Command::new(
+            "GetPhysicalDeviceSurfaceCapabilities2",
+            &[
+                ("physicalDevice", "VkPhysicalDevice"),
+                ("surface", "VkSurfaceKHR"),
+                ("pSurfaceCapabilities", "*mut VkSurfaceCapabilities2EXT"),
+            ],
+        )
+        .failable()
+        .extension("EXT", "display_surface_counter"),
+    ),
 ];

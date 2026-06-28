@@ -19330,6 +19330,145 @@ unsafe impl crate::VulkanSinkStructure for VkTextureLODGatherFormatPropertiesAMD
 #[rustfmt::skip]
 impl crate::TypedVulkanSinkStructure for VkTextureLODGatherFormatPropertiesAMD { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_TEXTURE_LOD_GATHER_FORMAT_PROPERTIES_AMD; }
 
+#[cfg(feature = "VK_NN_vi_surface")]
+#[rustfmt::skip]
+pub const VK_NN_VI_SURFACE_EXTENSION_NAME: &str = "VK_NN_vi_surface";
+#[cfg(feature = "VK_NN_vi_surface")]
+#[rustfmt::skip]
+pub const VK_NN_VI_SURFACE_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_NN_vi_surface")]
+#[rustfmt::skip]
+pub type VkViSurfaceCreateFlagsNN = VkFlags;
+#[cfg(feature = "VK_NN_vi_surface")]
+#[rustfmt::skip]
+pub type VkViSurfaceCreateFlagBitsNN = VkFlags;
+
+#[cfg(feature = "VK_NN_vi_surface")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkViSurfaceCreateInfoNN {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkViSurfaceCreateFlagsNN,
+    pub window: *mut core::ffi::c_void,
+}
+#[cfg(feature = "VK_NN_vi_surface")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_VI_SURFACE_CREATE_INFO_NN: VkStructureType = 1000062000;
+#[cfg(feature = "VK_NN_vi_surface")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkViSurfaceCreateInfoNN {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_NN_vi_surface")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkViSurfaceCreateInfoNN { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_VI_SURFACE_CREATE_INFO_NN; }
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NN_vi_surface")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCreateViSurfaceNN(pub unsafe extern "system" fn(instance: VkInstance, pCreateInfo: *const VkViSurfaceCreateInfoNN, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NN_vi_surface")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCreateViSurfaceNN {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateViSurfaceNN";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NN_vi_surface")]
+#[rustfmt::skip]
+impl crate::StaticCallable for PFN_vkCreateViSurfaceNN {
+    const STATIC: Self = Self(vkCreateViSurfaceNN);
+}
+
+#[cfg(feature = "VK_EXT_display_surface_counter")]
+#[rustfmt::skip]
+pub const VK_EXT_DISPLAY_SURFACE_COUNTER_EXTENSION_NAME: &str = "VK_EXT_display_surface_counter";
+#[cfg(feature = "VK_EXT_display_surface_counter")]
+#[rustfmt::skip]
+pub const VK_EXT_DISPLAY_SURFACE_COUNTER_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_EXT_display_surface_counter")]
+#[rustfmt::skip]
+pub type VkSurfaceCounterFlagsEXT = VkFlags;
+#[cfg(feature = "VK_EXT_display_surface_counter")]
+#[rustfmt::skip]
+pub type VkSurfaceCounterFlagBitsEXT = VkFlags;
+#[cfg(feature = "VK_EXT_display_surface_counter")]
+#[rustfmt::skip]
+pub const VK_SURFACE_COUNTER_VBLANK_BIT_EXT: VkSurfaceCounterFlagBitsEXT = 0x00000001;
+
+#[cfg(feature = "VK_EXT_display_surface_counter")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkSurfaceCapabilities2EXT {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub minImageCount: u32,
+    pub maxImageCount: u32,
+    pub currentExtent: VkExtent2D,
+    pub minImageExtent: VkExtent2D,
+    pub maxImageExtent: VkExtent2D,
+    pub maxImageArrayLayers: u32,
+    pub supportedTransforms: VkSurfaceTransformFlagsKHR,
+    pub currentTransform: VkSurfaceTransformFlagsKHR,
+    pub supportedCompositeAlpha: VkCompositeAlphaFlagsKHR,
+    pub supportedUsageFlags: VkImageUsageFlags,
+    pub supportedSurfaceCounters: VkSurfaceCounterFlagsEXT,
+}
+#[cfg(feature = "VK_EXT_display_surface_counter")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES2_EXT: VkStructureType = 1000090000;
+#[cfg(feature = "VK_EXT_display_surface_counter")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkSurfaceCapabilities2EXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_EXT_display_surface_counter")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkSurfaceCapabilities2EXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES2_EXT; }
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_display_surface_counter")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pSurfaceCapabilities: *mut VkSurfaceCapabilities2EXT) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_display_surface_counter")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceSurfaceCapabilities2EXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]
@@ -19604,4 +19743,6 @@ unsafe extern "system" {
     pub fn vkSignalSemaphore(device: VkDevice, pSignalInfo: *const VkSemaphoreSignalInfoKHR) -> VkResult;
     #[cfg(feature = "Allow1_2APIs")]
     pub fn vkWaitSemaphores(device: VkDevice, pWaitInfo: *const VkSemaphoreWaitInfoKHR, timeout: u64) -> VkResult;
+    #[cfg(feature = "VK_NN_vi_surface")]
+    pub fn vkCreateViSurfaceNN(instance: VkInstance, pCreateInfo: *const VkViSurfaceCreateInfoNN, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
 }
