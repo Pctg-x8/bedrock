@@ -406,7 +406,7 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
             descriptorSetCount: layouts.len() as _,
             pSetLayouts: layouts.as_ptr_empty_null() as _,
         };
-        let mut hs = crate::alloc::empty_reserved_buffer(layouts.len());
+        let mut hs = crate::alloc::reserve(layouts.len());
 
         unsafe {
             self.alloc_raw(

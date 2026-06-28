@@ -324,39 +324,38 @@ impl SurfaceCreateInfo for AndroidSurfaceCreateInfo {
 }
 
 #[cfg(feature = "VK_KHR_win32_surface")]
-pub type Win32SurfaceCreateInfo = VkWin32SurfaceCreateInfoKHR;
+#[repr(transparent)]
+pub struct Win32SurfaceCreateInfo(brvk::VkWin32SurfaceCreateInfoKHR);
 #[cfg(feature = "VK_KHR_win32_surface")]
 impl Win32SurfaceCreateInfo {
     pub const fn new(hinstance: windows::Win32::Foundation::HINSTANCE, hwnd: windows::Win32::Foundation::HWND) -> Self {
-        Self {
-            sType: Self::TYPE,
+        Self(brvk::VkWin32SurfaceCreateInfoKHR {
+            sType: brvk::VkWin32SurfaceCreateInfoKHR::TYPE,
             pNext: core::ptr::null(),
             flags: 0,
             hinstance,
             hwnd,
-        }
+        })
     }
 }
 #[cfg(feature = "VK_KHR_win32_surface")]
 impl SurfaceCreateInfo for Win32SurfaceCreateInfo {
     #[implements]
-    #[inline(always)]
-    unsafe fn execute(
+    #[inline]
+    fn execute(
         &self,
         instance: &(impl VkHandle<Handle = brvk::VkInstance> + ?Sized),
         allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
-    ) -> crate::Result<VkSurfaceKHR> {
+    ) -> crate::Result<brvk::VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
-
-        unsafe {
-            brvk::create_win32_surface_khr(
+        crate::error::translate_vk_result(unsafe {
+            brvk::fns::create_win32_surface_khr(
                 instance.native_ptr(),
-                self,
+                &self.0,
                 opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
-            .into_result()?;
-        }
+        })?;
 
         Ok(unsafe { h.assume_init() })
     }

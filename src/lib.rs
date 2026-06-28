@@ -30,7 +30,10 @@ mod libdl;
 #[cfg(windows)]
 mod libloaderapi;
 
-use bedrock_vk as brvk;
+pub use bedrock_vk::{
+    self as vk, VkDeviceSize as DeviceSize, VkExtent2D as Extent2D, VkExtent3D as Extent3D, VkFormat as Format,
+    VkOffset2D as Offset2D, VkOffset3D as Offset3D, VkRect2D as Rect2D, VkViewport as Viewport,
+};
 use cfg_if::cfg_if;
 use derives::*;
 
@@ -120,6 +123,7 @@ pub use self::handle::*;
 
 /// An result type of querying an array of objects
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[must_use = "array query may finished incompletely"]
 pub struct ArrayQueryResult<T> {
     /// The result value of the query.
     pub result: T,
@@ -129,13 +133,13 @@ pub struct ArrayQueryResult<T> {
 }
 impl ArrayQueryResult<()> {
     #[inline(always)]
-    pub(crate) fn from_vk_result(r: brvk::VkResult) -> Result<Self> {
+    pub(crate) fn from_vk_result(r: vk::VkResult) -> Result<Self> {
         match r {
-            brvk::VK_SUCCESS => Ok(Self {
+            vk::VK_SUCCESS => Ok(Self {
                 result: (),
                 is_incomplete: false,
             }),
-            brvk::VK_INCOMPLETE => Ok(Self {
+            vk::VK_INCOMPLETE => Ok(Self {
                 result: (),
                 is_incomplete: true,
             }),
@@ -189,10 +193,10 @@ pub enum TimeoutableWaitResult {
     Timeout,
 }
 impl TimeoutableWaitResult {
-    pub(crate) fn from_vk_result(r: brvk::VkResult) -> Self {
+    pub(crate) fn from_vk_result(r: vk::VkResult) -> Self {
         match r {
-            brvk::VK_SUCCESS => Self::Success,
-            brvk::VK_TIMEOUT => Self::Timeout,
+            vk::VK_SUCCESS => Self::Success,
+            vk::VK_TIMEOUT => Self::Timeout,
             e => unreachable!("unexpected result: {:?}", ResultCode(e)),
         }
     }
@@ -200,7 +204,7 @@ impl TimeoutableWaitResult {
 
 /// An object in Vulkan
 pub trait VkObject: VkHandle {
-    const TYPE: brvk::VkObjectType;
+    const TYPE: vk::VkObjectType;
 
     /// Give a user-friendly name to this object.
     /// # Failures
@@ -212,32 +216,32 @@ pub trait VkObject: VkHandle {
     fn set_name(&self, name: Option<&core::ffi::CStr>) -> crate::Result<()>
     where
         Self: DeviceChild<ConcreteDevice: InstanceChild<ConcreteInstance: InstanceDebugUtilsExtension>>,
-        Self::Handle: brvk::VkRawHandle,
+        Self::Handle: vk::VkRawHandle,
     {
         self.device()
             .set_object_name(&DebugUtilsObjectNameInfo::new(self, name))
     }
 }
 impl<T: VkObject + ?Sized> VkObject for &'_ T {
-    const TYPE: brvk::VkObjectType = T::TYPE;
+    const TYPE: vk::VkObjectType = T::TYPE;
 }
 impl<T: VkObject + ?Sized> VkObject for &'_ mut T {
-    const TYPE: brvk::VkObjectType = T::TYPE;
+    const TYPE: vk::VkObjectType = T::TYPE;
 }
 impl<T: VkObject + ?Sized> VkObject for std::rc::Rc<T> {
-    const TYPE: brvk::VkObjectType = T::TYPE;
+    const TYPE: vk::VkObjectType = T::TYPE;
 }
 impl<T: VkObject + ?Sized> VkObject for std::sync::Arc<T> {
-    const TYPE: brvk::VkObjectType = T::TYPE;
+    const TYPE: vk::VkObjectType = T::TYPE;
 }
 impl<T: VkObject + ?Sized> VkObject for std::cell::Ref<'_, T> {
-    const TYPE: brvk::VkObjectType = T::TYPE;
+    const TYPE: vk::VkObjectType = T::TYPE;
 }
 impl<T: VkObject + ?Sized> VkObject for std::cell::RefMut<'_, T> {
-    const TYPE: brvk::VkObjectType = T::TYPE;
+    const TYPE: vk::VkObjectType = T::TYPE;
 }
 impl<T: VkObject + ?Sized> VkObject for std::sync::MutexGuard<'_, T> {
-    const TYPE: brvk::VkObjectType = T::TYPE;
+    const TYPE: vk::VkObjectType = T::TYPE;
 }
 
 // A single Number or a Range

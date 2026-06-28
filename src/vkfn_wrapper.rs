@@ -43,11 +43,8 @@ pub fn instance_extension_properties(
     Ok(n)
 }
 
-/// # Safety
-///
-/// allocation_callbacks must be valid for the lifetime of the instance.
 #[inline]
-pub unsafe fn create_instance(
+pub fn create_instance(
     info: &InstanceCreateInfo,
     allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
 ) -> crate::Result<brvk::VkInstance> {
@@ -61,6 +58,14 @@ pub unsafe fn create_instance(
     })?;
 
     Ok(unsafe { h.assume_init() })
+}
+
+#[inline(always)]
+pub fn destroy_instance(
+    instance: VkHandleRefMut<brvk::VkInstance>,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) {
+    unsafe { brvk::fns::destroy_instance(instance.0, opt_pointer(allocation_callbacks)) }
 }
 
 #[inline]
@@ -88,6 +93,66 @@ pub unsafe fn enumerate_physical_devices(
 }
 
 #[inline]
+pub fn device_layer_property_count(physical_device: VkHandleRef<brvk::VkPhysicalDevice>) -> crate::Result<u32> {
+    let mut sink = MaybeUninit::uninit();
+    translate_vk_result(unsafe {
+        brvk::fns::enumerate_device_layer_properties(physical_device.0, sink.as_mut_ptr(), null_mut())
+    })?;
+
+    Ok(unsafe { sink.assume_init() })
+}
+
+#[inline]
+pub fn enumerate_device_layer_properties(
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
+    sink: &mut [MaybeUninit<brvk::VkLayerProperties>],
+) -> crate::Result<ArrayQueryResult<u32>> {
+    let mut n = sink.len() as _;
+    let r = ArrayQueryResult::from_vk_result(unsafe {
+        brvk::fns::enumerate_device_layer_properties(physical_device.0, &mut n, sink.as_mut_ptr().cast())
+    })?;
+
+    Ok(r.with_result(n))
+}
+
+#[inline]
+pub fn device_extension_property_count(
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
+    layer_name: Option<&CStr>,
+) -> crate::Result<u32> {
+    let mut sink = MaybeUninit::uninit();
+    translate_vk_result(unsafe {
+        brvk::fns::enumerate_device_extension_properties(
+            physical_device.0,
+            opt_cstr_ptr(layer_name),
+            sink.as_mut_ptr(),
+            null_mut(),
+        )
+    })?;
+
+    Ok(unsafe { sink.assume_init() })
+}
+
+#[inline]
+pub fn enumerate_device_extension_properties(
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
+    layer_name: Option<&CStr>,
+    sink: &mut [MaybeUninit<brvk::VkExtensionProperties>],
+) -> crate::Result<ArrayQueryResult<u32>> {
+    let mut n = sink.len() as _;
+    let r = ArrayQueryResult::from_vk_result(unsafe {
+        brvk::fns::enumerate_device_extension_properties(
+            physical_device.0,
+            opt_cstr_ptr(layer_name),
+            &mut n,
+            sink.as_mut_ptr().cast(),
+        )
+    })?;
+
+    Ok(r.with_result(n))
+}
+
+#[inline(always)]
 pub fn get_physical_device_features(
     physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
     sink: &mut MaybeUninit<PhysicalDeviceFeatures>,
@@ -95,7 +160,16 @@ pub fn get_physical_device_features(
     unsafe { brvk::fns::get_physical_device_features(physical_device.0, sink.as_mut_ptr()) }
 }
 
-#[inline]
+#[cfg(feature = "Allow1_1APIs")]
+#[inline(always)]
+pub fn get_physical_device_features2(
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
+    sink: &mut MaybeUninit<PhysicalDeviceFeatures2>,
+) {
+    unsafe { brvk::fns::get_physical_device_features2(physical_device.0, sink.as_mut_ptr().cast()) }
+}
+
+#[inline(always)]
 pub fn get_physical_device_properties(
     physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
     sink: &mut MaybeUninit<PhysicalDeviceProperties>,
@@ -103,12 +177,159 @@ pub fn get_physical_device_properties(
     unsafe { brvk::fns::get_physical_device_properties(physical_device.0, sink.as_mut_ptr()) }
 }
 
-#[inline]
+#[cfg(feature = "Allow1_1APIs")]
+#[inline(always)]
+pub fn get_physical_device_properties2(
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
+    sink: &mut MaybeUninit<brvk::VkPhysicalDeviceProperties2>,
+) {
+    unsafe { brvk::fns::get_physical_device_properties2(physical_device.0, sink.as_mut_ptr()) }
+}
+
+#[inline(always)]
 pub fn get_physical_device_memory_properties(
     physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
     sink: &mut MaybeUninit<PhysicalDeviceMemoryProperties>,
 ) {
     unsafe { brvk::fns::get_physical_device_memory_properties(physical_device.0, sink.as_mut_ptr().cast()) }
+}
+
+#[inline(always)]
+pub fn get_physical_device_format_properties(
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
+    format: brvk::VkFormat,
+    sink: &mut MaybeUninit<brvk::VkFormatProperties>,
+) {
+    unsafe { brvk::fns::get_physical_device_format_properties(physical_device.0, format, sink.as_mut_ptr()) }
+}
+
+#[cfg(feature = "Allow1_1APIs")]
+#[inline(always)]
+pub fn get_physical_device_format_properties2(
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
+    format: brvk::VkFormat,
+    sink: &mut MaybeUninit<brvk::VkFormatProperties2>,
+) {
+    unsafe { brvk::fns::get_physical_device_format_properties2(physical_device.0, format, sink.as_mut_ptr()) }
+}
+
+#[inline(always)]
+pub fn get_physical_device_image_format_properties(
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
+    format: brvk::VkFormat,
+    image_type: brvk::VkImageType,
+    tiling: brvk::VkImageTiling,
+    usage: ImageUsageFlags,
+    flags: ImageFlags,
+    sink: &mut MaybeUninit<brvk::VkImageFormatProperties>,
+) -> crate::Result<()> {
+    translate_vk_result(unsafe {
+        brvk::fns::get_physical_device_image_format_properties(
+            physical_device.0,
+            format,
+            image_type,
+            tiling,
+            usage.bits(),
+            flags.bits(),
+            sink.as_mut_ptr(),
+        )
+    })?;
+
+    Ok(())
+}
+
+#[cfg(feature = "Allow1_1APIs")]
+#[inline(always)]
+pub fn get_physical_device_image_format_properties2(
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
+    info: &brvk::VkPhysicalDeviceImageFormatInfo2,
+    sink: &mut MaybeUninit<brvk::VkImageFormatProperties2>,
+) -> crate::Result<()> {
+    translate_vk_result(unsafe {
+        brvk::fns::get_physical_device_image_format_properties2(
+            physical_device.0,
+            core::ptr::from_ref(info),
+            sink.as_mut_ptr(),
+        )
+    })?;
+
+    Ok(())
+}
+
+#[inline]
+pub fn get_physical_device_sparse_image_format_property_count(
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
+    format: brvk::VkFormat,
+    image_type: brvk::VkImageType,
+    samples: brvk::VkSampleCountFlags,
+    usage: ImageUsageFlags,
+    tiling: brvk::VkImageTiling,
+) -> u32 {
+    let mut sink = MaybeUninit::uninit();
+    unsafe {
+        brvk::fns::get_physical_device_sparse_image_format_properties(
+            physical_device.0,
+            format,
+            image_type,
+            samples,
+            usage.bits(),
+            tiling,
+            sink.as_mut_ptr(),
+            null_mut(),
+        );
+    }
+
+    unsafe { sink.assume_init() }
+}
+
+#[inline]
+pub fn get_physical_device_sparse_image_format_properties(
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
+    format: brvk::VkFormat,
+    image_type: brvk::VkImageType,
+    samples: brvk::VkSampleCountFlags,
+    usage: ImageUsageFlags,
+    tiling: brvk::VkImageTiling,
+    sink: &mut [MaybeUninit<brvk::VkSparseImageFormatProperties>],
+) -> u32 {
+    let mut count = sink.len() as _;
+    unsafe {
+        brvk::fns::get_physical_device_sparse_image_format_properties(
+            physical_device.0,
+            format,
+            image_type,
+            samples,
+            usage.bits(),
+            tiling,
+            &mut count,
+            sink.as_mut_ptr().cast(),
+        );
+    }
+
+    count
+}
+
+#[inline]
+pub fn get_physical_device_queue_family_property_count(physical_device: VkHandleRef<brvk::VkPhysicalDevice>) -> u32 {
+    let mut sink = MaybeUninit::uninit();
+    unsafe {
+        brvk::fns::get_physical_device_queue_family_properties(physical_device.0, sink.as_mut_ptr(), null_mut());
+    }
+
+    unsafe { sink.assume_init() }
+}
+
+#[inline(always)]
+pub fn get_physical_device_queue_family_properties(
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
+    sink: &mut [MaybeUninit<QueueFamilyProperties>],
+) -> u32 {
+    let mut count = sink.len() as _;
+    unsafe {
+        brvk::fns::get_physical_device_queue_family_properties(physical_device.0, &mut count, sink.as_mut_ptr().cast());
+    }
+
+    count
 }
 
 #[cfg(feature = "VK_KHR_xlib_surface")]
@@ -160,7 +381,8 @@ pub unsafe fn get_physical_device_wayland_presentation_support(
 }
 
 #[cfg(feature = "VK_KHR_win32_surface")]
-pub unsafe fn get_physical_device_win32_presentation_support(
+#[inline(always)]
+pub fn get_physical_device_win32_presentation_support(
     physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
     queue_family_index: u32,
 ) -> bool {

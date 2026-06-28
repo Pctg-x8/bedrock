@@ -1,6 +1,4 @@
-use bedrock_vk::VkRawHandle;
-
-use crate::*;
+use bedrock_vk::{self as brvk, VkRawHandle};
 
 /// Wrapping a Vulkan Dispatchable/Nondispatchable Handler
 pub trait VkHandle {

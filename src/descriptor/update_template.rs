@@ -1,3 +1,5 @@
+use bedrock_vk as brvk;
+
 use derives::implements;
 
 use crate::*;

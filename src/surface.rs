@@ -1,4 +1,5 @@
 //! Vulkan Surface/Swapchain Extensions
+use bedrock_vk as brvk;
 
 use crate::*;
 

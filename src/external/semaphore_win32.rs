@@ -152,12 +152,12 @@ impl<'t> D3D12FenceSubmitInfo<'t> {
 }
 unsafe impl<'t> brvk::VulkanStructure for D3D12FenceSubmitInfo<'t> {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::brvk::GenericVulkanStructure {
+    fn as_generic(&self) -> &brvk::GenericVulkanStructure {
         self.0.as_generic()
     }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::brvk::GenericVulkanStructure {
+    fn as_generic_mut(&mut self) -> &mut brvk::GenericVulkanStructure {
         self.0.as_generic_mut()
     }
 }
@@ -208,12 +208,12 @@ impl<'d> ExportSemaphoreWin32HandleInfo<'d> {
 }
 unsafe impl brvk::VulkanStructure for ExportSemaphoreWin32HandleInfo<'_> {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::brvk::GenericVulkanStructure {
+    fn as_generic(&self) -> &brvk::GenericVulkanStructure {
         self.0.as_generic()
     }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::brvk::GenericVulkanStructure {
+    fn as_generic_mut(&mut self) -> &mut brvk::GenericVulkanStructure {
         self.0.as_generic_mut()
     }
 }

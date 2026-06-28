@@ -3,10 +3,9 @@
 pub const VK_EXT_FULL_SCREEN_EXCLUSIVE_SPEC_VERSION: usize = 4;
 pub const VK_EXT_FULL_SCREEN_EXCLUSIVE_EXTENSION_NAME: &str = "VK_EXT_full_screen_exclusive";
 
-use derives::vk_ext_command;
+use derives::{TypedVulkanSinkStructure, TypedVulkanStructure, vk_ext_command};
 
-use super::*;
-use crate::vk2::*;
+use crate::*;
 
 pub const VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT: VkStructureType = ext_enum_value(256, 0) as _;
 pub const VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT: VkStructureType =
@@ -26,7 +25,7 @@ pub const VK_FULL_SCREEN_EXCLUSIVE_APPLICATION_CONTROLLED_EXT: VkFullScreenExclu
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT)]
 pub struct VkSurfaceFullScreenExclusiveInfoEXT {
     pub sType: VkStructureType,
-    pub pNext: *mut c_void,
+    pub pNext: *mut core::ffi::c_void,
     pub fullScreenExclusive: VkFullScreenExclusiveEXT,
 }
 
@@ -35,7 +34,7 @@ pub struct VkSurfaceFullScreenExclusiveInfoEXT {
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT)]
 pub struct VkSurfaceCapabilitiesFullScreenExclusiveEXT {
     pub sType: VkStructureType,
-    pub pNext: *mut c_void,
+    pub pNext: *mut core::ffi::c_void,
     pub fullScreenExclusiveSupported: VkBool32,
 }
 
@@ -51,25 +50,20 @@ vk_ext_command! {
     pub fn vkReleaseFullScreenExclusiveModeEXT(device: VkDevice, swapchain: VkSwapchainKHR) -> VkResult;
 }
 
-cfg_if::cfg_if! {
-    if #[cfg(feature = "VK_KHR_win32_surface")] {
-        pub const VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT: VkStructureType = ext_enum_value(256, 1) as _;
+#[cfg(feature = "VK_KHR_win32_surface")]
+pub const VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT: VkStructureType = ext_enum_value(256, 1) as _;
 
-        #[repr(C)]
-        #[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
-        #[VulkanStructure(type = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT)]
-        pub struct VkSurfaceFullScreenExclusiveWin32InfoEXT {
-            pub sType: VkStructureType,
-            pub pNext: *const c_void,
-            pub hmonitor: windows::Win32::Graphics::Gdi::HMONITOR,
-        }
-    }
+#[cfg(feature = "VK_KHR_win32_surface")]
+#[repr(C)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT)]
+pub struct VkSurfaceFullScreenExclusiveWin32InfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub hmonitor: windows::Win32::Graphics::Gdi::HMONITOR,
 }
 
-cfg_if::cfg_if! {
-    if #[cfg(feature = "VK_KHR_device_group")] {
-        vk_ext_command! {
-            pub fn vkGetDeviceGroupSurfacePresentModes2EXT(physicalDevice: VkPhysicalDevice, pSurfaceInfo: *const VkPhysicalDeviceSurfaceInfo2KHR, pModes: *mut VkDeviceGroupPresentModeFlagsKHR) -> VkResult;
-        }
-    }
+#[cfg(feature = "VK_KHR_device_group")]
+vk_ext_command! {
+    pub fn vkGetDeviceGroupSurfacePresentModes2EXT(physicalDevice: VkPhysicalDevice, pSurfaceInfo: *const VkPhysicalDeviceSurfaceInfo2KHR, pModes: *mut VkDeviceGroupPresentModeFlagsKHR) -> VkResult;
 }

@@ -1,4 +1,4 @@
-use crate::*;
+use bedrock_vk::{self as brvk};
 
 /// Hint values an application can specify affecting full-screen transition behavior.
 #[repr(i32)]
@@ -17,27 +17,28 @@ pub enum FullScreenExclusive {
 
 #[repr(transparent)]
 pub struct SurfaceFullScreenExclusiveInfo<'n>(
-    VkSurfaceFullScreenExclusiveInfoEXT,
-    core::marker::PhantomData<Option<&'n dyn VulkanStructure>>,
+    brvk::VkSurfaceFullScreenExclusiveInfoEXT,
+    core::marker::PhantomData<Option<&'n dyn brvk::VulkanStructure>>,
 );
-unsafe impl VulkanStructure for SurfaceFullScreenExclusiveInfo<'_> {
-    fn as_generic(&self) -> &GenericVulkanStructure {
+unsafe impl brvk::VulkanStructure for SurfaceFullScreenExclusiveInfo<'_> {
+    fn as_generic(&self) -> &brvk::GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
     }
 
-    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+    fn as_generic_mut(&mut self) -> &mut brvk::GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
     }
 }
-unsafe impl TypedVulkanStructure for SurfaceFullScreenExclusiveInfo<'_> {
-    const TYPE: crate::vk::VkStructureType = <VkSurfaceFullScreenExclusiveInfoEXT as TypedVulkanStructure>::TYPE;
+impl brvk::TypedVulkanStructure for SurfaceFullScreenExclusiveInfo<'_> {
+    const TYPE: crate::vk::VkStructureType =
+        <brvk::VkSurfaceFullScreenExclusiveInfoEXT as brvk::TypedVulkanStructure>::TYPE;
 }
 impl<'n> SurfaceFullScreenExclusiveInfo<'n> {
     /// Constructs the structure, specifying the preferred full-screen transition behavior.
-    pub const fn new(flags: VkFullScreenExclusiveEXT) -> Self {
+    pub const fn new(flags: brvk::VkFullScreenExclusiveEXT) -> Self {
         Self(
-            VkSurfaceFullScreenExclusiveInfoEXT {
-                sType: <VkSurfaceFullScreenExclusiveInfoEXT as brvk::TypedVulkanSinkStructure>::TYPE,
+            brvk::VkSurfaceFullScreenExclusiveInfoEXT {
+                sType: <brvk::VkSurfaceFullScreenExclusiveInfoEXT as brvk::TypedVulkanSinkStructure>::TYPE,
                 pNext: core::ptr::null_mut(),
                 fullScreenExclusive: flags,
             },
@@ -45,28 +46,36 @@ impl<'n> SurfaceFullScreenExclusiveInfo<'n> {
         )
     }
 
-    pub const unsafe fn from_raw(raw: VkSurfaceFullScreenExclusiveInfoEXT) -> Self {
+    /// # Safety
+    ///
+    /// `raw` must be a valid `VkSurfaceFullScreenExclusiveInfoEXT` structure.
+    pub const unsafe fn from_raw(raw: brvk::VkSurfaceFullScreenExclusiveInfoEXT) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkSurfaceFullScreenExclusiveInfoEXT {
+    pub const fn into_raw(self) -> brvk::VkSurfaceFullScreenExclusiveInfoEXT {
         self.0
     }
 
-    pub const fn with_next(mut self, next: &'n (impl VulkanStructure + ?Sized)) -> Self {
+    pub const fn with_next(mut self, next: &'n (impl brvk::VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next as *const _ as _;
         self
     }
 }
 
 #[cfg(windows)]
-impl VkSurfaceFullScreenExclusiveWin32InfoEXT {
+#[repr(transparent)]
+pub struct SurfaceFullScreenExclusiveWin32Info(brvk::VkSurfaceFullScreenExclusiveWin32InfoEXT);
+#[cfg(windows)]
+impl SurfaceFullScreenExclusiveWin32Info {
     /// Constructs the structure, with a handle identifying the display to create the surface with.
     pub const fn new(hmonitor: windows::Win32::Graphics::Gdi::HMONITOR) -> Self {
-        Self {
-            sType: Self::TYPE,
+        use bedrock_vk::TypedVulkanStructure;
+
+        Self(brvk::VkSurfaceFullScreenExclusiveWin32InfoEXT {
+            sType: brvk::VkSurfaceFullScreenExclusiveWin32InfoEXT::TYPE,
             pNext: core::ptr::null(),
             hmonitor,
-        }
+        })
     }
 }

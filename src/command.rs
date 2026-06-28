@@ -110,7 +110,7 @@ impl<Device: VkHandle<Handle = brvk::VkDevice>> CommandBufferObject<Device> {
     #[implements("alloc")]
     #[inline]
     pub fn alloc(device: Device, info: &CommandBufferAllocateInfo) -> crate::Result<Vec<Self>> {
-        let mut hs = crate::alloc::empty_reserved_buffer(info.0.commandBufferCount as _);
+        let mut hs = crate::alloc::reserve(info.0.commandBufferCount as _);
         unsafe {
             crate::vkfn_wrapper::allocate_command_buffers(
                 device.as_transparent_ref(),

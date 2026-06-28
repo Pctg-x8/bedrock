@@ -40,27 +40,27 @@ pub trait Swapchain: VkHandle<Handle = brvk::VkSwapchainKHR> + DeviceChild {
     /// * `brvk::VK_ERROR_INITIALIZATION_FAILED`
     /// * `brvk::VK_ERROR_SURFACE_LOST_KHR`
     #[implements("VK_EXT_full_screen_exclusive")]
+    #[inline(always)]
     fn acquire_full_screen_exclusive_mode(&self) -> crate::Result<()>
     where
         Self::ConcreteDevice: DeviceFullScreenExclusiveExtension,
     {
         unsafe {
-            self.device().acquire_full_screen_exclusive_mode_ext_fn().0(self.device().native_ptr(), self.native_ptr())
-                .into_result()
-                .map(drop)
+            self.device()
+                .acquire_full_screen_exclusive_mode(self.device_transparent_ref(), self.as_transparent_ref())
         }
     }
 
     /// Release full-screen exclusive mode from a swapchain.
     #[implements("VK_EXT_full_screen_exclusive")]
+    #[inline(always)]
     fn release_full_screen_exclusive_mode(&self) -> crate::Result<()>
     where
         Self::ConcreteDevice: DeviceFullScreenExclusiveExtension,
     {
         unsafe {
-            self.device().release_full_screen_exclusive_mode_ext_fn().0(self.device().native_ptr(), self.native_ptr())
-                .into_result()
-                .map(drop)
+            self.device()
+                .release_full_screen_exclusive_mode(self.device_transparent_ref(), self.as_transparent_ref())
         }
     }
 }
@@ -107,23 +107,21 @@ pub trait SwapchainImageExt: Swapchain {
     /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements("alloc")]
-    fn images_alloc(&self) -> crate::Result<ArrayQueryResult<Vec<crate::SwapchainImage<&Self>>>>
-    where
-        Self: Sized,
-    {
+    fn images_alloc(&self) -> crate::Result<Vec<crate::SwapchainImage<&Self>>> {
         let n = self.image_count()? as usize;
         if n == 0 {
             // no items
-            return Ok(ArrayQueryResult::completed(crate::alloc::empty_sink_buffer()));
+            return Ok(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = crate::alloc::empty_reserved_buffer(n);
+        let mut xs = crate::alloc::reserve(n);
         let res = self.images(xs.spare_capacity_mut())?;
+        assert!(!res.is_incomplete);
         unsafe {
             xs.set_len(res.result as _);
         }
 
-        Ok(res.with_result(crate::alloc::collect_vec(xs.into_iter().map(move |r| {
+        Ok(crate::alloc::collect_vec(xs.into_iter().map(move |r| {
             let ext = self.extent();
             crate::SwapchainImage(
                 r,
@@ -135,7 +133,7 @@ pub trait SwapchainImageExt: Swapchain {
                     depth: 1,
                 },
             )
-        }))))
+        })))
     }
 }
 DerefContainerBracketImpl!(for SwapchainImageExt {

@@ -1,4 +1,5 @@
 //! Vulkan Debug Layer Extensions
+use bedrock_vk as brvk;
 
 #[allow(unused_imports)]
 use crate::*;

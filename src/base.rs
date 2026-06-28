@@ -211,7 +211,7 @@ pub fn instance_layer_properties_alloc() -> crate::Result<Vec<brvk::VkLayerPrope
         return Ok(crate::alloc::empty_sink_buffer());
     }
 
-    let mut xs = crate::alloc::empty_reserved_buffer(n as _);
+    let mut xs = crate::alloc::reserve(n as _);
     crate::vkfn_wrapper::instance_layer_properties(xs.spare_capacity_mut())?;
     unsafe {
         xs.set_len(n as _);
@@ -237,7 +237,7 @@ pub fn instance_extension_properties_alloc(
         return Ok(crate::alloc::empty_sink_buffer());
     }
 
-    let mut xs = crate::alloc::empty_reserved_buffer(n);
+    let mut xs = crate::alloc::reserve(n);
     crate::vkfn_wrapper::instance_extension_properties(layer_name, xs.spare_capacity_mut())?;
     unsafe {
         xs.set_len(n);
@@ -366,10 +366,9 @@ unsafe impl Sync for InstanceObject {}
 unsafe impl Send for InstanceObject {}
 #[implements]
 impl Drop for InstanceObject {
+    #[inline(always)]
     fn drop(&mut self) {
-        unsafe {
-            brvk::fns::destroy_instance(self.handle, core::ptr::null());
-        }
+        crate::vkfn_wrapper::destroy_instance(self.as_transparent_ref_mut(), None);
     }
 }
 impl Instance for InstanceObject {}
@@ -861,6 +860,53 @@ pub trait InstanceFullScreenExclusiveExtension: Instance {
     fn get_physical_device_surface_present_modes_2_ext_fn(
         &self,
     ) -> brvk::PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT;
+
+    /// # Safety
+    ///
+    /// surface in `surface_info` and `physical_device` must be created from the same instance.
+    #[implements]
+    #[inline]
+    unsafe fn get_physical_device_surface_present_mode2_count(
+        &self,
+        physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
+        surface_info: &brvk::VkPhysicalDeviceSurfaceInfo2KHR,
+    ) -> crate::Result<u32> {
+        let mut n = 0;
+        translate_vk_result(unsafe {
+            self.get_physical_device_surface_present_modes_2_ext_fn().0(
+                physical_device.0,
+                surface_info,
+                &mut n,
+                core::ptr::null_mut(),
+            )
+        })?;
+
+        Ok(n)
+    }
+
+    /// # Safety
+    ///
+    /// surface in `surface_info` and `physical_device` must be created from the same instance.
+    #[implements]
+    #[inline]
+    unsafe fn get_physical_device_surface_present_modes2(
+        &self,
+        physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
+        surface_info: &brvk::VkPhysicalDeviceSurfaceInfo2KHR,
+        sink: &mut [core::mem::MaybeUninit<brvk::VkPresentModeKHR>],
+    ) -> crate::Result<ArrayQueryResult<u32>> {
+        let mut n = sink.len() as _;
+        let r = ArrayQueryResult::from_vk_result(unsafe {
+            self.get_physical_device_surface_present_modes_2_ext_fn().0(
+                physical_device.0,
+                surface_info,
+                &mut n,
+                sink.as_mut_ptr().cast(),
+            )
+        })?;
+
+        Ok(r.with_result(n))
+    }
 }
 #[cfg(feature = "VK_EXT_full_screen_exclusive")]
 DerefContainerWithGuardsBracketImpl!(for InstanceFullScreenExclusiveExtension {
@@ -883,6 +929,28 @@ pub trait InstanceGetSurfaceCapabilities2Extension: Instance {
     #[implements]
     fn get_physical_device_surface_capabilities_2_khr_fn(&self)
     -> brvk::PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR;
+
+    /// # Safety
+    ///
+    /// surface in `surface_info` and `physical_device` must be created from the same instance.
+    #[implements]
+    #[inline(always)]
+    unsafe fn get_physical_device_surface_capabilities2(
+        &self,
+        physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
+        surface_info: &brvk::VkPhysicalDeviceSurfaceInfo2KHR,
+        sink: &mut core::mem::MaybeUninit<brvk::VkSurfaceCapabilities2KHR>,
+    ) -> crate::Result<()> {
+        translate_vk_result(unsafe {
+            self.get_physical_device_surface_capabilities_2_khr_fn().0(
+                physical_device.0,
+                surface_info,
+                sink.as_mut_ptr(),
+            )
+        })?;
+
+        Ok(())
+    }
 }
 #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
 DerefContainerWithGuardsBracketImpl!(for InstanceGetSurfaceCapabilities2Extension {
@@ -951,14 +1019,9 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
     /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
-    #[inline]
+    #[inline(always)]
     fn layer_property_count(&self) -> crate::Result<u32> {
-        let mut n = 0;
-        translate_vk_result(unsafe {
-            brvk::fns::enumerate_device_layer_properties(self.native_ptr(), &mut n, core::ptr::null_mut())
-        })?;
-
-        Ok(n)
+        crate::vkfn_wrapper::device_layer_property_count(self.as_transparent_ref())
     }
 
     /// Returns properties of available physical device layers
@@ -968,17 +1031,12 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
     /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
-    #[inline]
+    #[inline(always)]
     fn enumerate_layer_properties(
         &self,
         sink: &mut [core::mem::MaybeUninit<brvk::VkLayerProperties>],
-    ) -> crate::Result<u32> {
-        let mut n = sink.len() as _;
-        translate_vk_result(unsafe {
-            brvk::fns::enumerate_device_layer_properties(self.native_ptr(), &mut n, sink.as_mut_ptr() as _)
-        })?;
-
-        Ok(n)
+    ) -> crate::Result<ArrayQueryResult<u32>> {
+        crate::vkfn_wrapper::enumerate_device_layer_properties(self.as_transparent_ref(), sink)
     }
 
     /// Returns properties of available physical device layers
@@ -995,10 +1053,11 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
             return Ok(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = Vec::with_capacity(count);
-        self.enumerate_layer_properties(xs.spare_capacity_mut())?;
+        let mut xs = crate::alloc::reserve(count);
+        let r = self.enumerate_layer_properties(xs.spare_capacity_mut())?;
+        assert!(!r.is_incomplete);
         unsafe {
-            xs.set_len(count);
+            xs.set_len(r.result as _);
         }
 
         Ok(xs)
@@ -1012,19 +1071,9 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
     /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     /// * [`brvk::VK_ERROR_LAYER_NOT_PRESENT`]
     #[implements]
-    #[inline]
-    fn extension_property_count_cstr(&self, layer_name: Option<&core::ffi::CStr>) -> crate::Result<u32> {
-        let mut n = 0;
-        translate_vk_result(unsafe {
-            brvk::fns::enumerate_device_extension_properties(
-                self.native_ptr(),
-                crate::ffi_helper::opt_cstr_ptr(layer_name),
-                &mut n,
-                core::ptr::null_mut(),
-            )
-        })?;
-
-        Ok(n)
+    #[inline(always)]
+    fn extension_property_count(&self, layer_name: Option<&CStr>) -> crate::Result<u32> {
+        crate::vkfn_wrapper::device_extension_property_count(self.as_transparent_ref(), layer_name)
     }
 
     /// Returns properties of available physical device extensions
@@ -1035,23 +1084,13 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
     /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     /// * [`brvk::VK_ERROR_LAYER_NOT_PRESENT`]
     #[implements]
-    #[inline]
-    fn enumerate_extension_properties_cstr(
+    #[inline(always)]
+    fn enumerate_extension_properties(
         &self,
-        layer_name: Option<&core::ffi::CStr>,
+        layer_name: Option<&CStr>,
         sink: &mut [core::mem::MaybeUninit<brvk::VkExtensionProperties>],
-    ) -> crate::Result<u32> {
-        let mut n = sink.len() as _;
-        translate_vk_result(unsafe {
-            brvk::fns::enumerate_device_extension_properties(
-                self.native_ptr(),
-                crate::ffi_helper::opt_cstr_ptr(layer_name),
-                &mut n,
-                sink.as_mut_ptr() as _,
-            )
-        })?;
-
-        Ok(n)
+    ) -> crate::Result<ArrayQueryResult<u32>> {
+        crate::vkfn_wrapper::enumerate_device_extension_properties(self.as_transparent_ref(), layer_name, sink)
     }
 
     /// Returns properties of available physical device extensions
@@ -1062,20 +1101,21 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
     /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `brvk::VK_ERROR_LAYER_NOT_PRESENT`
     #[implements("alloc")]
-    fn enumerate_extension_properties_cstr_alloc(
+    fn enumerate_extension_properties_alloc(
         &self,
-        layer_name: Option<&core::ffi::CStr>,
+        layer_name: Option<&CStr>,
     ) -> crate::Result<Vec<brvk::VkExtensionProperties>> {
-        let n = self.extension_property_count_cstr(layer_name)? as usize;
+        let n = self.extension_property_count(layer_name)? as usize;
         if n == 0 {
             // no items
             return Ok(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = Vec::with_capacity(n);
-        self.enumerate_extension_properties_cstr(layer_name, xs.spare_capacity_mut())?;
+        let mut xs = crate::alloc::reserve(n);
+        let r = self.enumerate_extension_properties(layer_name, xs.spare_capacity_mut())?;
+        assert!(!r.is_incomplete);
         unsafe {
-            xs.set_len(n);
+            xs.set_len(r.result as _);
         }
 
         Ok(xs)
@@ -1090,13 +1130,11 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
     /// * `brvk::VK_ERROR_LAYER_NOT_PRESENT`
     #[implements("alloc")]
     #[inline]
-    fn enumerate_extension_properties(
+    fn enumerate_extension_properties_str_alloc(
         &self,
         layer_name: Option<&str>,
     ) -> crate::Result<Vec<brvk::VkExtensionProperties>> {
-        self.enumerate_extension_properties_cstr_alloc(
-            layer_name.map(|s| crate::alloc::str_to_cstr(s).unwrap()).as_deref(),
-        )
+        self.enumerate_extension_properties_alloc(layer_name.map(|s| crate::alloc::str_to_cstr(s).unwrap()).as_deref())
     }
 
     /// Reports capabilities of a physical device.
@@ -1104,35 +1142,27 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
     #[inline]
     fn features(&self) -> brvk::VkPhysicalDeviceFeatures {
         let mut p = std::mem::MaybeUninit::uninit();
-        unsafe {
-            brvk::fns::get_physical_device_features(self.native_ptr(), p.as_mut_ptr());
+        crate::vkfn_wrapper::get_physical_device_features(self.as_transparent_ref(), &mut p);
 
-            p.assume_init()
-        }
+        unsafe { p.assume_init() }
     }
 
     /// Reports capabilities of a physical device
-    /// # Safety
-    /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
     #[implements("Allow1_1APIs")]
-    #[inline]
-    unsafe fn features2(&self, sink: &mut core::mem::MaybeUninit<brvk::VkPhysicalDeviceFeatures2KHR>) {
-        unsafe {
-            brvk::fns::get_physical_device_features2(self.native_ptr(), sink.as_mut_ptr());
-        }
+    #[inline(always)]
+    fn features2(&self, sink: &mut core::mem::MaybeUninit<PhysicalDeviceFeatures2>) {
+        crate::vkfn_wrapper::get_physical_device_features2(self.as_transparent_ref(), sink)
     }
 
     /// Reports capabilities of a physical device
-    /// # Safety
-    /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
     #[implements("VK_KHR_get_physical_device_properties2")]
     #[inline]
-    unsafe fn features2_khr(&self, sink: &mut core::mem::MaybeUninit<brvk::VkPhysicalDeviceFeatures2KHR>)
+    fn features2_khr(&self, sink: &mut core::mem::MaybeUninit<PhysicalDeviceFeatures2>)
     where
         Self::ConcreteInstance: InstanceGetPhysicalDeviceProperties2Extension,
     {
         unsafe {
-            self.instance().get_physical_device_features2_khr_fn().0(self.native_ptr(), sink.as_mut_ptr());
+            self.instance().get_physical_device_features2_khr_fn().0(self.native_ptr(), sink.as_mut_ptr().cast());
         }
     }
 
@@ -1141,30 +1171,22 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
     #[inline]
     fn properties(&self) -> brvk::VkPhysicalDeviceProperties {
         let mut p = std::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn_wrapper::get_physical_device_properties(self.as_transparent_ref(), &mut p);
+        crate::vkfn_wrapper::get_physical_device_properties(self.as_transparent_ref(), &mut p);
 
-            p.assume_init()
-        }
+        unsafe { p.assume_init() }
     }
 
     /// Returns properties of a physical device
-    /// # Safety
-    /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
     #[implements("Allow1_1APIs")]
-    #[inline]
-    unsafe fn properties2(&self, sink: &mut core::mem::MaybeUninit<brvk::VkPhysicalDeviceProperties2KHR>) {
-        unsafe {
-            brvk::fns::get_physical_device_properties2(self.native_ptr(), sink.as_mut_ptr());
-        }
+    #[inline(always)]
+    fn properties2(&self, sink: &mut core::mem::MaybeUninit<brvk::VkPhysicalDeviceProperties2KHR>) {
+        crate::vkfn_wrapper::get_physical_device_properties2(self.as_transparent_ref(), sink)
     }
 
     /// Returns properties of a physical device
-    /// # Safety
-    /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
     #[implements("VK_KHR_get_physical_device_properties2")]
     #[inline]
-    unsafe fn properties2_khr(&self, sink: &mut core::mem::MaybeUninit<brvk::VkPhysicalDeviceProperties2KHR>)
+    fn properties2_khr(&self, sink: &mut core::mem::MaybeUninit<brvk::VkPhysicalDeviceProperties2KHR>)
     where
         Self::ConcreteInstance: InstanceGetPhysicalDeviceProperties2Extension,
     {
@@ -1178,34 +1200,26 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
     #[inline]
     fn format_properties(&self, format: brvk::VkFormat) -> brvk::VkFormatProperties {
         let mut p = std::mem::MaybeUninit::uninit();
-        unsafe {
-            brvk::fns::get_physical_device_format_properties(self.native_ptr(), format, p.as_mut_ptr());
+        crate::vkfn_wrapper::get_physical_device_format_properties(self.as_transparent_ref(), format, &mut p);
 
-            p.assume_init()
-        }
+        unsafe { p.assume_init() }
     }
 
     /// Lists physical device's format capabilities
-    /// # Safety
-    /// Caller must guarantee that all write operations to `out` are safe.
     #[implements("Allow1_1APIs")]
-    #[inline]
-    unsafe fn format_properties2(
+    #[inline(always)]
+    fn format_properties2(
         &self,
         format: brvk::VkFormat,
         out: &mut core::mem::MaybeUninit<brvk::VkFormatProperties2KHR>,
     ) {
-        unsafe {
-            brvk::fns::get_physical_device_format_properties2(self.native_ptr(), format, out.as_mut_ptr());
-        }
+        crate::vkfn_wrapper::get_physical_device_format_properties2(self.as_transparent_ref(), format, out)
     }
 
     /// Lists physical device's format capabilities
-    /// # Safety
-    /// Caller must guarantee that all write operations to `out` are safe.
     #[implements("VK_KHR_get_physical_device_properties2")]
     #[inline]
-    unsafe fn format_properties2_khr(
+    fn format_properties2_khr(
         &self,
         format: brvk::VkFormat,
         out: &mut core::mem::MaybeUninit<brvk::VkFormatProperties2KHR>,
@@ -1239,48 +1253,35 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
         flags: ImageFlags,
     ) -> crate::Result<brvk::VkImageFormatProperties> {
         let mut p = std::mem::MaybeUninit::uninit();
-        translate_vk_result(unsafe {
-            brvk::fns::get_physical_device_image_format_properties(
-                self.native_ptr(),
-                format,
-                itype,
-                tiling,
-                usage.bits(),
-                flags.bits(),
-                p.as_mut_ptr(),
-            )
-        })?;
+        crate::vkfn_wrapper::get_physical_device_image_format_properties(
+            self.as_transparent_ref(),
+            format,
+            itype,
+            tiling,
+            usage,
+            flags,
+            &mut p,
+        )?;
 
         Ok(unsafe { p.assume_init() })
     }
 
     /// Reports a count of properties of the queues of the specified physical device
     #[implements]
-    #[inline]
+    #[inline(always)]
     fn queue_family_property_count(&self) -> u32 {
-        let mut n = 0;
-        unsafe {
-            brvk::fns::get_physical_device_queue_family_properties(self.native_ptr(), &mut n, core::ptr::null_mut());
-        }
-
-        n
+        crate::vkfn_wrapper::get_physical_device_queue_family_property_count(self.as_transparent_ref())
     }
 
     /// Reports properties of the queues of the specified physical device
     #[implements]
-    #[inline]
+    #[inline(always)]
     fn queue_family_properties(&self, sink: &mut [core::mem::MaybeUninit<QueueFamilyProperties>]) -> u32 {
-        let mut n = sink.len() as _;
-        unsafe {
-            brvk::fns::get_physical_device_queue_family_properties(self.native_ptr(), &mut n, sink.as_mut_ptr().cast());
-        }
-
-        n
+        crate::vkfn_wrapper::get_physical_device_queue_family_properties(self.as_transparent_ref(), sink)
     }
 
     /// Reports properties of the queues of the specified physical device
-    #[implements]
-    #[cfg(feature = "alloc")]
+    #[implements("alloc")]
     fn queue_family_properties_alloc(&self) -> QueueFamilies {
         let n = self.queue_family_property_count() as usize;
         if n == 0 {
@@ -1288,7 +1289,7 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
             return QueueFamilies(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = crate::alloc::empty_reserved_buffer(n);
+        let mut xs = crate::alloc::reserve(n);
         let filled = self.queue_family_properties(xs.spare_capacity_mut());
         unsafe {
             xs.set_len(filled as _);
@@ -1303,12 +1304,13 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
     fn memory_properties(&self) -> MemoryProperties {
         let mut p = core::mem::MaybeUninit::uninit();
         crate::vkfn_wrapper::get_physical_device_memory_properties(self.as_transparent_ref(), &mut p);
+
         unsafe { MemoryProperties(p.assume_init()) }
     }
 
     /// Retrieve a count of properties of an image format spplied to sparse images
     #[implements]
-    #[inline]
+    #[inline(always)]
     fn sparse_image_format_property_count(
         &self,
         format: brvk::VkFormat,
@@ -1317,26 +1319,19 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
         usage: ImageUsageFlags,
         tiling: brvk::VkImageTiling,
     ) -> u32 {
-        let mut n = 0;
-        unsafe {
-            brvk::fns::get_physical_device_sparse_image_format_properties(
-                self.native_ptr(),
-                format,
-                image_type,
-                samples,
-                usage.bits(),
-                tiling,
-                &mut n,
-                core::ptr::null_mut(),
-            );
-        }
-
-        n
+        crate::vkfn_wrapper::get_physical_device_sparse_image_format_property_count(
+            self.as_transparent_ref(),
+            format,
+            image_type,
+            samples,
+            usage,
+            tiling,
+        )
     }
 
     /// Retrieve properties of an image format applied to sparse images
     #[implements]
-    #[inline]
+    #[inline(always)]
     fn sparse_image_format_properties(
         &self,
         format: brvk::VkFormat,
@@ -1346,21 +1341,15 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
         tiling: brvk::VkImageTiling,
         sink: &mut [core::mem::MaybeUninit<brvk::VkSparseImageFormatProperties>],
     ) -> u32 {
-        let mut n = sink.len() as _;
-        unsafe {
-            brvk::fns::get_physical_device_sparse_image_format_properties(
-                self.native_ptr(),
-                format,
-                image_type,
-                samples,
-                usage.bits(),
-                tiling,
-                &mut n,
-                sink.as_mut_ptr() as _,
-            );
-        }
-
-        n
+        crate::vkfn_wrapper::get_physical_device_sparse_image_format_properties(
+            self.as_transparent_ref(),
+            format,
+            image_type,
+            samples,
+            usage,
+            tiling,
+            sink,
+        )
     }
 
     /// Retrieve properties of an image format applied to sparse images
@@ -1380,10 +1369,11 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
             return crate::alloc::empty_sink_buffer();
         }
 
-        let mut xs = Vec::with_capacity(n as _);
-        self.sparse_image_format_properties(format, itype, samples, usage, tiling, xs.spare_capacity_mut());
+        let mut xs = crate::alloc::reserve(n as _);
+        let filled =
+            self.sparse_image_format_properties(format, itype, samples, usage, tiling, xs.spare_capacity_mut());
         unsafe {
-            xs.set_len(n as _);
+            xs.set_len(filled as _);
         }
 
         xs
@@ -1457,14 +1447,41 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
     #[inline]
     fn surface_capabilities(&self, surface: &(impl Surface + ?Sized)) -> crate::Result<SurfaceCapabilities> {
         let mut s = std::mem::MaybeUninit::uninit();
-
         unsafe {
             crate::vkfn_wrapper::get_physical_device_surface_capabilities(
                 self.as_transparent_ref(),
                 surface.as_transparent_ref(),
                 &mut s,
             )?;
-            Ok(s.assume_init())
+        }
+
+        Ok(unsafe { s.assume_init() })
+    }
+
+    /// Reports capabilities of a surface on a physical device
+    ///
+    /// # Failures
+    ///
+    /// On failure, this command returns
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_SURFACE_LOST_KHR`]
+    ///
+    /// # Safety
+    /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
+    #[implements("VK_KHR_get_surface_capabilities2")]
+    #[inline(always)]
+    unsafe fn surface_capabilities2(
+        &self,
+        surface_info: &brvk::VkPhysicalDeviceSurfaceInfo2KHR,
+        sink: &mut core::mem::MaybeUninit<brvk::VkSurfaceCapabilities2KHR>,
+    ) -> crate::Result<()>
+    where
+        Self::ConcreteInstance: InstanceGetSurfaceCapabilities2Extension,
+    {
+        unsafe {
+            self.instance()
+                .get_physical_device_surface_capabilities2(self.as_transparent_ref(), surface_info, sink)
         }
     }
 
@@ -1520,23 +1537,21 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
     /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `brvk::VK_ERROR_SURFACE_LOST_KHR`
     #[implements("VK_KHR_surface", "alloc")]
-    fn surface_formats_alloc(
-        &self,
-        surface: &(impl Surface + ?Sized),
-    ) -> crate::Result<ArrayQueryResult<Vec<brvk::VkSurfaceFormatKHR>>> {
+    fn surface_formats_alloc(&self, surface: &(impl Surface + ?Sized)) -> crate::Result<Vec<brvk::VkSurfaceFormatKHR>> {
         let n = self.surface_format_count(surface)?;
         if n == 0 {
             // no items
-            return Ok(ArrayQueryResult::completed(crate::alloc::empty_sink_buffer()));
+            return Ok(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = crate::alloc::empty_reserved_buffer(n as _);
+        let mut xs = crate::alloc::reserve(n as _);
         let filled = self.surface_formats(surface, xs.spare_capacity_mut())?;
+        assert!(!filled.is_incomplete);
         unsafe {
             xs.set_len(filled.result as _);
         }
 
-        Ok(filled.with_result(xs))
+        Ok(xs)
     }
 
     /// Query a count of supported presentation modes
@@ -1598,20 +1613,23 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
             return Ok(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = Vec::with_capacity(n as _);
-        self.surface_present_modes(surface, xs.spare_capacity_mut())?;
+        let mut xs = crate::alloc::reserve(n as _);
+        let filled = self.surface_present_modes(surface, xs.spare_capacity_mut())?;
+        assert!(!filled.is_incomplete);
         unsafe {
-            xs.set_len(n as _);
+            xs.set_len(filled.result as _);
         }
 
         Ok(xs)
     }
 
     /// Query physical device for presentation to X11 server using Xlib
+    ///
     /// # Safety
+    ///
     /// Provided `display` must be a valid reference
     #[implements("VK_KHR_xlib_surface")]
-    #[inline]
+    #[inline(always)]
     unsafe fn xlib_presentation_support(
         &self,
         queue_family: u32,
@@ -1619,16 +1637,22 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
         visual: x11::xlib::VisualID,
     ) -> bool {
         unsafe {
-            brvk::get_physical_device_xlib_presentation_support_khr(self.native_ptr(), queue_family, display, visual)
-                != 0
+            crate::vkfn_wrapper::get_physical_device_xlib_presentation_support_khr(
+                self.as_transparent_ref(),
+                queue_family,
+                display,
+                visual,
+            )
         }
     }
 
     /// Query physical device for presentation to X11 server using XCB
+    ///
     /// # Safety
+    ///
     /// Provided `connection` must be a valid reference
     #[implements("VK_KHR_xcb_surface")]
-    #[inline]
+    #[inline(always)]
     unsafe fn xcb_presentation_support(
         &self,
         queue_family: u32,
@@ -1636,27 +1660,37 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
         visual: xcb::x::Visualid,
     ) -> bool {
         unsafe {
-            brvk::get_physical_device_xcb_presentation_support_khr(self.native_ptr(), queue_family, connection, visual)
-                != 0
+            crate::vkfn_wrapper::get_physical_device_xcb_presentation_support_khr(
+                self.as_transparent_ref(),
+                queue_family,
+                connection,
+                visual,
+            )
         }
     }
 
     /// Query physical device for presentation to Wayland
+    ///
     /// # Safety
+    ///
     /// Provided `display` must be a valid reference
     #[implements("VK_KHR_wayland_surface")]
-    #[inline]
+    #[inline(always)]
     unsafe fn wayland_presentation_support(&self, queue_family: u32, display: *mut core::ffi::c_void) -> bool {
         unsafe {
-            brvk::get_physical_device_wayland_presentation_support_khr(self.native_ptr(), queue_family, display) != 0
+            crate::vkfn_wrapper::get_physical_device_wayland_presentation_support_khr(
+                self.as_transparent_ref(),
+                queue_family,
+                display,
+            )
         }
     }
 
     /// Query queue family support for presentation on a Win32 display
     #[implements("VK_KHR_win32_surface")]
-    #[inline]
+    #[inline(always)]
     fn win32_presentation_support(&self, queue_family: u32) -> bool {
-        unsafe { brvk::get_physical_device_win32_presentation_support_khr(self.native_ptr(), queue_family) != 0 }
+        crate::vkfn_wrapper::get_physical_device_win32_presentation_support(self.as_transparent_ref(), queue_family)
     }
 
     /// Query a count of the set of mode properties supported by the display
@@ -1704,7 +1738,7 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
             return Ok(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = crate::alloc::empty_reserved_buffer(n as _);
+        let mut xs = crate::alloc::reserve(n as _);
         let res = self.display_mode_properties(display, xs.spare_capacity_mut())?;
         assert!(!res.is_incomplete);
         unsafe {
@@ -1763,8 +1797,9 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
         let mut s = core::mem::MaybeUninit::uninit();
         unsafe {
             crate::vkfn_wrapper::get_display_plane_capabilities(self.as_transparent_ref(), mode, plane_index, &mut s)?;
-            Ok(s.assume_init())
         }
+
+        Ok(unsafe { s.assume_init() })
     }
 
     /// Query a count of information about the available displays
@@ -1786,7 +1821,7 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
     /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements("VK_KHR_display")]
-    #[inline]
+    #[inline(always)]
     fn display_properties(
         &self,
         sink: &mut [core::mem::MaybeUninit<DisplayProperties>],
@@ -1808,7 +1843,7 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
             return Ok(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = crate::alloc::empty_reserved_buffer(n as _);
+        let mut xs = crate::alloc::reserve(n as _);
         let r = self.display_properties(xs.spare_capacity_mut())?;
         assert!(!r.is_incomplete);
         unsafe {
@@ -1862,7 +1897,7 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
             return Ok(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = crate::alloc::empty_reserved_buffer(n as _);
+        let mut xs = crate::alloc::reserve(n as _);
         let r = self.display_plane_properties(xs.spare_capacity_mut())?;
         assert!(!r.is_incomplete);
         unsafe {
@@ -1917,7 +1952,7 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
             return Ok(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = crate::alloc::empty_reserved_buffer(n as _);
+        let mut xs = crate::alloc::reserve(n as _);
         let r = self.display_plane_supported_displays(plane_index, xs.spare_capacity_mut())?;
         assert!(!r.is_incomplete);
         unsafe {
@@ -1944,7 +1979,6 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
         allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
     ) -> crate::Result<brvk::VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
-
         translate_vk_result(unsafe {
             brvk::fns::create_display_plane_surface_khr(
                 self.instance().native_ptr(),
@@ -1983,38 +2017,6 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
         Ok(Display(d.assume_init(), self))
     }
 
-    /// Reports capabilities of a surface on a physical device
-    ///
-    /// # Failures
-    ///
-    /// On failure, this command returns
-    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    /// * [`brvk::VK_ERROR_SURFACE_LOST_KHR`]
-    ///
-    /// # Safety
-    /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
-    #[implements("VK_KHR_get_surface_capabilities2")]
-    #[inline]
-    unsafe fn surface_capabilities2(
-        &self,
-        surface_info: &brvk::VkPhysicalDeviceSurfaceInfo2KHR,
-        sink: &mut core::mem::MaybeUninit<brvk::VkSurfaceCapabilities2KHR>,
-    ) -> crate::Result<()>
-    where
-        Self::ConcreteInstance: InstanceGetSurfaceCapabilities2Extension,
-    {
-        unsafe {
-            self.instance().get_physical_device_surface_capabilities_2_khr_fn().0(
-                self.native_ptr(),
-                surface_info,
-                sink.as_mut_ptr(),
-            )
-            .into_result()
-            .map(drop)
-        }
-    }
-
     /// Query a count of supported presentation modes
     /// # Failures
     /// On failure, this command returns
@@ -2023,23 +2025,15 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
     /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     /// * [`brvk::VK_ERROR_SURFACE_LOST_KHR`]
     #[implements("VK_EXT_full_screen_exclusive")]
-    #[inline]
+    #[inline(always)]
     fn surface_present_mode2_count(&self, surface_info: &brvk::VkPhysicalDeviceSurfaceInfo2KHR) -> crate::Result<u32>
     where
         Self::ConcreteInstance: InstanceFullScreenExclusiveExtension,
     {
-        let mut n = 0;
         unsafe {
-            self.instance().get_physical_device_surface_present_modes_2_ext_fn().0(
-                self.native_ptr(),
-                surface_info,
-                &mut n,
-                core::ptr::null_mut(),
-            )
-            .into_result()?;
+            self.instance()
+                .get_physical_device_surface_present_mode2_count(self.as_transparent_ref(), surface_info)
         }
-
-        Ok(n)
     }
 
     /// Query supported presentation modes
@@ -2050,27 +2044,19 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
     /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     /// * [`brvk::VK_ERROR_SURFACE_LOST_KHR`]
     #[implements("VK_EXT_full_screen_exclusive")]
-    #[inline]
+    #[inline(always)]
     fn surface_present_modes2(
         &self,
         surface_info: &brvk::VkPhysicalDeviceSurfaceInfo2KHR,
-        sink: &mut [core::mem::MaybeUninit<VkPresentModeKHR>],
-    ) -> crate::Result<u32>
+        sink: &mut [core::mem::MaybeUninit<brvk::VkPresentModeKHR>],
+    ) -> crate::Result<ArrayQueryResult<u32>>
     where
         Self::ConcreteInstance: InstanceFullScreenExclusiveExtension,
     {
-        let mut n = sink.len() as _;
         unsafe {
-            self.instance().get_physical_device_surface_present_modes_2_ext_fn().0(
-                self.native_ptr(),
-                surface_info,
-                &mut n,
-                sink.as_mut_ptr() as _,
-            )
-            .into_result()?;
+            self.instance()
+                .get_physical_device_surface_present_modes2(self.as_transparent_ref(), surface_info, sink)
         }
-
-        Ok(n)
     }
 
     /// Query supported presentation modes.
@@ -2085,7 +2071,7 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
     fn surface_present_modes2_alloc(
         &self,
         surface_info: &brvk::VkPhysicalDeviceSurfaceInfo2KHR,
-    ) -> crate::Result<Vec<VkPresentModeKHR>>
+    ) -> crate::Result<Vec<brvk::VkPresentModeKHR>>
     where
         Self::ConcreteInstance: InstanceFullScreenExclusiveExtension,
     {
@@ -2095,17 +2081,17 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
             return Ok(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = Vec::with_capacity(n as _);
-        self.surface_present_modes2(surface_info, xs.spare_capacity_mut())?;
+        let mut xs = crate::alloc::reserve(n as _);
+        let r = self.surface_present_modes2(surface_info, xs.spare_capacity_mut())?;
+        assert!(!r.is_incomplete);
         unsafe {
-            xs.set_len(n as _);
+            xs.set_len(r.result as _);
         }
 
         Ok(xs)
     }
 }
-DerefContainerBracketImpl!(for PhysicalDevice {});
-GuardsImpl!(for PhysicalDevice {});
+DerefContainerWithGuardsBracketImpl!(for PhysicalDevice {});
 
 pub trait InstanceChild {
     type ConcreteInstance: Instance;

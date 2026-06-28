@@ -1442,7 +1442,7 @@ pub trait DeviceGetMemoryRequirements2Extension: Device {
             return crate::alloc::empty_sink_buffer();
         }
 
-        let mut buf = crate::alloc::empty_reserved_buffer(n as _);
+        let mut buf = crate::alloc::reserve(n as _);
         let written = self.get_image_sparse_memory_requirements2_khr(info, buf.spare_capacity_mut());
         unsafe {
             buf.set_len(written as _);
@@ -1799,6 +1799,36 @@ pub trait DeviceFullScreenExclusiveExtension: Device {
     fn acquire_full_screen_exclusive_mode_ext_fn(&self) -> brvk::PFN_vkAcquireFullScreenExclusiveModeEXT;
     #[implements]
     fn release_full_screen_exclusive_mode_ext_fn(&self) -> brvk::PFN_vkReleaseFullScreenExclusiveModeEXT;
+
+    /// # Safety
+    ///
+    /// `swapchain` must be created from `device`.
+    #[implements]
+    #[inline(always)]
+    unsafe fn acquire_full_screen_exclusive_mode(
+        &self,
+        device: VkHandleRef<brvk::VkDevice>,
+        swapchain: VkHandleRef<brvk::VkSwapchainKHR>,
+    ) -> crate::Result<()> {
+        translate_vk_result(unsafe { self.acquire_full_screen_exclusive_mode_ext_fn().0(device.0, swapchain.0) })?;
+
+        Ok(())
+    }
+
+    /// # Safety
+    ///
+    /// `swapchain` must be created from `device`.
+    #[implements]
+    #[inline(always)]
+    unsafe fn release_full_screen_exclusive_mode(
+        &self,
+        device: VkHandleRef<brvk::VkDevice>,
+        swapchain: VkHandleRef<brvk::VkSwapchainKHR>,
+    ) -> crate::Result<()> {
+        translate_vk_result(unsafe { self.release_full_screen_exclusive_mode_ext_fn().0(device.0, swapchain.0) })?;
+
+        Ok(())
+    }
 }
 #[cfg(feature = "VK_EXT_full_screen_exclusive")]
 DerefContainerWithGuardsBracketImpl!(for DeviceFullScreenExclusiveExtension {
