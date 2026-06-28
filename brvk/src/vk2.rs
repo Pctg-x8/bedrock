@@ -19298,6 +19298,38 @@ unsafe impl crate::VulkanStructure for VkPipelineRasterizationStateRasterization
 #[rustfmt::skip]
 impl crate::TypedVulkanStructure for VkPipelineRasterizationStateRasterizationOrderAMD { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_RASTERIZATION_ORDER_AMD; }
 
+#[cfg(feature = "VK_AMD_texture_gather_bias_lod")]
+#[rustfmt::skip]
+pub const VK_AMD_TEXTURE_GATHER_BIAS_LOD_EXTENSION_NAME: &str = "VK_AMD_texture_gather_bias_lod";
+#[cfg(feature = "VK_AMD_texture_gather_bias_lod")]
+#[rustfmt::skip]
+pub const VK_AMD_TEXTURE_GATHER_BIAS_LOD_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_AMD_texture_gather_bias_lod")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkTextureLODGatherFormatPropertiesAMD {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub supportsTextureGatherLODBiasAMD: VkBool32,
+}
+#[cfg(feature = "VK_AMD_texture_gather_bias_lod")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_TEXTURE_LOD_GATHER_FORMAT_PROPERTIES_AMD: VkStructureType = 1000041000;
+#[cfg(feature = "VK_AMD_texture_gather_bias_lod")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkTextureLODGatherFormatPropertiesAMD {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_AMD_texture_gather_bias_lod")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkTextureLODGatherFormatPropertiesAMD { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_TEXTURE_LOD_GATHER_FORMAT_PROPERTIES_AMD; }
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]

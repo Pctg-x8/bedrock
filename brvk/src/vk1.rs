@@ -169,7 +169,6 @@ ExportExtensions!("VK_AMD_draw_indirect_count": draw_indirect_count_amd);
 ExportExtensions!("VK_AMD_negative_viewport_height": negative_viewport_height_amd);
 ExportExtensions!("VK_AMD_gpu_shader_half_float": gpu_shader_half_float_amd);
 ExportExtensions!("VK_AMD_shader_ballot": shader_ballot_amd);
-ExportExtensions!("VK_AMD_texture_gather_bias_lod": texture_gather_bias_lod_amd);
 ExportExtensions!("VK_AMD_shader_info": shader_info_amd);
 ExportExtensions!("VK_AMD_shader_image_load_store_lod": shader_image_load_store_lod_amd);
 ExportExtensions!("VK_IMG_format_pvrtc": format_pvrtc_img);

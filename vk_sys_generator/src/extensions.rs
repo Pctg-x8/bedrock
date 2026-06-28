@@ -1327,4 +1327,16 @@ pub const ELEMENTS: &[Element] = &[
         )
         .extensions(&[("AMD", "rasterization_order")]),
     ),
+    // VK_AMD_texture_gather_bias_lod
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_AMD_texture_gather_bias_lod", 1)),
+    Element::Struct(
+        Struct::typed(
+            "TextureLODGatherFormatProperties",
+            "TEXTURE_LOD_GATHER_FORMAT_PROPERTIES",
+            vk_ext_enum(42, 0) as _,
+            StructUsage::Sink,
+            &[Struct::member("supportsTextureGatherLODBiasAMD", TY_VK_BOOL)],
+        )
+        .extensions(&[("AMD", "texture_gather_bias_lod")]),
+    ),
 ];
