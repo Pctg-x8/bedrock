@@ -16577,44 +16577,44 @@ pub const VK_ERROR_NOT_PERMITTED_KHR_KHR: VkResult = VkResult(-1000174001);
 #[rustfmt::skip]
 pub const VK_ERROR_NOT_PERMITTED_KHR: VkResult = VkResult(-1000174001);
 
-#[cfg(feature = "KHR")]
+#[cfg(feature = "global_priority")]
 #[rustfmt::skip]
-pub type VkQueueGlobalPriorityglobal_priority = i32;
+pub type VkQueueGlobalPriorityKHR = i32;
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
 pub type VkQueueGlobalPriority = i32;
-#[cfg(feature = "KHR")]
+#[cfg(feature = "global_priority")]
 #[cfg(feature = "VK_KHR_global_priority")]
 #[rustfmt::skip]
-pub const VK_QUEUE_GLOBAL_PRIORITY_LOW_KHR: VkQueueGlobalPriorityglobal_priority = 128;
-#[cfg(feature = "KHR")]
+pub const VK_QUEUE_GLOBAL_PRIORITY_LOW_KHR: VkQueueGlobalPriorityKHR = 128;
+#[cfg(feature = "global_priority")]
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
-pub const VK_QUEUE_GLOBAL_PRIORITY_LOW: VkQueueGlobalPriorityglobal_priority = 128;
-#[cfg(feature = "KHR")]
+pub const VK_QUEUE_GLOBAL_PRIORITY_LOW: VkQueueGlobalPriorityKHR = 128;
+#[cfg(feature = "global_priority")]
 #[cfg(feature = "VK_KHR_global_priority")]
 #[rustfmt::skip]
-pub const VK_QUEUE_GLOBAL_PRIORITY_MEDIUM_KHR: VkQueueGlobalPriorityglobal_priority = 256;
-#[cfg(feature = "KHR")]
+pub const VK_QUEUE_GLOBAL_PRIORITY_MEDIUM_KHR: VkQueueGlobalPriorityKHR = 256;
+#[cfg(feature = "global_priority")]
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
-pub const VK_QUEUE_GLOBAL_PRIORITY_MEDIUM: VkQueueGlobalPriorityglobal_priority = 256;
-#[cfg(feature = "KHR")]
+pub const VK_QUEUE_GLOBAL_PRIORITY_MEDIUM: VkQueueGlobalPriorityKHR = 256;
+#[cfg(feature = "global_priority")]
 #[cfg(feature = "VK_KHR_global_priority")]
 #[rustfmt::skip]
-pub const VK_QUEUE_GLOBAL_PRIORITY_HIGH_KHR: VkQueueGlobalPriorityglobal_priority = 512;
-#[cfg(feature = "KHR")]
+pub const VK_QUEUE_GLOBAL_PRIORITY_HIGH_KHR: VkQueueGlobalPriorityKHR = 512;
+#[cfg(feature = "global_priority")]
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
-pub const VK_QUEUE_GLOBAL_PRIORITY_HIGH: VkQueueGlobalPriorityglobal_priority = 512;
-#[cfg(feature = "KHR")]
+pub const VK_QUEUE_GLOBAL_PRIORITY_HIGH: VkQueueGlobalPriorityKHR = 512;
+#[cfg(feature = "global_priority")]
 #[cfg(feature = "VK_KHR_global_priority")]
 #[rustfmt::skip]
-pub const VK_QUEUE_GLOBAL_PRIORITY_REALTIME_KHR: VkQueueGlobalPriorityglobal_priority = 1024;
-#[cfg(feature = "KHR")]
+pub const VK_QUEUE_GLOBAL_PRIORITY_REALTIME_KHR: VkQueueGlobalPriorityKHR = 1024;
+#[cfg(feature = "global_priority")]
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
-pub const VK_QUEUE_GLOBAL_PRIORITY_REALTIME: VkQueueGlobalPriorityglobal_priority = 1024;
+pub const VK_QUEUE_GLOBAL_PRIORITY_REALTIME: VkQueueGlobalPriorityKHR = 1024;
 
 #[cfg(feature = "VK_KHR_global_priority")]
 #[derive(Debug, Clone)]

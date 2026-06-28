@@ -85,7 +85,7 @@ pub const ELEMENTS: &[Element] = &[
                     .promoted(VERSION),
             ],
         )
-        .extension("KHR", "global_priority")
+        .extension("global_priority", "KHR")
         .promoted(VERSION),
     ),
     Element::Struct(
