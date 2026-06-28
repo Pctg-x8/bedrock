@@ -19469,6 +19469,197 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT {
     }
 }
 
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[rustfmt::skip]
+pub const VK_EXT_DEBUG_MARKER_EXTENSION_NAME: &str = "VK_EXT_debug_marker";
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[rustfmt::skip]
+pub const VK_EXT_DEBUG_MARKER_SPEC_VERSION: usize = 4;
+
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkDebugMarkerObjectNameInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub objectType: VkDebugReportObjectTypeEXT,
+    pub object: u64,
+    pub pObjectName: *const core::ffi::c_char,
+}
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT: VkStructureType = 1000022000;
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkDebugMarkerObjectNameInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkDebugMarkerObjectNameInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkDebugMarkerObjectTagInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub objectType: VkDebugReportObjectTypeEXT,
+    pub object: u64,
+    pub tagName: u64,
+    pub tagSize: usize,
+    pub pTag: *const core::ffi::c_void,
+}
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_TAG_INFO_EXT: VkStructureType = 1000022001;
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkDebugMarkerObjectTagInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkDebugMarkerObjectTagInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_TAG_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkDebugMarkerMarkerInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub pMarkerName: *const core::ffi::c_char,
+    pub color: [core::ffi::c_float; 4],
+}
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT: VkStructureType = 1000022002;
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkDebugMarkerMarkerInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkDebugMarkerMarkerInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT; }
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkDebugMarkerSetObjectTagEXT(pub unsafe extern "system" fn(device: VkDevice, pTagInfo: *const VkDebugMarkerObjectTagInfoEXT) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkDebugMarkerSetObjectTagEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDebugMarkerSetObjectTagEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkDebugMarkerSetObjectNameEXT(pub unsafe extern "system" fn(device: VkDevice, pNameInfo: *const VkDebugMarkerObjectNameInfoEXT) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkDebugMarkerSetObjectNameEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDebugMarkerSetObjectNameEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdDebugMarkerBeginEXT(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pMarkerInfo: *const VkDebugMarkerMarkerInfoEXT));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdDebugMarkerBeginEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdDebugMarkerBeginEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdDebugMarkerEndEXT(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdDebugMarkerEndEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdDebugMarkerEndEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdDebugMarkerInsertEXT(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pMarkerInfo: *const VkDebugMarkerMarkerInfoEXT));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_marker")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdDebugMarkerInsertEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdDebugMarkerInsertEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]

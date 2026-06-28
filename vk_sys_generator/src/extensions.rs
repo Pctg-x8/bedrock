@@ -1422,4 +1422,86 @@ pub const ELEMENTS: &[Element] = &[
         .failable()
         .extension("EXT", "display_surface_counter"),
     ),
+    // VK_EXT_debug_marker
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_debug_marker", 4)),
+    Element::Struct(
+        Struct::typed(
+            "DebugMarkerObjectNameInfo",
+            "DEBUG_MARKER_OBJECT_NAME_INFO",
+            vk_ext_enum(23, 0) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("objectType", "VkDebugReportObjectTypeEXT"),
+                Struct::member("object", "u64"),
+                Struct::member("pObjectName", "*const core::ffi::c_char"),
+            ],
+        )
+        .extensions(&[ex_ext("debug_marker")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "DebugMarkerObjectTagInfo",
+            "DEBUG_MARKER_OBJECT_TAG_INFO",
+            vk_ext_enum(23, 1) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("objectType", "VkDebugReportObjectTypeEXT"),
+                Struct::member("object", "u64"),
+                Struct::member("tagName", "u64"),
+                Struct::member("tagSize", "usize"),
+                Struct::member("pTag", "*const core::ffi::c_void"),
+            ],
+        )
+        .extensions(&[ex_ext("debug_marker")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "DebugMarkerMarkerInfo",
+            "DEBUG_MARKER_MARKER_INFO",
+            vk_ext_enum(23, 2) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("pMarkerName", "*const core::ffi::c_char"),
+                Struct::member("color", "[core::ffi::c_float; 4]"),
+            ],
+        )
+        .extensions(&[ex_ext("debug_marker")]),
+    ),
+    Element::Command(
+        Command::new(
+            "DebugMarkerSetObjectTag",
+            &[
+                ("device", "VkDevice"),
+                ("pTagInfo", "*const VkDebugMarkerObjectTagInfoEXT"),
+            ],
+        )
+        .failable()
+        .extension("EXT", "debug_marker"),
+    ),
+    Element::Command(
+        Command::new(
+            "DebugMarkerSetObjectName",
+            &[
+                ("device", "VkDevice"),
+                ("pNameInfo", "*const VkDebugMarkerObjectNameInfoEXT"),
+            ],
+        )
+        .failable()
+        .extension("EXT", "debug_marker"),
+    ),
+    Element::Command(
+        Command::inst(
+            "DebugMarkerBegin",
+            &[("pMarkerInfo", "*const VkDebugMarkerMarkerInfoEXT")],
+        )
+        .extension("EXT", "debug_marker"),
+    ),
+    Element::Command(Command::inst("DebugMarkerEnd", &[]).extension("EXT", "debug_marker")),
+    Element::Command(
+        Command::inst(
+            "DebugMarkerInsert",
+            &[("pMarkerInfo", "*const VkDebugMarkerMarkerInfoEXT")],
+        )
+        .extension("EXT", "debug_marker"),
+    ),
 ];
