@@ -84,10 +84,6 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT: cr
     100_0099_000;
 pub const VK_STRUCTURE_TYPE_PIPELINE_DISCARD_RECTANGLE_STATE_CREATE_INFO_EXT: crate::vk2::VkStructureType =
     100_0099_001;
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT: crate::vk2::VkStructureType =
-    100_0101_000;
-pub const VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT: crate::vk2::VkStructureType =
-    100_0101_001;
 pub const VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK: crate::vk2::VkStructureType = 100_0122_000;
 pub const VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK: crate::vk2::VkStructureType = 100_0123_000;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT: crate::vk2::VkStructureType =
@@ -166,7 +162,6 @@ ExportExtensions!("VK_NV_sample_mask_override_coverage": sample_mask_override_co
 ExportExtensions!("VK_NV_geometry_shader_passthrough": geometry_shader_passthrough_nv);
 ExportExtensions!("VK_NV_viewport_array2": viewport_array2_nv);
 ExportExtensions!("VK_EXT_discard_rectangles": discard_rectangles_ext);
-ExportExtensions!("VK_EXT_conservative_rasterization": conservative_rasterization_ext);
 ExportExtensions!("VK_EXT_swapchain_colorspace": swapchain_colorspace_ext);
 ExportExtensions!("VK_MVK_ios_surface": ios_surface_mvk);
 ExportExtensions!("VK_MVK_macos_surface": macos_surface_mvk);

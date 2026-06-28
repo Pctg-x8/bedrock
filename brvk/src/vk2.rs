@@ -20423,6 +20423,97 @@ pub const VK_NV_FILL_RECTANGLE_SPEC_VERSION: usize = 1;
 #[rustfmt::skip]
 pub const VK_POLYGON_MODE_FILL_RECTANGLE_NV: VkPolygonMode = 1000153000;
 
+#[cfg(feature = "VK_EXT_conservative_rasterization")]
+#[rustfmt::skip]
+pub const VK_EXT_CONSERVATIVE_RASTERIZATION_EXTENSION_NAME: &str = "VK_EXT_conservative_rasterization";
+#[cfg(feature = "VK_EXT_conservative_rasterization")]
+#[rustfmt::skip]
+pub const VK_EXT_CONSERVATIVE_RASTERIZATION_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_EXT_conservative_rasterization")]
+#[rustfmt::skip]
+pub type VkConservativeRasterizationModeEXT = i32;
+#[cfg(feature = "VK_EXT_conservative_rasterization")]
+#[rustfmt::skip]
+pub const VK_CONSERVATIVE_RASTERIZATION_MODE_DISABLED_EXT: VkConservativeRasterizationModeEXT = 0;
+#[cfg(feature = "VK_EXT_conservative_rasterization")]
+#[rustfmt::skip]
+pub const VK_CONSERVATIVE_RASTERIZATION_MODE_OVERESTIMATE_EXT: VkConservativeRasterizationModeEXT = 1;
+#[cfg(feature = "VK_EXT_conservative_rasterization")]
+#[rustfmt::skip]
+pub const VK_CONSERVATIVE_RASTERIZATION_MODE_UNDERESTIMATE_EXT: VkConservativeRasterizationModeEXT = 2;
+
+#[cfg(feature = "VK_EXT_conservative_rasterization")]
+#[rustfmt::skip]
+pub type VkPipelineRasterizationConservativeStateCreateFlagsEXT = VkFlags;
+#[cfg(feature = "VK_EXT_conservative_rasterization")]
+#[rustfmt::skip]
+pub type VkPipelineRasterizationConservativeStateCreateFlagBitsEXT = VkFlags;
+
+#[cfg(feature = "VK_EXT_conservative_rasterization")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceConservativeRasterizationPropertiesEXT {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub primitiveOverestimationSize: core::ffi::c_float,
+    pub maxExtraPrimitiveOverestimationSize: core::ffi::c_float,
+    pub extraPrimitiveOverestimationSizeGranularity: core::ffi::c_float,
+    pub primitiveUnderestimation: VkBool32,
+    pub conservativePointAndLineRasterization: VkBool32,
+    pub degenerateTrianglesRasterized: VkBool32,
+    pub degenerateLinesRasterized: VkBool32,
+    pub fullyCoveredFragmentShaderInputVariable: VkBool32,
+    pub conservativeRasterizationPostDepthCoverage: VkBool32,
+}
+#[cfg(feature = "VK_EXT_conservative_rasterization")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT: VkStructureType = 1000101000;
+#[cfg(feature = "VK_EXT_conservative_rasterization")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceConservativeRasterizationPropertiesEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_EXT_conservative_rasterization")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceConservativeRasterizationPropertiesEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT; }
+
+#[cfg(feature = "VK_EXT_conservative_rasterization")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPipelineRasterizationConservativeStateCreateInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkPipelineRasterizationConservativeStateCreateFlagsEXT,
+    pub conservativeRasterizationMode: VkConservativeRasterizationModeEXT,
+    pub extraPrimitiveOverestimationSize: core::ffi::c_float,
+}
+#[cfg(feature = "VK_EXT_conservative_rasterization")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT: VkStructureType = 1000101001;
+#[cfg(feature = "VK_EXT_conservative_rasterization")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPipelineRasterizationConservativeStateCreateInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_conservative_rasterization")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPipelineRasterizationConservativeStateCreateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT; }
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]

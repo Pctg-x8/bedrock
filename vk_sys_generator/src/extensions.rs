@@ -1989,4 +1989,61 @@ pub const ELEMENTS: &[Element] = &[
         "POLYGON_MODE",
         &[Enum::member("FILL_RECTANGLE", vk_ext_enum(154, 0) as _).extension("NV", "fill_rectangle")],
     )),
+    // VK_EXT_conservative_rasterization
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_conservative_rasterization", 1)),
+    Element::Enum(
+        Enum::new(
+            "ConservativeRasterizationMode",
+            "CONSERVATIVE_RASTERIZATION_MODE",
+            &[
+                Enum::member("DISABLED", 0).extension("EXT", "conservative_rasterization"),
+                Enum::member("OVERESTIMATE", 1).extension("EXT", "conservative_rasterization"),
+                Enum::member("UNDERESTIMATE", 2).extension("EXT", "conservative_rasterization"),
+            ],
+        )
+        .extension("EXT", "conservative_rasterization"),
+    ),
+    Element::Bitmask(
+        Bitmask::new(
+            "PipelineRasterizationConservativeStateCreateFlags",
+            "PipelineRasterizationConservativeStateCreateFlagBits",
+            "PIPELINE_RASTERIZATION_CONSERVATIVE_STATE",
+            &[],
+        )
+        .extension("EXT", "conservative_rasterization"),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "PhysicalDeviceConservativeRasterizationProperties",
+            "PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES",
+            vk_ext_enum(102, 0) as _,
+            StructUsage::Sink,
+            &[
+                Struct::member("primitiveOverestimationSize", "core::ffi::c_float"),
+                Struct::member("maxExtraPrimitiveOverestimationSize", "core::ffi::c_float"),
+                Struct::member("extraPrimitiveOverestimationSizeGranularity", "core::ffi::c_float"),
+                Struct::member("primitiveUnderestimation", TY_VK_BOOL),
+                Struct::member("conservativePointAndLineRasterization", TY_VK_BOOL),
+                Struct::member("degenerateTrianglesRasterized", TY_VK_BOOL),
+                Struct::member("degenerateLinesRasterized", TY_VK_BOOL),
+                Struct::member("fullyCoveredFragmentShaderInputVariable", TY_VK_BOOL),
+                Struct::member("conservativeRasterizationPostDepthCoverage", TY_VK_BOOL),
+            ],
+        )
+        .extensions(&[ex_ext("conservative_rasterization")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "PipelineRasterizationConservativeStateCreateInfo",
+            "PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO",
+            vk_ext_enum(102, 1) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("flags", "VkPipelineRasterizationConservativeStateCreateFlagsEXT"),
+                Struct::member("conservativeRasterizationMode", "VkConservativeRasterizationModeEXT"),
+                Struct::member("extraPrimitiveOverestimationSize", "core::ffi::c_float"),
+            ],
+        )
+        .extensions(&[ex_ext("conservative_rasterization")]),
+    ),
 ];
