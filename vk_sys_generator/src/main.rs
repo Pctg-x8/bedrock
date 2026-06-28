@@ -8,6 +8,7 @@ use parts::{
 mod extensions;
 mod parts;
 mod v1_2;
+mod v1_4;
 
 fn main() -> std::io::Result<()> {
     let mut o = std::io::stdout().lock();
@@ -182,6 +183,11 @@ fn main() -> std::io::Result<()> {
         x.emit(&mut o)?;
     }
 
+    for x in v1_4::ELEMENTS {
+        o.write_all(b"\n")?;
+        x.emit(&mut o)?;
+    }
+
     for x in extensions::ELEMENTS {
         o.write_all(b"\n")?;
         x.emit(&mut o)?;
@@ -197,6 +203,11 @@ fn main() -> std::io::Result<()> {
         c.emit_static_symbol(&mut o)?;
     }
     for x in v1_2::ELEMENTS {
+        if let Element::Command(x) = x {
+            x.emit_static_symbol(&mut o)?;
+        }
+    }
+    for x in v1_4::ELEMENTS {
         if let Element::Command(x) = x {
             x.emit_static_symbol(&mut o)?;
         }

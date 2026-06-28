@@ -739,4 +739,39 @@ pub const ELEMENTS: &[Element] = &[
         .failable()
         .extension("EXT", "external_memory_host"),
     ),
+    // VK_EXT_vertex_attribute_divisor
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_vertex_attribute_divisor", 1)),
+    Element::Struct(
+        Struct::typed(
+            "PhysicalDeviceVertexAttributeDivisorProperties",
+            "PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES",
+            vk_ext_enum(191, 0) as _,
+            StructUsage::Sink,
+            &[Struct::member("maxVertexAttribDivisor", "u32")],
+        )
+        .extensions(&[("EXT", "vertex_attribute_divisor")]),
+    ),
+    Element::Struct(
+        Struct::new(
+            "VertexInputBindingDivisorDescription",
+            &[Struct::member("binding", "u32"), Struct::member("divisor", "u32")],
+        )
+        .extensions(&[("EXT", "vertex_attribute_divisor")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "PipelineVertexInputDivisorStateCreateInfo",
+            "PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO",
+            vk_ext_enum(191, 1) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("vertexBindingDivisorCount", "u32"),
+                Struct::member(
+                    "pVertexBindingDivisors",
+                    "*const VkVertexInputBindingDivisorDescriptionEXT",
+                ),
+            ],
+        )
+        .extensions(&[("EXT", "vertex_attribute_divisor")]),
+    ),
 ];

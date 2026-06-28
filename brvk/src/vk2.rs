@@ -16379,6 +16379,141 @@ impl crate::StaticCallable for PFN_vkWaitSemaphores {
     const STATIC: Self = Self(vkWaitSemaphores);
 }
 
+#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
+#[rustfmt::skip]
+pub const VK_KHR_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME: &str = "VK_KHR_vertex_attribute_divisor";
+#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
+#[rustfmt::skip]
+pub const VK_KHR_VERTEX_ATTRIBUTE_DIVISOR_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceVertexAttributeDivisorPropertiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub maxVertexAttribDivisor: u32,
+    pub supportsNonZeroFirstInstance: VkBool32,
+}
+#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_KHR: VkStructureType = 1000190000;
+#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceVertexAttributeDivisorPropertiesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceVertexAttributeDivisorPropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_KHR; }
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkPhysicalDeviceVertexAttributeDivisorProperties = VkPhysicalDeviceVertexAttributeDivisorPropertiesKHR;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_KHR;
+
+#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkVertexInputBindingDivisorDescriptionKHR {
+    pub binding: u32,
+    pub divisor: u32,
+}
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkVertexInputBindingDivisorDescription = VkVertexInputBindingDivisorDescriptionKHR;
+
+#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPipelineVertexInputDivisorStateCreateInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub vertexBindingDivisorCount: u32,
+    pub pVertexBindingDivisors: *const VkVertexInputBindingDivisorDescriptionKHR,
+}
+#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_KHR: VkStructureType = 1000190001;
+#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPipelineVertexInputDivisorStateCreateInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPipelineVertexInputDivisorStateCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_KHR; }
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkPipelineVertexInputDivisorStateCreateInfo = VkPipelineVertexInputDivisorStateCreateInfoKHR;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_KHR;
+
+#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceVertexAttributeDivisorFeaturesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub vertexAttributeInstanceRateDivisor: VkBool32,
+    pub vertexAttributeInstanceRateZeroDivisor: VkBool32,
+}
+#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_KHR: VkStructureType = 1000190002;
+#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPhysicalDeviceVertexAttributeDivisorFeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPhysicalDeviceVertexAttributeDivisorFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_KHR; }
+#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceVertexAttributeDivisorFeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceVertexAttributeDivisorFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_KHR; }
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkPhysicalDeviceVertexAttributeDivisorFeatures = VkPhysicalDeviceVertexAttributeDivisorFeaturesKHR;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_KHR;
+
 #[cfg(feature = "VK_EXT_acquire_drm_display")]
 #[rustfmt::skip]
 pub const VK_EXT_ACQUIRE_DRM_DISPLAY_EXTENSION_NAME: &str = "VK_EXT_acquire_drm_display";
@@ -17786,6 +17921,77 @@ unsafe impl crate::PFN for PFN_vkGetMemoryHostPointerPropertiesEXT {
         unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
     }
 }
+
+#[cfg(feature = "VK_EXT_vertex_attribute_divisor")]
+#[rustfmt::skip]
+pub const VK_EXT_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME: &str = "VK_EXT_vertex_attribute_divisor";
+#[cfg(feature = "VK_EXT_vertex_attribute_divisor")]
+#[rustfmt::skip]
+pub const VK_EXT_VERTEX_ATTRIBUTE_DIVISOR_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_EXT_vertex_attribute_divisor")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub maxVertexAttribDivisor: u32,
+}
+#[cfg(feature = "VK_EXT_vertex_attribute_divisor")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_EXT: VkStructureType = 1000190000;
+#[cfg(feature = "VK_EXT_vertex_attribute_divisor")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_EXT_vertex_attribute_divisor")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_EXT; }
+
+#[cfg(feature = "VK_EXT_vertex_attribute_divisor")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkVertexInputBindingDivisorDescriptionEXT {
+    pub binding: u32,
+    pub divisor: u32,
+}
+
+#[cfg(feature = "VK_EXT_vertex_attribute_divisor")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPipelineVertexInputDivisorStateCreateInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub vertexBindingDivisorCount: u32,
+    pub pVertexBindingDivisors: *const VkVertexInputBindingDivisorDescriptionEXT,
+}
+#[cfg(feature = "VK_EXT_vertex_attribute_divisor")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_EXT: VkStructureType = 1000190001;
+#[cfg(feature = "VK_EXT_vertex_attribute_divisor")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPipelineVertexInputDivisorStateCreateInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_vertex_attribute_divisor")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPipelineVertexInputDivisorStateCreateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_EXT; }
 
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
