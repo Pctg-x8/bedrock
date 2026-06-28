@@ -358,7 +358,7 @@ Allow1_4APIs = [
   "VK_EXT_pipeline_robustness",
 ]
 
-Implements = []
+Implements = ["bedrock-vk/Implements"]
 Multithreaded = []
 Presentation = ["VK_KHR_surface", "VK_KHR_swapchain", "VK_KHR_display"]
 DynamicLoaded = ["Implements", "bedrock-vk/DynamicLoaded"]
