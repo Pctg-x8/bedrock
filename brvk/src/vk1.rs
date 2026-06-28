@@ -159,7 +159,6 @@ ExportExtensions!("VK_AMD_gpu_shader_half_float": gpu_shader_half_float_amd);
 ExportExtensions!("VK_AMD_shader_ballot": shader_ballot_amd);
 ExportExtensions!("VK_AMD_shader_info": shader_info_amd);
 ExportExtensions!("VK_AMD_shader_image_load_store_lod": shader_image_load_store_lod_amd);
-ExportExtensions!("VK_IMG_format_pvrtc": format_pvrtc_img);
 ExportExtensions!("VK_EXT_shader_group_ballot": shader_group_ballot_ext);
 ExportExtensions!("VK_EXT_shader_group_vote": shader_group_vote_ext);
 ExportExtensions!("VK_EXT_direct_mode_display": direct_mode_display_ext);

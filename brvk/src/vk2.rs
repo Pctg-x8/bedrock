@@ -20380,6 +20380,38 @@ unsafe impl crate::PFN for PFN_vkCmdSetViewportWScalingNV {
     }
 }
 
+#[cfg(feature = "VK_IMG_format_pvrtc")]
+#[rustfmt::skip]
+pub const VK_IMG_FORMAT_PVRTC_EXTENSION_NAME: &str = "VK_IMG_format_pvrtc";
+#[cfg(feature = "VK_IMG_format_pvrtc")]
+#[rustfmt::skip]
+pub const VK_IMG_FORMAT_PVRTC_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_IMG_format_pvrtc")]
+#[rustfmt::skip]
+pub const VK_FORMAT_PVRTC1_2BPP_UNORM_BLOCK_IMG: VkFormat = 1000054000;
+#[cfg(feature = "VK_IMG_format_pvrtc")]
+#[rustfmt::skip]
+pub const VK_FORMAT_PVRTC1_4BPP_UNORM_BLOCK_IMG: VkFormat = 1000054001;
+#[cfg(feature = "VK_IMG_format_pvrtc")]
+#[rustfmt::skip]
+pub const VK_FORMAT_PVRTC2_2BPP_UNORM_BLOCK_IMG: VkFormat = 1000054002;
+#[cfg(feature = "VK_IMG_format_pvrtc")]
+#[rustfmt::skip]
+pub const VK_FORMAT_PVRTC2_4BPP_UNORM_BLOCK_IMG: VkFormat = 1000054003;
+#[cfg(feature = "VK_IMG_format_pvrtc")]
+#[rustfmt::skip]
+pub const VK_FORMAT_PVRTC1_2BPP_SRGB_BLOCK_IMG: VkFormat = 1000054004;
+#[cfg(feature = "VK_IMG_format_pvrtc")]
+#[rustfmt::skip]
+pub const VK_FORMAT_PVRTC1_4BPP_SRGB_BLOCK_IMG: VkFormat = 1000054005;
+#[cfg(feature = "VK_IMG_format_pvrtc")]
+#[rustfmt::skip]
+pub const VK_FORMAT_PVRTC2_2BPP_SRGB_BLOCK_IMG: VkFormat = 1000054006;
+#[cfg(feature = "VK_IMG_format_pvrtc")]
+#[rustfmt::skip]
+pub const VK_FORMAT_PVRTC2_4BPP_SRGB_BLOCK_IMG: VkFormat = 1000054007;
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]
