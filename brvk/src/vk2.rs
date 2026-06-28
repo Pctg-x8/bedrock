@@ -20255,6 +20255,62 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceGeneratedCommandsPropertiesNVX
     }
 }
 
+#[cfg(feature = "VK_KHR_incremental_present")]
+#[rustfmt::skip]
+pub const VK_KHR_INCREMENTAL_PRESENT_EXTENSION_NAME: &str = "VK_KHR_incremental_present";
+#[cfg(feature = "VK_KHR_incremental_present")]
+#[rustfmt::skip]
+pub const VK_KHR_INCREMENTAL_PRESENT_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_incremental_present")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkRectLayerKHR {
+    pub offset: VkOffset2D,
+    pub extent: VkExtent2D,
+    pub layer: u32,
+}
+
+#[cfg(feature = "VK_KHR_incremental_present")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPresentRegionKHR {
+    pub rectangleCount: u32,
+    pub pRectangles: *const VkRectLayerKHR,
+}
+
+#[cfg(feature = "VK_KHR_incremental_present")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPresentREgionsKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub swapchainCount: u32,
+    pub pRegions: *const VkPresentRegionKHR,
+}
+#[cfg(feature = "VK_KHR_incremental_present")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PRESENT_REGIONS_KHR: VkStructureType = 1000084000;
+#[cfg(feature = "VK_KHR_incremental_present")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPresentREgionsKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_incremental_present")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPresentREgionsKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PRESENT_REGIONS_KHR; }
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]

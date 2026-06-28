@@ -1888,4 +1888,40 @@ pub const ELEMENTS: &[Element] = &[
         )
         .extension("NVX", "device_generated_commands"),
     ),
+    // VK_KHR_incremental_present
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_KHR_incremental_present", 1)),
+    Element::Struct(
+        Struct::new(
+            "RectLayer",
+            &[
+                Struct::member("offset", "VkOffset2D"),
+                Struct::member("extent", "VkExtent2D"),
+                Struct::member("layer", "u32"),
+            ],
+        )
+        .extensions(&[ex_khr("incremental_present")]),
+    ),
+    Element::Struct(
+        Struct::new(
+            "PresentRegion",
+            &[
+                Struct::member("rectangleCount", "u32"),
+                Struct::member("pRectangles", "*const VkRectLayerKHR"),
+            ],
+        )
+        .extensions(&[ex_khr("incremental_present")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "PresentREgions",
+            "PRESENT_REGIONS",
+            vk_ext_enum(85, 0) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("swapchainCount", "u32"),
+                Struct::member("pRegions", "*const VkPresentRegionKHR"),
+            ],
+        )
+        .extensions(&[ex_khr("incremental_present")]),
+    ),
 ];

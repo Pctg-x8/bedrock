@@ -79,7 +79,6 @@ pub const VK_STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHX: crate::vk2::VkStructure
 pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHX: crate::vk2::VkStructureType = 100_0060_011;
 pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHX: crate::vk2::VkStructureType = 100_0060_012;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES_KHR: crate::vk2::VkStructureType = 100_0080_000;
-pub const VK_STRUCTURE_TYPE_PRESENT_REGIONS_KHR: crate::vk2::VkStructureType = 100_0084_000;
 pub const VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_W_SCALING_STATE_CREATE_INFO_NV: crate::vk2::VkStructureType =
     100_0087_000;
 pub const VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES2_EXT: crate::vk2::VkStructureType = 100_0090_000;
@@ -153,7 +152,6 @@ macro_rules! ExportExtensions {
     };
 }
 
-ExportExtensions!("VK_KHR_incremental_present": incremental_present_khr);
 ExportExtensions!("VK_NV_glsl_shader": glsl_shader_nv);
 ExportExtensions!("VK_EXT_depth_range_unrestricted": depth_range_unrestricted_ext);
 ExportExtensions!("VK_AMD_gcn_shader": gcn_shader_amd);
