@@ -19686,10 +19686,10 @@ pub const VK_NVX_DEVICE_GENERATED_COMMANDS_SPEC_VERSION: usize = 1;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct ObjectTableNVX(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkObjectTableNVX(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[cfg(feature = "VK_NVX_device_generated_commands")]
 #[rustfmt::skip]
-impl crate::VkRawHandle for ObjectTableNVX {
+impl crate::VkRawHandle for VkObjectTableNVX {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_OBJECT_TABLE_NVX;
 
     #[inline(always)]
@@ -19705,10 +19705,10 @@ pub const VK_OBJECT_TYPE_OBJECT_TABLE_NVX: VkObjectType = 1000086000;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct IndirectCommandsLayoutNVX(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkIndirectCommandsLayoutNVX(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[cfg(feature = "VK_NVX_device_generated_commands")]
 #[rustfmt::skip]
-impl crate::VkRawHandle for IndirectCommandsLayoutNVX {
+impl crate::VkRawHandle for VkIndirectCommandsLayoutNVX {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NVX;
 
     #[inline(always)]
@@ -20037,7 +20037,7 @@ impl crate::TypedVulkanStructure for VkObjectTableCreateInfoNVX { const TYPE: Vk
 #[rustfmt::skip]
 pub struct VkObjectTableEntryNVX {
     pub r#type: VkObjectEntryTypeNVX,
-    pub flags: OVkObjectEntryUsageFlagsNVX,
+    pub flags: VkObjectEntryUsageFlagsNVX,
 }
 
 #[cfg(feature = "VK_NVX_device_generated_commands")]
@@ -20527,13 +20527,13 @@ pub const VK_DYNAMIC_STATE_DISCARD_RECTANGLE_EXT: VkDynamicState = 1000099000;
 
 #[cfg(feature = "VK_EXT_discard_rectangles")]
 #[rustfmt::skip]
-pub type VkDiscardRetangleModeEXT = i32;
+pub type VkDiscardRectangleModeEXT = i32;
 #[cfg(feature = "VK_EXT_discard_rectangles")]
 #[rustfmt::skip]
-pub const VK_DISCARD_RECTANGLE_MODE_INCLUSIVE_EXT: VkDiscardRetangleModeEXT = 0;
+pub const VK_DISCARD_RECTANGLE_MODE_INCLUSIVE_EXT: VkDiscardRectangleModeEXT = 0;
 #[cfg(feature = "VK_EXT_discard_rectangles")]
 #[rustfmt::skip]
-pub const VK_DISCARD_RECTANGLE_MODE_EXCLUSIVE_EXT: VkDiscardRetangleModeEXT = 1;
+pub const VK_DISCARD_RECTANGLE_MODE_EXCLUSIVE_EXT: VkDiscardRectangleModeEXT = 1;
 
 #[cfg(feature = "VK_EXT_discard_rectangles")]
 #[rustfmt::skip]
@@ -20574,7 +20574,7 @@ impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceDiscardRectanglePropert
 pub struct VkPipelineDiscardRectangleStateCreateInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const core::ffi::c_void,
-    pub flags: VkpipelineDiscardRectangleStateCreateFlagsEXT,
+    pub flags: VkPipelineDiscardRectangleStateCreateFlagsEXT,
     pub discardRectangleMode: VkDiscardRectangleModeEXT,
     pub discardRectangleCount: u32,
     pub pDiscardRectangles: *const VkRect2D,

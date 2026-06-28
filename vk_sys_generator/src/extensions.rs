@@ -1519,12 +1519,12 @@ pub const ELEMENTS: &[Element] = &[
     // VK_NVX_device_generated_commands
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_NVX_device_generated_commands", 1)),
     Element::Object(
-        Object::new("ObjectTableNVX", "OBJECT_TABLE_NVX", vk_ext_enum(87, 0) as _)
+        Object::new("VkObjectTableNVX", "OBJECT_TABLE_NVX", vk_ext_enum(87, 0) as _)
             .extension("VK_NVX_device_generated_commands"),
     ),
     Element::Object(
         Object::new(
-            "IndirectCommandsLayoutNVX",
+            "VkIndirectCommandsLayoutNVX",
             "INDIRECT_COMMANDS_LAYOUT_NVX",
             vk_ext_enum(87, 1) as _,
         )
@@ -1724,7 +1724,7 @@ pub const ELEMENTS: &[Element] = &[
             "ObjectTableEntry",
             &[
                 Struct::member("r#type", "VkObjectEntryTypeNVX"),
-                Struct::member("flags", "OVkObjectEntryUsageFlagsNVX"),
+                Struct::member("flags", "VkObjectEntryUsageFlagsNVX"),
             ],
         )
         .extensions(&[("NVX", "device_generated_commands")]),
@@ -2055,7 +2055,7 @@ pub const ELEMENTS: &[Element] = &[
     )),
     Element::Enum(
         Enum::new(
-            "DiscardRetangleMode",
+            "DiscardRectangleMode",
             "DISCARD_RECTANGLE_MODE",
             &[
                 Enum::member("INCLUSIVE", 0).extension("EXT", "discard_rectangles"),
@@ -2090,7 +2090,7 @@ pub const ELEMENTS: &[Element] = &[
             vk_ext_enum(100, 1) as _,
             StructUsage::Source,
             &[
-                Struct::member("flags", "VkpipelineDiscardRectangleStateCreateFlagsEXT"),
+                Struct::member("flags", "VkPipelineDiscardRectangleStateCreateFlagsEXT"),
                 Struct::member("discardRectangleMode", "VkDiscardRectangleModeEXT"),
                 Struct::member("discardRectangleCount", "u32"),
                 Struct::member("pDiscardRectangles", "*const VkRect2D"),
