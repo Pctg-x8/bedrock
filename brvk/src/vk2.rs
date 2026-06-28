@@ -18626,6 +18626,89 @@ unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMultiviewPerViewAttri
 #[rustfmt::skip]
 impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_ATTRIBUTES_PROPERTIES_NVX; }
 
+#[cfg(feature = "VK_NV_viewport_swizzle")]
+#[rustfmt::skip]
+pub const VK_NV_VIEWPORT_SWIZZLE_EXTENSION_NAME: &str = "VK_NV_viewport_swizzle";
+#[cfg(feature = "VK_NV_viewport_swizzle")]
+#[rustfmt::skip]
+pub const VK_NV_VIEWPORT_SWIZZLE_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_viewport_swizzle_NV")]
+#[rustfmt::skip]
+pub type VkViewportCoordinateSwizzleviewport_swizzle = i32;
+#[cfg(feature = "VK_viewport_swizzle_NV")]
+#[rustfmt::skip]
+pub const VK_VIEWPORT_COORDINATE_SWIZZLE_POSITIVE_X_viewport_swizzle: VkViewportCoordinateSwizzleviewport_swizzle = 0;
+#[cfg(feature = "VK_viewport_swizzle_NV")]
+#[rustfmt::skip]
+pub const VK_VIEWPORT_COORDINATE_SWIZZLE_NEGATIVE_X_viewport_swizzle: VkViewportCoordinateSwizzleviewport_swizzle = 1;
+#[cfg(feature = "VK_viewport_swizzle_NV")]
+#[rustfmt::skip]
+pub const VK_VIEWPORT_COORDINATE_SWIZZLE_POSITIVE_Y_viewport_swizzle: VkViewportCoordinateSwizzleviewport_swizzle = 2;
+#[cfg(feature = "VK_viewport_swizzle_NV")]
+#[rustfmt::skip]
+pub const VK_VIEWPORT_COORDINATE_SWIZZLE_NEGATIVE_Y_viewport_swizzle: VkViewportCoordinateSwizzleviewport_swizzle = 3;
+#[cfg(feature = "VK_viewport_swizzle_NV")]
+#[rustfmt::skip]
+pub const VK_VIEWPORT_COORDINATE_SWIZZLE_POSITIVE_Z_viewport_swizzle: VkViewportCoordinateSwizzleviewport_swizzle = 4;
+#[cfg(feature = "VK_viewport_swizzle_NV")]
+#[rustfmt::skip]
+pub const VK_VIEWPORT_COORDINATE_SWIZZLE_NEGATIVE_Z_viewport_swizzle: VkViewportCoordinateSwizzleviewport_swizzle = 5;
+#[cfg(feature = "VK_viewport_swizzle_NV")]
+#[rustfmt::skip]
+pub const VK_VIEWPORT_COORDINATE_SWIZZLE_POSITIVE_W_viewport_swizzle: VkViewportCoordinateSwizzleviewport_swizzle = 6;
+#[cfg(feature = "VK_viewport_swizzle_NV")]
+#[rustfmt::skip]
+pub const VK_VIEWPORT_COORDINATE_SWIZZLE_NEGATIVE_W_viewport_swizzle: VkViewportCoordinateSwizzleviewport_swizzle = 7;
+
+#[cfg(feature = "VK_NV_viewport_swizzle")]
+#[rustfmt::skip]
+pub type VkPipelineViewportSwizzleStateCreateFlagsNV = VkFlags;
+#[cfg(feature = "VK_NV_viewport_swizzle")]
+#[rustfmt::skip]
+pub type VkPipelineViewportSwizzleStateCreateFlagBitsNV = VkFlags;
+
+#[cfg(feature = "VK_NV_viewport_swizzle")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkViewportSwizzleNV {
+    pub x: VkViewportCoordinateSwizzleNV,
+    pub y: VkViewportCoordinateSwizzleNV,
+    pub z: VkViewportCoordinateSwizzleNV,
+    pub w: VkViewportCoordinateSwizzleNV,
+}
+
+#[cfg(feature = "VK_NV_viewport_swizzle")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPipelineViewportSwizzleStateCreateInfoNV {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub viewportCount: u32,
+    pub pViewportSwizzles: *const VkViewportSwizzleNV,
+}
+#[cfg(feature = "VK_NV_viewport_swizzle")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_SWIZZLE_STATE_CREATE_INFO_NV: VkStructureType = 1000098000;
+#[cfg(feature = "VK_NV_viewport_swizzle")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPipelineViewportSwizzleStateCreateInfoNV {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_NV_viewport_swizzle")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPipelineViewportSwizzleStateCreateInfoNV { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_SWIZZLE_STATE_CREATE_INFO_NV; }
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]

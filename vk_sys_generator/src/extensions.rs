@@ -1007,4 +1007,57 @@ pub const ELEMENTS: &[Element] = &[
         )
         .extensions(&[("NVX", "multiview_per_view_attributes")]),
     ),
+    // VK_NV_viewport_swizzle
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_NV_viewport_swizzle", 1)),
+    Element::Enum(
+        Enum::new(
+            "ViewportCoordinateSwizzle",
+            "VIEWPORT_COORDINATE_SWIZZLE",
+            &[
+                Enum::member("POSITIVE_X", 0).extension("NV", "viewport_swizzle"),
+                Enum::member("NEGATIVE_X", 1).extension("NV", "viewport_swizzle"),
+                Enum::member("POSITIVE_Y", 2).extension("NV", "viewport_swizzle"),
+                Enum::member("NEGATIVE_Y", 3).extension("NV", "viewport_swizzle"),
+                Enum::member("POSITIVE_Z", 4).extension("NV", "viewport_swizzle"),
+                Enum::member("NEGATIVE_Z", 5).extension("NV", "viewport_swizzle"),
+                Enum::member("POSITIVE_W", 6).extension("NV", "viewport_swizzle"),
+                Enum::member("NEGATIVE_W", 7).extension("NV", "viewport_swizzle"),
+            ],
+        )
+        .extension("NV", "viewport_swizzle"),
+    ),
+    Element::Bitmask(
+        Bitmask::new(
+            "PipelineViewportSwizzleStateCreateFlags",
+            "PipelineViewportSwizzleStateCreateFlagBits",
+            "PIPELINE_VIEWPORT_SWIZZLE_STATE_CREATE",
+            &[],
+        )
+        .extension("NV", "viewport_swizzle"),
+    ),
+    Element::Struct(
+        Struct::new(
+            "ViewportSwizzle",
+            &[
+                Struct::member("x", "VkViewportCoordinateSwizzleNV"),
+                Struct::member("y", "VkViewportCoordinateSwizzleNV"),
+                Struct::member("z", "VkViewportCoordinateSwizzleNV"),
+                Struct::member("w", "VkViewportCoordinateSwizzleNV"),
+            ],
+        )
+        .extensions(&[("NV", "viewport_swizzle")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "PipelineViewportSwizzleStateCreateInfo",
+            "PIPELINE_VIEWPORT_SWIZZLE_STATE_CREATE_INFO",
+            vk_ext_enum(99, 0) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("viewportCount", "u32"),
+                Struct::member("pViewportSwizzles", "*const VkViewportSwizzleNV"),
+            ],
+        )
+        .extensions(&[("NV", "viewport_swizzle")]),
+    ),
 ];
