@@ -16428,6 +16428,119 @@ pub type VkImageFormatListCreateInfo = VkImageFormatListCreateInfoKHR;
 #[rustfmt::skip]
 pub const VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO_KHR;
 
+#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
+#[rustfmt::skip]
+pub const VK_EXT_SAMPLER_FILTER_MINMAX_EXTENSION_NAME: &str = "VK_EXT_sampler_filter_minmax";
+#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
+#[rustfmt::skip]
+pub const VK_EXT_SAMPLER_FILTER_MINMAX_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
+#[rustfmt::skip]
+pub type VkSamplerReductionModeEXT = i32;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkSamplerReductionMode = i32;
+#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
+#[rustfmt::skip]
+pub const VK_SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE_EXT: VkSamplerReductionModeEXT = 0;
+#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE: VkSamplerReductionModeEXT = 0;
+#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
+#[rustfmt::skip]
+pub const VK_SAMPLER_REDUCTION_MODE_MIN_EXT: VkSamplerReductionModeEXT = 1;
+#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_SAMPLER_REDUCTION_MODE_MIN: VkSamplerReductionModeEXT = 1;
+#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
+#[rustfmt::skip]
+pub const VK_SAMPLER_REDUCTION_MODE_MAX_EXT: VkSamplerReductionModeEXT = 2;
+#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_SAMPLER_REDUCTION_MODE_MAX: VkSamplerReductionModeEXT = 2;
+
+#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_MINMAX_BIT_EXT: VkFormatFeatureFlagBits = 0x00010000;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_MINMAX_BIT: VkFormatFeatureFlagBits = 0x00010000;
+
+#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkSamplerReductionModeCreateInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub reductionMode: VkSamplerReductionModeEXT,
+}
+#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO_EXT: VkStructureType = 1000130001;
+#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkSamplerReductionModeCreateInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkSamplerReductionModeCreateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO_EXT; }
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkSamplerReductionModeCreateInfo = VkSamplerReductionModeCreateInfoEXT;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO_EXT;
+
+#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub filterMinmaxSingleComponentFormats: VkBool32,
+    pub filterMinmaxImageComponentMapping: VkBool32,
+}
+#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES_EXT: VkStructureType = 1000130000;
+#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES_EXT; }
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkPhysicalDeviceSamplerFilterMinmaxProperties = VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES_EXT;
+
 #[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
 #[rustfmt::skip]
 pub const VK_KHR_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME: &str = "VK_KHR_vertex_attribute_divisor";
@@ -18633,33 +18746,33 @@ pub const VK_NV_VIEWPORT_SWIZZLE_EXTENSION_NAME: &str = "VK_NV_viewport_swizzle"
 #[rustfmt::skip]
 pub const VK_NV_VIEWPORT_SWIZZLE_SPEC_VERSION: usize = 1;
 
-#[cfg(feature = "VK_viewport_swizzle_NV")]
+#[cfg(feature = "VK_NV_viewport_swizzle")]
 #[rustfmt::skip]
-pub type VkViewportCoordinateSwizzleviewport_swizzle = i32;
-#[cfg(feature = "VK_viewport_swizzle_NV")]
+pub type VkViewportCoordinateSwizzleNV = i32;
+#[cfg(feature = "VK_NV_viewport_swizzle")]
 #[rustfmt::skip]
-pub const VK_VIEWPORT_COORDINATE_SWIZZLE_POSITIVE_X_viewport_swizzle: VkViewportCoordinateSwizzleviewport_swizzle = 0;
-#[cfg(feature = "VK_viewport_swizzle_NV")]
+pub const VK_VIEWPORT_COORDINATE_SWIZZLE_POSITIVE_X_NV: VkViewportCoordinateSwizzleNV = 0;
+#[cfg(feature = "VK_NV_viewport_swizzle")]
 #[rustfmt::skip]
-pub const VK_VIEWPORT_COORDINATE_SWIZZLE_NEGATIVE_X_viewport_swizzle: VkViewportCoordinateSwizzleviewport_swizzle = 1;
-#[cfg(feature = "VK_viewport_swizzle_NV")]
+pub const VK_VIEWPORT_COORDINATE_SWIZZLE_NEGATIVE_X_NV: VkViewportCoordinateSwizzleNV = 1;
+#[cfg(feature = "VK_NV_viewport_swizzle")]
 #[rustfmt::skip]
-pub const VK_VIEWPORT_COORDINATE_SWIZZLE_POSITIVE_Y_viewport_swizzle: VkViewportCoordinateSwizzleviewport_swizzle = 2;
-#[cfg(feature = "VK_viewport_swizzle_NV")]
+pub const VK_VIEWPORT_COORDINATE_SWIZZLE_POSITIVE_Y_NV: VkViewportCoordinateSwizzleNV = 2;
+#[cfg(feature = "VK_NV_viewport_swizzle")]
 #[rustfmt::skip]
-pub const VK_VIEWPORT_COORDINATE_SWIZZLE_NEGATIVE_Y_viewport_swizzle: VkViewportCoordinateSwizzleviewport_swizzle = 3;
-#[cfg(feature = "VK_viewport_swizzle_NV")]
+pub const VK_VIEWPORT_COORDINATE_SWIZZLE_NEGATIVE_Y_NV: VkViewportCoordinateSwizzleNV = 3;
+#[cfg(feature = "VK_NV_viewport_swizzle")]
 #[rustfmt::skip]
-pub const VK_VIEWPORT_COORDINATE_SWIZZLE_POSITIVE_Z_viewport_swizzle: VkViewportCoordinateSwizzleviewport_swizzle = 4;
-#[cfg(feature = "VK_viewport_swizzle_NV")]
+pub const VK_VIEWPORT_COORDINATE_SWIZZLE_POSITIVE_Z_NV: VkViewportCoordinateSwizzleNV = 4;
+#[cfg(feature = "VK_NV_viewport_swizzle")]
 #[rustfmt::skip]
-pub const VK_VIEWPORT_COORDINATE_SWIZZLE_NEGATIVE_Z_viewport_swizzle: VkViewportCoordinateSwizzleviewport_swizzle = 5;
-#[cfg(feature = "VK_viewport_swizzle_NV")]
+pub const VK_VIEWPORT_COORDINATE_SWIZZLE_NEGATIVE_Z_NV: VkViewportCoordinateSwizzleNV = 5;
+#[cfg(feature = "VK_NV_viewport_swizzle")]
 #[rustfmt::skip]
-pub const VK_VIEWPORT_COORDINATE_SWIZZLE_POSITIVE_W_viewport_swizzle: VkViewportCoordinateSwizzleviewport_swizzle = 6;
-#[cfg(feature = "VK_viewport_swizzle_NV")]
+pub const VK_VIEWPORT_COORDINATE_SWIZZLE_POSITIVE_W_NV: VkViewportCoordinateSwizzleNV = 6;
+#[cfg(feature = "VK_NV_viewport_swizzle")]
 #[rustfmt::skip]
-pub const VK_VIEWPORT_COORDINATE_SWIZZLE_NEGATIVE_W_viewport_swizzle: VkViewportCoordinateSwizzleviewport_swizzle = 7;
+pub const VK_VIEWPORT_COORDINATE_SWIZZLE_NEGATIVE_W_NV: VkViewportCoordinateSwizzleNV = 7;
 
 #[cfg(feature = "VK_NV_viewport_swizzle")]
 #[rustfmt::skip]

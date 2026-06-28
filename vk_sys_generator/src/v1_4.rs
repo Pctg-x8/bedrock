@@ -64,7 +64,7 @@ pub const ELEMENTS: &[Element] = &[
         "NOT_PERMITTED_KHR",
         -vk_ext_enum(175, 1) as _,
     )
-    .extension("global_priority", "KHR")
+    .extension("KHR", "global_priority")
     .promoted(VERSION)])),
     Element::Enum(
         Enum::new(
@@ -72,20 +72,20 @@ pub const ELEMENTS: &[Element] = &[
             "QUEUE_GLOBAL_PRIORITY",
             &[
                 Enum::member("LOW", 128)
-                    .extension("global_priority", "KHR")
+                    .extension("KHR", "global_priority")
                     .promoted(VERSION),
                 Enum::member("MEDIUM", 256)
-                    .extension("global_priority", "KHR")
+                    .extension("KHR", "global_priority")
                     .promoted(VERSION),
                 Enum::member("HIGH", 512)
-                    .extension("global_priority", "KHR")
+                    .extension("KHR", "global_priority")
                     .promoted(VERSION),
                 Enum::member("REALTIME", 1024)
-                    .extension("global_priority", "KHR")
+                    .extension("KHR", "global_priority")
                     .promoted(VERSION),
             ],
         )
-        .extension("global_priority", "KHR")
+        .extension("KHR", "global_priority")
         .promoted(VERSION),
     ),
     Element::Struct(

@@ -105,9 +105,6 @@ pub const VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INF
 pub const VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR: crate::vk2::VkStructureType = 100_0111_000;
 pub const VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK: crate::vk2::VkStructureType = 100_0122_000;
 pub const VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK: crate::vk2::VkStructureType = 100_0123_000;
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES_EXT: crate::vk2::VkStructureType =
-    100_0130_000;
-pub const VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO_EXT: crate::vk2::VkStructureType = 100_0130_001;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT: crate::vk2::VkStructureType =
     100_0148_000;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_EXT: crate::vk2::VkStructureType =
@@ -203,7 +200,6 @@ ExportExtensions!("VK_MVK_ios_surface": ios_surface_mvk);
 ExportExtensions!("VK_MVK_macos_surface": macos_surface_mvk);
 ExportExtensions!("VK_EXT_external_memory_dma_buf": external_memory_dma_buf_ext);
 // ExportExtensions!("VK_EXT_queue_family_foreign": queue_family_foreign);
-ExportExtensions!("VK_EXT_sampler_filter_minmax": sampler_filter_minmax_ext);
 ExportExtensions!("VK_AMD_gpu_shader_int16": gpu_shader_int16_amd);
 ExportExtensions!("VK_AMD_mixed_attachment_samples": mixed_attachment_samples_amd);
 ExportExtensions!("VK_AMD_shader_fragment_mask": shader_fragment_mask_amd);

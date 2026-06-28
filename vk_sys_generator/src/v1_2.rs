@@ -11,7 +11,7 @@ pub const ELEMENTS: &[Element] = &[
         "INVALID_OPAQUE_CAPTURE_ADDRESS",
         -vk_ext_enum(258, 0) as _,
     )
-    .extension("buffer_device_address", "KHR")
+    .extension("KHR", "buffer_device_address")
     .promoted("1_2")])),
     Element::Enum(
         Enum::new(
@@ -19,14 +19,14 @@ pub const ELEMENTS: &[Element] = &[
             "SEMAPHORE_TYPE",
             &[
                 Enum::member("BINARY", 0)
-                    .extension("timeline_semaphore", "KHR")
+                    .extension("KHR", "timeline_semaphore")
                     .promoted("1_2"),
                 Enum::member("TIMELINE", 1)
-                    .extension("timeline_semaphore", "KHR")
+                    .extension("KHR", "timeline_semaphore")
                     .promoted("1_2"),
             ],
         )
-        .extension("timeline_semaphore", "KHR")
+        .extension("KHR", "timeline_semaphore")
         .promoted("1_2"),
     ),
     Element::Bitmask(Bitmask::extending(
@@ -351,6 +351,59 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .extensions(&[ex_khr("image_format_list")])
+        .promoted(VERSION),
+    ),
+    // VK_EXT_sampler_filter_minmax
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_sampler_filter_minmax", 1)),
+    Element::Enum(
+        Enum::new(
+            "SamplerReductionMode",
+            "SAMPLER_REDUCTION_MODE",
+            &[
+                Enum::member("WEIGHTED_AVERAGE", 0)
+                    .extension("EXT", "sampler_filter_minmax")
+                    .promoted(VERSION),
+                Enum::member("MIN", 1)
+                    .extension("EXT", "sampler_filter_minmax")
+                    .promoted(VERSION),
+                Enum::member("MAX", 2)
+                    .extension("EXT", "sampler_filter_minmax")
+                    .promoted(VERSION),
+            ],
+        )
+        .extension("EXT", "sampler_filter_minmax")
+        .promoted(VERSION),
+    ),
+    Element::Bitmask(Bitmask::extending(
+        "FormatFeatureFlagBits",
+        "FORMAT_FEATURE",
+        &[Bitmask::entry("SAMPLED_IMAGE_FILTER_MINMAX", 16)
+            .extension("EXT", "sampler_filter_minmax")
+            .promoted(VERSION)],
+    )),
+    Element::Struct(
+        Struct::typed(
+            "SamplerReductionModeCreateInfo",
+            "SAMPLER_REDUCTION_MODE_CREATE_INFO",
+            vk_ext_enum(131, 1) as _,
+            StructUsage::Source,
+            &[Struct::member("reductionMode", "VkSamplerReductionModeEXT")],
+        )
+        .extensions(&[ex_ext("sampler_filter_minmax")])
+        .promoted(VERSION),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "PhysicalDeviceSamplerFilterMinmaxProperties",
+            "PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES",
+            vk_ext_enum(131, 0) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("filterMinmaxSingleComponentFormats", TY_VK_BOOL),
+                Struct::member("filterMinmaxImageComponentMapping", TY_VK_BOOL),
+            ],
+        )
+        .extensions(&[ex_ext("sampler_filter_minmax")])
         .promoted(VERSION),
     ),
 ];

@@ -125,8 +125,8 @@ pub struct EnumMember {
     promoted: Option<&'static str>,
 }
 impl EnumMember {
-    pub const fn extension(mut self, ext: &'static str, suffix: &'static str) -> Self {
-        self.extension = Some((ext, suffix));
+    pub const fn extension(mut self, suffix: &'static str, name: &'static str) -> Self {
+        self.extension = Some((name, suffix));
         self
     }
 
@@ -171,7 +171,7 @@ impl Enum {
         Self::extending("Result", "ERROR", members)
     }
 
-    pub const fn extension(mut self, name: &'static str, suffix: &'static str) -> Self {
+    pub const fn extension(mut self, suffix: &'static str, name: &'static str) -> Self {
         self.extension = Some((name, suffix));
         self
     }
