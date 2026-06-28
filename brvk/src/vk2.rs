@@ -19660,6 +19660,21 @@ unsafe impl crate::PFN for PFN_vkCmdDebugMarkerInsertEXT {
     }
 }
 
+#[cfg(feature = "VK_IMG_filter_cubic")]
+#[rustfmt::skip]
+pub const VK_IMG_FILTER_CUBIC_EXTENSION_NAME: &str = "VK_IMG_filter_cubic";
+#[cfg(feature = "VK_IMG_filter_cubic")]
+#[rustfmt::skip]
+pub const VK_IMG_FILTER_CUBIC_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_IMG_filter_cubic")]
+#[rustfmt::skip]
+pub const VK_FILTER_CUBIC_IMG: VkFilter = 1000015000;
+
+#[cfg(feature = "VK_IMG_filter_cubic")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_IMG: VkFormatFeatureFlagBits = 0x00002000;
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]

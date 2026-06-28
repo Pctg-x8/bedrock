@@ -1504,4 +1504,16 @@ pub const ELEMENTS: &[Element] = &[
         )
         .extension("EXT", "debug_marker"),
     ),
+    // VK_IMG_filter_cubic
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_IMG_filter_cubic", 1)),
+    Element::Enum(Enum::extending(
+        "Filter",
+        "FILTER",
+        &[Enum::member("CUBIC", vk_ext_enum(16, 0) as _).extension("IMG", "filter_cubic")],
+    )),
+    Element::Bitmask(Bitmask::extending(
+        "FormatFeatureFlagBits",
+        "FORMAT_FEATURE",
+        &[Bitmask::entry("SAMPLED_IMAGE_FILTER_CUBIC", 13).extension("IMG", "filter_cubic")],
+    )),
 ];
