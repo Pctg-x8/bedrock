@@ -18874,6 +18874,228 @@ unsafe impl crate::VulkanStructure for VkHdrMetadataEXT {
 #[rustfmt::skip]
 impl crate::TypedVulkanStructure for VkHdrMetadataEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_HDR_METADATA_EXT; }
 
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+pub const VK_EXT_DISPLAY_CONTROL_EXTENSION_NAME: &str = "VK_EXT_display_control";
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+pub const VK_EXT_DISPLAY_CONTROL_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+pub type VkDisplayPowerStateEXT = i32;
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+pub const VK_DISPLAY_POWER_STATE_OFF_EXT: VkDisplayPowerStateEXT = 0;
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+pub const VK_DISPLAY_POWER_STATE_SUSPEND_EXT: VkDisplayPowerStateEXT = 1;
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+pub const VK_DISPLAY_POWER_STATE_ON_EXT: VkDisplayPowerStateEXT = 2;
+
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+pub type VkDeviceEventTypeEXT = i32;
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+pub const VK_DEVICE_EVENT_TYPE_DISPLAY_HOTPLUG_EXT: VkDeviceEventTypeEXT = 0;
+
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+pub type VkDisplayEventTypeEXT = i32;
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+pub const VK_DISPLAY_EVENT_TYPE_FIRST_PIXEL_OUT_EXT: VkDisplayEventTypeEXT = 0;
+
+#[cfg(feature = "VK_EXT_display_control")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkDisplayPowerInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub powerState: VkDisplayPowerStateEXT,
+}
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DISPLAY_POWER_INFO_EXT: VkStructureType = 1000091000;
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkDisplayPowerInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkDisplayPowerInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DISPLAY_POWER_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_display_control")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkDeviceEventInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub deviceEvent: VkDeviceEventTypeEXT,
+}
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DEVICE_EVENT_INFO_EXT: VkStructureType = 1000091001;
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkDeviceEventInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkDeviceEventInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_EVENT_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_display_control")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkDisplayEventInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub displayEVent: VkDisplayEventTypeEXT,
+}
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DISPLAY_EVENT_INFO_EXT: VkStructureType = 1000091002;
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkDisplayEventInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkDisplayEventInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DISPLAY_EVENT_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_display_control")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkSwapchainCounterCreateInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub surfaceCounters: VkSurfaceCounterFlagsEXT,
+}
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SWAPCHAIN_COUNTER_CREATE_INFO_EXT: VkStructureType = 1000091003;
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkSwapchainCounterCreateInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkSwapchainCounterCreateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SWAPCHAIN_COUNTER_CREATE_INFO_EXT; }
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_display_control")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkDisplayPowerControlEXT(pub unsafe extern "system" fn(device: VkDevice, display: VkDisplayKHR, pDisplayPowerInfo: *const VkDisplayPowerInfoEXT) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkDisplayPowerControlEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDisplayPowerControlEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_display_control")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkRegisterDeviceEventEXT(pub unsafe extern "system" fn(device: VkDevice, pDeviceEventInfo: *const VkDeviceEVentInfoEXT, pAllocator: *const VkAllocationCallbacks, pFence: *mut VkFence) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkRegisterDeviceEventEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkRegisterDeviceEventEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_display_control")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkRegisterDisplayEventEXT(pub unsafe extern "system" fn(device: VkDevice, pDisplayEventInfo: *const VkDisplayEventInfoEXT, pAllocator: *const VkAllocationCallbacks, pFence: *mut VkFence) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkRegisterDisplayEventEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkRegisterDisplayEventEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_swapchain_counter")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetSwapchainCounterEXT(pub unsafe extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR, counter: VkSurfaceCounterFlagsEXT, pCounterValue: *mut u64) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_swapchain_counter")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetSwapchainCounterEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetSwapchainCounterEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]

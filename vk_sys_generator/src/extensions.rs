@@ -1091,4 +1091,125 @@ pub const ELEMENTS: &[Element] = &[
         )
         .extensions(&[ex_ext("hdr_metadata")]),
     ),
+    // VK_EXT_display_control
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_display_control", 1)),
+    Element::Enum(
+        Enum::new(
+            "DisplayPowerState",
+            "DISPLAY_POWER_STATE",
+            &[
+                Enum::member("OFF", 0).extension("EXT", "display_control"),
+                Enum::member("SUSPEND", 1).extension("EXT", "display_control"),
+                Enum::member("ON", 2).extension("EXT", "display_control"),
+            ],
+        )
+        .extension("EXT", "display_control"),
+    ),
+    Element::Enum(
+        Enum::new(
+            "DeviceEventType",
+            "DEVICE_EVENT_TYPE",
+            &[Enum::member("DISPLAY_HOTPLUG", 0).extension("EXT", "display_control")],
+        )
+        .extension("EXT", "display_control"),
+    ),
+    Element::Enum(
+        Enum::new(
+            "DisplayEventType",
+            "DISPLAY_EVENT_TYPE",
+            &[Enum::member("FIRST_PIXEL_OUT", 0).extension("EXT", "display_control")],
+        )
+        .extension("EXT", "display_control"),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "DisplayPowerInfo",
+            "DISPLAY_POWER_INFO",
+            vk_ext_enum(92, 0) as _,
+            StructUsage::Source,
+            &[Struct::member("powerState", "VkDisplayPowerStateEXT")],
+        )
+        .extensions(&[ex_ext("display_control")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "DeviceEventInfo",
+            "DEVICE_EVENT_INFO",
+            vk_ext_enum(92, 1) as _,
+            StructUsage::Source,
+            &[Struct::member("deviceEvent", "VkDeviceEventTypeEXT")],
+        )
+        .extensions(&[ex_ext("display_control")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "DisplayEventInfo",
+            "DISPLAY_EVENT_INFO",
+            vk_ext_enum(92, 2) as _,
+            StructUsage::Source,
+            &[Struct::member("displayEVent", "VkDisplayEventTypeEXT")],
+        )
+        .extensions(&[ex_ext("display_control")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "SwapchainCounterCreateInfo",
+            "SWAPCHAIN_COUNTER_CREATE_INFO",
+            vk_ext_enum(92, 3) as _,
+            StructUsage::Source,
+            &[Struct::member("surfaceCounters", "VkSurfaceCounterFlagsEXT")],
+        )
+        .extensions(&[ex_ext("display_control")]),
+    ),
+    Element::Command(
+        Command::new(
+            "DisplayPowerControl",
+            &[
+                ("device", "VkDevice"),
+                ("display", "VkDisplayKHR"),
+                ("pDisplayPowerInfo", "*const VkDisplayPowerInfoEXT"),
+            ],
+        )
+        .failable()
+        .extension("EXT", "display_control"),
+    ),
+    Element::Command(
+        Command::new(
+            "RegisterDeviceEvent",
+            &[
+                ("device", "VkDevice"),
+                ("pDeviceEventInfo", "*const VkDeviceEVentInfoEXT"),
+                ("pAllocator", "*const VkAllocationCallbacks"),
+                ("pFence", "*mut VkFence"),
+            ],
+        )
+        .failable()
+        .extension("EXT", "display_control"),
+    ),
+    Element::Command(
+        Command::new(
+            "RegisterDisplayEvent",
+            &[
+                ("device", "VkDevice"),
+                ("pDisplayEventInfo", "*const VkDisplayEventInfoEXT"),
+                ("pAllocator", "*const VkAllocationCallbacks"),
+                ("pFence", "*mut VkFence"),
+            ],
+        )
+        .failable()
+        .extension("EXT", "display_control"),
+    ),
+    Element::Command(
+        Command::new(
+            "GetSwapchainCounter",
+            &[
+                ("device", "VkDevice"),
+                ("swapchain", "VkSwapchainKHR"),
+                ("counter", "VkSurfaceCounterFlagsEXT"),
+                ("pCounterValue", "*mut u64"),
+            ],
+        )
+        .failable()
+        .extension("EXT", "swapchain_counter"),
+    ),
 ];
