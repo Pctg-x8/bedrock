@@ -1060,4 +1060,35 @@ pub const ELEMENTS: &[Element] = &[
         )
         .extensions(&[("NV", "viewport_swizzle")]),
     ),
+    // VK_EXT_hdr_metadata
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_hdr_metadata", 1)),
+    Element::Struct(
+        Struct::new(
+            "XYColor",
+            &[
+                Struct::member("x", "core::ffi::c_float"),
+                Struct::member("y", "core::ffi::c_float"),
+            ],
+        )
+        .extensions(&[ex_ext("hdr_metadata")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "HdrMetadata",
+            "HDR_METADATA",
+            vk_ext_enum(106, 0) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("displayPrimaryRed", "VkXYColorEXT"),
+                Struct::member("displayPrimaryGreen", "VkXYColorEXT"),
+                Struct::member("displayPrimaryBlue", "VkXYColorEXT"),
+                Struct::member("whitePoint", "VkXYColorEXT"),
+                Struct::member("maxLuminance", "core::ffi::c_float"),
+                Struct::member("minLuminance", "core::ffi::c_float"),
+                Struct::member("maxContentLightLevel", "core::ffi::c_float"),
+                Struct::member("maxFrameAverageLightLevel", "core::ffi::c_float"),
+            ],
+        )
+        .extensions(&[ex_ext("hdr_metadata")]),
+    ),
 ];

@@ -102,7 +102,6 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIE
     100_0101_000;
 pub const VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT: crate::vk2::VkStructureType =
     100_0101_001;
-pub const VK_STRUCTURE_TYPE_HDR_METADATA_EXT: crate::vk2::VkStructureType = 100_0105_000;
 pub const VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR: crate::vk2::VkStructureType = 100_0111_000;
 pub const VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK: crate::vk2::VkStructureType = 100_0122_000;
 pub const VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK: crate::vk2::VkStructureType = 100_0123_000;
@@ -200,7 +199,6 @@ ExportExtensions!("VK_NV_viewport_array2": viewport_array2_nv);
 ExportExtensions!("VK_EXT_discard_rectangles": discard_rectangles_ext);
 ExportExtensions!("VK_EXT_conservative_rasterization": conservative_rasterization_ext);
 ExportExtensions!("VK_EXT_swapchain_colorspace": swapchain_colorspace_ext);
-ExportExtensions!("VK_EXT_hdr_metadata": hdr_metadata_ext);
 ExportExtensions!("VK_MVK_ios_surface": ios_surface_mvk);
 ExportExtensions!("VK_MVK_macos_surface": macos_surface_mvk);
 ExportExtensions!("VK_EXT_external_memory_dma_buf": external_memory_dma_buf_ext);

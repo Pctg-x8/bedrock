@@ -18709,6 +18709,58 @@ unsafe impl crate::VulkanStructure for VkPipelineViewportSwizzleStateCreateInfoN
 #[rustfmt::skip]
 impl crate::TypedVulkanStructure for VkPipelineViewportSwizzleStateCreateInfoNV { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_SWIZZLE_STATE_CREATE_INFO_NV; }
 
+#[cfg(feature = "VK_EXT_hdr_metadata")]
+#[rustfmt::skip]
+pub const VK_EXT_HDR_METADATA_EXTENSION_NAME: &str = "VK_EXT_hdr_metadata";
+#[cfg(feature = "VK_EXT_hdr_metadata")]
+#[rustfmt::skip]
+pub const VK_EXT_HDR_METADATA_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_EXT_hdr_metadata")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkXYColorEXT {
+    pub x: core::ffi::c_float,
+    pub y: core::ffi::c_float,
+}
+
+#[cfg(feature = "VK_EXT_hdr_metadata")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkHdrMetadataEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub displayPrimaryRed: VkXYColorEXT,
+    pub displayPrimaryGreen: VkXYColorEXT,
+    pub displayPrimaryBlue: VkXYColorEXT,
+    pub whitePoint: VkXYColorEXT,
+    pub maxLuminance: core::ffi::c_float,
+    pub minLuminance: core::ffi::c_float,
+    pub maxContentLightLevel: core::ffi::c_float,
+    pub maxFrameAverageLightLevel: core::ffi::c_float,
+}
+#[cfg(feature = "VK_EXT_hdr_metadata")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_HDR_METADATA_EXT: VkStructureType = 1000105000;
+#[cfg(feature = "VK_EXT_hdr_metadata")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkHdrMetadataEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_hdr_metadata")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkHdrMetadataEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_HDR_METADATA_EXT; }
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]
