@@ -1924,4 +1924,46 @@ pub const ELEMENTS: &[Element] = &[
         )
         .extensions(&[ex_khr("incremental_present")]),
     ),
+    // VK_NV_clip_space_w_scaling
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_NV_clip_space_w_scaling", 1)),
+    Element::Enum(Enum::extending(
+        "DynamicState",
+        "DYNAMIC_STATE",
+        &[Enum::member("VIEWPORT_W_SCALING", vk_ext_enum(88, 0) as _).extension("NV", "clip_space_w_scaling")],
+    )),
+    Element::Struct(
+        Struct::new(
+            "ViewportWScaling",
+            &[
+                Struct::member("xcoeff", "core::ffi::c_float"),
+                Struct::member("ycoeff", "core::ffi::c_float"),
+            ],
+        )
+        .extensions(&[("NV", "clip_space_w_scaling")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "PipelineViewportWScalingStateCreateInfo",
+            "PIPELINE_VIEWPORT_W_SCALING_STATE_CREATE_INFO",
+            vk_ext_enum(88, 0) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("viewportWScalingEnable", TY_VK_BOOL),
+                Struct::member("viewportCount", "u32"),
+                Struct::member("pViewportWScalings", "*const VkViewportWScalingNV"),
+            ],
+        )
+        .extensions(&[("NV", "clip_space_w_scaling")]),
+    ),
+    Element::Command(
+        Command::inst(
+            "SetViewportWScaling",
+            &[
+                ("firstViewport", "u32"),
+                ("viewportCount", "u32"),
+                ("pViewportWScalings", "*const VkViewportWScalingNV"),
+            ],
+        )
+        .extension("NV", "clip_space_w_scaling"),
+    ),
 ];

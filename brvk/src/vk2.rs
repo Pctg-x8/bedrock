@@ -20311,6 +20311,75 @@ unsafe impl crate::VulkanStructure for VkPresentREgionsKHR {
 #[rustfmt::skip]
 impl crate::TypedVulkanStructure for VkPresentREgionsKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PRESENT_REGIONS_KHR; }
 
+#[cfg(feature = "VK_NV_clip_space_w_scaling")]
+#[rustfmt::skip]
+pub const VK_NV_CLIP_SPACE_W_SCALING_EXTENSION_NAME: &str = "VK_NV_clip_space_w_scaling";
+#[cfg(feature = "VK_NV_clip_space_w_scaling")]
+#[rustfmt::skip]
+pub const VK_NV_CLIP_SPACE_W_SCALING_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_NV_clip_space_w_scaling")]
+#[rustfmt::skip]
+pub const VK_DYNAMIC_STATE_VIEWPORT_W_SCALING_NV: VkDynamicState = 1000087000;
+
+#[cfg(feature = "VK_NV_clip_space_w_scaling")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkViewportWScalingNV {
+    pub xcoeff: core::ffi::c_float,
+    pub ycoeff: core::ffi::c_float,
+}
+
+#[cfg(feature = "VK_NV_clip_space_w_scaling")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPipelineViewportWScalingStateCreateInfoNV {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub viewportWScalingEnable: VkBool32,
+    pub viewportCount: u32,
+    pub pViewportWScalings: *const VkViewportWScalingNV,
+}
+#[cfg(feature = "VK_NV_clip_space_w_scaling")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_W_SCALING_STATE_CREATE_INFO_NV: VkStructureType = 1000087000;
+#[cfg(feature = "VK_NV_clip_space_w_scaling")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPipelineViewportWScalingStateCreateInfoNV {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_NV_clip_space_w_scaling")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPipelineViewportWScalingStateCreateInfoNV { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_W_SCALING_STATE_CREATE_INFO_NV; }
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NV_clip_space_w_scaling")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdSetViewportWScalingNV(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, firstViewport: u32, viewportCount: u32, pViewportWScalings: *const VkViewportWScalingNV));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NV_clip_space_w_scaling")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdSetViewportWScalingNV {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetViewportWScalingNV";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]
