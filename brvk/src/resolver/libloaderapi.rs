@@ -32,23 +32,19 @@ impl Drop for OwnedLibrary {
     }
 }
 impl OwnedLibrary {
-    #[inline]
+    #[inline(always)]
     pub fn open(path: &[u16]) -> std::io::Result<Self> {
-        let r = unsafe { LoadLibraryExW(path.as_ptr(), core::ptr::null_mut(), 0) };
-        if r.is_null() {
-            Err(std::io::Error::last_os_error())
-        } else {
-            Ok(Self(r))
+        match unsafe { LoadLibraryExW(path.as_ptr(), core::ptr::null_mut(), 0) } {
+            r if r.is_null() => Err(std::io::Error::last_os_error()),
+            r => Ok(Self(r)),
         }
     }
 
-    #[inline]
+    #[inline(always)]
     pub fn sym(&self, name: &core::ffi::CStr) -> std::io::Result<NonNull<core::ffi::c_void>> {
-        let p = unsafe { GetProcAddress(self.0, name.as_ptr()) };
-        if p.is_null() {
-            Err(std::io::Error::last_os_error())
-        } else {
-            Ok(unsafe { NonNull::new_unchecked(p) })
+        match unsafe { GetProcAddress(self.0, name.as_ptr()) } {
+            p if p.is_null() => Err(std::io::Error::last_os_error()),
+            p => Ok(unsafe { NonNull::new_unchecked(p) }),
         }
     }
 }
