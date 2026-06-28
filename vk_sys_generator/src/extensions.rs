@@ -2046,4 +2046,67 @@ pub const ELEMENTS: &[Element] = &[
         )
         .extensions(&[ex_ext("conservative_rasterization")]),
     ),
+    // VK_EXT_discard_rectangles
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_discard_rectangles", 1)),
+    Element::Enum(Enum::extending(
+        "DynamicState",
+        "DYNAMIC_STATE",
+        &[Enum::member("DISCARD_RECTANGLE", vk_ext_enum(100, 0) as _).extension("EXT", "discard_rectangles")],
+    )),
+    Element::Enum(
+        Enum::new(
+            "DiscardRetangleMode",
+            "DISCARD_RECTANGLE_MODE",
+            &[
+                Enum::member("INCLUSIVE", 0).extension("EXT", "discard_rectangles"),
+                Enum::member("EXCLUSIVE", 1).extension("EXT", "discard_rectangles"),
+            ],
+        )
+        .extension("EXT", "discard_rectangles"),
+    ),
+    Element::Bitmask(
+        Bitmask::new(
+            "PipelineDiscardRectangleStateCreateFlags",
+            "PipelineDiscardRectangleStateCreateFlagBits",
+            "PIPELINE_DISCARD_RECTANGLE_STATE",
+            &[],
+        )
+        .extension("EXT", "discard_rectangles"),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "PhysicalDeviceDiscardRectangleProperties",
+            "PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES",
+            vk_ext_enum(100, 0) as _,
+            StructUsage::Sink,
+            &[Struct::member("maxDiscardRectangles", "u32")],
+        )
+        .extensions(&[ex_ext("discard_rectangles")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "PipelineDiscardRectangleStateCreateInfo",
+            "PIPELINE_DISCARD_RECTANGLE_STATE_CREATE_INFO",
+            vk_ext_enum(100, 1) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("flags", "VkpipelineDiscardRectangleStateCreateFlagsEXT"),
+                Struct::member("discardRectangleMode", "VkDiscardRectangleModeEXT"),
+                Struct::member("discardRectangleCount", "u32"),
+                Struct::member("pDiscardRectangles", "*const VkRect2D"),
+            ],
+        )
+        .extensions(&[ex_ext("discard_rectangles")]),
+    ),
+    Element::Command(
+        Command::inst(
+            "SetDiscardRectangle",
+            &[
+                ("firstDiscardRectangle", "u32"),
+                ("discardRectangleCount", "u32"),
+                ("pDiscardRectangles", "*const VkRect2D"),
+            ],
+        )
+        .extension("EXT", "discard_rectangles"),
+    ),
 ];

@@ -20514,6 +20514,109 @@ unsafe impl crate::VulkanStructure for VkPipelineRasterizationConservativeStateC
 #[rustfmt::skip]
 impl crate::TypedVulkanStructure for VkPipelineRasterizationConservativeStateCreateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT; }
 
+#[cfg(feature = "VK_EXT_discard_rectangles")]
+#[rustfmt::skip]
+pub const VK_EXT_DISCARD_RECTANGLES_EXTENSION_NAME: &str = "VK_EXT_discard_rectangles";
+#[cfg(feature = "VK_EXT_discard_rectangles")]
+#[rustfmt::skip]
+pub const VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_EXT_discard_rectangles")]
+#[rustfmt::skip]
+pub const VK_DYNAMIC_STATE_DISCARD_RECTANGLE_EXT: VkDynamicState = 1000099000;
+
+#[cfg(feature = "VK_EXT_discard_rectangles")]
+#[rustfmt::skip]
+pub type VkDiscardRetangleModeEXT = i32;
+#[cfg(feature = "VK_EXT_discard_rectangles")]
+#[rustfmt::skip]
+pub const VK_DISCARD_RECTANGLE_MODE_INCLUSIVE_EXT: VkDiscardRetangleModeEXT = 0;
+#[cfg(feature = "VK_EXT_discard_rectangles")]
+#[rustfmt::skip]
+pub const VK_DISCARD_RECTANGLE_MODE_EXCLUSIVE_EXT: VkDiscardRetangleModeEXT = 1;
+
+#[cfg(feature = "VK_EXT_discard_rectangles")]
+#[rustfmt::skip]
+pub type VkPipelineDiscardRectangleStateCreateFlagsEXT = VkFlags;
+#[cfg(feature = "VK_EXT_discard_rectangles")]
+#[rustfmt::skip]
+pub type VkPipelineDiscardRectangleStateCreateFlagBitsEXT = VkFlags;
+
+#[cfg(feature = "VK_EXT_discard_rectangles")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceDiscardRectanglePropertiesEXT {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub maxDiscardRectangles: u32,
+}
+#[cfg(feature = "VK_EXT_discard_rectangles")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT: VkStructureType = 1000099000;
+#[cfg(feature = "VK_EXT_discard_rectangles")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceDiscardRectanglePropertiesEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_EXT_discard_rectangles")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceDiscardRectanglePropertiesEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT; }
+
+#[cfg(feature = "VK_EXT_discard_rectangles")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPipelineDiscardRectangleStateCreateInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkpipelineDiscardRectangleStateCreateFlagsEXT,
+    pub discardRectangleMode: VkDiscardRectangleModeEXT,
+    pub discardRectangleCount: u32,
+    pub pDiscardRectangles: *const VkRect2D,
+}
+#[cfg(feature = "VK_EXT_discard_rectangles")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PIPELINE_DISCARD_RECTANGLE_STATE_CREATE_INFO_EXT: VkStructureType = 1000099001;
+#[cfg(feature = "VK_EXT_discard_rectangles")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPipelineDiscardRectangleStateCreateInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_discard_rectangles")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPipelineDiscardRectangleStateCreateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_DISCARD_RECTANGLE_STATE_CREATE_INFO_EXT; }
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_discard_rectangles")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdSetDiscardRectangleEXT(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, firstDiscardRectangle: u32, discardRectangleCount: u32, pDiscardRectangles: *const VkRect2D));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_discard_rectangles")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdSetDiscardRectangleEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetDiscardRectangleEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]
