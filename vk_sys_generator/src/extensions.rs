@@ -862,7 +862,7 @@ pub const ELEMENTS: &[Element] = &[
             &[
                 Struct::member("sampleLocationSampleCounts", "VkSampleCountFlags"),
                 Struct::member("maxSampleLocationGridSize", "VkExtent2D"),
-                Struct::member("sampleLocationCoordinateRange", "[c_float; 2]"),
+                Struct::member("sampleLocationCoordinateRange", "[core::ffi::c_float; 2]"),
                 Struct::member("sampleLocationSubpixelBits", "u32"),
                 Struct::member("variableSampleLocations", TY_VK_BOOL),
             ],

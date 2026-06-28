@@ -18459,7 +18459,7 @@ pub struct VkPhysicalDeviceSampleLocationsPropertiesEXT {
     pub pNext: *mut core::ffi::c_void,
     pub sampleLocationSampleCounts: VkSampleCountFlags,
     pub maxSampleLocationGridSize: VkExtent2D,
-    pub sampleLocationCoordinateRange: [c_float; 2],
+    pub sampleLocationCoordinateRange: [core::ffi::c_float; 2],
     pub sampleLocationSubpixelBits: u32,
     pub variableSampleLocations: VkBool32,
 }
