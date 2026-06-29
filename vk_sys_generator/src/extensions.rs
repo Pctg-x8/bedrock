@@ -1,5 +1,7 @@
 use crate::{parts::*, vk_ext_enum};
 
+const VK_EXT_IMAGE_DRM_FORMAT_MODIFIER: Extension = Extension::new("EXT", "image_drm_format_modifier", 1);
+
 pub const ELEMENTS: &[Element] = &[
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_acquire_drm_display", 1)),
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_acquire_xlib_display", 1)),
@@ -2108,5 +2110,136 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .extension("EXT", "discard_rectangles"),
+    ),
+    // VK_EXT_image_drm_format_modifier
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER)),
+    Element::Enum(Enum::extending(
+        "ImageTiling",
+        "IMAGE_TILING",
+        &[Enum::member("DRM_FORMAT_MODIFIER", vk_ext_enum(159, 0) as _).extension2(&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER)],
+    )),
+    Element::Bitmask(Bitmask::extending(
+        "ImageAspectFlagBits",
+        "IMAGE_ASPECT",
+        &[
+            Bitmask::entry("MEMORY_PLANE_0", 7).extension2(&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
+            Bitmask::entry("MEMORY_PLANE_1", 8).extension2(&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
+            Bitmask::entry("MEMORY_PLANE_2", 9).extension2(&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
+            Bitmask::entry("MEMORY_PLANE_3", 10).extension2(&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
+        ],
+    )),
+    Element::Struct(
+        Struct::new(
+            "DrmFormatModifierProperties",
+            &[
+                Struct::member("drmFormatModifier", "u64"),
+                Struct::member("drmFormatModifierPlaneCount", "u32"),
+                Struct::member("drmFormatModifierTilingFeatures", "VkFormatFeatureFlags"),
+            ],
+        )
+        .extensions2(&[&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "DrmFormatModifierPropertiesList",
+            "DRM_FORMAT_MODIFIER_PROPERTIES_LIST",
+            vk_ext_enum(159, 0) as _,
+            StructUsage::Sink,
+            &[
+                Struct::member("drmFormatModifierCount", "u32"),
+                Struct::member("pDrmFormatModifierProperties", "*mut VkDrmFormatModifierPropertiesEXT"),
+            ],
+        )
+        .extensions2(&[&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "PhysicalDeviceImageDrmFormatModifierInfo",
+            "PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO",
+            vk_ext_enum(159, 2) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("drmFormatModifer", "u64"),
+                Struct::member("sharingMode", "VkSharingMode"),
+                Struct::member("queueFamilyIndexCount", "u32"),
+                Struct::member("pQueueFamilyIndices", "*const u32"),
+            ],
+        )
+        .extensions2(&[&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "ImageDrmFormatModifierListCreateInfo",
+            "IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO",
+            vk_ext_enum(159, 3) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("drmFormatModifierCount", "u32"),
+                Struct::member("pDrmFormatModifiers", "*const u64"),
+            ],
+        )
+        .extensions2(&[&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "ImageDrmFormatModifierExplicitCreateInfo",
+            "IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO",
+            vk_ext_enum(159, 4) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("drmFormatModifier", "u64"),
+                Struct::member("drmFormatModifierPlaneCount", "u32"),
+                Struct::member("pPlaneLayouts", "*const VkSubresourceLayout"),
+            ],
+        )
+        .extensions2(&[&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "ImageDrmFormatModifierProperties",
+            "IMAGE_DRM_FORMAT_MODIFIER_PROPERTIES",
+            vk_ext_enum(159, 5) as _,
+            StructUsage::Sink,
+            &[Struct::member("drmFormatModifier", "u64")],
+        )
+        .extensions2(&[&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
+    ),
+    Element::Struct(
+        Struct::new(
+            "DrmFormatModifierProperties2",
+            &[
+                Struct::member("drmFormatModifier", "u64"),
+                Struct::member("drmFormatModifierPlaneCount", "u32"),
+                Struct::member("drmFormatModifierTilingFeatures", "VkFormatFeatureFlags2KHR"),
+            ],
+        )
+        .extensions2(&[&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER])
+        .available_condition("feature = \"VK_KHR_format_feature_flags2\""),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "DrmFormatModifierPropertiesList2",
+            "DRM_FORMAT_MODIFIER_PROPERTIES_LIST_2",
+            vk_ext_enum(159, 6) as _,
+            StructUsage::Sink,
+            &[
+                Struct::member("drmFormatModifierCount", "u32"),
+                Struct::member("pDrmFormatModifierProperties", "*mut VkDrmFormatModifierProperties2EXT"),
+            ],
+        )
+        .extensions2(&[&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER])
+        .available_condition("feature = \"VK_KHR_format_feature_flags2\""),
+    ),
+    Element::Command(
+        Command::new(
+            "GetImageDrmFormatModifierProperties",
+            &[
+                ("device", "VkDevice"),
+                ("image", "VkImage"),
+                ("pProperites", "*mut VkImageDrmFormatModifierPropertiesEXT"),
+            ],
+        )
+        .failable()
+        .extension2(&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
     ),
 ];

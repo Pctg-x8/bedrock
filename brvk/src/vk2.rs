@@ -23391,6 +23391,252 @@ unsafe impl crate::FromPtr for PFN_vkCmdSetDiscardRectangleEXT {
     }
 }
 
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+pub const VK_EXT_IMAGE_DRM_FORMAT_MODIFIER_EXTENSION_NAME: &str = "VK_EXT_image_drm_format_modifier";
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+pub const VK_EXT_IMAGE_DRM_FORMAT_MODIFIER_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+pub const VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT: VkImageTiling = 1000158000;
+
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+pub const VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT: VkImageAspectFlagBits = 0x00000080;
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+pub const VK_IMAGE_ASPECT_MEMORY_PLANE_1_BIT_EXT: VkImageAspectFlagBits = 0x00000100;
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+pub const VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT: VkImageAspectFlagBits = 0x00000200;
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+pub const VK_IMAGE_ASPECT_MEMORY_PLANE_3_BIT_EXT: VkImageAspectFlagBits = 0x00000400;
+
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkDrmFormatModifierPropertiesEXT {
+    pub drmFormatModifier: u64,
+    pub drmFormatModifierPlaneCount: u32,
+    pub drmFormatModifierTilingFeatures: VkFormatFeatureFlags,
+}
+
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkDrmFormatModifierPropertiesListEXT {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub drmFormatModifierCount: u32,
+    pub pDrmFormatModifierProperties: *mut VkDrmFormatModifierPropertiesEXT,
+}
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT: VkStructureType = 1000158000;
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkDrmFormatModifierPropertiesListEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkDrmFormatModifierPropertiesListEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT; }
+
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceImageDrmFormatModifierInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub drmFormatModifer: u64,
+    pub sharingMode: VkSharingMode,
+    pub queueFamilyIndexCount: u32,
+    pub pQueueFamilyIndices: *const u32,
+}
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT: VkStructureType = 1000158002;
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPhysicalDeviceImageDrmFormatModifierInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPhysicalDeviceImageDrmFormatModifierInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkImageDrmFormatModifierListCreateInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub drmFormatModifierCount: u32,
+    pub pDrmFormatModifiers: *const u64,
+}
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT: VkStructureType = 1000158003;
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkImageDrmFormatModifierListCreateInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkImageDrmFormatModifierListCreateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkImageDrmFormatModifierExplicitCreateInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub drmFormatModifier: u64,
+    pub drmFormatModifierPlaneCount: u32,
+    pub pPlaneLayouts: *const VkSubresourceLayout,
+}
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO_EXT: VkStructureType = 1000158004;
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkImageDrmFormatModifierExplicitCreateInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkImageDrmFormatModifierExplicitCreateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkImageDrmFormatModifierPropertiesEXT {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub drmFormatModifier: u64,
+}
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_PROPERTIES_EXT: VkStructureType = 1000158005;
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkImageDrmFormatModifierPropertiesEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkImageDrmFormatModifierPropertiesEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_PROPERTIES_EXT; }
+
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+pub struct VkDrmFormatModifierProperties2EXT {
+    pub drmFormatModifier: u64,
+    pub drmFormatModifierPlaneCount: u32,
+    pub drmFormatModifierTilingFeatures: VkFormatFeatureFlags2KHR,
+}
+
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+pub struct VkDrmFormatModifierPropertiesList2EXT {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub drmFormatModifierCount: u32,
+    pub pDrmFormatModifierProperties: *mut VkDrmFormatModifierProperties2EXT,
+}
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+pub const VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_2_EXT: VkStructureType = 1000158006;
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+unsafe impl crate::VulkanSinkStructure for VkDrmFormatModifierPropertiesList2EXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+impl crate::TypedVulkanSinkStructure for VkDrmFormatModifierPropertiesList2EXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_2_EXT; }
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetImageDrmFormatModifierProperties(pub unsafe extern "system" fn(device: VkDevice, image: VkImage, pProperites: *mut VkImageDrmFormatModifierPropertiesEXT) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetImageDrmFormatModifierProperties {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetImageDrmFormatModifierProperties";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetImageDrmFormatModifierProperties {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]
