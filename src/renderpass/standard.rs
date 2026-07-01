@@ -83,7 +83,7 @@ impl AttachmentDescription {
 }
 
 #[repr(transparent)]
-pub struct AttachmentReference(brvk::VkAttachmentReference);
+pub struct AttachmentReference(pub brvk::VkAttachmentReference);
 impl AttachmentReference {
     pub const UNUSED: Self = Self(brvk::VkAttachmentReference {
         attachment: brvk::VK_ATTACHMENT_UNUSED,
@@ -118,10 +118,10 @@ impl AttachmentReference {
 #[derive(Clone)]
 pub struct SubpassDescription<'r> {
     base: brvk::VkSubpassDescription,
-    input_lifetime: core::marker::PhantomData<&'r [brvk::VkAttachmentReference]>,
-    color_lifetime: core::marker::PhantomData<&'r [brvk::VkAttachmentReference]>,
-    resolve_lifetime: core::marker::PhantomData<&'r [brvk::VkAttachmentReference]>,
-    depth_stencil_lifetime: core::marker::PhantomData<Option<&'r brvk::VkAttachmentReference>>,
+    input_lifetime: core::marker::PhantomData<&'r [AttachmentReference]>,
+    color_lifetime: core::marker::PhantomData<&'r [AttachmentReference]>,
+    resolve_lifetime: core::marker::PhantomData<&'r [AttachmentReference]>,
+    depth_stencil_lifetime: core::marker::PhantomData<Option<&'r AttachmentReference>>,
     preserve_lifetime: core::marker::PhantomData<&'r [u32]>,
 }
 impl<'r> SubpassDescription<'r> {
@@ -147,29 +147,29 @@ impl<'r> SubpassDescription<'r> {
         }
     }
 
-    pub const fn input_attachments(mut self, inputs: &'r [brvk::VkAttachmentReference]) -> Self {
+    pub const fn input_attachments(mut self, inputs: &'r [AttachmentReference]) -> Self {
         self.base.inputAttachmentCount = inputs.len() as _;
-        self.base.pInputAttachments = slice_as_ptr_empty_null(inputs);
+        self.base.pInputAttachments = slice_as_ptr_empty_null(inputs).cast();
 
         self
     }
 
     pub const fn color_attachments(
         mut self,
-        colors: &'r [brvk::VkAttachmentReference],
-        resolves: &'r [brvk::VkAttachmentReference],
+        colors: &'r [AttachmentReference],
+        resolves: &'r [AttachmentReference],
     ) -> Self {
         assert!(resolves.is_empty() || resolves.len() == colors.len());
 
         self.base.colorAttachmentCount = colors.len() as _;
-        self.base.pColorAttachments = slice_as_ptr_empty_null(colors);
-        self.base.pResolveAttachments = slice_as_ptr_empty_null(resolves);
+        self.base.pColorAttachments = slice_as_ptr_empty_null(colors).cast();
+        self.base.pResolveAttachments = slice_as_ptr_empty_null(resolves).cast();
 
         self
     }
 
-    pub const fn depth_stencil_attachment(mut self, a: &'r brvk::VkAttachmentReference) -> Self {
-        self.base.pDepthStencilAttachment = a as *const _ as _;
+    pub const fn depth_stencil_attachment(mut self, a: &'r AttachmentReference) -> Self {
+        self.base.pDepthStencilAttachment = core::ptr::from_ref(a).cast();
 
         self
     }
