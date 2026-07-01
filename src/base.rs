@@ -1396,7 +1396,7 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
     unsafe fn multisample_properties(
         &self,
         samples: brvk::VkSampleCountFlags,
-        sink: &mut core::mem::MaybeUninit<VkMultisamplePropertiesEXT>,
+        sink: &mut core::mem::MaybeUninit<brvk::VkMultisamplePropertiesEXT>,
     ) where
         Self::ConcreteInstance: InstanceSampleLocationsExtension,
     {

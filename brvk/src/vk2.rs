@@ -21174,12 +21174,12 @@ impl crate::TypedVulkanSinkStructure for VkMultisamplePropertiesEXT { const TYPE
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
-pub struct PFN_vkCmdSampleLocationsEXT(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pSampleLocationsInfo: *const VkSampleLocationsInfoEXT));
+pub struct PFN_vkCmdSetSampleLocationsEXT(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pSampleLocationsInfo: *const VkSampleLocationsInfoEXT));
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_sample_locations")]
 #[rustfmt::skip]
-unsafe impl crate::PFN for PFN_vkCmdSampleLocationsEXT {
-    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSampleLocationsEXT";
+unsafe impl crate::PFN for PFN_vkCmdSetSampleLocationsEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetSampleLocationsEXT";
 
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
@@ -21189,7 +21189,7 @@ unsafe impl crate::PFN for PFN_vkCmdSampleLocationsEXT {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_sample_locations")]
 #[rustfmt::skip]
-unsafe impl crate::FromPtr for PFN_vkCmdSampleLocationsEXT {
+unsafe impl crate::FromPtr for PFN_vkCmdSetSampleLocationsEXT {
     #[inline(always)]
     unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }

@@ -886,7 +886,7 @@ pub const ELEMENTS: &[Element] = &[
     ),
     Element::Command(
         Command::inst(
-            "SampleLocations",
+            "SetSampleLocations",
             &[("pSampleLocationsInfo", "*const VkSampleLocationsInfoEXT")],
         )
         .extension("EXT", "sample_locations"),
