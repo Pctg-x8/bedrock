@@ -1918,7 +1918,7 @@ pub const ELEMENTS: &[Element] = &[
     ),
     Element::Struct(
         Struct::typed(
-            "PresentREgions",
+            "PresentRegions",
             "PRESENT_REGIONS",
             vk_ext_enum(85, 0) as _,
             StructUsage::Source,
