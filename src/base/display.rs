@@ -106,11 +106,11 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     where
         PhysicalDevice::ConcreteInstance: InstanceAcquireXlibDisplayExtension,
     {
-        unsafe {
+        crate::error::translate_vk_result(unsafe {
             self.1.instance().acquire_xlib_display_ext_fn().0(self.1.native_ptr(), dpy, self.native_ptr())
-                .into_result()
-                .map(drop)
-        }
+        })?;
+
+        Ok(())
     }
 
     /// Create a display mode

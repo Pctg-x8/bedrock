@@ -1562,12 +1562,11 @@ pub trait DeviceExternalFenceFdExtension: Device {
     #[inline]
     fn get_fence_fd(&self, info: &crate::FenceFdGetInfo) -> crate::Result<std::os::unix::io::RawFd> {
         let mut fd = core::mem::MaybeUninit::uninit();
+        crate::error::translate_vk_result(unsafe {
+            self.get_fence_fd_khr_fn().0(self.native_ptr(), &info.0, fd.as_mut_ptr())
+        })?;
 
-        unsafe {
-            self.get_fence_fd_khr_fn().0(self.native_ptr(), &info.0, fd.as_mut_ptr()).into_result()?;
-
-            Ok(fd.assume_init())
-        }
+        Ok(unsafe { fd.assume_init() })
     }
 
     /// Import a fence from a POSIX file descriptor
@@ -1579,11 +1578,9 @@ pub trait DeviceExternalFenceFdExtension: Device {
     #[implements]
     #[inline]
     fn import_fence_fd(&self, info: &crate::ImportFenceFdInfo) -> crate::Result<()> {
-        unsafe {
-            self.import_fence_fd_khr_fn().0(self.native_ptr(), &info.0)
-                .into_result()
-                .map(drop)
-        }
+        crate::error::translate_vk_result(unsafe { self.import_fence_fd_khr_fn().0(self.native_ptr(), &info.0) })?;
+
+        Ok(())
     }
 }
 #[cfg(feature = "VK_KHR_external_fence_fd")]
@@ -1689,12 +1686,11 @@ pub trait DeviceExternalMemoryFdExtension: Device {
     #[inline]
     fn get_memory_fd(&self, info: &crate::MemoryGetFdInfo) -> crate::Result<std::os::unix::io::RawFd> {
         let mut fd = core::mem::MaybeUninit::uninit();
+        crate::error::translate_vk_result(unsafe {
+            self.get_memory_fd_khr_fn().0(self.native_ptr(), &info.0, fd.as_mut_ptr())
+        })?;
 
-        unsafe {
-            self.get_memory_fd_khr_fn().0(self.native_ptr(), &info.0, fd.as_mut_ptr()).into_result()?;
-
-            Ok(fd.assume_init())
-        }
+        Ok(unsafe { fd.assume_init() })
     }
 
     /// Get Properties of External Memory File Descriptors
@@ -1713,11 +1709,11 @@ pub trait DeviceExternalMemoryFdExtension: Device {
         handle: std::os::unix::io::RawFd,
         sink: &mut core::mem::MaybeUninit<brvk::VkMemoryFdPropertiesKHR>,
     ) -> crate::Result<()> {
-        unsafe {
+        crate::error::translate_vk_result(unsafe {
             self.get_memory_fd_properties_khr_fn().0(self.native_ptr(), handle_type as _, handle, sink.as_mut_ptr())
-                .into_result()
-                .map(drop)
-        }
+        })?;
+
+        Ok(())
     }
 }
 #[cfg(feature = "VK_KHR_external_memory_fd")]
@@ -1763,16 +1759,16 @@ pub trait DeviceExternalMemoryHostExtension: Device {
         ptr: *mut core::ffi::c_void,
         sink: &mut core::mem::MaybeUninit<brvk::VkMemoryHostPointerPropertiesEXT>,
     ) -> crate::Result<()> {
-        unsafe {
+        crate::error::translate_vk_result(unsafe {
             self.get_memory_host_pointer_properties_ext_fn().0(
                 self.native_ptr(),
                 handle_type as _,
                 ptr,
                 sink.as_mut_ptr(),
             )
-            .into_result()
-            .map(drop)
-        }
+        })?;
+
+        Ok(())
     }
 }
 #[cfg(feature = "VK_EXT_external_memory_host")]
