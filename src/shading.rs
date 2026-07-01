@@ -1472,14 +1472,14 @@ impl PipelineDepthStencilStateCreateInfo {
     }
 
     /// Sets the state parameters for the front-face stencil test
-    pub const fn stencil_state_front(mut self, state: brvk::VkStencilOpState) -> Self {
-        self.0.front = state;
+    pub const fn stencil_state_front(mut self, state: StencilOpState) -> Self {
+        self.0.front = state.0;
         self
     }
 
     /// Sets the state parameters for the back-face stencil test
-    pub const fn stencil_state_back(mut self, state: brvk::VkStencilOpState) -> Self {
-        self.0.back = state;
+    pub const fn stencil_state_back(mut self, state: StencilOpState) -> Self {
+        self.0.back = state.0;
         self
     }
 }
