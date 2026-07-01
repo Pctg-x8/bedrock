@@ -1183,7 +1183,7 @@ pub const ELEMENTS: &[Element] = &[
             "RegisterDeviceEvent",
             &[
                 ("device", "VkDevice"),
-                ("pDeviceEventInfo", "*const VkDeviceEVentInfoEXT"),
+                ("pDeviceEventInfo", "*const VkDeviceEventInfoEXT"),
                 ("pAllocator", "*const VkAllocationCallbacks"),
                 ("pFence", "*mut VkFence"),
             ],
@@ -1802,7 +1802,7 @@ pub const ELEMENTS: &[Element] = &[
     Element::Command(
         Command::inst(
             "ReserveSpaceForCommands",
-            &[("pReserveSpaceInfo", "*const VkCmdREserveSpaceForCommandsInfoNVX")],
+            &[("pReserveSpaceInfo", "*const VkCmdReserveSpaceForCommandsInfoNVX")],
         )
         .extension("NVX", "device_generated_commands"),
     ),
@@ -1812,7 +1812,7 @@ pub const ELEMENTS: &[Element] = &[
             &[
                 ("device", "VkDevice"),
                 ("pCreateInfo", "*const VkIndirectCommandsLayoutCreateInfoNVX"),
-                ("pAllocator", "*const VkallocationCallbacks"),
+                ("pAllocator", "*const VkAllocationCallbacks"),
                 ("pIndirectCommandsLayout", "*mut VkIndirectCommandsLayoutNVX"),
             ],
         )
@@ -1887,8 +1887,8 @@ pub const ELEMENTS: &[Element] = &[
             "GetPhysicalDeviceGeneratedCommandsProperties",
             &[
                 ("physicalDevice", "VkPhysicalDevice"),
-                ("pFeatures", "*mut VkDEviceGeneratedCommandsFeaturesNVX"),
-                ("pLimits", "*mut VkDEviceGeneratedCommandsLimitsNVX"),
+                ("pFeatures", "*mut VkDeviceGeneratedCommandsFeaturesNVX"),
+                ("pLimits", "*mut VkDeviceGeneratedCommandsLimitsNVX"),
             ],
         )
         .extension("NVX", "device_generated_commands"),
