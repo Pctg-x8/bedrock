@@ -181,7 +181,7 @@ impl XlibSurfaceCreateInfo {
 impl SurfaceCreateInfo for XlibSurfaceCreateInfo {
     #[implements]
     #[inline(always)]
-    unsafe fn execute(
+    fn execute(
         &self,
         instance: &(impl VkHandle<Handle = brvk::VkInstance> + ?Sized),
         allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
@@ -221,7 +221,7 @@ impl XcbSurfaceCreateInfo {
 impl SurfaceCreateInfo for XcbSurfaceCreateInfo {
     #[implements]
     #[inline(always)]
-    unsafe fn execute(
+    fn execute(
         &self,
         instance: &(impl VkHandle<Handle = brvk::VkInstance> + ?Sized),
         allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
@@ -261,7 +261,7 @@ impl WaylandSurfaceCreateInfo {
 impl SurfaceCreateInfo for WaylandSurfaceCreateInfo {
     #[implements]
     #[inline(always)]
-    unsafe fn execute(
+    fn execute(
         &self,
         instance: &(impl VkHandle<Handle = brvk::VkInstance> + ?Sized),
         allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
@@ -300,7 +300,7 @@ impl AndroidSurfaceCreateInfo {
 impl SurfaceCreateInfo for AndroidSurfaceCreateInfo {
     #[implements]
     #[inline(always)]
-    unsafe fn execute(
+    fn execute(
         &self,
         instance: &(impl VkHandle<Handle = brvk::VkInstance> + ?Sized),
         allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
@@ -377,7 +377,7 @@ impl MetalSurfaceCreateInfo {
 impl SurfaceCreateInfo for MetalSurfaceCreateInfo {
     #[implements]
     #[inline(always)]
-    unsafe fn execute(
+    fn execute(
         &self,
         instance: &(impl VkHandle<Handle = brvk::VkInstance> + ?Sized),
         allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
