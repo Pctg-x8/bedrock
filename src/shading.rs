@@ -1489,10 +1489,10 @@ impl PipelineDepthStencilStateCreateInfo {
 #[derive(Clone)]
 pub struct PipelineColorBlendStateCreateInfo<'d>(
     brvk::VkPipelineColorBlendStateCreateInfo,
-    core::marker::PhantomData<&'d [brvk::VkPipelineColorBlendAttachmentState]>,
+    core::marker::PhantomData<&'d [PipelineColorBlendAttachmentState]>,
 );
 impl<'d> PipelineColorBlendStateCreateInfo<'d> {
-    pub const fn new(attachments: &'d [brvk::VkPipelineColorBlendAttachmentState]) -> Self {
+    pub const fn new(attachments: &'d [PipelineColorBlendAttachmentState]) -> Self {
         Self(
             brvk::VkPipelineColorBlendStateCreateInfo {
                 sType: brvk::VkPipelineColorBlendStateCreateInfo::TYPE,
@@ -1501,7 +1501,7 @@ impl<'d> PipelineColorBlendStateCreateInfo<'d> {
                 logicOpEnable: false as _,
                 logicOp: LogicOp::NoOp as _,
                 attachmentCount: attachments.len() as _,
-                pAttachments: slice_as_ptr_empty_null(attachments),
+                pAttachments: slice_as_ptr_empty_null(attachments).cast(),
                 blendConstants: [0.0; 4],
             },
             core::marker::PhantomData,
