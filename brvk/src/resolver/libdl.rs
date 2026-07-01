@@ -1,9 +1,9 @@
 use core::{
+    cell::UnsafeCell,
     ffi::*,
     ops::{Deref, DerefMut},
     ptr::NonNull,
 };
-use std::cell::UnsafeCell;
 
 use derives::bitflags_newtype;
 
@@ -28,18 +28,18 @@ unsafe impl Sync for Dylib {}
 unsafe impl Send for Dylib {}
 impl Dylib {
     #[inline]
-    pub fn open(filename: &CStr, flags: OpenFlags) -> Result<OwnedDylib, std::ffi::CString> {
+    pub fn open(filename: &CStr, flags: OpenFlags) -> Result<OwnedDylib, String> {
         match NonNull::new(unsafe { dlopen(filename.as_ptr(), flags.bits()) } as *mut Dylib) {
             Some(x) => Ok(OwnedDylib(x)),
-            None => Err(unsafe { CStr::from_ptr(dlerror()).into() }),
+            None => Err(unsafe { CStr::from_ptr(dlerror()).to_string_lossy().into_owned() }),
         }
     }
 
     #[inline]
-    pub fn sym(&self, name: &CStr) -> Result<NonNull<c_void>, std::ffi::CString> {
+    pub fn sym(&self, name: &CStr) -> Result<NonNull<c_void>, String> {
         match NonNull::new(unsafe { dlsym(self.0.get(), name.as_ptr()) }) {
             Some(x) => Ok(x),
-            None => Err(unsafe { CStr::from_ptr(dlerror()).into() }),
+            None => Err(unsafe { CStr::from_ptr(dlerror()).to_string_lossy().into_owned() }),
         }
     }
 }

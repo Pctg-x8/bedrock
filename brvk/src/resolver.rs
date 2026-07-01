@@ -95,7 +95,7 @@ static mut GLOBAL_RESOLVER: core::mem::MaybeUninit<DefaultResolver> = core::mem:
 #[cfg(all(feature = "DynamicLoaded", not(feature = "CustomResolver")))]
 pub struct DefaultResolver(
     #[cfg(windows)] self::libloaderapi::OwnedLibrary,
-    #[cfg(not(windows))] self::libdl::OwnedLibrary,
+    #[cfg(not(windows))] self::libdl::OwnedDylib,
 );
 #[cfg(all(feature = "DynamicLoaded", not(feature = "CustomResolver")))]
 impl ResolverInterface for DefaultResolver {
@@ -147,7 +147,7 @@ impl DefaultResolver {
     }
 
     #[cfg(not(windows))]
-    fn new() -> Self {
+    unsafe fn init_inplace(sink: *mut core::mem::MaybeUninit<Self>) {
         #[cfg(target_os = "macos")]
         fn libname() -> &'static core::ffi::CStr {
             // TODO: packed app
@@ -163,9 +163,8 @@ impl DefaultResolver {
             c"libvulkan.so"
         }
 
-        #[cfg(not(windows))]
-        match self::libdl::Dylib::open(libname(), crate::libdl::OpenFlags::RTLD_LAZY) {
-            Ok(x) => Self(x),
+        let lib = match self::libdl::Dylib::open(libname(), self::libdl::OpenFlags::RTLD_LAZY) {
+            Ok(x) => x,
             Err(e) => {
                 tracing::error!(
                     reason = ?e,
@@ -174,6 +173,10 @@ impl DefaultResolver {
                 );
                 std::process::abort();
             }
+        };
+
+        unsafe {
+            core::ptr::write(core::ptr::addr_of_mut!((*(*sink).as_mut_ptr()).0), lib);
         }
     }
 }
