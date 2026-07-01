@@ -169,7 +169,7 @@ impl XlibSurfaceCreateInfo {
     /// Provided `display` must be a valid reference
     pub const unsafe fn new(display: *mut x11::xlib::Display, window: x11::xlib::Window) -> Self {
         Self(brvk::VkXlibSurfaceCreateInfoKHR {
-            sType: Self::TYPE,
+            sType: brvk::VkXlibSurfaceCreateInfoKHR::TYPE,
             pNext: core::ptr::null(),
             flags: 0,
             dpy: display,
@@ -211,7 +211,7 @@ impl XcbSurfaceCreateInfo {
     /// Provided `connection` must be a valid reference
     pub const unsafe fn new(connection: *mut xcb::ffi::xcb_connection_t, window: xcb::x::Window) -> Self {
         Self(brvk::VkXcbSurfaceCreateInfoKHR {
-            sType: Self::TYPE,
+            sType: brvk::VkXcbSurfaceCreateInfoKHR::TYPE,
             pNext: core::ptr::null(),
             flags: 0,
             connection,
@@ -253,7 +253,7 @@ impl WaylandSurfaceCreateInfo {
     /// Provided `display` and `surface` must be a valid reference
     pub const unsafe fn new(display: *mut core::ffi::c_void, surface: *mut core::ffi::c_void) -> Self {
         Self(brvk::VkWaylandSurfaceCreateInfoKHR {
-            sType: Self::TYPE,
+            sType: brvk::VkWaylandSurfaceCreateInfoKHR::TYPE,
             pNext: core::ptr::null(),
             flags: 0,
             display,
@@ -295,7 +295,7 @@ impl AndroidSurfaceCreateInfo {
     /// Provided `window` must be a valid reference
     pub const unsafe fn new(window: *mut android::ANativeWindow) -> Self {
         Self(brvk::VkAndroidSurfaceCreateInfoKHR {
-            sType: Self::TYPE,
+            sType: brvk::VkAndroidSurfaceCreateInfoKHR::TYPE,
             pNext: core::ptr::null(),
             flags: 0,
             window,
