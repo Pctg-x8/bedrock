@@ -189,7 +189,7 @@ unsafe extern "system" fn {}({})"#,
 
         writeln!(
             sink,
-            r#"    let fp: {pfn} = unsafe {{ crate::resolver::current_resolver().load_function_unconstrainted() }};"#,
+            r#"    let fp: {pfn} = unsafe {{ crate::load_function_unconstrainted(crate::resolver::current_resolver()) }};"#,
             pfn = PFNNameWriter(self)
         )?;
         writeln!(sink, r#"    unsafe {{ FPTBL.{} = fp; }}"#, ExportNameWriter(self))?;

@@ -11,7 +11,7 @@ use derives::implements;
 type DeviceResolvedFn<F> = brvk::ResolvedFnCell<F, DeviceResolverImpl>;
 #[implements]
 #[repr(transparent)]
-struct DeviceResolverImpl(brvk::VkDevice);
+pub struct DeviceResolverImpl(pub brvk::VkDevice);
 #[implements]
 impl brvk::ResolverInterface for DeviceResolverImpl {
     #[tracing::instrument(

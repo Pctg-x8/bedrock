@@ -11,7 +11,7 @@ mod resolver;
 #[cfg(feature = "CustomResolver")]
 pub use resolver::set_resolver;
 #[cfg(feature = "Implements")]
-pub use resolver::{ResolvedFnCell, ResolverInterface};
+pub use resolver::{ResolvedFnCell, ResolverInterface, load_function_unconstrainted, load_symbol_unconstrainted};
 
 mod result_str;
 pub use result_str::*;
