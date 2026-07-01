@@ -1401,18 +1401,22 @@ impl<'d> CmdRecord<'d> {
 /// Graphics/Compute Commands: Transfer-like(clearing/filling) commands
 #[implements]
 impl<'d> CmdRecord<'d> {
-    /// Fill a region of a buffer with a fixed value.
-    /// `size` is number of bytes to fill
+    /// Fill a region of a buffer with a fixed value
     #[inline(always)]
     pub fn fill_buffer(
         mut self,
         dst: &(impl crate::VkHandle<Handle = brvk::VkBuffer> + ?Sized),
-        dst_offset: brvk::VkDeviceSize,
-        size: brvk::VkDeviceSize,
+        byte_range: core::ops::Range<DeviceSize>,
         data: u32,
     ) -> Self {
         unsafe {
-            brvk::fns::cmd_fill_buffer(self.ptr.native_ptr_mut(), dst.native_ptr(), dst_offset, size, data);
+            brvk::fns::cmd_fill_buffer(
+                self.ptr.native_ptr_mut(),
+                dst.native_ptr(),
+                byte_range.start,
+                byte_range.end - byte_range.start,
+                data,
+            );
         }
         self
     }
@@ -1424,7 +1428,7 @@ impl<'d> CmdRecord<'d> {
         image: &(impl crate::VkHandle<Handle = brvk::VkImage> + ?Sized),
         layout: ImageLayout,
         colors: &[ClearColorValue],
-        ranges: &[brvk::VkImageSubresourceRange],
+        ranges: &[ImageSubresourceRange],
     ) -> Self {
         assert_eq!(colors.len(), ranges.len());
 
@@ -1435,7 +1439,7 @@ impl<'d> CmdRecord<'d> {
                 layout as _,
                 crate::ffi_helper::slice_as_ptr_empty_null(colors).cast(),
                 ranges.len() as _,
-                crate::ffi_helper::slice_as_ptr_empty_null(ranges),
+                crate::ffi_helper::slice_as_ptr_empty_null(ranges).cast(),
             );
         }
         self
@@ -1449,7 +1453,7 @@ impl<'d> CmdRecord<'d> {
         layout: ImageLayout,
         depth: f32,
         stencil: u32,
-        ranges: &[brvk::VkImageSubresourceRange],
+        ranges: &[ImageSubresourceRange],
     ) -> Self {
         unsafe {
             brvk::fns::cmd_clear_depth_stencil_image(
@@ -1458,7 +1462,7 @@ impl<'d> CmdRecord<'d> {
                 layout as _,
                 &brvk::VkClearDepthStencilValue { depth, stencil },
                 ranges.len() as _,
-                crate::ffi_helper::slice_as_ptr_empty_null(ranges),
+                crate::ffi_helper::slice_as_ptr_empty_null(ranges).cast(),
             );
         }
         self
@@ -1493,7 +1497,7 @@ impl<'d> CmdRecord<'d> {
             brvk::fns::cmd_execute_commands(
                 self.ptr.native_ptr_mut(),
                 buffers.len() as _,
-                crate::ffi_helper::slice_as_ptr_empty_null(buffers) as _,
+                crate::ffi_helper::slice_as_ptr_empty_null(buffers).cast(),
             );
         }
         self
