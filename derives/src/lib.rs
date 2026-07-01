@@ -781,7 +781,7 @@ impl SpecializationConstantsFieldAttr {
             _ => None,
         });
         let Some(first_cid) = constant_ids.next() else {
-            return Err(syn::Error::new_spanned(f, "Missing constant_id attribute"));
+            return Err(syn::Error::new_spanned(field, "Missing constant_id attribute"));
         };
         if constant_ids.next().is_some() {
             return Err(syn::Error::new_spanned(
