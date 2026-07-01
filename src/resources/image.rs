@@ -1007,7 +1007,7 @@ impl<'r> ImageViewCreateInfo<'r> {
 
 pub struct ImageViewBuilder<I: Image>(ImageViewCreateInfo<'static>, I);
 impl<I: Image> ImageViewBuilder<I> {
-    pub fn new(source: I, subresource_range: brvk::VkImageSubresourceRange) -> Self {
+    pub fn new(source: I, subresource_range: ImageSubresourceRange) -> Self {
         Self(
             unsafe {
                 ImageViewCreateInfo::from_raw(brvk::VkImageViewCreateInfo {
@@ -1023,7 +1023,7 @@ impl<I: Image> ImageViewBuilder<I> {
                         b: brvk::VK_COMPONENT_SWIZZLE_B,
                         a: brvk::VK_COMPONENT_SWIZZLE_A,
                     },
-                    subresourceRange: subresource_range,
+                    subresourceRange: subresource_range.0,
                 })
             },
             source,
