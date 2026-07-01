@@ -332,6 +332,9 @@ pub fn get_physical_device_queue_family_properties(
     count
 }
 
+/// # Safety
+///
+/// `dpy` must be a valid Xlib display pointer.
 #[cfg(feature = "VK_KHR_xlib_surface")]
 #[inline]
 pub unsafe fn get_physical_device_xlib_presentation_support(
@@ -350,7 +353,11 @@ pub unsafe fn get_physical_device_xlib_presentation_support(
     }
 }
 
+/// # Safety
+///
+/// `connection` must be a valid XCB connection pointer.
 #[cfg(feature = "VK_KHR_xcb_surface")]
+#[inline]
 pub unsafe fn get_physical_device_xcb_presentation_support(
     physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
     queue_family_index: u32,
@@ -367,6 +374,9 @@ pub unsafe fn get_physical_device_xcb_presentation_support(
     }
 }
 
+/// # Safety
+///
+/// `display` must be a valid Wayland display pointer.
 #[cfg(feature = "VK_KHR_wayland_surface")]
 #[inline]
 pub unsafe fn get_physical_device_wayland_presentation_support(

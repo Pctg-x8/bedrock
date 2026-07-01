@@ -1648,7 +1648,7 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
         visual: x11::xlib::VisualID,
     ) -> bool {
         unsafe {
-            crate::vkfn_wrapper::get_physical_device_xlib_presentation_support_khr(
+            crate::vkfn_wrapper::get_physical_device_xlib_presentation_support(
                 self.as_transparent_ref(),
                 queue_family,
                 display,
@@ -1671,7 +1671,7 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
         visual: xcb::x::Visualid,
     ) -> bool {
         unsafe {
-            crate::vkfn_wrapper::get_physical_device_xcb_presentation_support_khr(
+            crate::vkfn_wrapper::get_physical_device_xcb_presentation_support(
                 self.as_transparent_ref(),
                 queue_family,
                 connection,
@@ -1689,7 +1689,7 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
     #[inline(always)]
     unsafe fn wayland_presentation_support(&self, queue_family: u32, display: *mut core::ffi::c_void) -> bool {
         unsafe {
-            crate::vkfn_wrapper::get_physical_device_wayland_presentation_support_khr(
+            crate::vkfn_wrapper::get_physical_device_wayland_presentation_support(
                 self.as_transparent_ref(),
                 queue_family,
                 display,
