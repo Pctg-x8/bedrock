@@ -188,15 +188,14 @@ impl SurfaceCreateInfo for XlibSurfaceCreateInfo {
     ) -> crate::Result<VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
 
-        unsafe {
+        crate::error::translate_vk_result(unsafe {
             brvk::fns::create_xlib_surface_khr(
                 instance.native_ptr(),
                 &self.0,
                 opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
-            .into_result()?;
-        }
+        })?;
 
         Ok(unsafe { h.assume_init() })
     }
@@ -230,15 +229,14 @@ impl SurfaceCreateInfo for XcbSurfaceCreateInfo {
     ) -> crate::Result<VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
 
-        unsafe {
+        crate::error::translate_vk_result(unsafe {
             brvk::fns::create_xcb_surface_khr(
                 instance.native_ptr(),
                 &self.0,
                 opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
-            .into_result()?;
-        }
+        })?;
 
         Ok(unsafe { h.assume_init() })
     }
@@ -272,15 +270,14 @@ impl SurfaceCreateInfo for WaylandSurfaceCreateInfo {
     ) -> crate::Result<VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
 
-        unsafe {
+        crate::error::translate_vk_result(unsafe {
             brvk::fns::create_wayland_surface_khr(
                 instance.native_ptr(),
                 &self.0,
                 opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
-            .into_result()?;
-        }
+        })?;
 
         Ok(unsafe { h.assume_init() })
     }
@@ -313,15 +310,14 @@ impl SurfaceCreateInfo for AndroidSurfaceCreateInfo {
     ) -> crate::Result<VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
 
-        unsafe {
+        crate::error::translate_vk_result(unsafe {
             brvk::fns::create_android_surface_khr(
                 instance.native_ptr(),
                 &self.0,
                 opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
-            .into_result()?;
-        }
+        })?;
 
         Ok(unsafe { h.assume_init() })
     }
@@ -392,15 +388,14 @@ impl SurfaceCreateInfo for MetalSurfaceCreateInfo {
     ) -> crate::Result<VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
 
-        unsafe {
+        crate::error::translate_vk_result(unsafe {
             brvk::fns::create_metal_surface_ext(
                 instance.native_ptr(),
                 &self.0,
                 opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
-            .into_result()?;
-        }
+        })?;
 
         Ok(unsafe { h.assume_init() })
     }

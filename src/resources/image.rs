@@ -104,13 +104,13 @@ pub trait Image: VkHandle<Handle = brvk::VkImage> + DeviceChildHandle {
     {
         use crate::Device;
 
-        self.device().get_image_drm_format_modifier_properties_ext_fn().0(
+        crate::error::translate_vk_result(self.device().get_image_drm_format_modifier_properties_ext_fn().0(
             self.device_handle(),
             self.native_ptr(),
             sink.as_mut_ptr(),
-        )
-        .into_result()
-        .map(drop)
+        ))?;
+
+        Ok(())
     }
 
     /// Returns an image's DRM format modifier
