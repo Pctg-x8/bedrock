@@ -384,7 +384,7 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
     unsafe fn alloc_raw(
         &mut self,
         info: &brvk::VkDescriptorSetAllocateInfo,
-        objects: &mut [core::mem::MaybeUninit<brvk::VkDescriptorSet>],
+        objects: &mut [core::mem::MaybeUninit<DescriptorSet>],
     ) -> crate::Result<()> {
         unsafe { crate::vkfn_wrapper::allocate_descriptor_sets(self.device_transparent_ref(), info, objects) }
     }
@@ -408,13 +408,7 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
         let mut hs = crate::alloc::reserve(layouts.len());
 
         unsafe {
-            self.alloc_raw(
-                &ainfo,
-                core::mem::transmute::<
-                    &mut [core::mem::MaybeUninit<DescriptorSet>],
-                    &mut [core::mem::MaybeUninit<brvk::VkDescriptorSet>],
-                >(hs.spare_capacity_mut()),
-            )?;
+            self.alloc_raw(&ainfo, hs.spare_capacity_mut())?;
             hs.set_len(layouts.len())
         }
 
@@ -446,7 +440,7 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
         }
 
         // Note: transmuteだと変換できない（要素数がジェネリックだとダメっぽい？）
-        Ok(core::array::from_fn(|n| DescriptorSet(unsafe { hs[n].assume_init() })))
+        Ok(core::array::from_fn(|n| unsafe { hs[n].assume_init() }))
     }
 
     /// Resets a descriptor pool object

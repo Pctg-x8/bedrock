@@ -1842,7 +1842,7 @@ pub unsafe fn reset_descriptor_pool(
 pub unsafe fn allocate_descriptor_sets(
     device: VkHandleRef<brvk::VkDevice>,
     info: &brvk::VkDescriptorSetAllocateInfo,
-    sink: &mut [MaybeUninit<brvk::VkDescriptorSet>],
+    sink: &mut [MaybeUninit<DescriptorSet>],
 ) -> crate::Result<()> {
     translate_vk_result(unsafe { brvk::fns::allocate_descriptor_sets(device.0, info, sink.as_mut_ptr().cast()) })?;
 
