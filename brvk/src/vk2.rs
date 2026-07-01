@@ -23615,12 +23615,12 @@ impl crate::TypedVulkanSinkStructure for VkDrmFormatModifierPropertiesList2EXT {
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
-pub struct PFN_vkGetImageDrmFormatModifierProperties(pub unsafe extern "system" fn(device: VkDevice, image: VkImage, pProperites: *mut VkImageDrmFormatModifierPropertiesEXT) -> VkResult);
+pub struct PFN_vkGetImageDrmFormatModifierPropertiesEXT(pub unsafe extern "system" fn(device: VkDevice, image: VkImage, pProperites: *mut VkImageDrmFormatModifierPropertiesEXT) -> VkResult);
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_image_drm_format_modifier")]
 #[rustfmt::skip]
-unsafe impl crate::PFN for PFN_vkGetImageDrmFormatModifierProperties {
-    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetImageDrmFormatModifierProperties";
+unsafe impl crate::PFN for PFN_vkGetImageDrmFormatModifierPropertiesEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetImageDrmFormatModifierPropertiesEXT";
 
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
@@ -23630,7 +23630,7 @@ unsafe impl crate::PFN for PFN_vkGetImageDrmFormatModifierProperties {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_image_drm_format_modifier")]
 #[rustfmt::skip]
-unsafe impl crate::FromPtr for PFN_vkGetImageDrmFormatModifierProperties {
+unsafe impl crate::FromPtr for PFN_vkGetImageDrmFormatModifierPropertiesEXT {
     #[inline(always)]
     unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }

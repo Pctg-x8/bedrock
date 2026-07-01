@@ -1527,22 +1527,32 @@ impl Command {
 
     pub fn emit(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
         let (type_name, org_fn_name);
-        match (self.is_command_buffer_inst, self.extension) {
-            (false, None) => {
-                type_name = format!("PFN_vk{}", self.name);
-                org_fn_name = format!("vk{}", self.name);
-            }
-            (true, None) => {
-                type_name = format!("PFN_vkCmd{}", self.name);
-                org_fn_name = format!("vkCmd{}", self.name);
-            }
-            (false, Some((tag, _))) => {
+        if let Some(Extension { tag, .. }) = self.extension2 {
+            if self.is_command_buffer_inst {
+                type_name = format!("PFN_vkCmd{}{tag}", self.name);
+                org_fn_name = format!("vkCmd{}{tag}", self.name);
+            } else {
                 type_name = format!("PFN_vk{}{tag}", self.name);
                 org_fn_name = format!("vk{}{tag}", self.name);
             }
-            (true, Some((tag, _))) => {
-                type_name = format!("PFN_vkCmd{}{tag}", self.name);
-                org_fn_name = format!("vkCmd{}{tag}", self.name);
+        } else {
+            match (self.is_command_buffer_inst, self.extension) {
+                (false, None) => {
+                    type_name = format!("PFN_vk{}", self.name);
+                    org_fn_name = format!("vk{}", self.name);
+                }
+                (true, None) => {
+                    type_name = format!("PFN_vkCmd{}", self.name);
+                    org_fn_name = format!("vkCmd{}", self.name);
+                }
+                (false, Some((tag, _))) => {
+                    type_name = format!("PFN_vk{}{tag}", self.name);
+                    org_fn_name = format!("vk{}{tag}", self.name);
+                }
+                (true, Some((tag, _))) => {
+                    type_name = format!("PFN_vkCmd{}{tag}", self.name);
+                    org_fn_name = format!("vkCmd{}{tag}", self.name);
+                }
             }
         }
 
