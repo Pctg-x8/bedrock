@@ -24058,7 +24058,7 @@ pub type VkMacOSSurfaceCreateFlagBitsMVK = VkFlags;
 pub struct VkMacOSSurfaceCreateInfoMVK {
     pub sType: VkStructureType,
     pub pNext: *const core::ffi::c_void,
-    pub flags: VkMacOSSurfaceCreateFlgsMVK,
+    pub flags: VkMacOSSurfaceCreateFlagsMVK,
     pub pView: *const core::ffi::c_void,
 }
 #[cfg(feature = "VK_MVK_macos_surface")]

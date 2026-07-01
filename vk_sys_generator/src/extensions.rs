@@ -2448,7 +2448,7 @@ pub const ELEMENTS: &[Element] = &[
             vk_ext_enum(124, 0) as _,
             StructUsage::Source,
             &[
-                Struct::member("flags", "VkMacOSSurfaceCreateFlgsMVK"),
+                Struct::member("flags", "VkMacOSSurfaceCreateFlagsMVK"),
                 Struct::member("pView", "*const core::ffi::c_void"),
             ],
         )
