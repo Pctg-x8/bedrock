@@ -658,7 +658,7 @@ impl<'d> CmdRecord<'d> {
     }
 
     #[cfg(feature = "VK_KHR_create_renderpass2")]
-    #[inline]
+    #[inline(always)]
     pub fn begin_render_pass2_khr(
         mut self,
         fn_provider: &(impl DeviceCreateRenderPass2Extension + ?Sized),
@@ -666,11 +666,7 @@ impl<'d> CmdRecord<'d> {
         subpass_begin_info: &SubpassBeginInfo,
     ) -> Self {
         unsafe {
-            (fn_provider.cmd_begin_render_pass_2_khr_fn().0)(
-                self.ptr.native_ptr_mut(),
-                begin_info as *const _ as _,
-                subpass_begin_info as *const _ as _,
-            );
+            fn_provider.cmd_begin_render_pass2_khr(&mut self.ptr, begin_info, subpass_begin_info);
         }
 
         self
@@ -695,7 +691,7 @@ impl<'d> CmdRecord<'d> {
     }
 
     #[cfg(feature = "VK_KHR_create_renderpass2")]
-    #[inline]
+    #[inline(always)]
     pub fn next_subpass2_khr(
         mut self,
         fn_provider: &(impl DeviceCreateRenderPass2Extension + ?Sized),
@@ -703,11 +699,7 @@ impl<'d> CmdRecord<'d> {
         subpass_end_info: &SubpassEndInfo,
     ) -> Self {
         unsafe {
-            (fn_provider.cmd_next_subpass_2_khr_fn().0)(
-                self.ptr.native_ptr_mut(),
-                subpass_begin_info as *const _ as _,
-                subpass_end_info as *const _ as _,
-            );
+            fn_provider.cmd_next_subpass2_khr(&mut self.ptr, subpass_begin_info, subpass_end_info);
         }
 
         self
@@ -728,17 +720,14 @@ impl<'d> CmdRecord<'d> {
     }
 
     #[cfg(feature = "VK_KHR_create_renderpass2")]
-    #[inline]
+    #[inline(always)]
     pub fn end_render_pass2_khr(
         mut self,
         fn_provider: &(impl DeviceCreateRenderPass2Extension + ?Sized),
         subpass_end_info: &SubpassEndInfo,
     ) -> Self {
         unsafe {
-            (fn_provider.cmd_end_render_pass_2_khr_fn().0)(
-                self.ptr.native_ptr_mut(),
-                subpass_end_info as *const _ as _,
-            );
+            fn_provider.cmd_end_render_pass2_khr(&mut self.ptr, subpass_end_info);
         }
 
         self

@@ -1871,7 +1871,9 @@ pub trait DeviceCreateRenderPass2Extension: Device {
     fn cmd_next_subpass_2_khr_fn(&self) -> brvk::PFN_vkCmdNextSubpass2KHR;
 
     /// Create a new render pass object
+    ///
     /// # Failures
+    ///
     /// On failure, this command returns
     ///
     /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
@@ -1894,6 +1896,67 @@ pub trait DeviceCreateRenderPass2Extension: Device {
         })?;
 
         Ok(unsafe { h.assume_init() })
+    }
+
+    /// Begin a new render pass
+    ///
+    /// # Safety
+    ///
+    /// Host access to the `VkCommandPool` that `command_buffer` was allocated from must be externally synchronized.
+    #[implements]
+    #[inline(always)]
+    unsafe fn cmd_begin_render_pass2_khr(
+        &self,
+        command_buffer: &mut (impl VkHandleMut<Handle = brvk::VkCommandBuffer> + ?Sized),
+        info: &RenderPassBeginInfo,
+        subpass_info: &SubpassBeginInfo,
+    ) {
+        unsafe {
+            self.cmd_begin_render_pass_2_khr_fn().0(
+                command_buffer.native_ptr_mut(),
+                core::ptr::from_ref(info).cast(),
+                core::ptr::from_ref(subpass_info).cast(),
+            )
+        }
+    }
+
+    /// End the current render pass
+    ///
+    /// # Safety
+    ///
+    /// Host access to the `VkCommandPool` that `command_buffer` was allocated from must be externally synchronized.
+    #[implements]
+    #[inline(always)]
+    unsafe fn cmd_end_render_pass2_khr(
+        &self,
+        command_buffer: &mut (impl VkHandleMut<Handle = brvk::VkCommandBuffer> + ?Sized),
+        subpass_info: &SubpassEndInfo,
+    ) {
+        unsafe {
+            self.cmd_end_render_pass_2_khr_fn().0(command_buffer.native_ptr(), core::ptr::from_ref(subpass_info).cast())
+        }
+    }
+
+    /// Transition to the next subpass of a render pass
+    ///
+    /// # Safety
+    ///
+    /// Host access to the `VkCommandPool` that `command_buffer` was allocated from must be externally synchronized.
+    #[implements]
+    #[inline(always)]
+    unsafe fn cmd_next_subpass2_khr(
+        &self,
+        command_buffer: &mut (impl VkHandleMut<Handle = brvk::VkCommandBuffer> + ?Sized),
+        begin_info: &SubpassBeginInfo,
+        end_info: &SubpassEndInfo,
+    ) {
+        unsafe {
+            self.cmd_next_subpass_2_khr_fn().0(
+                command_buffer.native_ptr(),
+                core::ptr::from_ref(begin_info).cast(),
+                core::ptr::from_ref(end_info).cast(),
+            )
+        }
     }
 }
 #[cfg(feature = "VK_KHR_create_renderpass2")]
