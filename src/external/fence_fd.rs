@@ -1,3 +1,5 @@
+use bedrock_vk::{self as brvk, TypedVulkanStructure};
+
 use crate::*;
 
 #[repr(u32)]
@@ -10,18 +12,18 @@ pub enum ExternalFenceFdType {
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct ImportFenceFdInfo<'d>(
-    pub(crate) VkImportFenceFdInfoKHR,
+    pub(crate) brvk::VkImportFenceFdInfoKHR,
     core::marker::PhantomData<&'d dyn VkHandle<Handle = brvk::VkFence>>,
 );
 impl<'d> ImportFenceFdInfo<'d> {
     pub fn new(
-        fence: &'d (impl VkHandle<Handle = brvk::VkFence> + ?Sized),
+        fence: &'d (impl brvk::VkHandle<Handle = brvk::VkFence> + ?Sized),
         handle_type: ExternalFenceFdType,
         fd: std::os::unix::io::RawFd,
     ) -> Self {
         Self(
-            VkImportFenceFdInfoKHR {
-                sType: VkImportFenceFdInfoKHR::TYPE,
+            brvk::VkImportFenceFdInfoKHR {
+                sType: brvk::VkImportFenceFdInfoKHR::TYPE,
                 pNext: core::ptr::null(),
                 flags: 0,
                 handleType: handle_type as _,
@@ -32,11 +34,11 @@ impl<'d> ImportFenceFdInfo<'d> {
         )
     }
 
-    pub const unsafe fn from_raw(raw: VkImportFenceFdInfoKHR) -> Self {
+    pub const unsafe fn from_raw(raw: brvk::VkImportFenceFdInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkImportFenceFdInfoKHR {
+    pub const fn into_raw(self) -> brvk::VkImportFenceFdInfoKHR {
         self.0
     }
 
