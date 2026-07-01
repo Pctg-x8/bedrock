@@ -177,7 +177,6 @@ ExportExtensions!("VK_KHR_shader_float_controls": shader_float_controls_khr);
 ExportExtensions!("VK_KHR_maintenance4": maintenance4_khr);
 ExportExtensions!("VK_KHR_dynamic_rendering": dynamic_rendering_khr);
 ExportExtensions!("VK_KHR_copy_commands2": copy_commands2_khr);
-ExportExtensions!("VK_KHR_format_feature_flags2": format_feature_flags2_khr);
 
 // Promoted Extensions (1.4)
 ExportExtensions!("VK_KHR_dynamic_rendering_local_read": dynamic_rendering_local_read_khr);

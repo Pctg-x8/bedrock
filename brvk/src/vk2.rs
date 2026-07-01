@@ -18874,6 +18874,140 @@ pub type VkPhysicalDeviceSamplerFilterMinmaxProperties = VkPhysicalDeviceSampler
 #[rustfmt::skip]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES_EXT;
 
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_KHR_FORMAT_FEATURE_FLAGS2_EXTENSION_NAME: &str = "VK_KHR_format_feature_flags2";
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_KHR_FORMAT_FEATURE_FLAGS2_SPEC_VERSION: usize = 2;
+
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub type VkFormatFeatureFlags2KHR = VkFlags64;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub type VkFormatFeatureFlags2 = VkFormatFeatureFlags2KHR;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub type VkFormatFeatureFlagBits2KHR = VkFlags64;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub type VkFormatFeatureFlagBits2 = VkFormatFeatureFlagBits2KHR;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_SAMPLED_IMAGE_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000000000001;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_STORAGE_IMAGE_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000000000002;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_STORAGE_IMAGE_ATOMIC_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000000000004;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_UNIFORM_TEXEL_BUFFER_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000000000008;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_STORAGE_TEXEL_BUFFER_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000000000010;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_STORAGE_TEXEL_BUFFER_ATOMIC_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000000000020;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_VERTEX_BUFFER_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000000000040;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_COLOR_ATTACHMENT_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000000000080;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_COLOR_ATTACHMENT_BLEND_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000000000100;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_DEPTH_STENCIL_ATTACHMENT_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000000000200;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_BLIT_SRC_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000000000400;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_BLIT_DST_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000000000800;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_SAMPLED_IMAGE_FILTER_LINEAR_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000000001000;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_TRANSFER_SRC_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000000004000;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_TRANSFER_DST_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000000008000;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_SAMPLED_IMAGE_FILTER_MINMAX_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000000010000;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_MIDPOINT_CHROMA_SAMPLES_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000000020000;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000000040000;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_SAMPLED_IMAGE_YCBCR_CONVERSION_SEPARATE_RECONSTRUCTION_FILTER_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000000080000;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000000100000;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_FORCEABLE_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000000200000;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_DISJOINT_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000000400000;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_COSITED_CHROMA_SAMPLES_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000000800000;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_STORAGE_READ_WITHOUT_FORMAT_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000800000000;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_STORAGE_WRITE_WITHOUT_FORMAT_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000100000000;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_SAMPLED_IMAGE_DEPTH_COMPARISON_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000200000000;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_2_SAMPLED_IMAGE_FILTER_CUBIC_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000000002000;
+
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkFormatProperties3KHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub linearTilingFeatures: VkFormatFeatureFlags2KHR,
+    pub optimalTilingFeatures: VkFormatFeatureFlags2KHR,
+    pub bufferFeatures: VkFormatFeatureFlags2KHR,
+}
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_3_KHR: VkStructureType = 1000360000;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkFormatProperties3KHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkFormatProperties3KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_3_KHR; }
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub type VkFormatProperties3 = VkFormatProperties3KHR;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_3: VkStructureType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_3_KHR;
+
 #[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
 #[rustfmt::skip]
 pub const VK_KHR_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME: &str = "VK_KHR_vertex_attribute_divisor";
@@ -21605,7 +21739,7 @@ unsafe impl crate::FromPtr for PFN_vkDisplayPowerControlEXT {
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
-pub struct PFN_vkRegisterDeviceEventEXT(pub unsafe extern "system" fn(device: VkDevice, pDeviceEventInfo: *const VkDeviceEVentInfoEXT, pAllocator: *const VkAllocationCallbacks, pFence: *mut VkFence) -> VkResult);
+pub struct PFN_vkRegisterDeviceEventEXT(pub unsafe extern "system" fn(device: VkDevice, pDeviceEventInfo: *const VkDeviceEventInfoEXT, pAllocator: *const VkAllocationCallbacks, pFence: *mut VkFence) -> VkResult);
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_display_control")]
 #[rustfmt::skip]
@@ -22800,7 +22934,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdProcessCommandsNVX {
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
-pub struct PFN_vkCmdReserveSpaceForCommandsNVX(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pReserveSpaceInfo: *const VkCmdREserveSpaceForCommandsInfoNVX));
+pub struct PFN_vkCmdReserveSpaceForCommandsNVX(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pReserveSpaceInfo: *const VkCmdReserveSpaceForCommandsInfoNVX));
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_NVX_device_generated_commands")]
 #[rustfmt::skip]
@@ -22827,7 +22961,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdReserveSpaceForCommandsNVX {
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
-pub struct PFN_vkCreateIndirectCommandsLayoutNVX(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkIndirectCommandsLayoutCreateInfoNVX, pAllocator: *const VkallocationCallbacks, pIndirectCommandsLayout: *mut VkIndirectCommandsLayoutNVX) -> VkResult);
+pub struct PFN_vkCreateIndirectCommandsLayoutNVX(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkIndirectCommandsLayoutCreateInfoNVX, pAllocator: *const VkAllocationCallbacks, pIndirectCommandsLayout: *mut VkIndirectCommandsLayoutNVX) -> VkResult);
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_NVX_device_generated_commands")]
 #[rustfmt::skip]
@@ -22989,7 +23123,7 @@ unsafe impl crate::FromPtr for PFN_vkUnregisterObjectsNVX {
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
-pub struct PFN_vkGetPhysicalDeviceGeneratedCommandsPropertiesNVX(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkDEviceGeneratedCommandsFeaturesNVX, pLimits: *mut VkDEviceGeneratedCommandsLimitsNVX));
+pub struct PFN_vkGetPhysicalDeviceGeneratedCommandsPropertiesNVX(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkDeviceGeneratedCommandsFeaturesNVX, pLimits: *mut VkDeviceGeneratedCommandsLimitsNVX));
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_NVX_device_generated_commands")]
 #[rustfmt::skip]
@@ -23041,7 +23175,7 @@ pub struct VkPresentRegionKHR {
 #[derive(Debug, Clone)]
 #[repr(C)]
 #[rustfmt::skip]
-pub struct VkPresentREgionsKHR {
+pub struct VkPresentRegionsKHR {
     pub sType: VkStructureType,
     pub pNext: *const core::ffi::c_void,
     pub swapchainCount: u32,
@@ -23052,7 +23186,7 @@ pub struct VkPresentREgionsKHR {
 pub const VK_STRUCTURE_TYPE_PRESENT_REGIONS_KHR: VkStructureType = 1000084000;
 #[cfg(feature = "VK_KHR_incremental_present")]
 #[rustfmt::skip]
-unsafe impl crate::VulkanStructure for VkPresentREgionsKHR {
+unsafe impl crate::VulkanStructure for VkPresentRegionsKHR {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
@@ -23065,7 +23199,7 @@ unsafe impl crate::VulkanStructure for VkPresentREgionsKHR {
 }
 #[cfg(feature = "VK_KHR_incremental_present")]
 #[rustfmt::skip]
-impl crate::TypedVulkanStructure for VkPresentREgionsKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PRESENT_REGIONS_KHR; }
+impl crate::TypedVulkanStructure for VkPresentRegionsKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PRESENT_REGIONS_KHR; }
 
 #[cfg(feature = "VK_NV_clip_space_w_scaling")]
 #[rustfmt::skip]
