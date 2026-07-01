@@ -366,18 +366,19 @@ impl SurfaceCreateInfo for Win32SurfaceCreateInfo {
 }
 
 #[cfg(feature = "VK_EXT_metal_surface")]
-pub type MetalSurfaceCreateInfo = VkMetalSurfaceCreateInfoEXT;
+#[repr(transparent)]
+pub struct MetalSurfaceCreateInfo(brvk::VkMetalSurfaceCreateInfoEXT);
 #[cfg(feature = "VK_EXT_metal_surface")]
 impl MetalSurfaceCreateInfo {
     /// # Safety
     /// Provided `layer` must be a valid reference
     pub const unsafe fn new(layer: *const core::ffi::c_void) -> Self {
-        Self {
-            sType: Self::TYPE,
+        Self(brvk::VkMetalSurfaceCreateInfoEXT {
+            sType: brvk::VkMetalSurfaceCreateInfoEXT::TYPE,
             pNext: core::ptr::null(),
             flags: 0,
             pLayer: layer,
-        }
+        })
     }
 }
 #[cfg(feature = "VK_EXT_metal_surface")]
@@ -394,7 +395,7 @@ impl SurfaceCreateInfo for MetalSurfaceCreateInfo {
         unsafe {
             brvk::fns::create_metal_surface_ext(
                 instance.native_ptr(),
-                self,
+                &self.0,
                 opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
