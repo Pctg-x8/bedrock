@@ -149,7 +149,7 @@ impl SurfaceCapabilities {
     }
 }
 
-pub type SurfaceFormat = brvk::VkSurfaceFormatKHR;
+pub use brvk::VkSurfaceFormatKHR as SurfaceFormat;
 
 pub trait SurfaceCreateInfo {
     #[implements]
@@ -161,19 +161,20 @@ pub trait SurfaceCreateInfo {
 }
 
 #[cfg(feature = "VK_KHR_xlib_surface")]
-pub type XlibSurfaceCreateInfo = VkXlibSurfaceCreateInfoKHR;
+#[repr(transparent)]
+pub struct XlibSurfaceCreateInfo(brvk::VkXlibSurfaceCreateInfoKHR);
 #[cfg(feature = "VK_KHR_xlib_surface")]
 impl XlibSurfaceCreateInfo {
     /// # Safety
     /// Provided `display` must be a valid reference
     pub const unsafe fn new(display: *mut x11::xlib::Display, window: x11::xlib::Window) -> Self {
-        Self {
+        Self(brvk::VkXlibSurfaceCreateInfoKHR {
             sType: Self::TYPE,
             pNext: core::ptr::null(),
             flags: 0,
             dpy: display,
             window,
-        }
+        })
     }
 }
 #[cfg(feature = "VK_KHR_xlib_surface")]
@@ -190,7 +191,7 @@ impl SurfaceCreateInfo for XlibSurfaceCreateInfo {
         unsafe {
             brvk::create_xlib_surface_khr(
                 instance.native_ptr(),
-                self,
+                &self.0,
                 opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
@@ -202,19 +203,20 @@ impl SurfaceCreateInfo for XlibSurfaceCreateInfo {
 }
 
 #[cfg(feature = "VK_KHR_xcb_surface")]
-pub type XcbSurfaceCreateInfo = VkXcbSurfaceCreateInfoKHR;
+#[repr(transparent)]
+pub struct XcbSurfaceCreateInfo(brvk::VkXcbSurfaceCreateInfoKHR);
 #[cfg(feature = "VK_KHR_xcb_surface")]
 impl XcbSurfaceCreateInfo {
     /// # Safety
     /// Provided `connection` must be a valid reference
     pub const unsafe fn new(connection: *mut xcb::ffi::xcb_connection_t, window: xcb::x::Window) -> Self {
-        Self {
+        Self(brvk::VkXcbSurfaceCreateInfoKHR {
             sType: Self::TYPE,
             pNext: core::ptr::null(),
             flags: 0,
             connection,
             window,
-        }
+        })
     }
 }
 #[cfg(feature = "VK_KHR_xcb_surface")]
@@ -231,7 +233,7 @@ impl SurfaceCreateInfo for XcbSurfaceCreateInfo {
         unsafe {
             brvk::create_xcb_surface_khr(
                 instance.native_ptr(),
-                self,
+                &self.0,
                 opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
@@ -243,19 +245,20 @@ impl SurfaceCreateInfo for XcbSurfaceCreateInfo {
 }
 
 #[cfg(feature = "VK_KHR_wayland_surface")]
-pub type WaylandSurfaceCreateInfo = VkWaylandSurfaceCreateInfoKHR;
+#[repr(transparent)]
+pub struct WaylandSurfaceCreateInfo(brvk::VkWaylandSurfaceCreateInfoKHR);
 #[cfg(feature = "VK_KHR_wayland_surface")]
 impl WaylandSurfaceCreateInfo {
     /// # Safety
     /// Provided `display` and `surface` must be a valid reference
     pub const unsafe fn new(display: *mut core::ffi::c_void, surface: *mut core::ffi::c_void) -> Self {
-        Self {
+        Self(brvk::VkWaylandSurfaceCreateInfoKHR {
             sType: Self::TYPE,
             pNext: core::ptr::null(),
             flags: 0,
             display,
             surface,
-        }
+        })
     }
 }
 #[cfg(feature = "VK_KHR_wayland_surface")]
@@ -272,7 +275,7 @@ impl SurfaceCreateInfo for WaylandSurfaceCreateInfo {
         unsafe {
             brvk::create_wayland_surface_khr(
                 instance.native_ptr(),
-                self,
+                &self.0,
                 opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
@@ -284,18 +287,19 @@ impl SurfaceCreateInfo for WaylandSurfaceCreateInfo {
 }
 
 #[cfg(feature = "VK_KHR_android_surface")]
-pub type AndroidSurfaceCreateInfo = brvk::VkAndroidSurfaceCreateInfoKHR;
+#[repr(transparent)]
+pub struct AndroidSurfaceCreateInfo(brvk::VkAndroidSurfaceCreateInfoKHR);
 #[cfg(feature = "VK_KHR_android_surface")]
 impl AndroidSurfaceCreateInfo {
     /// # Safety
     /// Provided `window` must be a valid reference
     pub const unsafe fn new(window: *mut android::ANativeWindow) -> Self {
-        Self {
+        Self(brvk::VkAndroidSurfaceCreateInfoKHR {
             sType: Self::TYPE,
             pNext: core::ptr::null(),
             flags: 0,
             window,
-        }
+        })
     }
 }
 #[cfg(feature = "VK_KHR_android_surface")]
@@ -312,7 +316,7 @@ impl SurfaceCreateInfo for AndroidSurfaceCreateInfo {
         unsafe {
             brvk::create_android_surface_khr(
                 instance.native_ptr(),
-                self,
+                &self.0,
                 opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
