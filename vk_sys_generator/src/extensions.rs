@@ -1,6 +1,7 @@
 use crate::{parts::*, vk_ext_enum};
 
 const VK_EXT_IMAGE_DRM_FORMAT_MODIFIER: Extension = Extension::new("EXT", "image_drm_format_modifier", 1);
+const VK_EXT_METAL_OBJECTS: Extension = Extension::new("EXT", "metal_objects", 2);
 
 pub const ELEMENTS: &[Element] = &[
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_acquire_drm_display", 1)),
@@ -2241,5 +2242,190 @@ pub const ELEMENTS: &[Element] = &[
         )
         .failable()
         .extension2(&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
+    ),
+    // VK_EXT_metal_objects
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(&VK_EXT_METAL_OBJECTS)),
+    Element::Bitmask(
+        Bitmask::new(
+            "ExportMetalObjectTypeFlags",
+            "ExportMetalObjectTypeFlagBits",
+            "EXPORT_METAL_OBJECT_TYPE",
+            &[
+                Bitmask::entry("METAL_DEVICE", 0),
+                Bitmask::entry("METAL_COMMAND_QUEUE", 1),
+                Bitmask::entry("METAL_BUFFER", 2),
+                Bitmask::entry("METAL_TEXTURE", 3),
+                Bitmask::entry("METAL_IOSURFACE", 4),
+                Bitmask::entry("METAL_SHARED_EVENT", 5),
+            ],
+        )
+        .extension2(&VK_EXT_METAL_OBJECTS),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "ExportMetalObjectCreateInfo",
+            "EXPORT_METAL_OBJECT_CREATE_INFO",
+            vk_ext_enum(312, 0) as _,
+            StructUsage::Source,
+            &[Struct::member("exportObjectType", "VkExportMetalObjectTypeFlagBitsEXT")],
+        )
+        .extensions2(&[&VK_EXT_METAL_OBJECTS]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "ExportMetalObjectsInfo",
+            "EXPORT_METAL_OBJECTS_INFO",
+            vk_ext_enum(312, 1) as _,
+            StructUsage::Source,
+            &[],
+        )
+        .extensions2(&[&VK_EXT_METAL_OBJECTS]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "ExportMetalDeviceInfo",
+            "EXPORT_METAL_DEVICE_INFO",
+            vk_ext_enum(312, 2) as _,
+            StructUsage::Source,
+            &[Struct::member(
+                "mtlDevice",
+                "*mut core::ffi::c_void", /* id<MTLDevice> */
+            )],
+        )
+        .extensions2(&[&VK_EXT_METAL_OBJECTS]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "ExportMetalCommandQueueInfo",
+            "EXPORT_METAL_COMMAND_QUEUE_INFO",
+            vk_ext_enum(312, 3) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("queue", "VkQueue"),
+                Struct::member(
+                    "mtlCommandQueue",
+                    "*mut core::ffi::c_void", /* id<MTLCommandQueue> */
+                ),
+            ],
+        )
+        .extensions2(&[&VK_EXT_METAL_OBJECTS]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "ExportMetalBufferInfo",
+            "EXPORT_METAL_BUFFER_INFO",
+            vk_ext_enum(312, 4) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("buffer", "VkBuffer"),
+                Struct::member("mtlBuffer", "*mut core::ffi::c_void" /* id<MTLBuffer> */),
+            ],
+        )
+        .extensions2(&[&VK_EXT_METAL_OBJECTS]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "ImportMetalBufferInfo",
+            "IMPORT_METAL_BUFFER_INFO",
+            vk_ext_enum(312, 5) as _,
+            StructUsage::Sink,
+            &[Struct::member(
+                "mtlBuffer",
+                "*mut core::ffi::c_void", /* id<MTLBuffer> */
+            )],
+        )
+        .extensions2(&[&VK_EXT_METAL_OBJECTS]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "ExportMetalTextureInfo",
+            "EXPORT_METAL_TEXTURE_INFO",
+            vk_ext_enum(312, 6) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("image", "VkImage"),
+                Struct::member("imageView", "VkImageView"),
+                Struct::member("bufferView", "VkBufferView"),
+                Struct::member("plane", "VkImageAspectFlagBits"),
+                Struct::member("mtlTexture", "*mut core::ffi::c_void" /* id<MTLTexture> */),
+            ],
+        )
+        .extensions2(&[&VK_EXT_METAL_OBJECTS]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "ImportMetalTextureInfo",
+            "IMPORT_METAL_TEXTURE_INFO",
+            vk_ext_enum(312, 7) as _,
+            StructUsage::Sink,
+            &[
+                Struct::member("plane", "VkImageAspectFlagBits"),
+                Struct::member("mtlTexture", "*mut core::ffi::c_void" /* id<MTLTexture> */),
+            ],
+        )
+        .extensions2(&[&VK_EXT_METAL_OBJECTS]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "ExportMetalIOSurfaceInfo",
+            "EXPORT_METAL_IO_SURFACE_INFO",
+            vk_ext_enum(312, 8) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("image", "VkImage"),
+                Struct::member("ioSurface", "*mut core::ffi::c_void" /* IOSurfaceRef */),
+            ],
+        )
+        .extensions2(&[&VK_EXT_METAL_OBJECTS]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "ImportMetalIOSurfaceInfo",
+            "IMPORT_METAL_IO_SURFACE_INFO",
+            vk_ext_enum(312, 9) as _,
+            StructUsage::Sink,
+            &[Struct::member(
+                "ioSurface",
+                "*mut core::ffi::c_void", /* IOSurfaceRef */
+            )],
+        )
+        .extensions2(&[&VK_EXT_METAL_OBJECTS]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "ExportMetalSharedEVentInfo",
+            "EXPORT_METAL_SHARED_EVENT_INFO",
+            vk_ext_enum(312, 10) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("semaphore", "VkSemaphore"),
+                Struct::member("event", "VkEvent"),
+                Struct::member("mtlSharedEvent", "*mut core::ffi::c_void" /* id<MTLSharedEvent> */),
+            ],
+        )
+        .extensions2(&[&VK_EXT_METAL_OBJECTS]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "ImportMetalSharedEventInfo",
+            "IMPORT_METAL_SHARED_EVENT_INFO",
+            vk_ext_enum(312, 11) as _,
+            StructUsage::Sink,
+            &[Struct::member(
+                "mtlSharedEvent",
+                "*mut core::ffi::c_void", /* id<MTLSharedEvent> */
+            )],
+        )
+        .extensions2(&[&VK_EXT_METAL_OBJECTS]),
+    ),
+    Element::Command(
+        Command::new(
+            "ExportMetalObjects",
+            &[
+                ("device", "VkDevice"),
+                ("pMetalObjectsInfo", "*mut VkExportMetalObjectsInfoEXT"),
+            ],
+        )
+        .extension2(&VK_EXT_METAL_OBJECTS),
     ),
 ];

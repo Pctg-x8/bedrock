@@ -23637,6 +23637,406 @@ unsafe impl crate::FromPtr for PFN_vkGetImageDrmFormatModifierPropertiesEXT {
     }
 }
 
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+pub const VK_EXT_METAL_OBJECTS_EXTENSION_NAME: &str = "VK_EXT_metal_objects";
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+pub const VK_EXT_METAL_OBJECTS_SPEC_VERSION: usize = 2;
+
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+pub type VkExportMetalObjectTypeFlagsEXT = VkFlags;
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+pub type VkExportMetalObjectTypeFlagBitsEXT = VkFlags;
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+pub const VK_EXPORT_METAL_OBJECT_TYPE_METAL_DEVICE_BIT: VkExportMetalObjectTypeFlagBitsEXT = 0x00000001;
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+pub const VK_EXPORT_METAL_OBJECT_TYPE_METAL_COMMAND_QUEUE_BIT: VkExportMetalObjectTypeFlagBitsEXT = 0x00000002;
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+pub const VK_EXPORT_METAL_OBJECT_TYPE_METAL_BUFFER_BIT: VkExportMetalObjectTypeFlagBitsEXT = 0x00000004;
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+pub const VK_EXPORT_METAL_OBJECT_TYPE_METAL_TEXTURE_BIT: VkExportMetalObjectTypeFlagBitsEXT = 0x00000008;
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+pub const VK_EXPORT_METAL_OBJECT_TYPE_METAL_IOSURFACE_BIT: VkExportMetalObjectTypeFlagBitsEXT = 0x00000010;
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+pub const VK_EXPORT_METAL_OBJECT_TYPE_METAL_SHARED_EVENT_BIT: VkExportMetalObjectTypeFlagBitsEXT = 0x00000020;
+
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkExportMetalObjectCreateInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub exportObjectType: VkExportMetalObjectTypeFlagBitsEXT,
+}
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_EXPORT_METAL_OBJECT_CREATE_INFO_EXT: VkStructureType = 1000311000;
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkExportMetalObjectCreateInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkExportMetalObjectCreateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_METAL_OBJECT_CREATE_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkExportMetalObjectsInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+}
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_EXPORT_METAL_OBJECTS_INFO_EXT: VkStructureType = 1000311001;
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkExportMetalObjectsInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkExportMetalObjectsInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_METAL_OBJECTS_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkExportMetalDeviceInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub mtlDevice: *mut core::ffi::c_void,
+}
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_EXPORT_METAL_DEVICE_INFO_EXT: VkStructureType = 1000311002;
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkExportMetalDeviceInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkExportMetalDeviceInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_METAL_DEVICE_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkExportMetalCommandQueueInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub queue: VkQueue,
+    pub mtlCommandQueue: *mut core::ffi::c_void,
+}
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_EXPORT_METAL_COMMAND_QUEUE_INFO_EXT: VkStructureType = 1000311003;
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkExportMetalCommandQueueInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkExportMetalCommandQueueInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_METAL_COMMAND_QUEUE_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkExportMetalBufferInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub buffer: VkBuffer,
+    pub mtlBuffer: *mut core::ffi::c_void,
+}
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_EXPORT_METAL_BUFFER_INFO_EXT: VkStructureType = 1000311004;
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkExportMetalBufferInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkExportMetalBufferInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_METAL_BUFFER_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkImportMetalBufferInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub mtlBuffer: *mut core::ffi::c_void,
+}
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_IMPORT_METAL_BUFFER_INFO_EXT: VkStructureType = 1000311005;
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkImportMetalBufferInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkImportMetalBufferInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMPORT_METAL_BUFFER_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkExportMetalTextureInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub image: VkImage,
+    pub imageView: VkImageView,
+    pub bufferView: VkBufferView,
+    pub plane: VkImageAspectFlagBits,
+    pub mtlTexture: *mut core::ffi::c_void,
+}
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_EXPORT_METAL_TEXTURE_INFO_EXT: VkStructureType = 1000311006;
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkExportMetalTextureInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkExportMetalTextureInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_METAL_TEXTURE_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkImportMetalTextureInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub plane: VkImageAspectFlagBits,
+    pub mtlTexture: *mut core::ffi::c_void,
+}
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_IMPORT_METAL_TEXTURE_INFO_EXT: VkStructureType = 1000311007;
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkImportMetalTextureInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkImportMetalTextureInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMPORT_METAL_TEXTURE_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkExportMetalIOSurfaceInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub image: VkImage,
+    pub ioSurface: *mut core::ffi::c_void,
+}
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_EXPORT_METAL_IO_SURFACE_INFO_EXT: VkStructureType = 1000311008;
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkExportMetalIOSurfaceInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkExportMetalIOSurfaceInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_METAL_IO_SURFACE_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkImportMetalIOSurfaceInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub ioSurface: *mut core::ffi::c_void,
+}
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_IMPORT_METAL_IO_SURFACE_INFO_EXT: VkStructureType = 1000311009;
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkImportMetalIOSurfaceInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkImportMetalIOSurfaceInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMPORT_METAL_IO_SURFACE_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkExportMetalSharedEVentInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub semaphore: VkSemaphore,
+    pub event: VkEvent,
+    pub mtlSharedEvent: *mut core::ffi::c_void,
+}
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_EXPORT_METAL_SHARED_EVENT_INFO_EXT: VkStructureType = 1000311010;
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkExportMetalSharedEVentInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkExportMetalSharedEVentInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_METAL_SHARED_EVENT_INFO_EXT; }
+
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkImportMetalSharedEventInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub mtlSharedEvent: *mut core::ffi::c_void,
+}
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_IMPORT_METAL_SHARED_EVENT_INFO_EXT: VkStructureType = 1000311011;
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkImportMetalSharedEventInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkImportMetalSharedEventInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMPORT_METAL_SHARED_EVENT_INFO_EXT; }
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkExportMetalObjectsEXT(pub unsafe extern "system" fn(device: VkDevice, pMetalObjectsInfo: *mut VkExportMetalObjectsInfoEXT));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkExportMetalObjectsEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkExportMetalObjectsEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkExportMetalObjectsEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]

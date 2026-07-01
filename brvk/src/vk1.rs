@@ -168,7 +168,6 @@ ExportExtensions!("VK_AMD_shader_fragment_mask": shader_fragment_mask_amd);
 ExportExtensions!("VK_EXT_post_depth_coverage": post_depth_coverage_ext);
 ExportExtensions!("VK_EXT_shader_viewport_index_layer": shader_viewport_index_layer_ext);
 ExportExtensions!("VK_EXT_full_screen_exclusive": full_screen_exclusive_ext);
-ExportExtensions!("VK_EXT_metal_objects": metal_objects_ext);
 ExportExtensions!("VK_KHR_maintenance7": maintenance7_khr);
 ExportExtensions!("VK_KHR_maintenance8": maintenance8_khr);
 
