@@ -2022,14 +2022,11 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
     {
         let mut d = core::mem::MaybeUninit::uninit();
 
-        crate::error::translate_vk_result(self.instance().get_randr_output_display_ext_fn().0(
-            self.native_ptr(),
-            dpy,
-            rr_output,
-            d.as_mut_ptr(),
-        ))?;
+        crate::error::translate_vk_result(unsafe {
+            self.instance().get_randr_output_display_ext_fn().0(self.native_ptr(), dpy, rr_output, d.as_mut_ptr())
+        })?;
 
-        Ok(Display(d.assume_init(), self))
+        Ok(Display(unsafe { d.assume_init() }, self))
     }
 
     /// Query a count of supported presentation modes
