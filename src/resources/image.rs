@@ -89,7 +89,7 @@ pub trait Image: VkHandle<Handle = brvk::VkImage> + DeviceChildHandle {
     #[cfg(feature = "VK_KHR_synchronization2")]
     #[inline]
     fn memory_barrier2<'r>(&'r self, subresource_range: ImageSubresourceRange) -> crate::ImageMemoryBarrier2<'r> {
-        crate::ImageMemoryBarrier2::new(self, subresource_range.0)
+        crate::ImageMemoryBarrier2::new(self, subresource_range)
     }
 
     /// Returns an image's DRM format modifier

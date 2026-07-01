@@ -57,8 +57,7 @@ pub struct BufferMemoryBarrier2<'b>(
 impl<'b> BufferMemoryBarrier2<'b> {
     pub fn new(
         buffer: &'b (impl VkHandle<Handle = brvk::VkBuffer> + ?Sized),
-        offset: brvk::VkDeviceSize,
-        size: brvk::VkDeviceSize,
+        range: core::ops::Range<DeviceSize>,
     ) -> Self {
         Self(
             brvk::VkBufferMemoryBarrier2KHR {
@@ -71,8 +70,8 @@ impl<'b> BufferMemoryBarrier2<'b> {
                 srcQueueFamilyIndex: brvk::VK_QUEUE_FAMILY_IGNORED,
                 dstQueueFamilyIndex: brvk::VK_QUEUE_FAMILY_IGNORED,
                 buffer: buffer.native_ptr(),
-                offset,
-                size,
+                offset: range.start,
+                size: range.end - range.start,
             },
             core::marker::PhantomData,
         )
@@ -120,7 +119,7 @@ pub struct ImageMemoryBarrier2<'r>(
 impl<'r> ImageMemoryBarrier2<'r> {
     pub fn new(
         image: &'r (impl VkHandle<Handle = brvk::VkImage> + ?Sized),
-        subresource_range: brvk::VkImageSubresourceRange,
+        subresource_range: ImageSubresourceRange,
     ) -> Self {
         Self(
             brvk::VkImageMemoryBarrier2KHR {
@@ -135,7 +134,7 @@ impl<'r> ImageMemoryBarrier2<'r> {
                 srcQueueFamilyIndex: brvk::VK_QUEUE_FAMILY_IGNORED,
                 dstQueueFamilyIndex: brvk::VK_QUEUE_FAMILY_IGNORED,
                 image: image.native_ptr(),
-                subresourceRange: subresource_range,
+                subresourceRange: subresource_range.0,
             },
             core::marker::PhantomData,
         )
@@ -208,11 +207,11 @@ impl<'b, 'r> DependencyInfo<'b, 'r> {
                 pNext: core::ptr::null(),
                 dependencyFlags: 0,
                 memoryBarrierCount: memory_barriers.len() as _,
-                pMemoryBarriers: slice_as_ptr_empty_null(memory_barriers) as _,
+                pMemoryBarriers: slice_as_ptr_empty_null(memory_barriers).cast(),
                 bufferMemoryBarrierCount: buffer_memory_barriers.len() as _,
-                pBufferMemoryBarriers: slice_as_ptr_empty_null(buffer_memory_barriers) as _,
+                pBufferMemoryBarriers: slice_as_ptr_empty_null(buffer_memory_barriers).cast(),
                 imageMemoryBarrierCount: image_memory_barriers.len() as _,
-                pImageMemoryBarriers: slice_as_ptr_empty_null(image_memory_barriers) as _,
+                pImageMemoryBarriers: slice_as_ptr_empty_null(image_memory_barriers).cast(),
             },
             core::marker::PhantomData,
         )
