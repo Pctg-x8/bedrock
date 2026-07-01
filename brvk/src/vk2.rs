@@ -24037,6 +24037,84 @@ unsafe impl crate::FromPtr for PFN_vkExportMetalObjectsEXT {
     }
 }
 
+#[cfg(feature = "VK_MVK_macos_surface")]
+#[rustfmt::skip]
+pub const VK_MVK_MACOS_SURFACE_EXTENSION_NAME: &str = "VK_MVK_macos_surface";
+#[cfg(feature = "VK_MVK_macos_surface")]
+#[rustfmt::skip]
+pub const VK_MVK_MACOS_SURFACE_SPEC_VERSION: usize = 2;
+
+#[cfg(feature = "VK_MVK_macos_surface")]
+#[rustfmt::skip]
+pub type VkMacOSSurfaceCreateFlagsMVK = VkFlags;
+#[cfg(feature = "VK_MVK_macos_surface")]
+#[rustfmt::skip]
+pub type VkMacOSSurfaceCreateFlagBitsMVK = VkFlags;
+
+#[cfg(feature = "VK_MVK_macos_surface")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkMacOSSurfaceCreateInfoMVK {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkMacOSSurfaceCreateFlgsMVK,
+    pub pView: *const core::ffi::c_void,
+}
+#[cfg(feature = "VK_MVK_macos_surface")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK: VkStructureType = 1000123000;
+#[cfg(feature = "VK_MVK_macos_surface")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkMacOSSurfaceCreateInfoMVK {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_MVK_macos_surface")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkMacOSSurfaceCreateInfoMVK { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK; }
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_MVK_macos_surface")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCreateMacOSSurfaceMVK(pub unsafe extern "system" fn(instance: VkInstance, pCreateInfo: *const VkMacOSSurfaceCreateInfoMVK, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_MVK_macos_surface")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCreateMacOSSurfaceMVK {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateMacOSSurfaceMVK";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_MVK_macos_surface")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateMacOSSurfaceMVK {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_MVK_macos_surface")]
+#[rustfmt::skip]
+impl crate::StaticCallable for PFN_vkCreateMacOSSurfaceMVK {
+    const STATIC: Self = Self(vkCreateMacOSSurfaceMVK);
+}
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]
@@ -24313,4 +24391,5 @@ unsafe extern "system" {
     pub fn vkWaitSemaphores(device: VkDevice, pWaitInfo: *const VkSemaphoreWaitInfoKHR, timeout: u64) -> VkResult;
     #[cfg(feature = "VK_NN_vi_surface")]
     pub fn vkCreateViSurfaceNN(instance: VkInstance, pCreateInfo: *const VkViSurfaceCreateInfoNN, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    pub fn vkCreateMacOSSurface(instance: VkInstance, pCreateInfo: *const VkMacOSSurfaceCreateInfoMVK, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
 }

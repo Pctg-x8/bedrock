@@ -81,7 +81,6 @@ pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHX: crate::vk2::
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES_KHR: crate::vk2::VkStructureType = 100_0080_000;
 pub const VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES2_EXT: crate::vk2::VkStructureType = 100_0090_000;
 pub const VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK: crate::vk2::VkStructureType = 100_0122_000;
-pub const VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK: crate::vk2::VkStructureType = 100_0123_000;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT: crate::vk2::VkStructureType =
     100_0148_000;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_EXT: crate::vk2::VkStructureType =
@@ -159,7 +158,6 @@ ExportExtensions!("VK_NV_geometry_shader_passthrough": geometry_shader_passthrou
 ExportExtensions!("VK_NV_viewport_array2": viewport_array2_nv);
 ExportExtensions!("VK_EXT_swapchain_colorspace": swapchain_colorspace_ext);
 ExportExtensions!("VK_MVK_ios_surface": ios_surface_mvk);
-ExportExtensions!("VK_MVK_macos_surface": macos_surface_mvk);
 ExportExtensions!("VK_EXT_external_memory_dma_buf": external_memory_dma_buf_ext);
 // ExportExtensions!("VK_EXT_queue_family_foreign": queue_family_foreign);
 ExportExtensions!("VK_AMD_gpu_shader_int16": gpu_shader_int16_amd);

@@ -2,6 +2,7 @@ use crate::{parts::*, vk_ext_enum};
 
 const VK_EXT_IMAGE_DRM_FORMAT_MODIFIER: Extension = Extension::new("EXT", "image_drm_format_modifier", 1);
 const VK_EXT_METAL_OBJECTS: Extension = Extension::new("EXT", "metal_objects", 2);
+const VK_MVK_MACOS_SURFACE: Extension = Extension::new("MVK", "macos_surface", 2);
 
 pub const ELEMENTS: &[Element] = &[
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_acquire_drm_display", 1)),
@@ -2427,5 +2428,43 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .extension2(&VK_EXT_METAL_OBJECTS),
+    ),
+    // VK_MVK_macos_surface
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(&VK_MVK_MACOS_SURFACE)),
+    Element::Bitmask(
+        Bitmask::new(
+            "MacOSSurfaceCreateFlags",
+            "MacOSSurfaceCreateFlagBits",
+            "MACOS_SURFACE_CREATE",
+            &[],
+        )
+        .extension2(&VK_MVK_MACOS_SURFACE),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "MacOSSurfaceCreateInfo",
+            "MACOS_SURFACE_CREATE_INFO",
+            vk_ext_enum(124, 0) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("flags", "VkMacOSSurfaceCreateFlgsMVK"),
+                Struct::member("pView", "*const core::ffi::c_void"),
+            ],
+        )
+        .extensions2(&[&VK_MVK_MACOS_SURFACE]),
+    ),
+    Element::Command(
+        Command::new(
+            "CreateMacOSSurface",
+            &[
+                ("instance", "VkInstance"),
+                ("pCreateInfo", "*const VkMacOSSurfaceCreateInfoMVK"),
+                ("pAllocator", "*const VkAllocationCallbacks"),
+                ("pSurface", "*mut VkSurfaceKHR"),
+            ],
+        )
+        .failable()
+        .static_callable()
+        .extension2(&VK_MVK_MACOS_SURFACE),
     ),
 ];
