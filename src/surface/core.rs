@@ -152,6 +152,7 @@ impl SurfaceCapabilities {
 pub use brvk::VkSurfaceFormatKHR as SurfaceFormat;
 
 pub trait SurfaceCreateInfo {
+    // Note: executeは安全になるようにする(selfの構築でunsafeにするかsafetyを担保する)
     #[implements]
     fn execute(
         &self,
