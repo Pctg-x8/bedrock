@@ -189,7 +189,7 @@ impl SurfaceCreateInfo for XlibSurfaceCreateInfo {
         let mut h = core::mem::MaybeUninit::uninit();
 
         unsafe {
-            brvk::create_xlib_surface_khr(
+            brvk::fns::create_xlib_surface_khr(
                 instance.native_ptr(),
                 &self.0,
                 opt_pointer(allocation_callbacks),
@@ -231,7 +231,7 @@ impl SurfaceCreateInfo for XcbSurfaceCreateInfo {
         let mut h = core::mem::MaybeUninit::uninit();
 
         unsafe {
-            brvk::create_xcb_surface_khr(
+            brvk::fns::create_xcb_surface_khr(
                 instance.native_ptr(),
                 &self.0,
                 opt_pointer(allocation_callbacks),
@@ -273,7 +273,7 @@ impl SurfaceCreateInfo for WaylandSurfaceCreateInfo {
         let mut h = core::mem::MaybeUninit::uninit();
 
         unsafe {
-            brvk::create_wayland_surface_khr(
+            brvk::fns::create_wayland_surface_khr(
                 instance.native_ptr(),
                 &self.0,
                 opt_pointer(allocation_callbacks),
@@ -314,7 +314,7 @@ impl SurfaceCreateInfo for AndroidSurfaceCreateInfo {
         let mut h = core::mem::MaybeUninit::uninit();
 
         unsafe {
-            brvk::create_android_surface_khr(
+            brvk::fns::create_android_surface_khr(
                 instance.native_ptr(),
                 &self.0,
                 opt_pointer(allocation_callbacks),
@@ -392,7 +392,7 @@ impl SurfaceCreateInfo for MetalSurfaceCreateInfo {
         let mut h = core::mem::MaybeUninit::uninit();
 
         unsafe {
-            brvk::create_metal_surface_ext(
+            brvk::fns::create_metal_surface_ext(
                 instance.native_ptr(),
                 self,
                 opt_pointer(allocation_callbacks),
