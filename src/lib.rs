@@ -22,18 +22,17 @@ extern crate x11;
 extern crate xcb;
 
 pub use bedrock_vk::{
-    self as vk, GenericVulkanSinkStructure, GenericVulkanStructure, TypedVulkanSinkStructure, TypedVulkanStructure,
-    VkDeviceSize as DeviceSize, VkExtent2D as Extent2D, VkExtent3D as Extent3D, VkFormat as Format,
-    VkOffset2D as Offset2D, VkOffset3D as Offset3D, VkRawHandle, VkRect2D as Rect2D, VkViewport as Viewport,
-    VulkanSinkStructure, VulkanStructure,
+    self as vk, GenericVulkanSinkStructure, GenericVulkanStructure, ResolvedFnCell, ResolverInterface,
+    TypedVulkanSinkStructure, TypedVulkanStructure, VkDeviceSize as DeviceSize, VkExtent2D as Extent2D,
+    VkExtent3D as Extent3D, VkFormat as Format, VkOffset2D as Offset2D, VkOffset3D as Offset3D, VkRawHandle,
+    VkRect2D as Rect2D, VkViewport as Viewport, VulkanSinkStructure, VulkanStructure, load_function_unconstrainted,
+    load_symbol_unconstrainted,
 };
 use cfg_if::cfg_if;
 use derives::*;
 
 #[cfg(feature = "CustomResolver")]
 pub use bedrock_vk::set_resolver;
-#[cfg(feature = "DynamicLoaded")]
-pub use bedrock_vk::{ResolvedFnCell, ResolverInterface};
 
 pub use derives::SpecializationConstants;
 
