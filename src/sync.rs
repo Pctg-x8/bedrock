@@ -307,6 +307,18 @@ impl<'d> SemaphoreCreateInfo<'d> {
 #[repr(transparent)]
 pub struct PhysicalDeviceTimelineSemaphoreFeatures(pub brvk::VkPhysicalDeviceTimelineSemaphoreFeaturesKHR);
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
+unsafe impl brvk::VulkanSinkStructure for PhysicalDeviceTimelineSemaphoreFeatures {
+    #[inline(always)]
+    fn as_generic(&self) -> &GenericVulkanSinkStructure {
+        brvk::VulkanSinkStructure::as_generic(&self.0)
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut GenericVulkanSinkStructure {
+        brvk::VulkanSinkStructure::as_generic_mut(&mut self.0)
+    }
+}
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
 impl PhysicalDeviceTimelineSemaphoreFeatures {
     #[inline(always)]
     pub const fn new(active: bool) -> Self {
