@@ -800,11 +800,13 @@ pub fn safe_derive_spec_constant(tok: TokenStream) -> TokenStream {
 
                 let ty = &f.ty;
                 let ident = &f.ident;
-                entries.push(quote! { bedrock::SpecializationMapEntry {
-                    constantID: #constant_id,
-                    offset: core::mem::offset_of!(Self, #ident) as _,
-                    size: core::mem::size_of::<#ty>(),
-                } });
+                entries.push(
+                    quote! { bedrock::SpecializationMapEntry(bedrock::vk::VkSpecializationMapEntry {
+                        constantID: #constant_id,
+                        offset: core::mem::offset_of!(Self, #ident) as _,
+                        size: core::mem::size_of::<#ty>(),
+                    }) },
+                );
             }
 
             quote! {
@@ -813,7 +815,7 @@ pub fn safe_derive_spec_constant(tok: TokenStream) -> TokenStream {
 
                     #[inline(always)]
                     fn as_ptr(&self) -> *const core::ffi::c_void {
-                        self as *const _ as _
+                        core::ptr::from_ref(self).cast()
                     }
                 }
             }
