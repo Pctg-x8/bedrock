@@ -185,9 +185,8 @@ impl SurfaceCreateInfo for XlibSurfaceCreateInfo {
         &self,
         instance: &(impl VkHandle<Handle = brvk::VkInstance> + ?Sized),
         allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
-    ) -> crate::Result<VkSurfaceKHR> {
+    ) -> crate::Result<brvk::VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
-
         crate::error::translate_vk_result(unsafe {
             brvk::fns::create_xlib_surface_khr(
                 instance.native_ptr(),
@@ -226,9 +225,8 @@ impl SurfaceCreateInfo for XcbSurfaceCreateInfo {
         &self,
         instance: &(impl VkHandle<Handle = brvk::VkInstance> + ?Sized),
         allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
-    ) -> crate::Result<VkSurfaceKHR> {
+    ) -> crate::Result<brvk::VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
-
         crate::error::translate_vk_result(unsafe {
             brvk::fns::create_xcb_surface_khr(
                 instance.native_ptr(),
@@ -267,9 +265,8 @@ impl SurfaceCreateInfo for WaylandSurfaceCreateInfo {
         &self,
         instance: &(impl VkHandle<Handle = brvk::VkInstance> + ?Sized),
         allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
-    ) -> crate::Result<VkSurfaceKHR> {
+    ) -> crate::Result<brvk::VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
-
         crate::error::translate_vk_result(unsafe {
             brvk::fns::create_wayland_surface_khr(
                 instance.native_ptr(),
@@ -307,9 +304,8 @@ impl SurfaceCreateInfo for AndroidSurfaceCreateInfo {
         &self,
         instance: &(impl VkHandle<Handle = brvk::VkInstance> + ?Sized),
         allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
-    ) -> crate::Result<VkSurfaceKHR> {
+    ) -> crate::Result<brvk::VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
-
         crate::error::translate_vk_result(unsafe {
             brvk::fns::create_android_surface_khr(
                 instance.native_ptr(),
@@ -385,9 +381,8 @@ impl SurfaceCreateInfo for MetalSurfaceCreateInfo {
         &self,
         instance: &(impl VkHandle<Handle = brvk::VkInstance> + ?Sized),
         allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
-    ) -> crate::Result<VkSurfaceKHR> {
+    ) -> crate::Result<brvk::VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
-
         crate::error::translate_vk_result(unsafe {
             brvk::fns::create_metal_surface_ext(
                 instance.native_ptr(),
