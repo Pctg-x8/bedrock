@@ -17,7 +17,7 @@ pub struct ImportFenceFdInfo<'d>(
 );
 impl<'d> ImportFenceFdInfo<'d> {
     pub fn new(
-        fence: &'d (impl brvk::VkHandle<Handle = brvk::VkFence> + ?Sized),
+        fence: &'d (impl VkHandle<Handle = brvk::VkFence> + ?Sized),
         handle_type: ExternalFenceFdType,
         fd: std::os::unix::io::RawFd,
     ) -> Self {
