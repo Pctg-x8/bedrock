@@ -24115,6 +24115,84 @@ impl crate::StaticCallable for PFN_vkCreateMacOSSurfaceMVK {
     const STATIC: Self = Self(vkCreateMacOSSurfaceMVK);
 }
 
+#[cfg(feature = "VK_MVK_ios_surface")]
+#[rustfmt::skip]
+pub const VK_MVK_IOS_SURFACE_EXTENSION_NAME: &str = "VK_MVK_ios_surface";
+#[cfg(feature = "VK_MVK_ios_surface")]
+#[rustfmt::skip]
+pub const VK_MVK_IOS_SURFACE_SPEC_VERSION: usize = 2;
+
+#[cfg(feature = "VK_MVK_ios_surface")]
+#[rustfmt::skip]
+pub type VkIOSSurfaceCreateFlagsMVK = VkFlags;
+#[cfg(feature = "VK_MVK_ios_surface")]
+#[rustfmt::skip]
+pub type VkIOSSurfaceCreateFlagBitsMVK = VkFlags;
+
+#[cfg(feature = "VK_MVK_ios_surface")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkIOSSurfaceCreateInfoMVK {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkIOSSurfaceCreateFlagsMVK,
+    pub pView: *const core::ffi::c_void,
+}
+#[cfg(feature = "VK_MVK_ios_surface")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK: VkStructureType = 1000122000;
+#[cfg(feature = "VK_MVK_ios_surface")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkIOSSurfaceCreateInfoMVK {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_MVK_ios_surface")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkIOSSurfaceCreateInfoMVK { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK; }
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_MVK_ios_surface")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCreateIOSSurfaceMVK(pub unsafe extern "system" fn(instance: VkInstance, pCreateInfo: *const VkIOSSurfaceCreateInfoMVK, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_MVK_ios_surface")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCreateIOSSurfaceMVK {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateIOSSurfaceMVK";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_MVK_ios_surface")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateIOSSurfaceMVK {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_MVK_ios_surface")]
+#[rustfmt::skip]
+impl crate::StaticCallable for PFN_vkCreateIOSSurfaceMVK {
+    const STATIC: Self = Self(vkCreateIOSSurfaceMVK);
+}
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]
@@ -24391,5 +24469,8 @@ unsafe extern "system" {
     pub fn vkWaitSemaphores(device: VkDevice, pWaitInfo: *const VkSemaphoreWaitInfoKHR, timeout: u64) -> VkResult;
     #[cfg(feature = "VK_NN_vi_surface")]
     pub fn vkCreateViSurfaceNN(instance: VkInstance, pCreateInfo: *const VkViSurfaceCreateInfoNN, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
-    pub fn vkCreateMacOSSurface(instance: VkInstance, pCreateInfo: *const VkMacOSSurfaceCreateInfoMVK, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    #[cfg(feature = "VK_MVK_macos_surface")]
+    pub fn vkCreateMacOSSurfaceMVK(instance: VkInstance, pCreateInfo: *const VkMacOSSurfaceCreateInfoMVK, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    #[cfg(feature = "VK_MVK_ios_surface")]
+    pub fn vkCreateIOSSurfaceMVK(instance: VkInstance, pCreateInfo: *const VkIOSSurfaceCreateInfoMVK, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
 }

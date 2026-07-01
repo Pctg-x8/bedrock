@@ -1658,15 +1658,27 @@ impl Command {
                 writeln!(w, "    #[cfg(feature = \"VK_{tag}_{name}\")]")?;
             }
 
+            if let Some(Extension { tag, name, .. }) = self.extension2 {
+                writeln!(w, "    #[cfg(feature = \"VK_{tag}_{name}\")]")?;
+            }
+
             if let Some(v) = self.version_since {
                 writeln!(w, "    #[cfg(feature = \"Allow{v}APIs\")]")?;
             }
 
-            match (self.is_command_buffer_inst, self.extension) {
-                (false, None) => write!(w, "    pub fn vk{}(", self.name)?,
-                (true, None) => write!(w, "    pub fn vkCmd{}(", self.name)?,
-                (false, Some((tag, _))) => write!(w, "    pub fn vk{}{tag}(", self.name)?,
-                (true, Some((tag, _))) => write!(w, "    pub fn vkCmd{}{tag}(", self.name)?,
+            if let Some(Extension { tag, .. }) = self.extension2 {
+                if self.is_command_buffer_inst {
+                    write!(w, "    pub fn vkCmd{}{tag}(", self.name)?;
+                } else {
+                    write!(w, "    pub fn vk{}{tag}(", self.name)?;
+                }
+            } else {
+                match (self.is_command_buffer_inst, self.extension) {
+                    (false, None) => write!(w, "    pub fn vk{}(", self.name)?,
+                    (true, None) => write!(w, "    pub fn vkCmd{}(", self.name)?,
+                    (false, Some((tag, _))) => write!(w, "    pub fn vk{}{tag}(", self.name)?,
+                    (true, Some((tag, _))) => write!(w, "    pub fn vkCmd{}{tag}(", self.name)?,
+                }
             }
             let mut cont = false;
             if self.is_command_buffer_inst {
