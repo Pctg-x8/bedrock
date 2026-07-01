@@ -3,7 +3,6 @@ use bedrock_vk::{self as brvk, TypedVulkanStructure, VkRawHandle};
 
 use derives::implements;
 
-use crate::error::translate_vk_result;
 use crate::ffi_helper::{ArrayFFIExtensions, slice_as_ptr_empty_null};
 use crate::*;
 
@@ -19,7 +18,11 @@ impl<Device: VkHandle<Handle = brvk::VkDevice>> Drop for DescriptorSetLayoutObje
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            brvk::fns::destroy_descriptor_set_layout(self.1.native_ptr(), self.0, core::ptr::null());
+            crate::vkfn_wrapper::destroy_descriptor_set_layout(
+                self.1.as_transparent_ref(),
+                VkHandleRefMut::dangling(self.0),
+                None,
+            );
         }
     }
 }
@@ -48,14 +51,12 @@ impl<Device: VkHandle<Handle = brvk::VkDevice>> DescriptorSetLayoutObject<Device
     /// - [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// - [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
+    #[inline]
     pub fn new(device: Device, info: &DescriptorSetLayoutCreateInfo) -> crate::Result<Self> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        translate_vk_result(unsafe {
-            brvk::fns::create_descriptor_set_layout(device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr())
-        })?;
-
-        Ok(Self(unsafe { h.assume_init() }, device))
+        Ok(Self(
+            crate::vkfn_wrapper::create_descriptor_set_layout(device.as_transparent_ref(), info, None)?,
+            device,
+        ))
     }
 
     /// Constructs from raw values
@@ -96,7 +97,11 @@ impl<Device: VkHandle<Handle = brvk::VkDevice>> Drop for DescriptorPoolObject<De
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            brvk::fns::destroy_descriptor_pool(self.1.native_ptr(), self.0, core::ptr::null());
+            crate::vkfn_wrapper::destroy_descriptor_pool(
+                self.1.as_transparent_ref(),
+                VkHandleRefMut::dangling(self.0),
+                None,
+            );
         }
     }
 }
@@ -126,14 +131,12 @@ impl<Device: VkHandle<Handle = brvk::VkDevice>> DescriptorPoolObject<Device> {
     /// - brvk::VK_ERROR_OUT_OF_HOST_MEMORY
     /// - brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[implements]
+    #[inline]
     pub fn new(device: Device, info: &DescriptorPoolCreateInfo) -> crate::Result<Self> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        translate_vk_result(unsafe {
-            brvk::fns::create_descriptor_pool(device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr())
-        })?;
-
-        Ok(Self(unsafe { h.assume_init() }, device))
+        Ok(Self(
+            crate::vkfn_wrapper::create_descriptor_pool(device.as_transparent_ref(), info, None)?,
+            device,
+        ))
     }
 
     /// Constructs from raw values
@@ -292,7 +295,7 @@ impl<'d, 's> DescriptorSetLayoutCreateInfo<'d, 's> {
                 pNext: core::ptr::null(),
                 flags: 0,
                 bindingCount: bindings.len() as _,
-                pBindings: slice_as_ptr_empty_null(bindings) as _,
+                pBindings: slice_as_ptr_empty_null(bindings).cast(),
             },
             core::marker::PhantomData,
         )
@@ -383,11 +386,7 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
         info: &brvk::VkDescriptorSetAllocateInfo,
         objects: &mut [core::mem::MaybeUninit<brvk::VkDescriptorSet>],
     ) -> crate::Result<()> {
-        translate_vk_result(unsafe {
-            brvk::fns::allocate_descriptor_sets(self.device_handle(), info, objects.as_mut_ptr().cast())
-        })?;
-
-        Ok(())
+        unsafe { crate::vkfn_wrapper::allocate_descriptor_sets(self.device_transparent_ref(), info, objects) }
     }
 
     /// Allocate one or more descriptor sets
@@ -404,7 +403,7 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
             pNext: core::ptr::null(),
             descriptorPool: self.native_ptr_mut(),
             descriptorSetCount: layouts.len() as _,
-            pSetLayouts: layouts.as_ptr_empty_null() as _,
+            pSetLayouts: layouts.as_ptr_empty_null().cast(),
         };
         let mut hs = crate::alloc::reserve(layouts.len());
 
@@ -438,15 +437,16 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
             pNext: core::ptr::null(),
             descriptorPool: self.native_ptr_mut(),
             descriptorSetCount: N as _,
-            pSetLayouts: layouts.as_ptr_empty_null() as _,
+            pSetLayouts: layouts.as_ptr_empty_null().cast(),
         };
 
+        let mut hs = [core::mem::MaybeUninit::uninit(); N];
         unsafe {
-            let mut hs = [core::mem::MaybeUninit::uninit().assume_init(); N];
             self.alloc_raw(&ainfo, &mut hs)?;
-            // Note: transmuteだと変換できない（要素数がジェネリックだとダメっぽい？）
-            Ok(*(&hs as *const _ as *const [DescriptorSet; N]))
         }
+
+        // Note: transmuteだと変換できない（要素数がジェネリックだとダメっぽい？）
+        Ok(core::array::from_fn(|n| DescriptorSet(unsafe { hs[n].assume_init() })))
     }
 
     /// Resets a descriptor pool object
@@ -459,11 +459,13 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
     #[implements]
     #[inline]
     unsafe fn reset(&mut self, flags: brvk::VkDescriptorPoolResetFlags) -> crate::Result<()> {
-        translate_vk_result(unsafe {
-            brvk::fns::reset_descriptor_pool(self.device_handle(), self.native_ptr_mut(), flags)
-        })?;
-
-        Ok(())
+        unsafe {
+            crate::vkfn_wrapper::reset_descriptor_pool(
+                self.device_transparent_ref(),
+                VkHandleRefMut::dangling(self.native_ptr()),
+                flags,
+            )
+        }
     }
 
     /// Free one or more descriptor sets
@@ -476,16 +478,13 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
     #[implements]
     #[inline]
     unsafe fn free(&mut self, sets: &[DescriptorSet]) -> crate::Result<()> {
-        translate_vk_result(unsafe {
-            brvk::fns::free_descriptor_sets(
-                self.device_handle(),
-                self.native_ptr(),
-                sets.len() as _,
-                sets.as_ptr_empty_null().cast(),
+        unsafe {
+            crate::vkfn_wrapper::free_descriptor_sets(
+                self.device_transparent_ref(),
+                VkHandleRefMut::dangling(self.native_ptr()),
+                sets,
             )
-        })?;
-
-        Ok(())
+        }
     }
 }
 DerefContainerBracketImpl!(for mut DescriptorPoolMut {});

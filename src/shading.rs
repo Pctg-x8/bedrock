@@ -193,7 +193,11 @@ impl<Device: VkHandle<Handle = brvk::VkDevice>> Drop for ShaderModuleObject<Devi
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            brvk::fns::destroy_shader_module(self.1.native_ptr(), self.0, core::ptr::null());
+            crate::vkfn_wrapper::destroy_shader_module(
+                self.1.as_transparent_ref(),
+                VkHandleRefMut::dangling(self.0),
+                None,
+            );
         }
     }
 }
@@ -238,7 +242,12 @@ impl<Device: crate::Device> ShaderModuleObject<Device> {
     #[implements]
     #[inline]
     pub fn new(device: Device, info: &ShaderModuleCreateInfo) -> crate::Result<Self> {
-        Ok(unsafe { Self::manage(device.new_shader_module_raw(info, None)?, device) })
+        Ok(unsafe {
+            Self::manage(
+                crate::vkfn_wrapper::create_shader_module(device.as_transparent_ref(), info, None)?,
+                device,
+            )
+        })
     }
 }
 
@@ -290,7 +299,11 @@ impl<Device: VkHandle<Handle = brvk::VkDevice>> Drop for PipelineCacheObject<Dev
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            brvk::fns::destroy_pipeline_cache(self.1.native_ptr(), self.0, core::ptr::null());
+            crate::vkfn_wrapper::destroy_pipeline_cache(
+                self.1.as_transparent_ref(),
+                VkHandleRefMut::dangling(self.0),
+                None,
+            );
         }
     }
 }
@@ -340,7 +353,12 @@ impl<Device: crate::Device> PipelineCacheObject<Device> {
     /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
     pub fn new(device: Device, create_info: &PipelineCacheCreateInfo) -> crate::Result<Self> {
-        Ok(unsafe { Self::manage(device.new_pipeline_cache_raw(create_info, None)?, device) })
+        Ok(unsafe {
+            Self::manage(
+                crate::vkfn_wrapper::create_pipeline_cache(device.as_transparent_ref(), create_info, None)?,
+                device,
+            )
+        })
     }
 }
 

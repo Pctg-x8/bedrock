@@ -1527,6 +1527,37 @@ pub unsafe fn destroy_render_pass(
     unsafe { brvk::fns::destroy_render_pass(device.0, render_pass.0, opt_pointer(allocation_callbacks)) }
 }
 
+#[inline]
+pub fn create_shader_module(
+    device: VkHandleRef<brvk::VkDevice>,
+    info: &ShaderModuleCreateInfo,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) -> crate::Result<brvk::VkShaderModule> {
+    let mut h = MaybeUninit::uninit();
+    translate_vk_result(unsafe {
+        brvk::fns::create_shader_module(
+            device.0,
+            core::ptr::from_ref(info).cast(),
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+    })?;
+
+    Ok(unsafe { h.assume_init() })
+}
+
+/// # Safety
+///
+/// `shader_module` must be created from `device`.
+#[inline]
+pub unsafe fn destroy_shader_module(
+    device: VkHandleRef<brvk::VkDevice>,
+    shader_module: VkHandleRefMut<brvk::VkShaderModule>,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) {
+    unsafe { brvk::fns::destroy_shader_module(device.0, shader_module.0, opt_pointer(allocation_callbacks)) }
+}
+
 /// # Safety
 ///
 /// `pipeline_cache` must be created from `device`.
@@ -1615,6 +1646,37 @@ pub unsafe fn destroy_pipeline_layout(
     unsafe { brvk::fns::destroy_pipeline_layout(device.0, pipeline_layout.0, opt_pointer(allocation_callbacks)) }
 }
 
+#[inline]
+pub fn create_pipeline_cache(
+    device: VkHandleRef<brvk::VkDevice>,
+    info: &PipelineCacheCreateInfo,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) -> crate::Result<brvk::VkPipelineCache> {
+    let mut h = MaybeUninit::uninit();
+    translate_vk_result(unsafe {
+        brvk::fns::create_pipeline_cache(
+            device.0,
+            core::ptr::from_ref(info).cast(),
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+    })?;
+
+    Ok(unsafe { h.assume_init() })
+}
+
+/// # Safety
+///
+/// `pipeline_cache` must be created from `device`.
+#[inline]
+pub unsafe fn destroy_pipeline_cache(
+    device: VkHandleRef<brvk::VkDevice>,
+    pipeline_cache: VkHandleRefMut<brvk::VkPipelineCache>,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) {
+    unsafe { brvk::fns::destroy_pipeline_cache(device.0, pipeline_cache.0, opt_pointer(allocation_callbacks)) }
+}
+
 /// # Safety
 ///
 /// `pipeline_cache` must be created from `device`.
@@ -1693,4 +1755,122 @@ pub unsafe fn wait_semaphores(
     Ok(TimeoutableWaitResult::from_vk_result(translate_vk_result(unsafe {
         brvk::fns::wait_semaphores(device.0, core::ptr::from_ref(wait_info).cast(), timeout)
     })?))
+}
+
+#[inline]
+pub fn create_descriptor_pool(
+    device: VkHandleRef<brvk::VkDevice>,
+    info: &DescriptorPoolCreateInfo,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) -> crate::Result<brvk::VkDescriptorPool> {
+    let mut h = MaybeUninit::uninit();
+    translate_vk_result(unsafe {
+        brvk::fns::create_descriptor_pool(
+            device.0,
+            core::ptr::from_ref(info).cast(),
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+    })?;
+
+    Ok(unsafe { h.assume_init() })
+}
+
+/// # Safety
+///
+/// `descriptor_pool` must be created from `device`.
+#[inline]
+pub unsafe fn destroy_descriptor_pool(
+    device: VkHandleRef<brvk::VkDevice>,
+    descriptor_pool: VkHandleRefMut<brvk::VkDescriptorPool>,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) {
+    unsafe { brvk::fns::destroy_descriptor_pool(device.0, descriptor_pool.0, opt_pointer(allocation_callbacks)) }
+}
+
+/// # Safety
+///
+/// * `descriptor_pool` must be created from `device`.
+/// * Host access to any `VkDescriptorSet` objects allocated from `descriptor_pool` must be externally synchronized.
+#[inline]
+pub unsafe fn reset_descriptor_pool(
+    device: VkHandleRef<brvk::VkDevice>,
+    descriptor_pool: VkHandleRefMut<brvk::VkDescriptorPool>,
+    flags: brvk::VkDescriptorPoolResetFlags,
+) -> crate::Result<()> {
+    translate_vk_result(unsafe { brvk::fns::reset_descriptor_pool(device.0, descriptor_pool.0, flags) })?;
+
+    Ok(())
+}
+
+/// # Safety
+///
+/// * `info` must be a valid `VkDescriptorSetAllocateInfo` structure.
+/// * `sink` must be a slice of `MaybeUninit<VkDescriptorSet>` with enough capacity to hold `info.descriptorSetCount` elements.
+/// * `VkDescriptorPool` in `info` must be valid and created from `device`.
+#[inline]
+pub unsafe fn allocate_descriptor_sets(
+    device: VkHandleRef<brvk::VkDevice>,
+    info: &brvk::VkDescriptorSetAllocateInfo,
+    sink: &mut [MaybeUninit<brvk::VkDescriptorSet>],
+) -> crate::Result<()> {
+    translate_vk_result(unsafe { brvk::fns::allocate_descriptor_sets(device.0, info, sink.as_mut_ptr().cast()) })?;
+
+    Ok(())
+}
+
+/// # Safety
+///
+/// * `descriptor_pool` must be created from `device`.
+/// * each member of `descriptor_sets` must be allocated from `descriptor_pool`.
+/// * Host access to each member of `descriptor_sets` must be externally synchronized.
+#[inline]
+pub unsafe fn free_descriptor_sets(
+    device: VkHandleRef<brvk::VkDevice>,
+    descriptor_pool: VkHandleRefMut<brvk::VkDescriptorPool>,
+    descriptor_sets: &[DescriptorSet],
+) -> crate::Result<()> {
+    translate_vk_result(unsafe {
+        brvk::fns::free_descriptor_sets(
+            device.0,
+            descriptor_pool.0,
+            descriptor_sets.len() as _,
+            descriptor_sets.as_ptr().cast(),
+        )
+    })?;
+
+    Ok(())
+}
+
+#[inline]
+pub fn create_descriptor_set_layout(
+    device: VkHandleRef<brvk::VkDevice>,
+    info: &DescriptorSetLayoutCreateInfo,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) -> crate::Result<brvk::VkDescriptorSetLayout> {
+    let mut h = MaybeUninit::uninit();
+    translate_vk_result(unsafe {
+        brvk::fns::create_descriptor_set_layout(
+            device.0,
+            core::ptr::from_ref(info).cast(),
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+    })?;
+
+    Ok(unsafe { h.assume_init() })
+}
+
+/// # Safety
+///
+/// `descriptor_set_layout` must be created from `device`.
+#[inline]
+pub unsafe fn destroy_descriptor_set_layout(
+    device: VkHandleRef<brvk::VkDevice>,
+    descriptor_set_layout: VkHandleRefMut<brvk::VkDescriptorSetLayout>,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) {
+    unsafe {
+        brvk::fns::destroy_descriptor_set_layout(device.0, descriptor_set_layout.0, opt_pointer(allocation_callbacks))
+    }
 }
