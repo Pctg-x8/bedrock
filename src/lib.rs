@@ -22,8 +22,10 @@ extern crate x11;
 extern crate xcb;
 
 pub use bedrock_vk::{
-    self as vk, VkDeviceSize as DeviceSize, VkExtent2D as Extent2D, VkExtent3D as Extent3D, VkFormat as Format,
-    VkOffset2D as Offset2D, VkOffset3D as Offset3D, VkRect2D as Rect2D, VkViewport as Viewport,
+    self as vk, GenericVulkanSinkStructure, GenericVulkanStructure, TypedVulkanSinkStructure, TypedVulkanStructure,
+    VkDeviceSize as DeviceSize, VkExtent2D as Extent2D, VkExtent3D as Extent3D, VkFormat as Format,
+    VkOffset2D as Offset2D, VkOffset3D as Offset3D, VkRawHandle, VkRect2D as Rect2D, VkViewport as Viewport,
+    VulkanSinkStructure, VulkanStructure,
 };
 use cfg_if::cfg_if;
 use derives::*;
