@@ -762,6 +762,40 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
     .into()
 }
 
+struct SpecializationConstantsFieldAttr {
+    constant_id: syn::Expr,
+}
+impl SpecializationConstantsFieldAttr {
+    fn parse(field: &syn::Field) -> Result<Self, syn::Error> {
+        let mut constant_ids = field.attrs.iter().filter_map(|a| match a {
+            syn::Attribute {
+                style: syn::AttrStyle::Outer,
+                meta: syn::Meta::NameValue(ref nv),
+                ..
+            } if nv.path.is_ident("constant_id") => Some(Ok(nv.value.clone())),
+            syn::Attribute {
+                style: syn::AttrStyle::Outer,
+                meta: syn::Meta::List(ref ml),
+                ..
+            } if ml.path.is_ident("constant_id") => Some(ml.parse_args::<syn::Expr>()),
+            _ => None,
+        });
+        let Some(first_cid) = constant_ids.next() else {
+            return Err(syn::Error::new_spanned(f, "Missing constant_id attribute"));
+        };
+        if constant_ids.next().is_some() {
+            return Err(syn::Error::new_spanned(
+                field,
+                "One or more constant_id attributes found on same field",
+            ));
+        }
+
+        Ok(Self {
+            constant_id: first_cid?,
+        })
+    }
+}
+
 /// Provides safe implementation for [`SpecializationConstants`] by deriving from structs.
 #[proc_macro_derive(SpecializationConstants, attributes(constant_id))]
 pub fn safe_derive_spec_constant(tok: TokenStream) -> TokenStream {
@@ -773,30 +807,8 @@ pub fn safe_derive_spec_constant(tok: TokenStream) -> TokenStream {
         syn::Data::Struct(syn::DataStruct { ref fields, .. }) => {
             let mut entries = Vec::with_capacity(fields.len());
             for f in fields {
-                let mut constant_ids = f.attrs.iter().filter_map(|a| match a {
-                    syn::Attribute {
-                        style: syn::AttrStyle::Outer,
-                        meta: syn::Meta::NameValue(ref nv),
-                        ..
-                    } if nv.path.is_ident("constant_id") => Some(Ok(nv.value.clone())),
-                    syn::Attribute {
-                        style: syn::AttrStyle::Outer,
-                        meta: syn::Meta::List(ref ml),
-                        ..
-                    } if ml.path.is_ident("constant_id") => Some(ml.parse_args::<syn::Expr>()),
-                    _ => None,
-                });
-                let Some(first_cid) = constant_ids.next() else {
-                    return syn::Error::new_spanned(f, "Missing constant_id attribute")
-                        .into_compile_error()
-                        .into();
-                };
-                if constant_ids.next().is_some() {
-                    return syn::Error::new_spanned(f, "One or more constant_id attributes found on same field")
-                        .into_compile_error()
-                        .into();
-                }
-                let constant_id = try_compile_error!(first_cid);
+                let SpecializationConstantsFieldAttr { constant_id } =
+                    try_compile_error!(SpecializationConstantsFieldAttr::parse(f));
 
                 let ty = &f.ty;
                 let ident = &f.ident;
