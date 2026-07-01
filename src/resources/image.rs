@@ -122,7 +122,8 @@ pub trait Image: VkHandle<Handle = brvk::VkImage> + DeviceChildHandle {
         let mut properties = core::mem::MaybeUninit::<brvk::VkImageDrmFormatModifierPropertiesEXT>::uninit();
         unsafe {
             let p = properties.as_mut_ptr();
-            core::ptr::addr_of_mut!((*p).sType).write(brvk::VkImageDrmFormatModifierPropertiesEXT::TYPE);
+            core::ptr::addr_of_mut!((*p).sType)
+                .write(<brvk::VkImageDrmFormatModifierPropertiesEXT as brvk::TypedVulkanSinkStructure>::TYPE);
             core::ptr::addr_of_mut!((*p).pNext).write(core::ptr::null_mut());
 
             self.drm_format_modifier_properties_raw(&mut properties)?;
