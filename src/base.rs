@@ -98,6 +98,71 @@ pub fn instance_version() -> crate::Result<Version> {
     }
 }
 
+/// Returns up to all of global layer properties
+/// # Failures
+/// On failure, this command returns
+///
+/// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+/// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+#[implements("alloc")]
+pub fn instance_layer_properties_alloc() -> crate::Result<Vec<brvk::VkLayerProperties>> {
+    let n = crate::vkfn_wrapper::instance_layer_property_count()?;
+    if n == 0 {
+        // no items
+        return Ok(crate::alloc::empty_sink_buffer());
+    }
+
+    let mut xs = crate::alloc::reserve(n as _);
+    let r = crate::vkfn_wrapper::instance_layer_properties(xs.spare_capacity_mut())?;
+    assert!(!r.is_incomplete);
+    unsafe {
+        xs.set_len(r.result as _);
+    }
+
+    Ok(xs)
+}
+
+/// Returns up to all of global extension properties
+/// # Failures
+/// On failure, this command returns
+///
+/// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+/// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+/// * `brvk::VK_ERROR_LAYER_NOT_PRESENT`
+#[implements("alloc")]
+pub fn instance_extension_properties_alloc(
+    layer_name: Option<&CStr>,
+) -> crate::Result<Vec<brvk::VkExtensionProperties>> {
+    let n = crate::vkfn_wrapper::instance_extension_property_count(layer_name)? as usize;
+    if n == 0 {
+        // no items
+        return Ok(crate::alloc::empty_sink_buffer());
+    }
+
+    let mut xs = crate::alloc::reserve(n);
+    let r = crate::vkfn_wrapper::instance_extension_properties(layer_name, xs.spare_capacity_mut())?;
+    assert!(!r.is_incomplete);
+    unsafe {
+        xs.set_len(r.result as _);
+    }
+
+    Ok(xs)
+}
+
+/// Returns up to all of global extension properties
+/// # Failures
+/// On failure, this command returns
+///
+/// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+/// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+/// * `brvk::VK_ERROR_LAYER_NOT_PRESENT`
+#[implements("alloc")]
+pub fn instance_extension_properties_str_alloc(
+    layer_name: Option<&str>,
+) -> crate::Result<Vec<brvk::VkExtensionProperties>> {
+    instance_extension_properties_alloc(layer_name.map(|s| crate::alloc::str_to_cstr(s).unwrap()).as_deref())
+}
+
 #[implements]
 type InstanceResolvedFn<F> = brvk::ResolvedFnCell<F, InstanceResolverImpl>;
 #[implements]
@@ -132,143 +197,6 @@ impl brvk::ResolverInterface for InstanceResolverImpl {
             }
         }
     }
-}
-
-/// Opaque handle to a physical device object
-///
-/// ## Platform Dependent Methods: Presentation Support checking functions
-///
-/// * `xlib_presentation_support(&self, queue_family: u32, display: *mut x11::xlib::Display, visual: x11::xlib::VisualID) -> bool`: brvk::VK_KHR_xlib_surface
-/// * `xcb_presentation_support(&self, queue_family: u32, connection: *mut xcb::ffi::xcb_connection_t, visual: xcb::ffi::xcb_visualid_t) -> bool`: brvk::VK_KHR_xcb_surface
-/// * `wayland_presentation_support(&self, queue_family: u32, display: *mut wayland_client::sys::wl_display) -> bool`: brvk::VK_KHR_wayland_surface
-/// * `win32_presentation_support(&self, queue_family: u32) -> bool`: brvk::VK_KHR_win32_surface
-/// * Methods for Android and Mir surfaces are not implemented
-#[derive(VkHandle, VkObject, crate::InstanceChild, crate::InstanceChildTransferrable, Clone)]
-#[VkObject(type = brvk::VK_OBJECT_TYPE_PHYSICAL_DEVICE)]
-pub struct PhysicalDeviceObject<Owner: Instance>(brvk::VkPhysicalDevice, #[parent] Owner);
-unsafe impl<Owner: Instance + Sync> Sync for PhysicalDeviceObject<Owner> {}
-unsafe impl<Owner: Instance + Send> Send for PhysicalDeviceObject<Owner> {}
-impl<Owner: Instance> PhysicalDevice for PhysicalDeviceObject<Owner> {}
-impl<Owner: Instance> PhysicalDeviceObject<Owner> {
-    /// # Safety
-    ///
-    /// passed handles must be valid, and owned by the same instance as `owner`.
-    pub const unsafe fn manage(handle: brvk::VkPhysicalDevice, owner: Owner) -> Self {
-        Self(handle, owner)
-    }
-
-    pub const fn unmanage(self) -> (brvk::VkPhysicalDevice, Owner) {
-        let handle = self.0;
-        let owner = unsafe { core::ptr::read(&self.1) };
-        core::mem::forget(self);
-
-        (handle, owner)
-    }
-}
-impl<Owner: Instance + Clone> PhysicalDeviceObject<&'_ Owner> {
-    /// Split the lifetime from owner by cloning it.
-    #[inline(always)]
-    pub fn clone_parent(&self) -> PhysicalDeviceObject<Owner> {
-        PhysicalDeviceObject(self.0, self.1.clone())
-    }
-}
-
-pub struct IterPhysicalDevices<'i, Source: Instance + 'i + ?Sized>(Vec<brvk::VkPhysicalDevice>, usize, &'i Source);
-impl<'i, Source: Instance + 'i + ?Sized> Iterator for IterPhysicalDevices<'i, Source> {
-    type Item = PhysicalDeviceObject<&'i Source>;
-
-    #[inline(always)]
-    fn next(&mut self) -> Option<PhysicalDeviceObject<&'i Source>> {
-        if self.0.len() <= self.1 {
-            None
-        } else {
-            self.1 += 1;
-            Some(PhysicalDeviceObject(self.0[self.1 - 1], self.2))
-        }
-    }
-    #[inline(always)]
-    fn size_hint(&self) -> (usize, Option<usize>) {
-        (self.0.len(), Some(self.0.len()))
-    }
-}
-impl<'i, Source: Instance + 'i + ?Sized> ExactSizeIterator for IterPhysicalDevices<'i, Source> {
-    #[inline(always)]
-    fn len(&self) -> usize {
-        self.0.len()
-    }
-}
-impl<'i, Source: Instance + 'i + ?Sized> DoubleEndedIterator for IterPhysicalDevices<'i, Source> {
-    #[inline(always)]
-    fn next_back(&mut self) -> Option<PhysicalDeviceObject<&'i Source>> {
-        if self.0.len() <= self.1 {
-            None
-        } else {
-            self.0.pop().map(|p| PhysicalDeviceObject(p, self.2))
-        }
-    }
-}
-
-/// Returns up to all of global layer properties
-/// # Failures
-/// On failure, this command returns
-///
-/// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
-/// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
-#[implements("alloc")]
-pub fn instance_layer_properties_alloc() -> crate::Result<Vec<brvk::VkLayerProperties>> {
-    let n = crate::vkfn_wrapper::instance_layer_property_count()?;
-    if n == 0 {
-        // no items
-        return Ok(crate::alloc::empty_sink_buffer());
-    }
-
-    let mut xs = crate::alloc::reserve(n as _);
-    crate::vkfn_wrapper::instance_layer_properties(xs.spare_capacity_mut())?;
-    unsafe {
-        xs.set_len(n as _);
-    }
-
-    Ok(xs)
-}
-
-/// Returns up to all of global extension properties
-/// # Failures
-/// On failure, this command returns
-///
-/// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
-/// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
-/// * `brvk::VK_ERROR_LAYER_NOT_PRESENT`
-#[implements("alloc")]
-pub fn instance_extension_properties_alloc(
-    layer_name: Option<&CStr>,
-) -> crate::Result<Vec<brvk::VkExtensionProperties>> {
-    let n = crate::vkfn_wrapper::instance_extension_property_count(layer_name)? as usize;
-    if n == 0 {
-        // no items
-        return Ok(crate::alloc::empty_sink_buffer());
-    }
-
-    let mut xs = crate::alloc::reserve(n);
-    crate::vkfn_wrapper::instance_extension_properties(layer_name, xs.spare_capacity_mut())?;
-    unsafe {
-        xs.set_len(n);
-    }
-
-    Ok(xs)
-}
-
-/// Returns up to all of global extension properties
-/// # Failures
-/// On failure, this command returns
-///
-/// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
-/// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
-/// * `brvk::VK_ERROR_LAYER_NOT_PRESENT`
-#[implements("alloc")]
-pub fn instance_extension_properties_str_alloc(
-    layer_name: Option<&str>,
-) -> crate::Result<Vec<brvk::VkExtensionProperties>> {
-    instance_extension_properties_alloc(layer_name.map(|s| crate::alloc::str_to_cstr(s).unwrap()).as_deref())
 }
 
 #[repr(transparent)]
@@ -455,8 +383,8 @@ pub trait Instance: VkHandle<Handle = brvk::VkInstance> {
     fn enumerate_physical_devices(
         &self,
         sink: &mut [core::mem::MaybeUninit<brvk::VkPhysicalDevice>],
-    ) -> crate::Result<u32> {
-        unsafe { crate::vkfn_wrapper::enumerate_physical_devices(self.as_transparent_ref(), sink) }
+    ) -> crate::Result<ArrayQueryResult<u32>> {
+        crate::vkfn_wrapper::enumerate_physical_devices(self.as_transparent_ref(), sink)
     }
 
     /// Lazyly enumerates the physical devices accessible to a Vulkan instance
@@ -477,9 +405,10 @@ pub trait Instance: VkHandle<Handle = brvk::VkInstance> {
         }
 
         let mut xs = Vec::with_capacity(n);
-        self.enumerate_physical_devices(xs.spare_capacity_mut())?;
+        let r = self.enumerate_physical_devices(xs.spare_capacity_mut())?;
+        assert!(!r.is_incomplete);
         unsafe {
-            xs.set_len(n);
+            xs.set_len(r.result as _);
         }
 
         Ok(IterPhysicalDevices(xs, 0, self))
@@ -1018,6 +947,80 @@ impl InstanceSampleLocationsExtension for InstanceObject {
         &self,
     ) -> brvk::PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT {
         *self.ext.get_physical_device_multisample_properties_ext.resolve()
+    }
+}
+
+/// Opaque handle to a physical device object
+///
+/// ## Platform Dependent Methods: Presentation Support checking functions
+///
+/// * `xlib_presentation_support(&self, queue_family: u32, display: *mut x11::xlib::Display, visual: x11::xlib::VisualID) -> bool`: brvk::VK_KHR_xlib_surface
+/// * `xcb_presentation_support(&self, queue_family: u32, connection: *mut xcb::ffi::xcb_connection_t, visual: xcb::ffi::xcb_visualid_t) -> bool`: brvk::VK_KHR_xcb_surface
+/// * `wayland_presentation_support(&self, queue_family: u32, display: *mut wayland_client::sys::wl_display) -> bool`: brvk::VK_KHR_wayland_surface
+/// * `win32_presentation_support(&self, queue_family: u32) -> bool`: brvk::VK_KHR_win32_surface
+/// * Methods for Android and Mir surfaces are not implemented
+#[derive(VkHandle, VkObject, crate::InstanceChild, crate::InstanceChildTransferrable, Clone)]
+#[VkObject(type = brvk::VK_OBJECT_TYPE_PHYSICAL_DEVICE)]
+pub struct PhysicalDeviceObject<Owner: Instance>(brvk::VkPhysicalDevice, #[parent] Owner);
+unsafe impl<Owner: Instance + Sync> Sync for PhysicalDeviceObject<Owner> {}
+unsafe impl<Owner: Instance + Send> Send for PhysicalDeviceObject<Owner> {}
+impl<Owner: Instance> PhysicalDevice for PhysicalDeviceObject<Owner> {}
+impl<Owner: Instance> PhysicalDeviceObject<Owner> {
+    /// # Safety
+    ///
+    /// passed handles must be valid, and owned by the same instance as `owner`.
+    pub const unsafe fn manage(handle: brvk::VkPhysicalDevice, owner: Owner) -> Self {
+        Self(handle, owner)
+    }
+
+    pub const fn unmanage(self) -> (brvk::VkPhysicalDevice, Owner) {
+        let handle = self.0;
+        let owner = unsafe { core::ptr::read(&self.1) };
+        core::mem::forget(self);
+
+        (handle, owner)
+    }
+}
+impl<Owner: Instance + Clone> PhysicalDeviceObject<&'_ Owner> {
+    /// Split the lifetime from owner by cloning it.
+    #[inline(always)]
+    pub fn clone_parent(&self) -> PhysicalDeviceObject<Owner> {
+        PhysicalDeviceObject(self.0, self.1.clone())
+    }
+}
+
+pub struct IterPhysicalDevices<'i, Source: Instance + 'i + ?Sized>(Vec<brvk::VkPhysicalDevice>, usize, &'i Source);
+impl<'i, Source: Instance + 'i + ?Sized> Iterator for IterPhysicalDevices<'i, Source> {
+    type Item = PhysicalDeviceObject<&'i Source>;
+
+    #[inline(always)]
+    fn next(&mut self) -> Option<PhysicalDeviceObject<&'i Source>> {
+        if self.0.len() <= self.1 {
+            None
+        } else {
+            self.1 += 1;
+            Some(PhysicalDeviceObject(self.0[self.1 - 1], self.2))
+        }
+    }
+    #[inline(always)]
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        (self.0.len(), Some(self.0.len()))
+    }
+}
+impl<'i, Source: Instance + 'i + ?Sized> ExactSizeIterator for IterPhysicalDevices<'i, Source> {
+    #[inline(always)]
+    fn len(&self) -> usize {
+        self.0.len()
+    }
+}
+impl<'i, Source: Instance + 'i + ?Sized> DoubleEndedIterator for IterPhysicalDevices<'i, Source> {
+    #[inline(always)]
+    fn next_back(&mut self) -> Option<PhysicalDeviceObject<&'i Source>> {
+        if self.0.len() <= self.1 {
+            None
+        } else {
+            self.0.pop().map(|p| PhysicalDeviceObject(p, self.2))
+        }
     }
 }
 

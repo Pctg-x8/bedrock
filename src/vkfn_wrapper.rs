@@ -13,11 +13,15 @@ pub fn instance_layer_property_count() -> crate::Result<u32> {
 }
 
 #[inline]
-pub fn instance_layer_properties(sink: &mut [MaybeUninit<brvk::VkLayerProperties>]) -> crate::Result<u32> {
+pub fn instance_layer_properties(
+    sink: &mut [MaybeUninit<brvk::VkLayerProperties>],
+) -> crate::Result<ArrayQueryResult<u32>> {
     let mut n = sink.len() as _;
-    translate_vk_result(unsafe { brvk::fns::enumerate_instance_layer_properties(&mut n, sink.as_mut_ptr() as _) })?;
+    let r = ArrayQueryResult::from_vk_result(unsafe {
+        brvk::fns::enumerate_instance_layer_properties(&mut n, sink.as_mut_ptr().cast())
+    })?;
 
-    Ok(n)
+    Ok(r.with_result(n))
 }
 
 #[inline]
@@ -34,13 +38,13 @@ pub fn instance_extension_property_count(layer_name: Option<&CStr>) -> crate::Re
 pub fn instance_extension_properties(
     layer_name: Option<&CStr>,
     sink: &mut [MaybeUninit<brvk::VkExtensionProperties>],
-) -> crate::Result<u32> {
+) -> crate::Result<ArrayQueryResult<u32>> {
     let mut n = sink.len() as _;
-    translate_vk_result(unsafe {
-        brvk::fns::enumerate_instance_extension_properties(opt_cstr_ptr(layer_name), &mut n, sink.as_mut_ptr() as _)
+    let r = ArrayQueryResult::from_vk_result(unsafe {
+        brvk::fns::enumerate_instance_extension_properties(opt_cstr_ptr(layer_name), &mut n, sink.as_mut_ptr().cast())
     })?;
 
-    Ok(n)
+    Ok(r.with_result(n))
 }
 
 #[inline]
@@ -76,20 +80,17 @@ pub fn physical_device_count(instance: VkHandleRef<brvk::VkInstance>) -> crate::
     Ok(n)
 }
 
-/// # Safety
-///
-/// instance must be valid for the lifetime of the returned physical devices.
 #[inline]
-pub unsafe fn enumerate_physical_devices(
+pub fn enumerate_physical_devices(
     instance: VkHandleRef<brvk::VkInstance>,
     sink: &mut [MaybeUninit<brvk::VkPhysicalDevice>],
-) -> crate::Result<u32> {
+) -> crate::Result<ArrayQueryResult<u32>> {
     let mut n = sink.len() as _;
-    translate_vk_result(unsafe {
+    let r = ArrayQueryResult::from_vk_result(unsafe {
         brvk::fns::enumerate_physical_devices(instance.0, &mut n, sink.as_mut_ptr().cast())
     })?;
 
-    Ok(n)
+    Ok(r.with_result(n))
 }
 
 #[inline]

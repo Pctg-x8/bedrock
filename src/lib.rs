@@ -145,14 +145,6 @@ impl ArrayQueryResult<()> {
 }
 impl<T> ArrayQueryResult<T> {
     #[inline(always)]
-    pub(crate) const fn completed(result: T) -> Self {
-        Self {
-            result,
-            is_incomplete: false,
-        }
-    }
-
-    #[inline(always)]
     pub fn with_result<U>(self, v: U) -> ArrayQueryResult<U> {
         ArrayQueryResult {
             result: v,
