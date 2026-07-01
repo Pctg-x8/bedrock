@@ -70,7 +70,7 @@ impl<Instance> Drop for DeviceObject<Instance> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            brvk::fns::destroy_device(self.handle, std::ptr::null());
+            crate::vkfn_wrapper::destroy_device(self.as_transparent_ref_mut(), None);
         }
     }
 }
@@ -119,14 +119,8 @@ impl<Instance: crate::Instance> DeviceObject<Instance> {
         physical_device: PhysicalDevice,
         info: &DeviceCreateInfo,
     ) -> crate::Result<Self> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        translate_vk_result(unsafe {
-            brvk::fns::create_device(physical_device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr())
-        })?;
-
         Ok(Self::wrap_handle(
-            unsafe { h.assume_init() },
+            crate::vkfn_wrapper::create_device(physical_device.as_transparent_ref(), info, None)?,
             physical_device.transfer_instance(),
         ))
     }

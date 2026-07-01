@@ -788,6 +788,36 @@ pub unsafe fn acquire_next_image(
 }
 
 #[inline]
+pub fn create_device(
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
+    info: &DeviceCreateInfo,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) -> crate::Result<brvk::VkDevice> {
+    let mut h = MaybeUninit::uninit();
+    translate_vk_result(unsafe {
+        brvk::fns::create_device(
+            physical_device.0,
+            core::ptr::from_ref(info).cast(),
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+    })?;
+
+    Ok(unsafe { h.assume_init() })
+}
+
+/// # Safety
+///
+/// Host access to all `VkQueue` objects created from `device` must be externally synchronized.
+#[inline]
+pub unsafe fn destroy_device(
+    device: VkHandleRefMut<brvk::VkDevice>,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) {
+    unsafe { brvk::fns::destroy_device(device.0, opt_pointer(allocation_callbacks)) }
+}
+
+#[inline]
 pub fn get_device_queue(device: VkHandleRef<brvk::VkDevice>, family_index: u32, index: u32) -> brvk::VkQueue {
     let mut h = MaybeUninit::uninit();
     unsafe {
