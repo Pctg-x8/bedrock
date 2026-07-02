@@ -5,6 +5,22 @@ use bedrock_vk::{self as brvk, TypedVulkanStructure};
 #[repr(transparent)]
 pub struct ExternalMemoryImageCreateInfo(brvk::VkExternalMemoryImageCreateInfoKHR);
 #[cfg(feature = "VK_KHR_external_memory")]
+unsafe impl brvk::VulkanStructure for ExternalMemoryImageCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &brvk::GenericVulkanStructure {
+        brvk::VulkanStructure::as_generic(&self.0)
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut brvk::GenericVulkanStructure {
+        brvk::VulkanStructure::as_generic_mut(&mut self.0)
+    }
+}
+#[cfg(feature = "VK_KHR_external_memory")]
+impl brvk::TypedVulkanStructure for ExternalMemoryImageCreateInfo {
+    const TYPE: brvk::VkStructureType = <brvk::VkExternalMemoryImageCreateInfoKHR as brvk::TypedVulkanStructure>::TYPE;
+}
+#[cfg(feature = "VK_KHR_external_memory")]
 impl ExternalMemoryImageCreateInfo {
     #[inline(always)]
     pub const fn new(handle_types: brvk::VkExternalMemoryHandleTypeFlagBitsKHR) -> Self {
