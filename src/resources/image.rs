@@ -327,7 +327,7 @@ impl<Device: VkHandle<Handle = brvk::VkDevice>> MemoryBound for ImageObject<Devi
     fn bind(
         &mut self,
         memory: &(impl VkHandle<Handle = brvk::VkDeviceMemory> + ?Sized),
-        offset: usize,
+        offset: DeviceSize,
     ) -> crate::Result<()>
     where
         Self: VkHandleMut,

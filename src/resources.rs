@@ -164,7 +164,7 @@ pub trait MemoryBound: VkHandle {
     fn bind(
         &mut self,
         memory: &(impl VkHandle<Handle = brvk::VkDeviceMemory> + ?Sized),
-        offset: usize,
+        offset: DeviceSize,
     ) -> crate::Result<()>
     where
         Self: VkHandleMut;
@@ -175,7 +175,7 @@ pub trait MemoryBound: VkHandle {
 pub fn bind_memory(
     resource: &mut (impl MemoryBound + VkHandleMut + ?Sized),
     memory: &(impl VkHandle<Handle = brvk::VkDeviceMemory> + ?Sized),
-    offset: usize,
+    offset: DeviceSize,
 ) -> crate::Result<()> {
     resource.bind(memory, offset)
 }

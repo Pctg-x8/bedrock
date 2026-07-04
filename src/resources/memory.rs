@@ -31,7 +31,7 @@ pub trait DeviceMemoryMut: DeviceMemory + VkHandleMut {
     /// * `brvk::VK_ERROR_MEMORY_MAP_FAILED`
     #[implements]
     #[inline(always)]
-    unsafe fn map_raw(&mut self, range: core::ops::Range<brvk::VkDeviceSize>) -> crate::Result<*mut core::ffi::c_void> {
+    unsafe fn map_raw(&mut self, range: core::ops::Range<DeviceSize>) -> crate::Result<*mut core::ffi::c_void> {
         unsafe {
             crate::vkfn_wrapper::map_memory(
                 self.device_transparent_ref(),

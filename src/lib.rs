@@ -29,6 +29,7 @@ pub use bedrock_vk::{
 };
 #[cfg(feature = "Implements")]
 pub use bedrock_vk::{ResolvedFnCell, ResolverInterface, load_function_unconstrainted, load_symbol_unconstrainted};
+
 use cfg_if::cfg_if;
 use derives::*;
 

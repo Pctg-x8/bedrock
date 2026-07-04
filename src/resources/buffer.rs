@@ -70,7 +70,7 @@ impl<Device: VkHandle<Handle = brvk::VkDevice>> MemoryBound for BufferObject<Dev
     fn bind(
         &mut self,
         memory: &(impl VkHandle<Handle = brvk::VkDeviceMemory> + ?Sized),
-        offset: usize,
+        offset: DeviceSize,
     ) -> crate::Result<()>
     where
         Self: VkHandleMut,
@@ -80,7 +80,7 @@ impl<Device: VkHandle<Handle = brvk::VkDevice>> MemoryBound for BufferObject<Dev
                 self.1.as_transparent_ref(),
                 VkHandleRefMut::dangling(self.0),
                 memory.as_transparent_ref(),
-                offset as _,
+                offset,
             )
         }
     }
@@ -216,13 +216,13 @@ impl<Buffer: DeviceChild> BufferViewObject<Buffer> {
 pub struct BufferCreateInfo<'s>(brvk::VkBufferCreateInfo, core::marker::PhantomData<Option<&'s [u32]>>);
 impl<'s> BufferCreateInfo<'s> {
     /// Creates a new buffer description with provided byte-size and usage flags
-    pub const fn new(byte_size: usize, usage: BufferUsage) -> Self {
+    pub const fn new(byte_size: DeviceSize, usage: BufferUsage) -> Self {
         Self(
             brvk::VkBufferCreateInfo {
                 sType: brvk::VkBufferCreateInfo::TYPE,
                 pNext: core::ptr::null(),
                 flags: 0,
-                size: byte_size as _,
+                size: byte_size,
                 usage: usage.0,
                 sharingMode: brvk::VK_SHARING_MODE_EXCLUSIVE,
                 queueFamilyIndexCount: 0,
@@ -235,7 +235,7 @@ impl<'s> BufferCreateInfo<'s> {
     /// Creates a new buffer description which fits for a type
     #[inline(always)]
     pub const fn new_for_type<T>(usage: BufferUsage) -> Self {
-        Self::new(core::mem::size_of::<T>(), usage)
+        Self::new(core::mem::size_of::<T>() as _, usage)
     }
 
     /// Wraps raw vulkan structure
@@ -283,7 +283,7 @@ impl<'s> BufferCreateInfo<'s> {
         self
     }
 
-    pub const fn size(&self) -> brvk::VkDeviceSize {
+    pub const fn size(&self) -> DeviceSize {
         self.0.size
     }
 
