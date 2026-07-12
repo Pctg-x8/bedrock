@@ -1114,8 +1114,7 @@ pub trait Device: VkHandle<Handle = brvk::VkDevice> + InstanceChild {
 }
 DerefContainerWithGuardsBracketImpl!(for Device {});
 
-pub trait DeviceMut: Device + VkHandleMut {
-}
+pub trait DeviceMut: Device + VkHandleMut {}
 DerefContainerWithGuardsBracketImpl!(for mut DeviceMut {});
 
 /// Extension function caches
