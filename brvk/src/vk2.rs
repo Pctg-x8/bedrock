@@ -2978,8 +2978,6 @@ pub const VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT: VkSamplerAddressMode = 1;
 pub const VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE: VkSamplerAddressMode = 2;
 #[rustfmt::skip]
 pub const VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER: VkSamplerAddressMode = 3;
-#[rustfmt::skip]
-pub const VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE: VkSamplerAddressMode = 4;
 
 #[rustfmt::skip]
 pub type VkSamplerMipmapMode = i32;
@@ -5048,37 +5046,6 @@ pub struct VkDisplayPlanePropertiesKHR {
     pub currentDisplay: VkDisplayKHR,
     pub currentStackIndex: u32,
 }
-
-#[cfg(feature = "VK_KHR_display_swapchain")]
-#[derive(Debug, Clone)]
-#[repr(C)]
-#[rustfmt::skip]
-pub struct VkDisplayPresentInfoKHR {
-    pub sType: VkStructureType,
-    pub pNext: *const core::ffi::c_void,
-    pub srcRect: VkRect2D,
-    pub dstRect: VkRect2D,
-    pub persistent: VkBool32,
-}
-#[cfg(feature = "VK_KHR_display_swapchain")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DISPLAY_PRESENT_INFO_KHR: VkStructureType = 1000003000;
-#[cfg(feature = "VK_KHR_display_swapchain")]
-#[rustfmt::skip]
-unsafe impl crate::VulkanStructure for VkDisplayPresentInfoKHR {
-    #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
-
-    #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
-}
-#[cfg(feature = "VK_KHR_display_swapchain")]
-#[rustfmt::skip]
-impl crate::TypedVulkanStructure for VkDisplayPresentInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DISPLAY_PRESENT_INFO_KHR; }
 
 #[cfg(feature = "VK_KHR_display")]
 #[derive(Debug, Clone)]
@@ -12975,33 +12942,6 @@ impl crate::StaticCallable for PFN_vkCreateDisplayPlaneSurfaceKHR {
 }
 
 #[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_display_swapchain")]
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy)]
-#[rustfmt::skip]
-pub struct PFN_vkCreateSharedSwapchainKHR(pub unsafe extern "system" fn(device: VkDevice, swapchainCount: u32, pCreateInfos: *const VkSwapchainCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSwapchains: *mut VkSwapchainKHR) -> VkResult);
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_display_swapchain")]
-#[rustfmt::skip]
-unsafe impl crate::PFN for PFN_vkCreateSharedSwapchainKHR {
-    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateSharedSwapchainKHR";
-
-    #[inline(always)]
-    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
-        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
-    }
-}
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_display_swapchain")]
-#[rustfmt::skip]
-unsafe impl crate::FromPtr for PFN_vkCreateSharedSwapchainKHR {
-    #[inline(always)]
-    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
-        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
-    }
-}
-
-#[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_xlib_surface")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -17527,13 +17467,6 @@ pub const VK_EXT_METAL_SURFACE_EXTENSION_NAME: &str = "VK_EXT_metal_surface";
 #[rustfmt::skip]
 pub const VK_EXT_METAL_SURFACE_SPEC_VERSION: usize = 1;
 
-#[cfg(feature = "VK_KHR_sampler_mirror_clamp_to_edge")]
-#[rustfmt::skip]
-pub const VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE_EXTENSION_NAME: &str = "VK_KHR_sampler_mirror_clamp_to_edge";
-#[cfg(feature = "VK_KHR_sampler_mirror_clamp_to_edge")]
-#[rustfmt::skip]
-pub const VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE_SPEC_VERSION: usize = 1;
-
 #[cfg(feature = "VK_KHR_win32_keyed_mutex")]
 #[rustfmt::skip]
 pub const VK_KHR_WIN32_KEYED_MUTEX_EXTENSION_NAME: &str = "VK_KHR_win32_keyed_mutex";
@@ -21615,45 +21548,6 @@ unsafe impl crate::VulkanStructure for VkDeviceQueueGlobalPriorityCreateInfoEXT 
 #[rustfmt::skip]
 impl crate::TypedVulkanStructure for VkDeviceQueueGlobalPriorityCreateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_EXT; }
 
-#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
-#[rustfmt::skip]
-pub const VK_NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES_EXTENSION_NAME: &str = "VK_NVX_multiview_per_view_attributes";
-#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
-#[rustfmt::skip]
-pub const VK_NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
-#[rustfmt::skip]
-pub const VK_SUBPASS_DESCRIPTION_PER_VIEW_ATTRIBUTES_BIT_NVX: VkSubpassDescriptionFlagBits = 0x00000001;
-#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
-#[rustfmt::skip]
-pub const VK_SUBPASS_DESCRIPTION_PER_VIEW_POSITION_X_ONLY_BIT_NVX: VkSubpassDescriptionFlagBits = 0x00000002;
-
-#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
-#[derive(Debug, Clone)]
-#[repr(C)]
-#[rustfmt::skip]
-pub struct VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX {
-    pub sType: VkStructureType,
-    pub pNext: *mut core::ffi::c_void,
-    pub perViewPositionAllComponents: VkBool32,
-}
-#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_ATTRIBUTES_PROPERTIES_NVX: VkStructureType = 1000097000;
-#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
-#[rustfmt::skip]
-unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX {
-    #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
-
-    #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
-}
-#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
-#[rustfmt::skip]
-impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_ATTRIBUTES_PROPERTIES_NVX; }
-
 #[cfg(feature = "VK_NV_viewport_swizzle")]
 #[rustfmt::skip]
 pub const VK_NV_VIEWPORT_SWIZZLE_EXTENSION_NAME: &str = "VK_NV_viewport_swizzle";
@@ -22700,21 +22594,6 @@ unsafe impl crate::FromPtr for PFN_vkCmdDebugMarkerInsertEXT {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-
-#[cfg(feature = "VK_IMG_filter_cubic")]
-#[rustfmt::skip]
-pub const VK_IMG_FILTER_CUBIC_EXTENSION_NAME: &str = "VK_IMG_filter_cubic";
-#[cfg(feature = "VK_IMG_filter_cubic")]
-#[rustfmt::skip]
-pub const VK_IMG_FILTER_CUBIC_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_IMG_filter_cubic")]
-#[rustfmt::skip]
-pub const VK_FILTER_CUBIC_IMG: VkFilter = 1000015000;
-
-#[cfg(feature = "VK_IMG_filter_cubic")]
-#[rustfmt::skip]
-pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_IMG: VkFormatFeatureFlagBits = 0x00002000;
 
 #[cfg(feature = "VK_NVX_device_generated_commands")]
 #[rustfmt::skip]
