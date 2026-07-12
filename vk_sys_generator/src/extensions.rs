@@ -1018,26 +1018,6 @@ pub const ELEMENTS: &[Element] = &[
         )
         .extensions(&[ex_ext("global_priority")]),
     ),
-    // VK_NVX_multiview_per_view_attributes
-    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_NVX_multiview_per_view_attributes", 1)),
-    Element::Bitmask(Bitmask::extending(
-        "SubpassDescriptionFlagBits",
-        "SUBPASS_DESCRIPTION",
-        &[
-            Bitmask::entry("PER_VIEW_ATTRIBUTES", 0).extension("NVX", "multiview_per_view_attributes"),
-            Bitmask::entry("PER_VIEW_POSITION_X_ONLY", 1).extension("NVX", "multiview_per_view_attributes"),
-        ],
-    )),
-    Element::Struct(
-        Struct::typed(
-            "PhysicalDeviceMultiviewPerViewAttributesProperties",
-            "PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_ATTRIBUTES_PROPERTIES",
-            vk_ext_enum(98, 0) as _,
-            StructUsage::Sink,
-            &[Struct::member("perViewPositionAllComponents", TY_VK_BOOL)],
-        )
-        .extensions(&[("NVX", "multiview_per_view_attributes")]),
-    ),
     // VK_NV_viewport_swizzle
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_NV_viewport_swizzle", 1)),
     Element::Enum(
@@ -1535,18 +1515,6 @@ pub const ELEMENTS: &[Element] = &[
         )
         .extension("EXT", "debug_marker"),
     ),
-    // VK_IMG_filter_cubic
-    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_IMG_filter_cubic", 1)),
-    Element::Enum(Enum::extending(
-        "Filter",
-        "FILTER",
-        &[Enum::member("CUBIC", vk_ext_enum(16, 0) as _).extension("IMG", "filter_cubic")],
-    )),
-    Element::Bitmask(Bitmask::extending(
-        "FormatFeatureFlagBits",
-        "FORMAT_FEATURE",
-        &[Bitmask::entry("SAMPLED_IMAGE_FILTER_CUBIC", 13).extension("IMG", "filter_cubic")],
-    )),
     // VK_NVX_device_generated_commands
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_NVX_device_generated_commands", 1)),
     Element::Object(

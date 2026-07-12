@@ -272,7 +272,6 @@ const EXTENSION_HEADER_CONSTANTS: &[ExtensionHeaderConstants] = &[
     ExtensionHeaderConstants::new("VK_KHR_android_surface", 6),
     ExtensionHeaderConstants::new("VK_KHR_win32_surface", 6),
     ExtensionHeaderConstants::new("VK_EXT_metal_surface", 1),
-    ExtensionHeaderConstants::new("VK_KHR_sampler_mirror_clamp_to_edge", 1),
     ExtensionHeaderConstants::new("VK_KHR_win32_keyed_mutex", 1),
     ExtensionHeaderConstants::new("VK_KHR_external_memory", 1),
     ExtensionHeaderConstants::new("VK_KHR_external_memory_capabilities", 1),
@@ -749,7 +748,6 @@ const ENUMS: &[Enum] = &[
             Enum::member("MIRRORED_REPEAT", 1),
             Enum::member("CLAMP_TO_EDGE", 2),
             Enum::member("CLAMP_TO_BORDER", 3),
-            Enum::member("MIRROR_CLAMP_TO_EDGE", 4),
         ],
     ),
     Enum::new(
@@ -2714,16 +2712,6 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .extensions(&[("KHR", "display")]),
-    Struct::new(
-        "DisplayPresentInfo",
-        &[
-            Struct::member("srcRect", "VkRect2D"),
-            Struct::member("dstRect", "VkRect2D"),
-            Struct::member("persistent", "VkBool32"),
-        ],
-    )
-    .stype("DISPLAY_PRESENT_INFO", vk_ext_enum(4, 0) as _, StructUsage::Source)
-    .extensions(&[("KHR", "display_swapchain")]),
     Struct::new(
         "DisplayProperties",
         &[
@@ -5801,18 +5789,6 @@ const COMMANDS: &[Command] = &[
     .failable()
     .static_callable()
     .extension("KHR", "display"),
-    Command::new(
-        "CreateSharedSwapchain",
-        &[
-            ("device", "VkDevice"),
-            ("swapchainCount", "u32"),
-            ("pCreateInfos", "*const VkSwapchainCreateInfoKHR"),
-            ("pAllocator", "*const VkAllocationCallbacks"),
-            ("pSwapchains", "*mut VkSwapchainKHR"),
-        ],
-    )
-    .failable()
-    .extension("KHR", "display_swapchain"),
     Command::new(
         "CreateXlibSurface",
         &[
