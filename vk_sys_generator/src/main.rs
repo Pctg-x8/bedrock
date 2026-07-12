@@ -137,8 +137,11 @@ fn main() -> std::io::Result<()> {
     }
 
     // chaotic requirement structure
-    Struct::new(
+    Struct::typed(
         "PhysicalDeviceIDPropertiesKHR",
+        "PHYSICAL_DEVICE_ID_PROPERTIES_KHR",
+        vk_ext_enum(72, 4) as _,
+        StructUsage::Sink,
         &const {
             [
                 Struct::member("deviceUUID", "[u8; VK_UUID_SIZE]"),
@@ -148,11 +151,6 @@ fn main() -> std::io::Result<()> {
                 Struct::member("deviceLUIDValid", "VkBool32"),
             ]
         },
-    )
-    .stype(
-        "PHYSICAL_DEVICE_ID_PROPERTIES_KHR",
-        vk_ext_enum(72, 4) as _,
-        StructUsage::Sink,
     )
     .emit_extra_cfg(&mut o, "any(feature = \"VK_KHR_external_fence_capabilities\", feature = \"VK_KHR_external_memory_capabilities\", feature = \"VK_KHR_external_semaphore_capabilities\")")?;
     o.write_all(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
@@ -297,7 +295,6 @@ const EXTENSION_HEADER_CONSTANTS: &[ExtensionHeaderConstants] = &[
     ExtensionHeaderConstants::new("VK_KHR_variable_pointers", 1),
     ExtensionHeaderConstants::new("VK_KHR_dedicated_allocation", 3),
     ExtensionHeaderConstants::new("VK_KHR_16bit_storage", 1),
-    ExtensionHeaderConstants::new("VK_KHR_sampler_ycbcr_conversion", 14),
     ExtensionHeaderConstants::new("VK_KHR_maintenance1", 2),
     ExtensionHeaderConstants::new("VK_KHR_maintenance2", 1),
     ExtensionHeaderConstants::new("VK_KHR_maintenance3", 1),
@@ -329,13 +326,6 @@ const OBJECTS: &[Object] = &[
     Object::new("VkPipeline", "PIPELINE", 19),
     Object::new("VkPipelineLayout", "PIPELINE_LAYOUT", 17),
     Object::new("VkSampler", "SAMPLER", 21),
-    Object::new(
-        "VkSamplerYcbcrConversionKHR",
-        "SAMPLER_YCBCR_CONVERSION_KHR",
-        vk_ext_enum(157, 0),
-    )
-    .extension("VK_KHR_sampler_ycbcr_conversion")
-    .promoted("1_1", "VkSamplerYcbcrConversion", "SAMPLER_YCBCR_CONVERSION"),
     Object::new("VkDescriptorSet", "DESCRIPTOR_SET", 23),
     Object::new("VkDescriptorSetLayout", "DESCRIPTOR_SET_LAYOUT", 20),
     Object::new("VkDescriptorPool", "DESCRIPTOR_POOL", 22),
@@ -344,7 +334,7 @@ const OBJECTS: &[Object] = &[
         "DESCRIPTOR_UPDATE_TEMPLATE_KHR",
         vk_ext_enum(86, 0),
     )
-    .extension("VK_KHR_descriptor_update_template")
+    .extension_old("VK_KHR_descriptor_update_template")
     .promoted("1_1", "VkDescriptorUpdateTemplate", "DESCRIPTOR_UPDATE_TEMPLATE"),
     Object::new("VkFence", "FENCE", 7),
     Object::new("VkSemaphore", "SEMAPHORE", 5),
@@ -354,23 +344,23 @@ const OBJECTS: &[Object] = &[
     Object::new("VkRenderPass", "RENDER_PASS", 18),
     Object::new("VkPipelineCache", "PIPELINE_CACHE", 16),
     // WSI extensions
-    Object::new("VkDisplayKHR", "DISPLAY_KHR", vk_ext_enum(3, 0)).extension("VK_KHR_display"),
-    Object::new("VkDisplayModeKHR", "DISPLAY_MODE_KHR", vk_ext_enum(3, 1)).extension("VK_KHR_display"),
-    Object::new("VkSurfaceKHR", "SURFACE_KHR", vk_ext_enum(1, 0)).extension("VK_KHR_surface"),
-    Object::new("VkSwapchainKHR", "SWAPCHAIN_KHR", vk_ext_enum(2, 0)).extension("VK_KHR_swapchain"),
+    Object::new("VkDisplayKHR", "DISPLAY_KHR", vk_ext_enum(3, 0)).extension_old("VK_KHR_display"),
+    Object::new("VkDisplayModeKHR", "DISPLAY_MODE_KHR", vk_ext_enum(3, 1)).extension_old("VK_KHR_display"),
+    Object::new("VkSurfaceKHR", "SURFACE_KHR", vk_ext_enum(1, 0)).extension_old("VK_KHR_surface"),
+    Object::new("VkSwapchainKHR", "SWAPCHAIN_KHR", vk_ext_enum(2, 0)).extension_old("VK_KHR_swapchain"),
     // debug report
     Object::new(
         "VkDebugReportCallbackEXT",
         "DEBUG_REPORT_CALLBACK_EXT",
         vk_ext_enum(12, 0),
     )
-    .extension("VK_EXT_debug_report"),
+    .extension_old("VK_EXT_debug_report"),
     Object::new(
         "VkDebugUtilsMessengerEXT",
         "DEBUG_UTILS_MESSENGER_EXT",
         vk_ext_enum(129, 0),
     )
-    .extension("VK_EXT_debug_utils"),
+    .extension_old("VK_EXT_debug_utils"),
 ];
 
 const ENUMS: &[Enum] = &[
@@ -436,20 +426,6 @@ const ENUMS: &[Enum] = &[
             Enum::member("INT_OPAQUE_WHITE", 5),
         ],
     ),
-    Enum::new(
-        "ChromaLocation",
-        "CHROMA_LOCATION",
-        &[
-            Enum::member("COSITED_EVEN", 0)
-                .extension_old("KHR", "sampler_ycbcr_conversion")
-                .promoted("1_1"),
-            Enum::member("MIDPOINT", 1)
-                .extension_old("KHR", "sampler_ycbcr_conversion")
-                .promoted("1_1"),
-        ],
-    )
-    .extension_old("KHR", "sampler_ycbcr_conversion")
-    .promoted("1_1"),
     Enum::new(
         "ColorSpace",
         "COLOR_SPACE",
@@ -528,9 +504,6 @@ const ENUMS: &[Enum] = &[
             Enum::member("VALIDATION_CACHE_EXT", 33),
             Enum::member("DESCRIPTOR_UPDATE_TEMPLATE", vk_ext_enum(86, 0) as _)
                 .extension_old("KHR", "descriptor_update_template")
-                .promoted("1_1"),
-            Enum::member("SAMPLER_YCBCR_CONVERSION", vk_ext_enum(157, 0) as _)
-                .extension_old("KHR", "sampler_ycbcr_conversion")
                 .promoted("1_1"),
         ],
     )
@@ -754,43 +727,6 @@ const ENUMS: &[Enum] = &[
         "SAMPLER_MIPMAP_MODE",
         &[Enum::member("NEAREST", 0), Enum::member("LINEAR", 1)],
     ),
-    Enum::new(
-        "SamplerYcbcrModelConversion",
-        "SAMPLER_YCBCR_MODEL_CONVERSION",
-        &[
-            Enum::member("RGB_IDENTITY", 0)
-                .extension_old("KHR", "sampler_ycbcr_conversion")
-                .promoted("1_1"),
-            Enum::member("YCBCR_IDENTITY", 1)
-                .extension_old("KHR", "sampler_ycbcr_conversion")
-                .promoted("1_1"),
-            Enum::member("YCBCR_709", 2)
-                .extension_old("KHR", "sampler_ycbcr_conversion")
-                .promoted("1_1"),
-            Enum::member("YCBCR_601", 3)
-                .extension_old("KHR", "sampler_ycbcr_conversion")
-                .promoted("1_1"),
-            Enum::member("YCBCR_2020", 4)
-                .extension_old("KHR", "sampler_ycbcr_conversion")
-                .promoted("1_1"),
-        ],
-    )
-    .extension_old("KHR", "sampler_ycbcr_conversion")
-    .promoted("1_1"),
-    Enum::new(
-        "SamplerYcbcrRange",
-        "SAMPLER_YCBCR_RANGE",
-        &[
-            Enum::member("ITU_FULL", 0)
-                .extension_old("KHR", "sampler_ycbcr_conversion")
-                .promoted("1_1"),
-            Enum::member("ITU_NARROW", 1)
-                .extension_old("KHR", "sampler_ycbcr_conversion")
-                .promoted("1_1"),
-        ],
-    )
-    .extension_old("KHR", "sampler_ycbcr_conversion")
-    .promoted("1_1"),
     Enum::new(
         "SharingMode",
         "SHARING_MODE",
@@ -1355,30 +1291,6 @@ const FLAGS: &[Bitmask] = &[
             Bitmask::entry("TRANSFER_DST", 15)
                 .extension_old("KHR", "maintenance1")
                 .promoted("1_1"),
-            Bitmask::entry("MIDPOINT_CHROMA_SAMPLES", 17)
-                .extension_old("KHR", "sampler_ycbcr_conversion")
-                .promoted("1_1"),
-            Bitmask::entry("SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER", 18)
-                .extension_old("KHR", "sampler_ycbcr_conversion")
-                .promoted("1_1"),
-            Bitmask::entry("SAMPLED_IMAGE_YCBCR_CONVERSION_SEPARATE_RECONSTRUCTION_FILTER", 19)
-                .extension_old("KHR", "sampler_ycbcr_conversion")
-                .promoted("1_1"),
-            Bitmask::entry("SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT", 20)
-                .extension_old("KHR", "sampler_ycbcr_conversion")
-                .promoted("1_1"),
-            Bitmask::entry(
-                "SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_FORCEABLE",
-                21,
-            )
-            .extension_old("KHR", "sampler_ycbcr_conversion")
-            .promoted("1_1"),
-            Bitmask::entry("DISJOINT", 22)
-                .extension_old("KHR", "sampler_ycbcr_conversion")
-                .promoted("1_1"),
-            Bitmask::entry("COSITED_CHROMA_SAMPLES", 23)
-                .extension_old("KHR", "sampler_ycbcr_conversion")
-                .promoted("1_1"),
         ],
     ),
     Bitmask::new(
@@ -1404,15 +1316,6 @@ const FLAGS: &[Bitmask] = &[
             Bitmask::entry("DEPTH", 1),
             Bitmask::entry("STENCIL", 2),
             Bitmask::entry("METADATA", 3),
-            Bitmask::entry("PLANE_0", 4)
-                .extension_old("KHR", "sampler_ycbcr_conversion")
-                .promoted("1_1"),
-            Bitmask::entry("PLANE_1", 5)
-                .extension_old("KHR", "sampler_ycbcr_conversion")
-                .promoted("1_1"),
-            Bitmask::entry("PLANE_2", 6)
-                .extension_old("KHR", "sampler_ycbcr_conversion")
-                .promoted("1_1"),
         ],
     ),
     Bitmask::new(
@@ -1452,9 +1355,6 @@ const FLAGS: &[Bitmask] = &[
                 .promoted("1_1"),
             Bitmask::entry("EXTENDED_USAGE", 8)
                 .extension_old("KHR", "maintenance2")
-                .promoted("1_1"),
-            Bitmask::entry("DISJOINT", 9)
-                .extension_old("KHR", "sampler_ycbcr_conversion")
                 .promoted("1_1"),
             Bitmask::entry("ALIAS", 10)
                 .extension_old("KHR", "bind_memory2")
@@ -2151,15 +2051,6 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .extensions_old(&[("KHR", "device_group"), ("KHR", "swapchain")]),
-    Struct::typed(
-        "BindImagePlaneMemoryInfo",
-        "BIND_IMAGE_PLANE_MEMORY_INFO",
-        vk_ext_enum(157, 2) as _,
-        StructUsage::Source,
-        &[Struct::member("planeAspect", "VkImageAspectFlags")],
-    )
-    .extensions_old(&[("KHR", "sampler_ycbcr_conversion")])
-    .promoted("1_1"),
     Struct::new(
         "BindSparseInfo",
         &[
@@ -3106,15 +2997,6 @@ const STRUCTS: &[Struct] = &[
     )
     .extensions_old(&[("KHR", "get_memory_requirements2")])
     .promoted("1_1"),
-    Struct::typed(
-        "ImagePlaneMemoryRequirementsInfo",
-        "IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO",
-        vk_ext_enum(157, 2) as _,
-        StructUsage::Source,
-        &[Struct::member("planeAspect", "VkImageAspectFlagBits")],
-    )
-    .extensions_old(&[("KHR", "sampler_ycbcr_conversion")])
-    .promoted("1_1"),
     Struct::new(
         "ImageResolve",
         &[
@@ -3815,15 +3697,6 @@ const STRUCTS: &[Struct] = &[
     .extensions_old(&[("KHR", "get_physical_device_properties2")])
     .promoted("1_1"),
     Struct::typed(
-        "PhysicalDeviceSamplerYcbcrConversionFeatures",
-        "PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES",
-        vk_ext_enum(157, 4) as _,
-        StructUsage::Both,
-        &[Struct::member("samplerYcbcrConversion", "VkBool32")],
-    )
-    .extensions_old(&[("KHR", "sampler_ycbcr_conversion")])
-    .promoted("1_1"),
-    Struct::typed(
         "PhysicalDeviceSparseImageFormatInfo2",
         "PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2",
         vk_ext_enum(60, 8) as _,
@@ -4165,42 +4038,6 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .stype("SAMPLER_CREATE_INFO", 31, StructUsage::Source),
-    Struct::typed(
-        "SamplerYcbcrConversionCreateInfo",
-        "SAMPLER_YCBCR_CONVERSION_CREATE_INFO",
-        vk_ext_enum(157, 0) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("format", "VkFormat"),
-            Struct::member("ycbcrModel", "VkSamplerYcbcrModelConversionKHR"),
-            Struct::member("ycbcrRange", "VkSamplerYcbcrRangeKHR"),
-            Struct::member("components", "VkComponentMapping"),
-            Struct::member("xChromaOffset", "VkChromaLocationKHR"),
-            Struct::member("yChromaOffset", "VkChromaLocationKHR"),
-            Struct::member("chromaFilter", "VkFilter"),
-            Struct::member("forceExplicitReconstruction", "VkBool32"),
-        ],
-    )
-    .extensions_old(&[("KHR", "sampler_ycbcr_conversion")])
-    .promoted("1_1"),
-    Struct::typed(
-        "SamplerYcbcrConversionImageFormatProperties",
-        "SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES",
-        vk_ext_enum(157, 5) as _,
-        StructUsage::Sink,
-        &[Struct::member("combinedImageSamplerDescriptorCount", "u32")],
-    )
-    .extensions_old(&[("KHR", "sampler_ycbcr_conversion")])
-    .promoted("1_1"),
-    Struct::typed(
-        "SamplerYcbcrConversionInfo",
-        "SAMPLER_YCBCR_CONVERSION_INFO",
-        vk_ext_enum(157, 1) as _,
-        StructUsage::Source,
-        &[Struct::member("conversion", "VkSamplerYcbcrConversion")],
-    )
-    .extensions_old(&[("KHR", "sampler_ycbcr_conversion")])
-    .promoted("1_1"),
     Struct::new(
         "SemaphoreCreateInfo",
         &[Struct::member("flags", "VkSemaphoreCreateFlags")],
@@ -6397,28 +6234,6 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .extension_old("KHR", "descriptor_update_template")
-    .promoted("1_1"),
-    Command::new(
-        "CreateSamplerYcbcrConversion",
-        &[
-            ("device", "VkDevice"),
-            ("pCreateInfo", "VkSamplerYcbcrConversionCreateInfoKHR"),
-            ("pAllocator", "*const VkAllocationCallbacks"),
-            ("pYcbcrConversion", "*mut VkSamplerYcbcrConversionKHR"),
-        ],
-    )
-    .failable()
-    .extension_old("KHR", "sampler_ycbcr_conversion")
-    .promoted("1_1"),
-    Command::new(
-        "DestroySamplerYcbcrConversion",
-        &[
-            ("device", "VkDevice"),
-            ("ycbcrConversion", "VkSamplerYcbcrConversionKHR"),
-            ("pAllocator", "*const VkAllocationCallbacks"),
-        ],
-    )
-    .extension_old("KHR", "sampler_ycbcr_conversion")
     .promoted("1_1"),
     Command::new(
         "TrimCommandPool",

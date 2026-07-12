@@ -214,6 +214,10 @@ impl Enum {
         }
     }
 
+    pub const fn into_element(self) -> Element {
+        Element::Enum(self)
+    }
+
     pub fn emit(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
         let type_name = if let Some(x) = self.extension {
             format!("Vk{}{}", self.name, x.tag)
@@ -567,6 +571,10 @@ impl Bitmask {
         }
     }
 
+    pub const fn into_element(self) -> Element {
+        Element::Bitmask(self)
+    }
+
     pub fn emit(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
         let (type_name, bits_name);
         if let Some(x) = self.extension {
@@ -697,7 +705,8 @@ pub struct Object {
     name: &'static str,
     object_type_const_name: &'static str,
     object_type_const_value: i32,
-    extension: Option<&'static str>,
+    extension_old: Option<&'static str>,
+    extension: Option<&'static Extension<'static>>,
     promoted: Option<(&'static str, &'static str, &'static str)>,
 }
 impl Object {
@@ -707,6 +716,7 @@ impl Object {
             name,
             object_type_const_name: const_suffix,
             object_type_const_value: object_type_value,
+            extension_old: None,
             extension: None,
             promoted: None,
         }
@@ -717,8 +727,14 @@ impl Object {
         self
     }
 
-    pub const fn extension(mut self, name: &'static str) -> Self {
-        self.extension = Some(name);
+    #[deprecated = "use new extensions specifier"]
+    pub const fn extension_old(mut self, name: &'static str) -> Self {
+        self.extension_old = Some(name);
+        self
+    }
+
+    pub const fn extension(mut self, x: &'static Extension<'static>) -> Self {
+        self.extension = Some(x);
         self
     }
 
@@ -732,6 +748,22 @@ impl Object {
         self
     }
 
+    pub const fn into_element(self) -> Element {
+        Element::Object(self)
+    }
+
+    fn emit_ext_item_prefixes(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
+        if let Some(x) = self.extension_old {
+            writeln!(w, "#[cfg(feature = {x:?})]")?;
+        }
+        if let Some(Extension { tag, name, .. }) = self.extension {
+            writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
+        }
+        writeln!(w, "#[rustfmt::skip]")?;
+
+        Ok(())
+    }
+
     pub fn emit(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
         let (value_type, raw_expr);
         if self.dispatchable {
@@ -742,23 +774,16 @@ impl Object {
             raw_expr = "self.0.get()";
         }
 
-        if let Some(x) = self.extension {
-            writeln!(w, "#[cfg(feature = {x:?})]")?;
-        }
-
+        self.emit_ext_item_prefixes(w)?;
         writeln!(w, "#[repr(transparent)]")?;
         writeln!(w, "#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]")?;
-        writeln!(w, "#[rustfmt::skip]")?;
         writeln!(
             w,
             "pub struct {}(pub {value_type}, pub core::marker::PhantomData<*mut u8>);",
             self.name
         )?;
 
-        if let Some(x) = self.extension {
-            writeln!(w, "#[cfg(feature = {x:?})]")?;
-        }
-        writeln!(w, "#[rustfmt::skip]")?;
+        self.emit_ext_item_prefixes(w)?;
         writeln!(w, "impl crate::VkRawHandle for {} {{", self.name)?;
         writeln!(
             w,
@@ -772,10 +797,7 @@ impl Object {
         writeln!(w, "    }}")?;
         writeln!(w, "}}")?;
 
-        if let Some(x) = self.extension {
-            writeln!(w, "#[cfg(feature = {x:?})]")?;
-        }
-        writeln!(w, "#[rustfmt::skip]")?;
+        self.emit_ext_item_prefixes(w)?;
         writeln!(
             w,
             "pub const VK_OBJECT_TYPE_{}: VkObjectType = {};",
@@ -920,6 +942,10 @@ impl Struct {
 
     pub const fn member(name: &'static str, r#type: &'static str) -> StructMember {
         StructMember::new(name, r#type)
+    }
+
+    pub const fn into_element(self) -> Element {
+        Element::Struct(self)
     }
 
     fn emit_core(
@@ -1495,6 +1521,10 @@ impl Command {
     pub const fn promoted(mut self, promoted: &'static str) -> Self {
         self.promoted = Some(promoted);
         self
+    }
+
+    pub const fn into_element(self) -> Element {
+        Element::Command(self)
     }
 
     fn emit_pfn(w: &mut impl std::io::Write, type_name: &str, org_fn_name: &str) -> std::io::Result<()> {

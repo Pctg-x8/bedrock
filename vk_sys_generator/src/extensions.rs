@@ -1,5 +1,6 @@
 use crate::{parts::*, vk_ext_enum};
 
+pub const VK_EXT_DEBUG_REPORT: &Extension = &Extension::ext("debub_report", 10);
 const VK_EXT_IMAGE_DRM_FORMAT_MODIFIER: &Extension = &Extension::ext("image_drm_format_modifier", 1);
 const VK_EXT_METAL_OBJECTS: &Extension = &Extension::ext("metal_objects", 2);
 const VK_MVK_MACOS_SURFACE: &Extension = &Extension::new("MVK", "macos_surface", 2);
@@ -50,7 +51,7 @@ pub const ELEMENTS: &[Element] = &[
     ),
     Element::Object(
         Object::new("VkValidationCacheEXT", "VALIDATION_CACHE_EXT", vk_ext_enum(161, 0) as _)
-            .extension("VK_EXT_validation_cache"),
+            .extension_old("VK_EXT_validation_cache"),
     ),
     Element::Enum(Enum::extending(
         "BlendOp",
@@ -1520,7 +1521,7 @@ pub const ELEMENTS: &[Element] = &[
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_NVX_device_generated_commands", 1)),
     Element::Object(
         Object::new("VkObjectTableNVX", "OBJECT_TABLE_NVX", vk_ext_enum(87, 0) as _)
-            .extension("VK_NVX_device_generated_commands"),
+            .extension_old("VK_NVX_device_generated_commands"),
     ),
     Element::Object(
         Object::new(
@@ -1528,7 +1529,7 @@ pub const ELEMENTS: &[Element] = &[
             "INDIRECT_COMMANDS_LAYOUT_NVX",
             vk_ext_enum(87, 1) as _,
         )
-        .extension("VK_NVX_device_generated_commands"),
+        .extension_old("VK_NVX_device_generated_commands"),
     ),
     Element::Enum(
         Enum::new(

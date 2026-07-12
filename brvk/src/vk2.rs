@@ -849,48 +849,6 @@ pub const VK_FORMAT_FEATURE_TRANSFER_DST_BIT_KHR: VkFormatFeatureFlagBits = 0x00
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_FORMAT_FEATURE_TRANSFER_DST_BIT: VkFormatFeatureFlagBits = 0x00008000;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_FORMAT_FEATURE_MIDPOINT_CHROMA_SAMPLES_BIT_KHR: VkFormatFeatureFlagBits = 0x00020000;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_FORMAT_FEATURE_MIDPOINT_CHROMA_SAMPLES_BIT: VkFormatFeatureFlagBits = 0x00020000;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER_BIT_KHR: VkFormatFeatureFlagBits = 0x00040000;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER_BIT: VkFormatFeatureFlagBits = 0x00040000;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_SEPARATE_RECONSTRUCTION_FILTER_BIT_KHR: VkFormatFeatureFlagBits = 0x00080000;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_SEPARATE_RECONSTRUCTION_FILTER_BIT: VkFormatFeatureFlagBits = 0x00080000;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_BIT_KHR: VkFormatFeatureFlagBits = 0x00100000;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_BIT: VkFormatFeatureFlagBits = 0x00100000;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_FORCEABLE_BIT_KHR: VkFormatFeatureFlagBits = 0x00200000;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_FORCEABLE_BIT: VkFormatFeatureFlagBits = 0x00200000;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_FORMAT_FEATURE_DISJOINT_BIT_KHR: VkFormatFeatureFlagBits = 0x00400000;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_FORMAT_FEATURE_DISJOINT_BIT: VkFormatFeatureFlagBits = 0x00400000;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT_KHR: VkFormatFeatureFlagBits = 0x00800000;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT: VkFormatFeatureFlagBits = 0x00800000;
 
 #[rustfmt::skip]
 pub type VkFramebufferCreateFlags = VkFlags;
@@ -920,24 +878,6 @@ pub const VK_IMAGE_ASPECT_DEPTH_BIT: VkImageAspectFlagBits = 0x00000002;
 pub const VK_IMAGE_ASPECT_STENCIL_BIT: VkImageAspectFlagBits = 0x00000004;
 #[rustfmt::skip]
 pub const VK_IMAGE_ASPECT_METADATA_BIT: VkImageAspectFlagBits = 0x00000008;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_IMAGE_ASPECT_PLANE_0_BIT_KHR: VkImageAspectFlagBits = 0x00000010;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_IMAGE_ASPECT_PLANE_0_BIT: VkImageAspectFlagBits = 0x00000010;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_IMAGE_ASPECT_PLANE_1_BIT_KHR: VkImageAspectFlagBits = 0x00000020;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_IMAGE_ASPECT_PLANE_1_BIT: VkImageAspectFlagBits = 0x00000020;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_IMAGE_ASPECT_PLANE_2_BIT_KHR: VkImageAspectFlagBits = 0x00000040;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_IMAGE_ASPECT_PLANE_2_BIT: VkImageAspectFlagBits = 0x00000040;
 
 #[rustfmt::skip]
 pub type VkImageUsageFlags = VkFlags;
@@ -999,12 +939,6 @@ pub const VK_IMAGE_CREATE_EXTENDED_USAGE_BIT_KHR: VkImageCreateFlagBits = 0x0000
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_IMAGE_CREATE_EXTENDED_USAGE_BIT: VkImageCreateFlagBits = 0x00000100;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_IMAGE_CREATE_DISJOINT_BIT_KHR: VkImageCreateFlagBits = 0x00000200;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_IMAGE_CREATE_DISJOINT_BIT: VkImageCreateFlagBits = 0x00000200;
 #[cfg(feature = "VK_KHR_bind_memory2")]
 #[rustfmt::skip]
 pub const VK_IMAGE_CREATE_ALIAS_BIT_KHR: VkImageCreateFlagBits = 0x00000400;
@@ -1712,9 +1646,9 @@ pub const VK_ACCESS_2_NONE_KHR: VkAccessFlagBits2KHR = 0;
 #[rustfmt::skip]
 pub const VK_ACCESS_2_NONE: VkAccessFlagBits2 = 0;
 
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkInstance(pub core::ptr::NonNull<core::ffi::c_void>, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkInstance {
@@ -1728,9 +1662,9 @@ impl crate::VkRawHandle for VkInstance {
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_INSTANCE: VkObjectType = 1;
 
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkPhysicalDevice(pub core::ptr::NonNull<core::ffi::c_void>, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkPhysicalDevice {
@@ -1744,9 +1678,9 @@ impl crate::VkRawHandle for VkPhysicalDevice {
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_PHYSICAL_DEVICE: VkObjectType = 2;
 
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkDevice(pub core::ptr::NonNull<core::ffi::c_void>, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkDevice {
@@ -1760,9 +1694,9 @@ impl crate::VkRawHandle for VkDevice {
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_DEVICE: VkObjectType = 3;
 
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkQueue(pub core::ptr::NonNull<core::ffi::c_void>, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkQueue {
@@ -1776,9 +1710,9 @@ impl crate::VkRawHandle for VkQueue {
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_QUEUE: VkObjectType = 4;
 
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkCommandBuffer(pub core::ptr::NonNull<core::ffi::c_void>, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkCommandBuffer {
@@ -1792,9 +1726,9 @@ impl crate::VkRawHandle for VkCommandBuffer {
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_COMMAND_BUFFER: VkObjectType = 6;
 
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkDeviceMemory(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkDeviceMemory {
@@ -1808,9 +1742,9 @@ impl crate::VkRawHandle for VkDeviceMemory {
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_DEVICE_MEMORY: VkObjectType = 8;
 
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkCommandPool(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkCommandPool {
@@ -1824,9 +1758,9 @@ impl crate::VkRawHandle for VkCommandPool {
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_COMMAND_POOL: VkObjectType = 25;
 
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkBuffer(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkBuffer {
@@ -1840,9 +1774,9 @@ impl crate::VkRawHandle for VkBuffer {
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_BUFFER: VkObjectType = 9;
 
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkBufferView(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkBufferView {
@@ -1856,9 +1790,9 @@ impl crate::VkRawHandle for VkBufferView {
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_BUFFER_VIEW: VkObjectType = 13;
 
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkImage(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkImage {
@@ -1872,9 +1806,9 @@ impl crate::VkRawHandle for VkImage {
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_IMAGE: VkObjectType = 10;
 
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkImageView(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkImageView {
@@ -1888,9 +1822,9 @@ impl crate::VkRawHandle for VkImageView {
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_IMAGE_VIEW: VkObjectType = 14;
 
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkShaderModule(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkShaderModule {
@@ -1904,9 +1838,9 @@ impl crate::VkRawHandle for VkShaderModule {
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_SHADER_MODULE: VkObjectType = 15;
 
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkPipeline(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkPipeline {
@@ -1920,9 +1854,9 @@ impl crate::VkRawHandle for VkPipeline {
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_PIPELINE: VkObjectType = 19;
 
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkPipelineLayout(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkPipelineLayout {
@@ -1936,9 +1870,9 @@ impl crate::VkRawHandle for VkPipelineLayout {
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_PIPELINE_LAYOUT: VkObjectType = 17;
 
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkSampler(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkSampler {
@@ -1952,34 +1886,9 @@ impl crate::VkRawHandle for VkSampler {
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_SAMPLER: VkObjectType = 21;
 
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
-pub struct VkSamplerYcbcrConversionKHR(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-impl crate::VkRawHandle for VkSamplerYcbcrConversionKHR {
-    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_KHR;
-
-    #[inline(always)]
-    fn raw_handle_value(&self) -> u64 {
-        self.0.get()
-    }
-}
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_KHR: VkObjectType = 1000156000;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub type VkSamplerYcbcrConversion = VkSamplerYcbcrConversionKHR;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION: VkObjectType = 1000156000;
-
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkDescriptorSet(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkDescriptorSet {
@@ -1993,9 +1902,9 @@ impl crate::VkRawHandle for VkDescriptorSet {
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_DESCRIPTOR_SET: VkObjectType = 23;
 
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkDescriptorSetLayout(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkDescriptorSetLayout {
@@ -2009,9 +1918,9 @@ impl crate::VkRawHandle for VkDescriptorSetLayout {
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT: VkObjectType = 20;
 
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkDescriptorPool(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkDescriptorPool {
@@ -2026,9 +1935,9 @@ impl crate::VkRawHandle for VkDescriptorPool {
 pub const VK_OBJECT_TYPE_DESCRIPTOR_POOL: VkObjectType = 22;
 
 #[cfg(feature = "VK_KHR_descriptor_update_template")]
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkDescriptorUpdateTemplateKHR(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[rustfmt::skip]
@@ -2050,9 +1959,9 @@ pub type VkDescriptorUpdateTemplate = VkDescriptorUpdateTemplateKHR;
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE: VkObjectType = 1000085000;
 
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkFence(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkFence {
@@ -2066,9 +1975,9 @@ impl crate::VkRawHandle for VkFence {
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_FENCE: VkObjectType = 7;
 
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkSemaphore(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkSemaphore {
@@ -2082,9 +1991,9 @@ impl crate::VkRawHandle for VkSemaphore {
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_SEMAPHORE: VkObjectType = 5;
 
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkEvent(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkEvent {
@@ -2098,9 +2007,9 @@ impl crate::VkRawHandle for VkEvent {
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_EVENT: VkObjectType = 11;
 
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkQueryPool(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkQueryPool {
@@ -2114,9 +2023,9 @@ impl crate::VkRawHandle for VkQueryPool {
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_QUERY_POOL: VkObjectType = 12;
 
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkFramebuffer(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkFramebuffer {
@@ -2130,9 +2039,9 @@ impl crate::VkRawHandle for VkFramebuffer {
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_FRAMEBUFFER: VkObjectType = 24;
 
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkRenderPass(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkRenderPass {
@@ -2146,9 +2055,9 @@ impl crate::VkRawHandle for VkRenderPass {
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_RENDER_PASS: VkObjectType = 18;
 
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkPipelineCache(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkPipelineCache {
@@ -2163,9 +2072,9 @@ impl crate::VkRawHandle for VkPipelineCache {
 pub const VK_OBJECT_TYPE_PIPELINE_CACHE: VkObjectType = 16;
 
 #[cfg(feature = "VK_KHR_display")]
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkDisplayKHR(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[cfg(feature = "VK_KHR_display")]
 #[rustfmt::skip]
@@ -2182,9 +2091,9 @@ impl crate::VkRawHandle for VkDisplayKHR {
 pub const VK_OBJECT_TYPE_DISPLAY_KHR: VkObjectType = 1000002000;
 
 #[cfg(feature = "VK_KHR_display")]
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkDisplayModeKHR(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[cfg(feature = "VK_KHR_display")]
 #[rustfmt::skip]
@@ -2201,9 +2110,9 @@ impl crate::VkRawHandle for VkDisplayModeKHR {
 pub const VK_OBJECT_TYPE_DISPLAY_MODE_KHR: VkObjectType = 1000002001;
 
 #[cfg(feature = "VK_KHR_surface")]
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkSurfaceKHR(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[cfg(feature = "VK_KHR_surface")]
 #[rustfmt::skip]
@@ -2220,9 +2129,9 @@ impl crate::VkRawHandle for VkSurfaceKHR {
 pub const VK_OBJECT_TYPE_SURFACE_KHR: VkObjectType = 1000000000;
 
 #[cfg(feature = "VK_KHR_swapchain")]
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkSwapchainKHR(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[cfg(feature = "VK_KHR_swapchain")]
 #[rustfmt::skip]
@@ -2239,9 +2148,9 @@ impl crate::VkRawHandle for VkSwapchainKHR {
 pub const VK_OBJECT_TYPE_SWAPCHAIN_KHR: VkObjectType = 1000001000;
 
 #[cfg(feature = "VK_EXT_debug_report")]
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkDebugReportCallbackEXT(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[cfg(feature = "VK_EXT_debug_report")]
 #[rustfmt::skip]
@@ -2258,9 +2167,9 @@ impl crate::VkRawHandle for VkDebugReportCallbackEXT {
 pub const VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT: VkObjectType = 1000011000;
 
 #[cfg(feature = "VK_EXT_debug_utils")]
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkDebugUtilsMessengerEXT(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[rustfmt::skip]
@@ -2485,27 +2394,6 @@ pub const VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE: VkBorderColor = 4;
 #[rustfmt::skip]
 pub const VK_BORDER_COLOR_INT_OPAQUE_WHITE: VkBorderColor = 5;
 
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub type VkChromaLocationKHR = i32;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub type VkChromaLocation = i32;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_CHROMA_LOCATION_COSITED_EVEN_KHR: VkChromaLocationKHR = 0;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_CHROMA_LOCATION_COSITED_EVEN: VkChromaLocationKHR = 0;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_CHROMA_LOCATION_MIDPOINT_KHR: VkChromaLocationKHR = 1;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_CHROMA_LOCATION_MIDPOINT: VkChromaLocationKHR = 1;
-
 #[cfg(feature = "VK_KHR_surface")]
 #[rustfmt::skip]
 pub type VkColorSpaceKHR = i32;
@@ -2669,14 +2557,6 @@ pub const VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR: VkDebugRep
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE: VkDebugReportObjectTypeEXT = 1000085000;
-#[cfg(feature = "VK_EXT_debug_report")]
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_KHR: VkDebugReportObjectTypeEXT = 1000156000;
-#[cfg(feature = "VK_EXT_debug_report")]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION: VkDebugReportObjectTypeEXT = 1000156000;
 
 #[rustfmt::skip]
 pub type VkDescriptorType = i32;
@@ -2985,69 +2865,6 @@ pub type VkSamplerMipmapMode = i32;
 pub const VK_SAMPLER_MIPMAP_MODE_NEAREST: VkSamplerMipmapMode = 0;
 #[rustfmt::skip]
 pub const VK_SAMPLER_MIPMAP_MODE_LINEAR: VkSamplerMipmapMode = 1;
-
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub type VkSamplerYcbcrModelConversionKHR = i32;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub type VkSamplerYcbcrModelConversion = i32;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_RGB_IDENTITY_KHR: VkSamplerYcbcrModelConversionKHR = 0;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_RGB_IDENTITY: VkSamplerYcbcrModelConversionKHR = 0;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_IDENTITY_KHR: VkSamplerYcbcrModelConversionKHR = 1;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_IDENTITY: VkSamplerYcbcrModelConversionKHR = 1;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_709_KHR: VkSamplerYcbcrModelConversionKHR = 2;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_709: VkSamplerYcbcrModelConversionKHR = 2;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_601_KHR: VkSamplerYcbcrModelConversionKHR = 3;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_601: VkSamplerYcbcrModelConversionKHR = 3;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_2020_KHR: VkSamplerYcbcrModelConversionKHR = 4;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_2020: VkSamplerYcbcrModelConversionKHR = 4;
-
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub type VkSamplerYcbcrRangeKHR = i32;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub type VkSamplerYcbcrRange = i32;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_SAMPLER_YCBCR_RANGE_ITU_FULL_KHR: VkSamplerYcbcrRangeKHR = 0;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_SAMPLER_YCBCR_RANGE_ITU_FULL: VkSamplerYcbcrRangeKHR = 0;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_SAMPLER_YCBCR_RANGE_ITU_NARROW_KHR: VkSamplerYcbcrRangeKHR = 1;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_SAMPLER_YCBCR_RANGE_ITU_NARROW: VkSamplerYcbcrRangeKHR = 1;
 
 #[rustfmt::skip]
 pub type VkSharingMode = i32;
@@ -3778,41 +3595,6 @@ unsafe impl crate::VulkanStructure for VkBindImageMemorySwapchainInfoKHR {
 #[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]
 #[rustfmt::skip]
 impl crate::TypedVulkanStructure for VkBindImageMemorySwapchainInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHR; }
-
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[derive(Debug, Clone)]
-#[repr(C)]
-#[rustfmt::skip]
-pub struct VkBindImagePlaneMemoryInfoKHR {
-    pub sType: VkStructureType,
-    pub pNext: *const core::ffi::c_void,
-    pub planeAspect: VkImageAspectFlags,
-}
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO_KHR: VkStructureType = 1000156002;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-unsafe impl crate::VulkanStructure for VkBindImagePlaneMemoryInfoKHR {
-    #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
-
-    #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
-}
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-impl crate::TypedVulkanStructure for VkBindImagePlaneMemoryInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO_KHR; }
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub type VkBindImagePlaneMemoryInfo = VkBindImagePlaneMemoryInfoKHR;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO: VkStructureType = VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO_KHR;
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -5917,41 +5699,6 @@ pub type VkImageMemoryRequirementsInfo2 = VkImageMemoryRequirementsInfo2KHR;
 #[rustfmt::skip]
 pub const VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2_KHR;
 
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[derive(Debug, Clone)]
-#[repr(C)]
-#[rustfmt::skip]
-pub struct VkImagePlaneMemoryRequirementsInfoKHR {
-    pub sType: VkStructureType,
-    pub pNext: *const core::ffi::c_void,
-    pub planeAspect: VkImageAspectFlagBits,
-}
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO_KHR: VkStructureType = 1000156002;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-unsafe impl crate::VulkanStructure for VkImagePlaneMemoryRequirementsInfoKHR {
-    #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
-
-    #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
-}
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-impl crate::TypedVulkanStructure for VkImagePlaneMemoryRequirementsInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO_KHR; }
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub type VkImagePlaneMemoryRequirementsInfo = VkImagePlaneMemoryRequirementsInfoKHR;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO_KHR;
-
 #[derive(Debug, Clone)]
 #[repr(C)]
 #[rustfmt::skip]
@@ -7485,53 +7232,6 @@ pub type VkPhysicalDeviceProperties2 = VkPhysicalDeviceProperties2KHR;
 #[rustfmt::skip]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR;
 
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[derive(Debug, Clone)]
-#[repr(C)]
-#[rustfmt::skip]
-pub struct VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR {
-    pub sType: VkStructureType,
-    pub pNext: *mut core::ffi::c_void,
-    pub samplerYcbcrConversion: VkBool32,
-}
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES_KHR: VkStructureType = 1000156004;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-unsafe impl crate::VulkanStructure for VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR {
-    #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
-
-    #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
-}
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-impl crate::TypedVulkanStructure for VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES_KHR; }
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR {
-    #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
-
-    #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
-}
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES_KHR; }
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub type VkPhysicalDeviceSamplerYcbcrConversionFeatures = VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES_KHR;
-
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -8356,114 +8056,6 @@ unsafe impl crate::VulkanStructure for VkSamplerCreateInfo {
 }
 #[rustfmt::skip]
 impl crate::TypedVulkanStructure for VkSamplerCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO; }
-
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[derive(Debug, Clone)]
-#[repr(C)]
-#[rustfmt::skip]
-pub struct VkSamplerYcbcrConversionCreateInfoKHR {
-    pub sType: VkStructureType,
-    pub pNext: *const core::ffi::c_void,
-    pub format: VkFormat,
-    pub ycbcrModel: VkSamplerYcbcrModelConversionKHR,
-    pub ycbcrRange: VkSamplerYcbcrRangeKHR,
-    pub components: VkComponentMapping,
-    pub xChromaOffset: VkChromaLocationKHR,
-    pub yChromaOffset: VkChromaLocationKHR,
-    pub chromaFilter: VkFilter,
-    pub forceExplicitReconstruction: VkBool32,
-}
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO_KHR: VkStructureType = 1000156000;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-unsafe impl crate::VulkanStructure for VkSamplerYcbcrConversionCreateInfoKHR {
-    #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
-
-    #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
-}
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-impl crate::TypedVulkanStructure for VkSamplerYcbcrConversionCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO_KHR; }
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub type VkSamplerYcbcrConversionCreateInfo = VkSamplerYcbcrConversionCreateInfoKHR;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO_KHR;
-
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[derive(Debug, Clone)]
-#[repr(C)]
-#[rustfmt::skip]
-pub struct VkSamplerYcbcrConversionImageFormatPropertiesKHR {
-    pub sType: VkStructureType,
-    pub pNext: *mut core::ffi::c_void,
-    pub combinedImageSamplerDescriptorCount: u32,
-}
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES_KHR: VkStructureType = 1000156005;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-unsafe impl crate::VulkanSinkStructure for VkSamplerYcbcrConversionImageFormatPropertiesKHR {
-    #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
-
-    #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
-}
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-impl crate::TypedVulkanSinkStructure for VkSamplerYcbcrConversionImageFormatPropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES_KHR; }
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub type VkSamplerYcbcrConversionImageFormatProperties = VkSamplerYcbcrConversionImageFormatPropertiesKHR;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES_KHR;
-
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[derive(Debug, Clone)]
-#[repr(C)]
-#[rustfmt::skip]
-pub struct VkSamplerYcbcrConversionInfoKHR {
-    pub sType: VkStructureType,
-    pub pNext: *const core::ffi::c_void,
-    pub conversion: VkSamplerYcbcrConversion,
-}
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO_KHR: VkStructureType = 1000156001;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-unsafe impl crate::VulkanStructure for VkSamplerYcbcrConversionInfoKHR {
-    #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
-
-    #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
-}
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-impl crate::TypedVulkanStructure for VkSamplerYcbcrConversionInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO_KHR; }
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub type VkSamplerYcbcrConversionInfo = VkSamplerYcbcrConversionInfoKHR;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO_KHR;
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -15277,126 +14869,6 @@ impl crate::StaticCallable for PFN_vkUpdateDescriptorSetWithTemplate {
 }
 
 #[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy)]
-#[rustfmt::skip]
-pub struct PFN_vkCreateSamplerYcbcrConversionKHR(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: VkSamplerYcbcrConversionCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pYcbcrConversion: *mut VkSamplerYcbcrConversionKHR) -> VkResult);
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-unsafe impl crate::PFN for PFN_vkCreateSamplerYcbcrConversionKHR {
-    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateSamplerYcbcrConversionKHR";
-
-    #[inline(always)]
-    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
-        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
-    }
-}
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-unsafe impl crate::FromPtr for PFN_vkCreateSamplerYcbcrConversionKHR {
-    #[inline(always)]
-    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
-        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
-    }
-}
-#[cfg(feature = "Implements")]
-#[cfg(feature = "Allow1_1APIs")]
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy)]
-#[rustfmt::skip]
-pub struct PFN_vkCreateSamplerYcbcrConversion(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: VkSamplerYcbcrConversionCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pYcbcrConversion: *mut VkSamplerYcbcrConversionKHR) -> VkResult);
-#[cfg(feature = "Implements")]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-unsafe impl crate::PFN for PFN_vkCreateSamplerYcbcrConversion {
-    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateSamplerYcbcrConversion";
-
-    #[inline(always)]
-    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
-        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
-    }
-}
-#[cfg(feature = "Implements")]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-unsafe impl crate::FromPtr for PFN_vkCreateSamplerYcbcrConversion {
-    #[inline(always)]
-    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
-        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
-    }
-}
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateSamplerYcbcrConversion {
-    const STATIC: Self = Self(vkCreateSamplerYcbcrConversion);
-}
-
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy)]
-#[rustfmt::skip]
-pub struct PFN_vkDestroySamplerYcbcrConversionKHR(pub unsafe extern "system" fn(device: VkDevice, ycbcrConversion: VkSamplerYcbcrConversionKHR, pAllocator: *const VkAllocationCallbacks));
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-unsafe impl crate::PFN for PFN_vkDestroySamplerYcbcrConversionKHR {
-    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroySamplerYcbcrConversionKHR";
-
-    #[inline(always)]
-    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
-        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
-    }
-}
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-unsafe impl crate::FromPtr for PFN_vkDestroySamplerYcbcrConversionKHR {
-    #[inline(always)]
-    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
-        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
-    }
-}
-#[cfg(feature = "Implements")]
-#[cfg(feature = "Allow1_1APIs")]
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy)]
-#[rustfmt::skip]
-pub struct PFN_vkDestroySamplerYcbcrConversion(pub unsafe extern "system" fn(device: VkDevice, ycbcrConversion: VkSamplerYcbcrConversionKHR, pAllocator: *const VkAllocationCallbacks));
-#[cfg(feature = "Implements")]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-unsafe impl crate::PFN for PFN_vkDestroySamplerYcbcrConversion {
-    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroySamplerYcbcrConversion";
-
-    #[inline(always)]
-    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
-        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
-    }
-}
-#[cfg(feature = "Implements")]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-unsafe impl crate::FromPtr for PFN_vkDestroySamplerYcbcrConversion {
-    #[inline(always)]
-    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
-        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
-    }
-}
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDestroySamplerYcbcrConversion {
-    const STATIC: Self = Self(vkDestroySamplerYcbcrConversion);
-}
-
-#[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_maintenance1")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -17642,13 +17114,6 @@ pub const VK_KHR_16BIT_STORAGE_EXTENSION_NAME: &str = "VK_KHR_16bit_storage";
 #[rustfmt::skip]
 pub const VK_KHR_16BIT_STORAGE_SPEC_VERSION: usize = 1;
 
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_KHR_SAMPLER_YCBCR_CONVERSION_EXTENSION_NAME: &str = "VK_KHR_sampler_ycbcr_conversion";
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_KHR_SAMPLER_YCBCR_CONVERSION_SPEC_VERSION: usize = 14;
-
 #[cfg(feature = "VK_KHR_maintenance1")]
 #[rustfmt::skip]
 pub const VK_KHR_MAINTENANCE1_EXTENSION_NAME: &str = "VK_KHR_maintenance1";
@@ -17683,6 +17148,535 @@ pub const VK_EXT_SHADER_SUBGROUP_VOTE_EXTENSION_NAME: &str = "VK_EXT_shader_subg
 #[cfg(feature = "VK_EXT_shader_subgroup_vote")]
 #[rustfmt::skip]
 pub const VK_EXT_SHADER_SUBGROUP_VOTE_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_KHR_SAMPLER_YCBCR_CONVERSION_EXTENSION_NAME: &str = "VK_KHR_sampler_ycbcr_conversion";
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_KHR_SAMPLER_YCBCR_CONVERSION_SPEC_VERSION: usize = 14;
+
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkSamplerYcbcrConversionKHR(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+impl crate::VkRawHandle for VkSamplerYcbcrConversionKHR {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_KHR;
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0.get()
+    }
+}
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_KHR: VkObjectType = 1000156000;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub type VkSamplerYcbcrConversion = VkSamplerYcbcrConversionKHR;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION: VkObjectType = 1000156000;
+
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_MIDPOINT_CHROMA_SAMPLES_BIT_KHR: VkFormatFeatureFlagBits = 0x00020000;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_MIDPOINT_CHROMA_SAMPLES_BIT: VkFormatFeatureFlagBits = 0x00020000;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER_BIT_KHR: VkFormatFeatureFlagBits = 0x00040000;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER_BIT: VkFormatFeatureFlagBits = 0x00040000;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_SEPARATE_RECONSTRUCTION_FILTER_BIT_KHR: VkFormatFeatureFlagBits = 0x00080000;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_SEPARATE_RECONSTRUCTION_FILTER_BIT: VkFormatFeatureFlagBits = 0x00080000;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_BIT_KHR: VkFormatFeatureFlagBits = 0x00100000;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_BIT: VkFormatFeatureFlagBits = 0x00100000;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_FORCEABLE_BIT_KHR: VkFormatFeatureFlagBits = 0x00200000;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_FORCEABLE_BIT: VkFormatFeatureFlagBits = 0x00200000;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_DISJOINT_BIT_KHR: VkFormatFeatureFlagBits = 0x00400000;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_DISJOINT_BIT: VkFormatFeatureFlagBits = 0x00400000;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT_KHR: VkFormatFeatureFlagBits = 0x00800000;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT: VkFormatFeatureFlagBits = 0x00800000;
+
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_IMAGE_ASPECT_PLANE_0_BIT_KHR: VkImageAspectFlagBits = 0x00000010;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_IMAGE_ASPECT_PLANE_0_BIT: VkImageAspectFlagBits = 0x00000010;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_IMAGE_ASPECT_PLANE_1_BIT_KHR: VkImageAspectFlagBits = 0x00000020;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_IMAGE_ASPECT_PLANE_1_BIT: VkImageAspectFlagBits = 0x00000020;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_IMAGE_ASPECT_PLANE_2_BIT_KHR: VkImageAspectFlagBits = 0x00000040;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_IMAGE_ASPECT_PLANE_2_BIT: VkImageAspectFlagBits = 0x00000040;
+
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_IMAGE_CREATE_DISJOINT_BIT_KHR: VkImageCreateFlagBits = 0x00000200;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_IMAGE_CREATE_DISJOINT_BIT: VkImageCreateFlagBits = 0x00000200;
+
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub type VkSamplerYcbcrModelConversionKHR = i32;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub type VkSamplerYcbcrModelConversion = i32;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_RGB_IDENTITY_KHR: VkSamplerYcbcrModelConversionKHR = 0;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_RGB_IDENTITY: VkSamplerYcbcrModelConversionKHR = 0;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_IDENTITY_KHR: VkSamplerYcbcrModelConversionKHR = 1;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_IDENTITY: VkSamplerYcbcrModelConversionKHR = 1;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_709_KHR: VkSamplerYcbcrModelConversionKHR = 2;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_709: VkSamplerYcbcrModelConversionKHR = 2;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_601_KHR: VkSamplerYcbcrModelConversionKHR = 3;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_601: VkSamplerYcbcrModelConversionKHR = 3;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_2020_KHR: VkSamplerYcbcrModelConversionKHR = 4;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_2020: VkSamplerYcbcrModelConversionKHR = 4;
+
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub type VkChromaLocationKHR = i32;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub type VkChromaLocation = i32;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_CHROMA_LOCATION_COSITED_EVEN_KHR: VkChromaLocationKHR = 0;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_CHROMA_LOCATION_COSITED_EVEN: VkChromaLocationKHR = 0;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_CHROMA_LOCATION_MIDPOINT_KHR: VkChromaLocationKHR = 1;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_CHROMA_LOCATION_MIDPOINT: VkChromaLocationKHR = 1;
+
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub type VkSamplerYcbcrRangeKHR = i32;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub type VkSamplerYcbcrRange = i32;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_SAMPLER_YCBCR_RANGE_ITU_FULL_KHR: VkSamplerYcbcrRangeKHR = 0;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_SAMPLER_YCBCR_RANGE_ITU_FULL: VkSamplerYcbcrRangeKHR = 0;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_SAMPLER_YCBCR_RANGE_ITU_NARROW_KHR: VkSamplerYcbcrRangeKHR = 1;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_SAMPLER_YCBCR_RANGE_ITU_NARROW: VkSamplerYcbcrRangeKHR = 1;
+
+#[cfg(feature = "VK_EXT_debub_report")]
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_KHR: VkDebugReportObjectTypeEXT = 1000156000;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION: VkDebugReportObjectTypeEXT = 1000156000;
+
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub samplerYcbcrConversion: VkBool32,
+}
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES_KHR: VkStructureType = 1000156004;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES_KHR; }
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES_KHR; }
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub type VkPhysicalDeviceSamplerYcbcrConversionFeatures = VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES_KHR;
+
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkBindImagePlaneMemoryInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub planeAspect: VkImageAspectFlags,
+}
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO_KHR: VkStructureType = 1000156002;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkBindImagePlaneMemoryInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkBindImagePlaneMemoryInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO_KHR; }
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub type VkBindImagePlaneMemoryInfo = VkBindImagePlaneMemoryInfoKHR;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO: VkStructureType = VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO_KHR;
+
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkImagePlaneMemoryRequirementsInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub planeAspect: VkImageAspectFlagBits,
+}
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO_KHR: VkStructureType = 1000156002;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkImagePlaneMemoryRequirementsInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkImagePlaneMemoryRequirementsInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO_KHR; }
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub type VkImagePlaneMemoryRequirementsInfo = VkImagePlaneMemoryRequirementsInfoKHR;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO_KHR;
+
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkSamplerYcbcrConversionCreateInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub format: VkFormat,
+    pub ycbcrModel: VkSamplerYcbcrModelConversionKHR,
+    pub ycbcrRange: VkSamplerYcbcrRangeKHR,
+    pub components: VkComponentMapping,
+    pub xChromaOffset: VkChromaLocationKHR,
+    pub yChromaOffset: VkChromaLocationKHR,
+    pub chromaFilter: VkFilter,
+    pub forceExplicitReconstruction: VkBool32,
+}
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO_KHR: VkStructureType = 1000156000;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkSamplerYcbcrConversionCreateInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkSamplerYcbcrConversionCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO_KHR; }
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub type VkSamplerYcbcrConversionCreateInfo = VkSamplerYcbcrConversionCreateInfoKHR;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO_KHR;
+
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkSamplerYcbcrConversionImageFormatPropertiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub combinedImageSamplerDescriptorCount: u32,
+}
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES_KHR: VkStructureType = 1000156005;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkSamplerYcbcrConversionImageFormatPropertiesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkSamplerYcbcrConversionImageFormatPropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES_KHR; }
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub type VkSamplerYcbcrConversionImageFormatProperties = VkSamplerYcbcrConversionImageFormatPropertiesKHR;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES_KHR;
+
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkSamplerYcbcrConversionInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub conversion: VkSamplerYcbcrConversion,
+}
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO_KHR: VkStructureType = 1000156001;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkSamplerYcbcrConversionInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkSamplerYcbcrConversionInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO_KHR; }
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub type VkSamplerYcbcrConversionInfo = VkSamplerYcbcrConversionInfoKHR;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO_KHR;
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCreateSamplerYcbcrConversionKHR(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: VkSamplerYcbcrConversionCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pYcbcrConversion: *mut VkSamplerYcbcrConversionKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCreateSamplerYcbcrConversionKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateSamplerYcbcrConversionKHR";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateSamplerYcbcrConversionKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCreateSamplerYcbcrConversion(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: VkSamplerYcbcrConversionCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pYcbcrConversion: *mut VkSamplerYcbcrConversionKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCreateSamplerYcbcrConversion {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateSamplerYcbcrConversion";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateSamplerYcbcrConversion {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+impl crate::StaticCallable for PFN_vkCreateSamplerYcbcrConversion {
+    const STATIC: Self = Self(vkCreateSamplerYcbcrConversion);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkDestroySamplerYcbcrConversionKHR(pub unsafe extern "system" fn(device: VkDevice, ycbcrConversion: VkSamplerYcbcrConversionKHR, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkDestroySamplerYcbcrConversionKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroySamplerYcbcrConversionKHR";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroySamplerYcbcrConversionKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkDestroySamplerYcbcrConversion(pub unsafe extern "system" fn(device: VkDevice, ycbcrConversion: VkSamplerYcbcrConversionKHR, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkDestroySamplerYcbcrConversion {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroySamplerYcbcrConversion";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkDestroySamplerYcbcrConversion {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+impl crate::StaticCallable for PFN_vkDestroySamplerYcbcrConversion {
+    const STATIC: Self = Self(vkDestroySamplerYcbcrConversion);
+}
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -18705,21 +18699,18 @@ pub type VkSamplerReductionMode = i32;
 #[cfg(feature = "VK_EXT_sampler_filter_minmax")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE_EXT: VkSamplerReductionModeEXT = 0;
-#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE: VkSamplerReductionModeEXT = 0;
 #[cfg(feature = "VK_EXT_sampler_filter_minmax")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_REDUCTION_MODE_MIN_EXT: VkSamplerReductionModeEXT = 1;
-#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_REDUCTION_MODE_MIN: VkSamplerReductionModeEXT = 1;
 #[cfg(feature = "VK_EXT_sampler_filter_minmax")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_REDUCTION_MODE_MAX_EXT: VkSamplerReductionModeEXT = 2;
-#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_REDUCTION_MODE_MAX: VkSamplerReductionModeEXT = 2;
@@ -19191,28 +19182,24 @@ pub type VkQueueGlobalPriority = i32;
 #[cfg(feature = "VK_KHR_global_priority")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_LOW_KHR: VkQueueGlobalPriorityKHR = 128;
-#[cfg(feature = "VK_KHR_global_priority")]
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_LOW: VkQueueGlobalPriorityKHR = 128;
 #[cfg(feature = "VK_KHR_global_priority")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_MEDIUM_KHR: VkQueueGlobalPriorityKHR = 256;
-#[cfg(feature = "VK_KHR_global_priority")]
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_MEDIUM: VkQueueGlobalPriorityKHR = 256;
 #[cfg(feature = "VK_KHR_global_priority")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_HIGH_KHR: VkQueueGlobalPriorityKHR = 512;
-#[cfg(feature = "VK_KHR_global_priority")]
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_HIGH: VkQueueGlobalPriorityKHR = 512;
 #[cfg(feature = "VK_KHR_global_priority")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_REALTIME_KHR: VkQueueGlobalPriorityKHR = 1024;
-#[cfg(feature = "VK_KHR_global_priority")]
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_REALTIME: VkQueueGlobalPriorityKHR = 1024;
@@ -19519,9 +19506,9 @@ pub type VkValidationCacheCreateFlagsEXT = VkFlags;
 pub type VkValidationCacheCreateFlagBitsEXT = VkFlags;
 
 #[cfg(feature = "VK_EXT_validation_cache")]
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkValidationCacheEXT(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[cfg(feature = "VK_EXT_validation_cache")]
 #[rustfmt::skip]
@@ -22594,9 +22581,9 @@ pub const VK_NVX_DEVICE_GENERATED_COMMANDS_EXTENSION_NAME: &str = "VK_NVX_device
 pub const VK_NVX_DEVICE_GENERATED_COMMANDS_SPEC_VERSION: usize = 1;
 
 #[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkObjectTableNVX(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[cfg(feature = "VK_NVX_device_generated_commands")]
 #[rustfmt::skip]
@@ -22613,9 +22600,9 @@ impl crate::VkRawHandle for VkObjectTableNVX {
 pub const VK_OBJECT_TYPE_OBJECT_TABLE_NVX: VkObjectType = 1000086000;
 
 #[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[rustfmt::skip]
 pub struct VkIndirectCommandsLayoutNVX(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[cfg(feature = "VK_NVX_device_generated_commands")]
 #[rustfmt::skip]
@@ -24922,10 +24909,6 @@ unsafe extern "system" {
     #[cfg(feature = "Allow1_1APIs")]
     pub fn vkUpdateDescriptorSetWithTemplate(device: VkDevice, descriptorSet: VkDescriptorSet, descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR, pData: *const core::ffi::c_void);
     #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkCreateSamplerYcbcrConversion(device: VkDevice, pCreateInfo: VkSamplerYcbcrConversionCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pYcbcrConversion: *mut VkSamplerYcbcrConversionKHR) -> VkResult;
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkDestroySamplerYcbcrConversion(device: VkDevice, ycbcrConversion: VkSamplerYcbcrConversionKHR, pAllocator: *const VkAllocationCallbacks);
-    #[cfg(feature = "Allow1_1APIs")]
     pub fn vkTrimCommandPool(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolTrimFlagsKHR);
     #[cfg(feature = "Allow1_1APIs")]
     pub fn vkGetDescriptorSetLayoutSupport(device: VkDevice, pCreateInfo: *const VkDescriptorSetLayoutCreateInfo, pSupport: *mut VkDescriptorSetLayoutSupport);
@@ -24989,6 +24972,10 @@ unsafe extern "system" {
     pub fn vkCmdPipelineBarrier2(commandBuffer: VkCommandBuffer, pDependencyInfo: *const VkDependencyInfoKHR);
     #[cfg(feature = "Allow1_3APIs")]
     pub fn vkCmdWriteTimestamp2(commandBuffer: VkCommandBuffer, stage: VkPipelineStageFlags2KHR, queryPool: VkQueryPool, query: u32);
+    #[cfg(feature = "Allow1_1APIs")]
+    pub fn vkCreateSamplerYcbcrConversion(device: VkDevice, pCreateInfo: VkSamplerYcbcrConversionCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pYcbcrConversion: *mut VkSamplerYcbcrConversionKHR) -> VkResult;
+    #[cfg(feature = "Allow1_1APIs")]
+    pub fn vkDestroySamplerYcbcrConversion(device: VkDevice, ycbcrConversion: VkSamplerYcbcrConversionKHR, pAllocator: *const VkAllocationCallbacks);
     #[cfg(feature = "Allow1_2APIs")]
     pub fn vkGetBufferDeviceAddress(device: VkDevice, pInfo: *const VkBufferDeviceAddressInfoKHR) -> VkDeviceAddress;
     #[cfg(feature = "Allow1_2APIs")]
