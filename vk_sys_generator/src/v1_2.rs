@@ -413,7 +413,7 @@ pub const ELEMENTS: &[Element] = &[
     Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE)),
     Element::Enum(Enum::extending(
         "SamplerAddressMode",
-        "SMAPLER_ADDRESS_MODE",
+        "SAMPLER_ADDRESS_MODE",
         &[Enum::member("MIRROR_CLAMP_TO_EDGE", 4)
             .extension2(VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE)
             .promoted(VERSION)],

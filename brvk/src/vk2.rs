@@ -18813,10 +18813,10 @@ pub const VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE_SPEC_VERSION: usize = 3;
 
 #[cfg(feature = "VK_KHR_sampler_mirror_clamp_to_edge")]
 #[rustfmt::skip]
-pub const VK_SMAPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE_KHR: VkSamplerAddressMode = 4;
+pub const VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE_KHR: VkSamplerAddressMode = 4;
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
-pub const VK_SMAPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE: VkSamplerAddressMode = 4;
+pub const VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE: VkSamplerAddressMode = 4;
 
 #[cfg(feature = "VK_KHR_shader_float_controls")]
 #[rustfmt::skip]
