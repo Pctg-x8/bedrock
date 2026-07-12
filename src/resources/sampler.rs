@@ -220,7 +220,7 @@ pub enum AddressingMode {
     ClampToBorder = brvk::VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER as _,
     /// The mirror clamp to edge wrap mode
     #[cfg(feature = "VK_KHR_sampler_mirror_clamp_to_edge")]
-    MirrorClampToEdge = brvk::VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE as _,
+    MirrorClampToEdge = brvk::VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE_KHR as _,
 }
 
 /// Specify filter used for texture lookups
