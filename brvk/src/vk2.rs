@@ -17418,13 +17418,6 @@ pub const VK_KHR_DISPLAY_EXTENSION_NAME: &str = "VK_KHR_display";
 #[rustfmt::skip]
 pub const VK_KHR_DISPLAY_SPEC_VERSION: usize = 21;
 
-#[cfg(feature = "VK_KHR_display_swapchain")]
-#[rustfmt::skip]
-pub const VK_KHR_DISPLAY_SWAPCHAIN_EXTENSION_NAME: &str = "VK_KHR_display_swapchain";
-#[cfg(feature = "VK_KHR_display_swapchain")]
-#[rustfmt::skip]
-pub const VK_KHR_DISPLAY_SWAPCHAIN_SPEC_VERSION: usize = 1;
-
 #[cfg(feature = "VK_KHR_xlib_surface")]
 #[rustfmt::skip]
 pub const VK_KHR_XLIB_SURFACE_EXTENSION_NAME: &str = "VK_KHR_xlib_surface";
@@ -23389,38 +23382,6 @@ unsafe impl crate::FromPtr for PFN_vkCmdSetViewportWScalingNV {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-
-#[cfg(feature = "VK_IMG_format_pvrtc")]
-#[rustfmt::skip]
-pub const VK_IMG_FORMAT_PVRTC_EXTENSION_NAME: &str = "VK_IMG_format_pvrtc";
-#[cfg(feature = "VK_IMG_format_pvrtc")]
-#[rustfmt::skip]
-pub const VK_IMG_FORMAT_PVRTC_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_IMG_format_pvrtc")]
-#[rustfmt::skip]
-pub const VK_FORMAT_PVRTC1_2BPP_UNORM_BLOCK_IMG: VkFormat = 1000054000;
-#[cfg(feature = "VK_IMG_format_pvrtc")]
-#[rustfmt::skip]
-pub const VK_FORMAT_PVRTC1_4BPP_UNORM_BLOCK_IMG: VkFormat = 1000054001;
-#[cfg(feature = "VK_IMG_format_pvrtc")]
-#[rustfmt::skip]
-pub const VK_FORMAT_PVRTC2_2BPP_UNORM_BLOCK_IMG: VkFormat = 1000054002;
-#[cfg(feature = "VK_IMG_format_pvrtc")]
-#[rustfmt::skip]
-pub const VK_FORMAT_PVRTC2_4BPP_UNORM_BLOCK_IMG: VkFormat = 1000054003;
-#[cfg(feature = "VK_IMG_format_pvrtc")]
-#[rustfmt::skip]
-pub const VK_FORMAT_PVRTC1_2BPP_SRGB_BLOCK_IMG: VkFormat = 1000054004;
-#[cfg(feature = "VK_IMG_format_pvrtc")]
-#[rustfmt::skip]
-pub const VK_FORMAT_PVRTC1_4BPP_SRGB_BLOCK_IMG: VkFormat = 1000054005;
-#[cfg(feature = "VK_IMG_format_pvrtc")]
-#[rustfmt::skip]
-pub const VK_FORMAT_PVRTC2_2BPP_SRGB_BLOCK_IMG: VkFormat = 1000054006;
-#[cfg(feature = "VK_IMG_format_pvrtc")]
-#[rustfmt::skip]
-pub const VK_FORMAT_PVRTC2_4BPP_SRGB_BLOCK_IMG: VkFormat = 1000054007;
 
 #[cfg(feature = "VK_NV_fill_rectangle")]
 #[rustfmt::skip]

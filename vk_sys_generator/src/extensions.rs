@@ -1965,22 +1965,6 @@ pub const ELEMENTS: &[Element] = &[
         )
         .extension("NV", "clip_space_w_scaling"),
     ),
-    // VK_IMG_format_pvrtc
-    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_IMG_format_pvrtc", 1)),
-    Element::Enum(Enum::extending(
-        "Format",
-        "FORMAT",
-        &[
-            Enum::member("PVRTC1_2BPP_UNORM_BLOCK", vk_ext_enum(55, 0) as _).extension("IMG", "format_pvrtc"),
-            Enum::member("PVRTC1_4BPP_UNORM_BLOCK", vk_ext_enum(55, 1) as _).extension("IMG", "format_pvrtc"),
-            Enum::member("PVRTC2_2BPP_UNORM_BLOCK", vk_ext_enum(55, 2) as _).extension("IMG", "format_pvrtc"),
-            Enum::member("PVRTC2_4BPP_UNORM_BLOCK", vk_ext_enum(55, 3) as _).extension("IMG", "format_pvrtc"),
-            Enum::member("PVRTC1_2BPP_SRGB_BLOCK", vk_ext_enum(55, 4) as _).extension("IMG", "format_pvrtc"),
-            Enum::member("PVRTC1_4BPP_SRGB_BLOCK", vk_ext_enum(55, 5) as _).extension("IMG", "format_pvrtc"),
-            Enum::member("PVRTC2_2BPP_SRGB_BLOCK", vk_ext_enum(55, 6) as _).extension("IMG", "format_pvrtc"),
-            Enum::member("PVRTC2_4BPP_SRGB_BLOCK", vk_ext_enum(55, 7) as _).extension("IMG", "format_pvrtc"),
-        ],
-    )),
     // VK_NV_fill_rectangle
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_NV_fill_rectangle", 1)),
     Element::Enum(Enum::extending(

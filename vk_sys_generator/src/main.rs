@@ -265,7 +265,6 @@ const EXTENSION_HEADER_CONSTANTS: &[ExtensionHeaderConstants] = &[
     ExtensionHeaderConstants::new("VK_KHR_surface", 25),
     ExtensionHeaderConstants::new("VK_KHR_swapchain", 68),
     ExtensionHeaderConstants::new("VK_KHR_display", 21),
-    ExtensionHeaderConstants::new("VK_KHR_display_swapchain", 1),
     ExtensionHeaderConstants::new("VK_KHR_xlib_surface", 6),
     ExtensionHeaderConstants::new("VK_KHR_xcb_surface", 6),
     ExtensionHeaderConstants::new("VK_KHR_wayland_surface", 6),
