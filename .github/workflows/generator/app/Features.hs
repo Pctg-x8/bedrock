@@ -53,7 +53,6 @@ platformIndependent =
     "VK_NV_sample_mask_override_coverage",
     "VK_EXT_sampler_filter_minmax",
     "VK_KHR_sampler_mirror_clamp_to_edge",
-    "VK_AMD_shader_ballot",
     "VK_KHR_shader_draw_parameters",
     "VK_AMD_shader_explicit_vertex_parameter",
     "VK_AMD_shader_fragment_mask",
