@@ -3,6 +3,9 @@
 use crate::{parts::*, vk_ext_enum};
 
 const VERSION: &str = "1_2";
+const VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE: &Extension = &Extension::khr("sampler_mirror_clamp_to_edge", 3);
+const VK_KHR_SHADER_FLOAT_CONTROLS: &Extension = &Extension::khr("shader_float_controls", 4);
+const VK_EXT_SHADER_VIEWPORT_INDEX_LAYER: &Extension = &Extension::ext("shader_viewport_index_layer", 1);
 
 pub const ELEMENTS: &[Element] = &[
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_KHR_buffer_device_address", 1)),
@@ -406,4 +409,64 @@ pub const ELEMENTS: &[Element] = &[
         .extensions(&[ex_ext("sampler_filter_minmax")])
         .promoted(VERSION),
     ),
+    // VK_KHR_sampler_mirror_clamp_to_edge
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE)),
+    Element::Enum(Enum::extending(
+        "SamplerAddressMode",
+        "SMAPLER_ADDRESS_MODE",
+        &[Enum::member("MIRROR_CLAMP_TO_EDGE", 4)
+            .extension2(VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE)
+            .promoted(VERSION)],
+    )),
+    // VK_KHR_shader_float_controls
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_KHR_SHADER_FLOAT_CONTROLS)),
+    Element::Enum(
+        Enum::new(
+            "ShaderFloatControlsIndependence",
+            "SHADER_FLOAT_CONTROLS_INDEPENDENCE",
+            &[
+                Enum::member("32_BIT_ONLY", 0)
+                    .extension2(VK_KHR_SHADER_FLOAT_CONTROLS)
+                    .promoted(VERSION),
+                Enum::member("ALL", 1)
+                    .extension2(VK_KHR_SHADER_FLOAT_CONTROLS)
+                    .promoted(VERSION),
+                Enum::member("NONE", 2)
+                    .extension2(VK_KHR_SHADER_FLOAT_CONTROLS)
+                    .promoted(VERSION),
+            ],
+        )
+        .extension2(VK_KHR_SHADER_FLOAT_CONTROLS),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "PhysicalDeviceFloatControlsProperties",
+            "PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES",
+            vk_ext_enum(198, 0) as _,
+            StructUsage::Sink,
+            &[
+                Struct::member("denormBehaviorIndependence", "VkShaderFloatControlsIndependenceKHR"),
+                Struct::member("roundingModeIndependence", "VkShaderFloatControlsIndependenceKHR"),
+                Struct::member("shaderSignedZeroInfNanPreserveFloat16", TY_VK_BOOL),
+                Struct::member("shaderSignedZeroInfNanPreserveFloat32", TY_VK_BOOL),
+                Struct::member("shaderSignedZeroInfNanPreserveFloat64", TY_VK_BOOL),
+                Struct::member("shaderDenormPreserveFloat16", TY_VK_BOOL),
+                Struct::member("shaderDenormPreserveFloat32", TY_VK_BOOL),
+                Struct::member("shaderDenormPreserveFloat64", TY_VK_BOOL),
+                Struct::member("shaderDenormFlushToZeroFloat16", TY_VK_BOOL),
+                Struct::member("shaderDenormFlushToZeroFloat32", TY_VK_BOOL),
+                Struct::member("shaderDenormFlushToZeroFloat64", TY_VK_BOOL),
+                Struct::member("shaderRoundingModeRTEFloat16", TY_VK_BOOL),
+                Struct::member("shaderRoundingModeRTEFloat32", TY_VK_BOOL),
+                Struct::member("shaderRoundingModeRTEFloat64", TY_VK_BOOL),
+                Struct::member("shaderRoundingModeRTZFloat16", TY_VK_BOOL),
+                Struct::member("shaderRoundingModeRTZFloat32", TY_VK_BOOL),
+                Struct::member("shaderRoundingModeRTZFloat64", TY_VK_BOOL),
+            ],
+        )
+        .extensions2(&[VK_KHR_SHADER_FLOAT_CONTROLS])
+        .promoted(VERSION),
+    ),
+    // VK_EXT_shader_viewport_index_layer
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_EXT_SHADER_VIEWPORT_INDEX_LAYER)),
 ];

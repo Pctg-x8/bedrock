@@ -127,29 +127,7 @@ macro_rules! ExportExtensions {
     };
 }
 
-ExportExtensions!("VK_NV_glsl_shader": glsl_shader_nv);
-ExportExtensions!("VK_EXT_depth_range_unrestricted": depth_range_unrestricted_ext);
-ExportExtensions!("VK_AMD_gcn_shader": gcn_shader_amd);
-ExportExtensions!("VK_AMD_draw_indirect_count": draw_indirect_count_amd);
-ExportExtensions!("VK_AMD_negative_viewport_height": negative_viewport_height_amd);
-ExportExtensions!("VK_AMD_gpu_shader_half_float": gpu_shader_half_float_amd);
-ExportExtensions!("VK_AMD_shader_ballot": shader_ballot_amd);
 ExportExtensions!("VK_AMD_shader_info": shader_info_amd);
-ExportExtensions!("VK_AMD_shader_image_load_store_lod": shader_image_load_store_lod_amd);
-ExportExtensions!("VK_EXT_shader_group_ballot": shader_group_ballot_ext);
-ExportExtensions!("VK_EXT_shader_group_vote": shader_group_vote_ext);
-ExportExtensions!("VK_EXT_direct_mode_display": direct_mode_display_ext);
-ExportExtensions!("VK_NV_sample_mask_override_coverage": sample_mask_override_coverage_nv);
-ExportExtensions!("VK_NV_geometry_shader_passthrough": geometry_shader_passthrough_nv);
-ExportExtensions!("VK_NV_viewport_array2": viewport_array2_nv);
-ExportExtensions!("VK_EXT_swapchain_colorspace": swapchain_colorspace_ext);
-ExportExtensions!("VK_EXT_external_memory_dma_buf": external_memory_dma_buf_ext);
-// ExportExtensions!("VK_EXT_queue_family_foreign": queue_family_foreign);
-ExportExtensions!("VK_AMD_gpu_shader_int16": gpu_shader_int16_amd);
-ExportExtensions!("VK_AMD_mixed_attachment_samples": mixed_attachment_samples_amd);
-ExportExtensions!("VK_AMD_shader_fragment_mask": shader_fragment_mask_amd);
-ExportExtensions!("VK_EXT_post_depth_coverage": post_depth_coverage_ext);
-ExportExtensions!("VK_EXT_shader_viewport_index_layer": shader_viewport_index_layer_ext);
 ExportExtensions!("VK_EXT_full_screen_exclusive": full_screen_exclusive_ext);
 ExportExtensions!("VK_KHR_maintenance7": maintenance7_khr);
 ExportExtensions!("VK_KHR_maintenance8": maintenance8_khr);
@@ -158,7 +136,6 @@ ExportExtensions!("VK_KHR_maintenance8": maintenance8_khr);
 ExportExtensions!("VK_KHR_create_renderpass2": create_renderpass2_khr);
 ExportExtensions!("VK_KHR_depth_stencil_resolve": depth_stencil_resolve_khr);
 ExportExtensions!("VK_EXT_descriptor_indexing": descriptor_indexing_ext);
-ExportExtensions!("VK_KHR_shader_float_controls": shader_float_controls_khr);
 
 // Promoted Extensions (1.3)
 ExportExtensions!("VK_KHR_maintenance4": maintenance4_khr);
@@ -169,13 +146,10 @@ ExportExtensions!("VK_KHR_copy_commands2": copy_commands2_khr);
 ExportExtensions!("VK_KHR_dynamic_rendering_local_read": dynamic_rendering_local_read_khr);
 ExportExtensions!("VK_KHR_index_type_uint8": index_type_uint8_khr);
 ExportExtensions!("VK_KHR_line_rasterization": line_rasterization_khr);
-ExportExtensions!("VK_KHR_load_store_op_none": load_store_op_none_khr);
 ExportExtensions!("VK_KHR_maintenance5": maintenance5_khr);
 ExportExtensions!("VK_KHR_maintenance6": maintenance6_khr);
 ExportExtensions!("VK_KHR_map_memory2": map_memory2_khr);
 ExportExtensions!("VK_KHR_push_descriptor": push_descriptor_khr);
-ExportExtensions!("VK_KHR_shader_expect_assume": shader_expect_assume_khr);
-ExportExtensions!("VK_KHR_shader_float_controls2": shader_float_controls2_khr);
 ExportExtensions!("VK_KHR_shader_subgroup_rotate": shader_subgroup_rotate_khr);
 ExportExtensions!("VK_EXT_host_image_copy": host_image_copy_ext);
 ExportExtensions!("VK_EXT_pipeline_protected_access": pipeline_protected_access_ext);

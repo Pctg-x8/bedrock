@@ -1,6 +1,9 @@
 use crate::{parts::*, vk_ext_enum};
 
 const VERSION: &str = "1_4";
+const VK_KHR_LOAD_STORE_OP_NONE: &Extension = &Extension::khr("load_store_op_none", 1);
+const VK_KHR_SHADER_EXPECT_ASSUME: &Extension = &Extension::khr("shader_expect_assume", 1);
+const VK_KHR_SHADER_FLOAT_CONTROLS2: &Extension = &Extension::khr("shader_float_controls2", 1);
 
 pub const ELEMENTS: &[Element] = &[
     // VK_KHR_vertex_attribute_divisor
@@ -125,6 +128,49 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .extensions(&[ex_khr("global_priority")])
+        .promoted(VERSION),
+    ),
+    // VK_KHR_load_store_op_none
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_KHR_LOAD_STORE_OP_NONE)),
+    Element::Enum(Enum::extending(
+        "AttachmentLoadOp",
+        "ATTACHMENT_LOAD_OP",
+        &[Enum::member("NONE", vk_ext_enum(401, 0) as _)
+            .extension2(VK_KHR_LOAD_STORE_OP_NONE)
+            .promoted(VERSION)],
+    )),
+    Element::Enum(Enum::extending(
+        "AttachmentStoreOp",
+        "ATTACHMENT_STORE_OP",
+        &[Enum::member("NONE", vk_ext_enum(302, 0) as _)
+            .extension2(VK_KHR_LOAD_STORE_OP_NONE)
+            .extra_requirements("not(feature = \"VK_KHR_dynamic_rendering\")") // conflicting definition
+            .promoted(VERSION)],
+    )),
+    // VK_KHR_shader_expect_assume
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_KHR_SHADER_EXPECT_ASSUME)),
+    Element::Struct(
+        Struct::typed(
+            "PhysicalDeviceShaderExpectAssumeFeatures",
+            "PHYSICAL_DEVICE_SHADER_EXPECT_ASSUME_FEATURES",
+            vk_ext_enum(545, 0) as _,
+            StructUsage::Both,
+            &[Struct::member("shaderExpectAssume", TY_VK_BOOL)],
+        )
+        .extensions2(&[VK_KHR_SHADER_EXPECT_ASSUME])
+        .promoted(VERSION),
+    ),
+    // VK_KHR_shader_float_controls2
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_KHR_SHADER_FLOAT_CONTROLS2)),
+    Element::Struct(
+        Struct::typed(
+            "PhysicalDeviceShaderFloatControls2Features",
+            "PHYSICAL_DEVICE_SHADER_FLOAT_CONTROLS_2_FEATURES",
+            vk_ext_enum(529, 0) as _,
+            StructUsage::Both,
+            &[Struct::member("shaderFloatControls2", TY_VK_BOOL)],
+        )
+        .extensions2(&[VK_KHR_SHADER_FLOAT_CONTROLS2])
         .promoted(VERSION),
     ),
 ];

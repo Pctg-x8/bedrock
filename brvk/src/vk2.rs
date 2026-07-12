@@ -2311,22 +2311,19 @@ pub const VK_LUID_SIZE_KHR: usize = 8;
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_LUID_SIZE: usize = 8;
-#[cfg(feature = "VK_KHR_external_memory")]
-#[rustfmt::skip]
+#[cfg(feature = "VK_KHR_external_memory")]#[rustfmt::skip]
 pub const VK_QUEUE_FAMILY_EXTERNAL_KHR: u32 = !1;
 #[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]
 pub const VK_QUEUE_FAMILY_EXTERNAL: u32 = !1;
-#[cfg(feature = "VK_KHR_device_group_creation")]
-#[rustfmt::skip]
+#[cfg(feature = "VK_EXT_queue_family_foreign")]#[rustfmt::skip]
+pub const VK_QUEUE_FAMILY_FOREIGN_EXT: u32 = !0u32 - 2;
+#[cfg(feature = "VK_KHR_device_group_creation")]#[rustfmt::skip]
 pub const VK_MAX_DEVICE_GROUP_SIZE_KHR: usize = 32;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]
 pub const VK_MAX_DEVICE_GROUP_SIZE: usize = 32;
-#[cfg(feature = "VK_KHR_global_priority")]
-#[rustfmt::skip]
+#[cfg(feature = "VK_KHR_global_priority")]#[rustfmt::skip]
 pub const VK_MAX_GLOBAL_PRIORITY_SIZE_KHR: usize = 16;
-#[cfg(feature = "Allow1_4APIs")]
-#[rustfmt::skip]
+#[cfg(feature = "Allow1_4APIs")]#[rustfmt::skip]
 pub const VK_MAX_GLOBAL_PRIORITY_SIZE: usize = 16;
 
 #[repr(transparent)]
@@ -17754,6 +17751,13 @@ pub const VK_KHR_SYNCHRONIZATION2_EXTENSION_NAME: &str = "VK_KHR_synchronization
 #[rustfmt::skip]
 pub const VK_KHR_SYNCHRONIZATION2_SPEC_VERSION: usize = 1;
 
+#[cfg(feature = "VK_EXT_shader_subgroup_vote")]
+#[rustfmt::skip]
+pub const VK_EXT_SHADER_SUBGROUP_VOTE_EXTENSION_NAME: &str = "VK_EXT_shader_subgroup_vote";
+#[cfg(feature = "VK_EXT_shader_subgroup_vote")]
+#[rustfmt::skip]
+pub const VK_EXT_SHADER_SUBGROUP_VOTE_SPEC_VERSION: usize = 1;
+
 #[cfg(feature = "VK_KHR_buffer_device_address")]
 #[rustfmt::skip]
 pub const VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME: &str = "VK_KHR_buffer_device_address";
@@ -18874,6 +18878,103 @@ pub type VkPhysicalDeviceSamplerFilterMinmaxProperties = VkPhysicalDeviceSampler
 #[rustfmt::skip]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES_EXT;
 
+#[cfg(feature = "VK_KHR_sampler_mirror_clamp_to_edge")]
+#[rustfmt::skip]
+pub const VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE_EXTENSION_NAME: &str = "VK_KHR_sampler_mirror_clamp_to_edge";
+#[cfg(feature = "VK_KHR_sampler_mirror_clamp_to_edge")]
+#[rustfmt::skip]
+pub const VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE_SPEC_VERSION: usize = 3;
+
+#[cfg(feature = "VK_KHR_sampler_mirror_clamp_to_edge")]
+#[rustfmt::skip]
+pub const VK_SMAPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE_KHR: VkSamplerAddressMode = 4;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_SMAPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE: VkSamplerAddressMode = 4;
+
+#[cfg(feature = "VK_KHR_shader_float_controls")]
+#[rustfmt::skip]
+pub const VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME: &str = "VK_KHR_shader_float_controls";
+#[cfg(feature = "VK_KHR_shader_float_controls")]
+#[rustfmt::skip]
+pub const VK_KHR_SHADER_FLOAT_CONTROLS_SPEC_VERSION: usize = 4;
+
+#[cfg(feature = "VK_KHR_shader_float_controls")]
+#[rustfmt::skip]
+pub type VkShaderFloatControlsIndependenceKHR = i32;
+#[cfg(feature = "VK_KHR_shader_float_controls")]
+#[rustfmt::skip]
+pub const VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_32_BIT_ONLY_KHR: VkShaderFloatControlsIndependenceKHR = 0;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_32_BIT_ONLY: VkShaderFloatControlsIndependenceKHR = 0;
+#[cfg(feature = "VK_KHR_shader_float_controls")]
+#[rustfmt::skip]
+pub const VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_ALL_KHR: VkShaderFloatControlsIndependenceKHR = 1;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_ALL: VkShaderFloatControlsIndependenceKHR = 1;
+#[cfg(feature = "VK_KHR_shader_float_controls")]
+#[rustfmt::skip]
+pub const VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_NONE_KHR: VkShaderFloatControlsIndependenceKHR = 2;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_NONE: VkShaderFloatControlsIndependenceKHR = 2;
+
+#[cfg(feature = "VK_KHR_shader_float_controls")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceFloatControlsPropertiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub denormBehaviorIndependence: VkShaderFloatControlsIndependenceKHR,
+    pub roundingModeIndependence: VkShaderFloatControlsIndependenceKHR,
+    pub shaderSignedZeroInfNanPreserveFloat16: VkBool32,
+    pub shaderSignedZeroInfNanPreserveFloat32: VkBool32,
+    pub shaderSignedZeroInfNanPreserveFloat64: VkBool32,
+    pub shaderDenormPreserveFloat16: VkBool32,
+    pub shaderDenormPreserveFloat32: VkBool32,
+    pub shaderDenormPreserveFloat64: VkBool32,
+    pub shaderDenormFlushToZeroFloat16: VkBool32,
+    pub shaderDenormFlushToZeroFloat32: VkBool32,
+    pub shaderDenormFlushToZeroFloat64: VkBool32,
+    pub shaderRoundingModeRTEFloat16: VkBool32,
+    pub shaderRoundingModeRTEFloat32: VkBool32,
+    pub shaderRoundingModeRTEFloat64: VkBool32,
+    pub shaderRoundingModeRTZFloat16: VkBool32,
+    pub shaderRoundingModeRTZFloat32: VkBool32,
+    pub shaderRoundingModeRTZFloat64: VkBool32,
+}
+#[cfg(feature = "VK_KHR_shader_float_controls")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES_KHR: VkStructureType = 1000197000;
+#[cfg(feature = "VK_KHR_shader_float_controls")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceFloatControlsPropertiesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_shader_float_controls")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceFloatControlsPropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES_KHR; }
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkPhysicalDeviceFloatControlsProperties = VkPhysicalDeviceFloatControlsPropertiesKHR;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES_KHR;
+
+#[cfg(feature = "VK_EXT_shader_viewport_index_layer")]
+#[rustfmt::skip]
+pub const VK_EXT_SHADER_VIEWPORT_INDEX_LAYER_EXTENSION_NAME: &str = "VK_EXT_shader_viewport_index_layer";
+#[cfg(feature = "VK_EXT_shader_viewport_index_layer")]
+#[rustfmt::skip]
+pub const VK_EXT_SHADER_VIEWPORT_INDEX_LAYER_SPEC_VERSION: usize = 1;
+
 #[cfg(feature = "VK_KHR_format_feature_flags2")]
 #[rustfmt::skip]
 pub const VK_KHR_FORMAT_FEATURE_FLAGS2_EXTENSION_NAME: &str = "VK_KHR_format_feature_flags2";
@@ -19305,6 +19406,137 @@ pub type VkQueueFamilyGlobalPriorityProperties = VkQueueFamilyGlobalPriorityProp
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
 pub const VK_STRUCTURE_TYPE_QUEUE_FAMILY_GLOBAL_PRIORITY_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_GLOBAL_PRIORITY_PROPERTIES_KHR;
+
+#[cfg(feature = "VK_KHR_load_store_op_none")]
+#[rustfmt::skip]
+pub const VK_KHR_LOAD_STORE_OP_NONE_EXTENSION_NAME: &str = "VK_KHR_load_store_op_none";
+#[cfg(feature = "VK_KHR_load_store_op_none")]
+#[rustfmt::skip]
+pub const VK_KHR_LOAD_STORE_OP_NONE_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_load_store_op_none")]
+#[rustfmt::skip]
+pub const VK_ATTACHMENT_LOAD_OP_NONE_KHR: VkAttachmentLoadOp = 1000400000;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_ATTACHMENT_LOAD_OP_NONE: VkAttachmentLoadOp = 1000400000;
+
+#[cfg(not(feature = "VK_KHR_dynamic_rendering"))]
+#[cfg(feature = "VK_KHR_load_store_op_none")]
+#[rustfmt::skip]
+pub const VK_ATTACHMENT_STORE_OP_NONE_KHR: VkAttachmentStoreOp = 1000301000;
+#[cfg(not(feature = "VK_KHR_dynamic_rendering"))]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_ATTACHMENT_STORE_OP_NONE: VkAttachmentStoreOp = 1000301000;
+
+#[cfg(feature = "VK_KHR_shader_expect_assume")]
+#[rustfmt::skip]
+pub const VK_KHR_SHADER_EXPECT_ASSUME_EXTENSION_NAME: &str = "VK_KHR_shader_expect_assume";
+#[cfg(feature = "VK_KHR_shader_expect_assume")]
+#[rustfmt::skip]
+pub const VK_KHR_SHADER_EXPECT_ASSUME_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_shader_expect_assume")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceShaderExpectAssumeFeaturesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub shaderExpectAssume: VkBool32,
+}
+#[cfg(feature = "VK_KHR_shader_expect_assume")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_EXPECT_ASSUME_FEATURES_KHR: VkStructureType = 1000544000;
+#[cfg(feature = "VK_KHR_shader_expect_assume")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPhysicalDeviceShaderExpectAssumeFeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_shader_expect_assume")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPhysicalDeviceShaderExpectAssumeFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_EXPECT_ASSUME_FEATURES_KHR; }
+#[cfg(feature = "VK_KHR_shader_expect_assume")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceShaderExpectAssumeFeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_shader_expect_assume")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceShaderExpectAssumeFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_EXPECT_ASSUME_FEATURES_KHR; }
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkPhysicalDeviceShaderExpectAssumeFeatures = VkPhysicalDeviceShaderExpectAssumeFeaturesKHR;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_EXPECT_ASSUME_FEATURES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_EXPECT_ASSUME_FEATURES_KHR;
+
+#[cfg(feature = "VK_KHR_shader_float_controls2")]
+#[rustfmt::skip]
+pub const VK_KHR_SHADER_FLOAT_CONTROLS2_EXTENSION_NAME: &str = "VK_KHR_shader_float_controls2";
+#[cfg(feature = "VK_KHR_shader_float_controls2")]
+#[rustfmt::skip]
+pub const VK_KHR_SHADER_FLOAT_CONTROLS2_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_shader_float_controls2")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceShaderFloatControls2FeaturesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub shaderFloatControls2: VkBool32,
+}
+#[cfg(feature = "VK_KHR_shader_float_controls2")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT_CONTROLS_2_FEATURES_KHR: VkStructureType = 1000528000;
+#[cfg(feature = "VK_KHR_shader_float_controls2")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPhysicalDeviceShaderFloatControls2FeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_shader_float_controls2")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPhysicalDeviceShaderFloatControls2FeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT_CONTROLS_2_FEATURES_KHR; }
+#[cfg(feature = "VK_KHR_shader_float_controls2")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceShaderFloatControls2FeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_shader_float_controls2")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceShaderFloatControls2FeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT_CONTROLS_2_FEATURES_KHR; }
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkPhysicalDeviceShaderFloatControls2Features = VkPhysicalDeviceShaderFloatControls2FeaturesKHR;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT_CONTROLS_2_FEATURES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT_CONTROLS_2_FEATURES_KHR;
 
 #[cfg(feature = "VK_EXT_acquire_drm_display")]
 #[rustfmt::skip]
@@ -24326,6 +24558,336 @@ unsafe impl crate::FromPtr for PFN_vkCreateIOSSurfaceMVK {
 impl crate::StaticCallable for PFN_vkCreateIOSSurfaceMVK {
     const STATIC: Self = Self(vkCreateIOSSurfaceMVK);
 }
+
+#[cfg(feature = "VK_EXT_depth_range_unrestricted")]
+#[rustfmt::skip]
+pub const VK_EXT_DEPTH_RANGE_UNRESTRICTED_EXTENSION_NAME: &str = "VK_EXT_depth_range_unrestricted";
+#[cfg(feature = "VK_EXT_depth_range_unrestricted")]
+#[rustfmt::skip]
+pub const VK_EXT_DEPTH_RANGE_UNRESTRICTED_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_EXT_direct_mode_display")]
+#[rustfmt::skip]
+pub const VK_EXT_DIRECT_MODE_DISPLAY_EXTENSION_NAME: &str = "VK_EXT_direct_mode_display";
+#[cfg(feature = "VK_EXT_direct_mode_display")]
+#[rustfmt::skip]
+pub const VK_EXT_DIRECT_MODE_DISPLAY_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_direct_mode_display")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkReleaseDisplayEXT(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, display: VkDisplayKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_direct_mode_display")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkReleaseDisplayEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkReleaseDisplayEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_direct_mode_display")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkReleaseDisplayEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+
+#[cfg(feature = "VK_KHR_display_swapchain")]
+#[rustfmt::skip]
+pub const VK_KHR_DISPLAY_SWAPCHAIN_EXTENSION_NAME: &str = "VK_KHR_display_swapchain";
+#[cfg(feature = "VK_KHR_display_swapchain")]
+#[rustfmt::skip]
+pub const VK_KHR_DISPLAY_SWAPCHAIN_SPEC_VERSION: usize = 10;
+
+#[cfg(feature = "VK_KHR_display_swapchain")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkDisplayPresentInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub srcRect: VkRect2D,
+    pub dstRect: VkRect2D,
+    pub persistent: VkBool32,
+}
+#[cfg(feature = "VK_KHR_display_swapchain")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DISPLAY_PRESENT_INFO_KHR: VkStructureType = 1000003000;
+#[cfg(feature = "VK_KHR_display_swapchain")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkDisplayPresentInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_display_swapchain")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkDisplayPresentInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DISPLAY_PRESENT_INFO_KHR; }
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display_swapchain")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCreateSharedSwapchainKHR(pub unsafe extern "system" fn(device: VkDevice, swapchainCount: u32, pCreateInfos: *const VkSwapchainCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSwapchains: *mut VkSwapchainKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display_swapchain")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCreateSharedSwapchainKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateSharedSwapchainKHR";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display_swapchain")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateSharedSwapchainKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+
+#[cfg(feature = "VK_AMD_draw_indirect_count")]
+#[rustfmt::skip]
+pub const VK_AMD_DRAW_INDIRECT_COUNT_EXTENSION_NAME: &str = "VK_AMD_draw_indirect_count";
+#[cfg(feature = "VK_AMD_draw_indirect_count")]
+#[rustfmt::skip]
+pub const VK_AMD_DRAW_INDIRECT_COUNT_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_EXT_external_memory_dma_buf")]
+#[rustfmt::skip]
+pub const VK_EXT_EXTERNAL_MEMORY_DMA_BUF_EXTENSION_NAME: &str = "VK_EXT_external_memory_dma_buf";
+#[cfg(feature = "VK_EXT_external_memory_dma_buf")]
+#[rustfmt::skip]
+pub const VK_EXT_EXTERNAL_MEMORY_DMA_BUF_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_EXT_external_memory_dma_buf")]
+#[cfg(feature = "VK_KHR_external_memory_capabilities")]
+#[rustfmt::skip]
+pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT: VkExternalMemoryHandleTypeFlagBitsKHR = 0x00000200;
+
+#[cfg(feature = "VK_IMG_filter_cubic")]
+#[rustfmt::skip]
+pub const VK_IMG_FILTER_CUBIC_EXTENSION_NAME: &str = "VK_IMG_filter_cubic";
+#[cfg(feature = "VK_IMG_filter_cubic")]
+#[rustfmt::skip]
+pub const VK_IMG_FILTER_CUBIC_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_IMG_filter_cubic")]
+#[rustfmt::skip]
+pub const VK_FILTER_CUBIC_IMG: VkFilter = 1000015000;
+
+#[cfg(feature = "VK_IMG_filter_cubic")]
+#[rustfmt::skip]
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_IMG: VkFormatFeatureFlagBits = 0x00002000;
+
+#[cfg(feature = "VK_IMG_format_pvrtc")]
+#[rustfmt::skip]
+pub const VK_IMG_FORMAT_PVRTC_EXTENSION_NAME: &str = "VK_IMG_format_pvrtc";
+#[cfg(feature = "VK_IMG_format_pvrtc")]
+#[rustfmt::skip]
+pub const VK_IMG_FORMAT_PVRTC_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_IMG_format_pvrtc")]
+#[rustfmt::skip]
+pub const VK_FORMAT_PVRTC1_2BPP_UNORM_BLOCK_IMG: VkFormat = 1000054000;
+#[cfg(feature = "VK_IMG_format_pvrtc")]
+#[rustfmt::skip]
+pub const VK_FORMAT_PVRTC1_4BPP_UNORM_BLOCK_IMG: VkFormat = 1000054001;
+#[cfg(feature = "VK_IMG_format_pvrtc")]
+#[rustfmt::skip]
+pub const VK_FORMAT_PVRTC2_2BPP_UNORM_BLOCK_IMG: VkFormat = 1000054002;
+#[cfg(feature = "VK_IMG_format_pvrtc")]
+#[rustfmt::skip]
+pub const VK_FORMAT_PVRTC2_4BPP_UNORM_BLOCK_IMG: VkFormat = 1000054003;
+#[cfg(feature = "VK_IMG_format_pvrtc")]
+#[rustfmt::skip]
+pub const VK_FORMAT_PVRTC1_2BPP_SRGB_BLOCK_IMG: VkFormat = 1000054004;
+#[cfg(feature = "VK_IMG_format_pvrtc")]
+#[rustfmt::skip]
+pub const VK_FORMAT_PVRTC1_4BPP_SRGB_BLOCK_IMG: VkFormat = 1000054005;
+#[cfg(feature = "VK_IMG_format_pvrtc")]
+#[rustfmt::skip]
+pub const VK_FORMAT_PVRTC2_2BPP_SRGB_BLOCK_IMG: VkFormat = 1000054006;
+#[cfg(feature = "VK_IMG_format_pvrtc")]
+#[rustfmt::skip]
+pub const VK_FORMAT_PVRTC2_4BPP_SRGB_BLOCK_IMG: VkFormat = 1000054007;
+
+#[cfg(feature = "VK_AMD_gcn_shader")]
+#[rustfmt::skip]
+pub const VK_AMD_GCN_SHADER_EXTENSION_NAME: &str = "VK_AMD_gcn_shader";
+#[cfg(feature = "VK_AMD_gcn_shader")]
+#[rustfmt::skip]
+pub const VK_AMD_GCN_SHADER_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_NV_geometry_shader_passthrough")]
+#[rustfmt::skip]
+pub const VK_NV_GEOMETRY_SHADER_PASSTHROUGH_EXTENSION_NAME: &str = "VK_NV_geometry_shader_passthrough";
+#[cfg(feature = "VK_NV_geometry_shader_passthrough")]
+#[rustfmt::skip]
+pub const VK_NV_GEOMETRY_SHADER_PASSTHROUGH_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_NV_glsl_shader")]
+#[rustfmt::skip]
+pub const VK_NV_GLSL_SHADER_EXTENSION_NAME: &str = "VK_NV_glsl_shader";
+#[cfg(feature = "VK_NV_glsl_shader")]
+#[rustfmt::skip]
+pub const VK_NV_GLSL_SHADER_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_AMD_gpu_shader_half_float")]
+#[rustfmt::skip]
+pub const VK_AMD_GPU_SHADER_HALF_FLOAT_EXTENSION_NAME: &str = "VK_AMD_gpu_shader_half_float";
+#[cfg(feature = "VK_AMD_gpu_shader_half_float")]
+#[rustfmt::skip]
+pub const VK_AMD_GPU_SHADER_HALF_FLOAT_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_AMD_gpu_shader_int16")]
+#[rustfmt::skip]
+pub const VK_AMD_GPU_SHADER_INT16_EXTENSION_NAME: &str = "VK_AMD_gpu_shader_int16";
+#[cfg(feature = "VK_AMD_gpu_shader_int16")]
+#[rustfmt::skip]
+pub const VK_AMD_GPU_SHADER_INT16_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_AMD_mixed_attachment_samples")]
+#[rustfmt::skip]
+pub const VK_AMD_MIXED_ATTACHMENT_SAMPLES_EXTENSION_NAME: &str = "VK_AMD_mixed_attachment_samples";
+#[cfg(feature = "VK_AMD_mixed_attachment_samples")]
+#[rustfmt::skip]
+pub const VK_AMD_MIXED_ATTACHMENT_SAMPLES_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
+#[rustfmt::skip]
+pub const VK_NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES_EXTENSION_NAME: &str = "VK_NVX_multiview_per_view_attributes";
+#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
+#[rustfmt::skip]
+pub const VK_NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
+#[rustfmt::skip]
+pub const VK_SUBPASS_DESCRIPTION_PER_VIEW_ATTRIBUTES_BIT_NVX: VkSubpassDescriptionFlagBits = 0x00000001;
+#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
+#[rustfmt::skip]
+pub const VK_SUBPASS_DESCRIPTION_PER_VIEW_POSITION_X_ONLY_BIT_NVX: VkSubpassDescriptionFlagBits = 0x00000002;
+
+#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub perViewPositionAllComponents: VkBool32,
+}
+#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_ATTRIBUTES_PROPERTIES_NVX: VkStructureType = 1000097000;
+#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_ATTRIBUTES_PROPERTIES_NVX; }
+
+#[cfg(feature = "VK_AMD_negative_viewport_height")]
+#[rustfmt::skip]
+pub const VK_AMD_NEGATIVE_VIEWPORT_HEIGHT_EXTENSION_NAME: &str = "VK_AMD_negative_viewport_height";
+#[cfg(feature = "VK_AMD_negative_viewport_height")]
+#[rustfmt::skip]
+pub const VK_AMD_NEGATIVE_VIEWPORT_HEIGHT_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_EXT_post_depth_coverage")]
+#[rustfmt::skip]
+pub const VK_EXT_POST_DEPTH_COVERAGE_EXTENSION_NAME: &str = "VK_EXT_post_depth_coverage";
+#[cfg(feature = "VK_EXT_post_depth_coverage")]
+#[rustfmt::skip]
+pub const VK_EXT_POST_DEPTH_COVERAGE_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_EXT_queue_family_foreign")]
+#[rustfmt::skip]
+pub const VK_EXT_QUEUE_FAMILY_FOREIGN_EXTENSION_NAME: &str = "VK_EXT_queue_family_foreign";
+#[cfg(feature = "VK_EXT_queue_family_foreign")]
+#[rustfmt::skip]
+pub const VK_EXT_QUEUE_FAMILY_FOREIGN_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_NV_sample_mask_override_coverage")]
+#[rustfmt::skip]
+pub const VK_NV_SAMPLE_MASK_OVERRIDE_COVERAGE_EXTENSION_NAME: &str = "VK_NV_sample_mask_override_coverage";
+#[cfg(feature = "VK_NV_sample_mask_override_coverage")]
+#[rustfmt::skip]
+pub const VK_NV_SAMPLE_MASK_OVERRIDE_COVERAGE_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_AMD_shader_ballot")]
+#[rustfmt::skip]
+pub const VK_AMD_SHADER_BALLOT_EXTENSION_NAME: &str = "VK_AMD_shader_ballot";
+#[cfg(feature = "VK_AMD_shader_ballot")]
+#[rustfmt::skip]
+pub const VK_AMD_SHADER_BALLOT_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_AMD_shader_explicit_vertex_parameter")]
+#[rustfmt::skip]
+pub const VK_AMD_SHADER_EXPLICIT_VERTEX_PARAMETER_EXTENSION_NAME: &str = "VK_AMD_shader_explicit_vertex_parameter";
+#[cfg(feature = "VK_AMD_shader_explicit_vertex_parameter")]
+#[rustfmt::skip]
+pub const VK_AMD_SHADER_EXPLICIT_VERTEX_PARAMETER_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_AMD_shader_fragment_mask")]
+#[rustfmt::skip]
+pub const VK_AMD_SHADER_FRAGMENT_MASK_EXTENSION_NAME: &str = "VK_AMD_shader_fragment_mask";
+#[cfg(feature = "VK_AMD_shader_fragment_mask")]
+#[rustfmt::skip]
+pub const VK_AMD_SHADER_FRAGMENT_MASK_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_AMD_shader_image_load_store_lod")]
+#[rustfmt::skip]
+pub const VK_AMD_SHADER_IMAGE_LOAD_STORE_LOD_EXTENSION_NAME: &str = "VK_AMD_shader_image_load_store_lod";
+#[cfg(feature = "VK_AMD_shader_image_load_store_lod")]
+#[rustfmt::skip]
+pub const VK_AMD_SHADER_IMAGE_LOAD_STORE_LOD_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_AMD_shader_trinary_minmax")]
+#[rustfmt::skip]
+pub const VK_AMD_SHADER_TRINARY_MINMAX_EXTENSION_NAME: &str = "VK_AMD_shader_trinary_minmax";
+#[cfg(feature = "VK_AMD_shader_trinary_minmax")]
+#[rustfmt::skip]
+pub const VK_AMD_SHADER_TRINARY_MINMAX_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_EXT_swapchain_colorspace")]
+#[rustfmt::skip]
+pub const VK_EXT_SWAPCHAIN_COLORSPACE_EXTENSION_NAME: &str = "VK_EXT_swapchain_colorspace";
+#[cfg(feature = "VK_EXT_swapchain_colorspace")]
+#[rustfmt::skip]
+pub const VK_EXT_SWAPCHAIN_COLORSPACE_SPEC_VERSION: usize = 3;
+
+#[cfg(feature = "VK_NV_viewport_array2")]
+#[rustfmt::skip]
+pub const VK_NV_VIEWPORT_ARRAY2_EXTENSION_NAME: &str = "VK_NV_viewport_array2";
+#[cfg(feature = "VK_NV_viewport_array2")]
+#[rustfmt::skip]
+pub const VK_NV_VIEWPORT_ARRAY2_SPEC_VERSION: usize = 1;
 
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]

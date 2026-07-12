@@ -7,6 +7,7 @@ use parts::{
 
 mod extensions;
 mod parts;
+mod v1_1;
 mod v1_2;
 mod v1_3;
 mod v1_4;
@@ -92,19 +93,21 @@ fn main() -> std::io::Result<()> {
     writeln!(o, r#"#[cfg(feature = "Allow1_1APIs")]"#)?;
     emit_const(&mut o, "VK_LUID_SIZE", "usize", "8")?;
 
-    o.write_all(b"#[cfg(feature = \"VK_KHR_external_memory\")]\n")?;
+    o.write_all(b"#[cfg(feature = \"VK_KHR_external_memory\")]")?;
     emit_const(&mut o, "VK_QUEUE_FAMILY_EXTERNAL_KHR", "u32", "!1")?;
     o.write_all(b"#[cfg(feature = \"Allow1_1APIs\")]")?;
     emit_const(&mut o, "VK_QUEUE_FAMILY_EXTERNAL", "u32", "!1")?;
+    o.write_all(b"#[cfg(feature = \"VK_EXT_queue_family_foreign\")]")?;
+    emit_const(&mut o, "VK_QUEUE_FAMILY_FOREIGN_EXT", "u32", "!0u32 - 2")?;
 
-    o.write_all(b"#[cfg(feature = \"VK_KHR_device_group_creation\")]\n")?;
+    o.write_all(b"#[cfg(feature = \"VK_KHR_device_group_creation\")]")?;
     emit_const(&mut o, "VK_MAX_DEVICE_GROUP_SIZE_KHR", "usize", "32")?;
-    o.write_all(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
+    o.write_all(b"#[cfg(feature = \"Allow1_1APIs\")]")?;
     emit_const(&mut o, "VK_MAX_DEVICE_GROUP_SIZE", "usize", "32")?;
 
-    o.write_all(b"#[cfg(feature = \"VK_KHR_global_priority\")]\n")?;
+    o.write_all(b"#[cfg(feature = \"VK_KHR_global_priority\")]")?;
     emit_const(&mut o, "VK_MAX_GLOBAL_PRIORITY_SIZE_KHR", "usize", "16")?;
-    o.write_all(b"#[cfg(feature = \"Allow1_4APIs\")]\n")?;
+    o.write_all(b"#[cfg(feature = \"Allow1_4APIs\")]")?;
     emit_const(&mut o, "VK_MAX_GLOBAL_PRIORITY_SIZE", "usize", "16")?;
 
     o.write_all(b"\n")?;
@@ -184,6 +187,11 @@ fn main() -> std::io::Result<()> {
         c.emit(&mut o)?;
     }
 
+    for x in v1_1::ELEMENTS {
+        o.write_all(b"\n")?;
+        x.emit(&mut o)?;
+    }
+
     for x in v1_2::ELEMENTS {
         o.write_all(b"\n")?;
         x.emit(&mut o)?;
@@ -212,6 +220,11 @@ fn main() -> std::io::Result<()> {
     o.write_all(b"unsafe extern \"system\" {\n")?;
     for c in COMMANDS {
         c.emit_static_symbol(&mut o)?;
+    }
+    for x in v1_1::ELEMENTS {
+        if let Element::Command(x) = x {
+            x.emit_static_symbol(&mut o)?;
+        }
     }
     for x in v1_2::ELEMENTS {
         if let Element::Command(x) = x {

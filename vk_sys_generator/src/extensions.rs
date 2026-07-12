@@ -1,9 +1,35 @@
 use crate::{parts::*, vk_ext_enum};
 
-const VK_EXT_IMAGE_DRM_FORMAT_MODIFIER: Extension = Extension::new("EXT", "image_drm_format_modifier", 1);
-const VK_EXT_METAL_OBJECTS: Extension = Extension::new("EXT", "metal_objects", 2);
-const VK_MVK_MACOS_SURFACE: Extension = Extension::new("MVK", "macos_surface", 2);
-const VK_MVK_IOS_SURFACE: Extension = Extension::new("MVK", "ios_surface", 2);
+const VK_EXT_IMAGE_DRM_FORMAT_MODIFIER: &Extension = &Extension::new("EXT", "image_drm_format_modifier", 1);
+const VK_EXT_METAL_OBJECTS: &Extension = &Extension::new("EXT", "metal_objects", 2);
+const VK_MVK_MACOS_SURFACE: &Extension = &Extension::new("MVK", "macos_surface", 2);
+const VK_MVK_IOS_SURFACE: &Extension = &Extension::new("MVK", "ios_surface", 2);
+const VK_EXT_DEPTH_RANGE_UNRESTRICTED: &Extension = &Extension::new("EXT", "depth_range_unrestricted", 1);
+const VK_EXT_DIRECT_MODE_DISPLAY: &Extension = &Extension::new("EXT", "direct_mode_display", 1);
+const VK_KHR_DISPLAY_SWAPCHAIN: &Extension = &Extension::new("KHR", "display_swapchain", 10);
+const VK_AMD_DRAW_INDIRECT_COUNT: &Extension = &Extension::new("AMD", "draw_indirect_count", 1);
+const VK_EXT_EXTERNAL_MEMORY_DMA_BUF: &Extension = &Extension::new("EXT", "external_memory_dma_buf", 1);
+const VK_IMG_FILTER_CUBIC: &Extension = &Extension::new("IMG", "filter_cubic", 1);
+const VK_IMG_FORMAT_PVRTC: &Extension = &Extension::new("IMG", "format_pvrtc", 1);
+const VK_AMD_GCN_SHADER: &Extension = &Extension::new("AMD", "gcn_shader", 1);
+const VK_NV_GEOMETRY_SHADER_PASSTHROUGH: &Extension = &Extension::new("NV", "geometry_shader_passthrough", 1);
+const VK_NV_GLSL_SHADER: &Extension = &Extension::new("NV", "glsl_shader", 1);
+const VK_AMD_GPU_SHADER_HALF_FLOAT: &Extension = &Extension::new("AMD", "gpu_shader_half_float", 1);
+const VK_AMD_GPU_SHADER_INT16: &Extension = &Extension::new("AMD", "gpu_shader_int16", 1);
+const VK_AMD_MIXED_ATTACHMENT_SAMPLES: &Extension = &Extension::new("AMD", "mixed_attachment_samples", 1);
+const VK_NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES: &Extension = &Extension::new("NVX", "multiview_per_view_attributes", 1);
+const VK_AMD_NEGATIVE_VIEWPORT_HEIGHT: &Extension = &Extension::new("AMD", "negative_viewport_height", 1);
+const VK_EXT_POST_DEPTH_COVERAGE: &Extension = &Extension::ext("post_depth_coverage", 1);
+const VK_EXT_QUEUE_FAMILY_FOREIGN: &Extension = &Extension::ext("queue_family_foreign", 1);
+const VK_NV_SAMPLE_MASK_OVERRIDE_COVERAGE: &Extension = &Extension::new("NV", "sample_mask_override_coverage", 1);
+const VK_AMD_SHADER_BALLOT: &Extension = &Extension::new("AMD", "shader_ballot", 1);
+const VK_AMD_SHADER_EXPLICIT_VERTEX_PARAMETER: &Extension =
+    &Extension::new("AMD", "shader_explicit_vertex_parameter", 1);
+const VK_AMD_SHADER_FRAGMENT_MASK: &Extension = &Extension::new("AMD", "shader_fragment_mask", 1);
+const VK_AMD_SHADER_IMAGE_LOAD_STORE_LOD: &Extension = &Extension::new("AMD", "shader_image_load_store_lod", 1);
+const VK_AMD_SHADER_TRINARY_MINMAX: &Extension = &Extension::new("AMD", "shader_trinary_minmax", 1);
+const VK_EXT_SWAPCHAIN_COLORSPACE: &Extension = &Extension::ext("swapchain_colorspace", 3);
+const VK_NV_VIEWPORT_ARRAY2: &Extension = &Extension::new("NV", "viewport_array2", 1);
 
 pub const ELEMENTS: &[Element] = &[
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_acquire_drm_display", 1)),
@@ -2115,20 +2141,20 @@ pub const ELEMENTS: &[Element] = &[
         .extension("EXT", "discard_rectangles"),
     ),
     // VK_EXT_image_drm_format_modifier
-    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER)),
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER)),
     Element::Enum(Enum::extending(
         "ImageTiling",
         "IMAGE_TILING",
-        &[Enum::member("DRM_FORMAT_MODIFIER", vk_ext_enum(159, 0) as _).extension2(&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER)],
+        &[Enum::member("DRM_FORMAT_MODIFIER", vk_ext_enum(159, 0) as _).extension2(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER)],
     )),
     Element::Bitmask(Bitmask::extending(
         "ImageAspectFlagBits",
         "IMAGE_ASPECT",
         &[
-            Bitmask::entry("MEMORY_PLANE_0", 7).extension2(&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
-            Bitmask::entry("MEMORY_PLANE_1", 8).extension2(&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
-            Bitmask::entry("MEMORY_PLANE_2", 9).extension2(&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
-            Bitmask::entry("MEMORY_PLANE_3", 10).extension2(&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
+            Bitmask::entry("MEMORY_PLANE_0", 7).extension2(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
+            Bitmask::entry("MEMORY_PLANE_1", 8).extension2(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
+            Bitmask::entry("MEMORY_PLANE_2", 9).extension2(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
+            Bitmask::entry("MEMORY_PLANE_3", 10).extension2(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
         ],
     )),
     Element::Struct(
@@ -2140,7 +2166,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("drmFormatModifierTilingFeatures", "VkFormatFeatureFlags"),
             ],
         )
-        .extensions2(&[&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
+        .extensions2(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2153,7 +2179,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pDrmFormatModifierProperties", "*mut VkDrmFormatModifierPropertiesEXT"),
             ],
         )
-        .extensions2(&[&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
+        .extensions2(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2168,7 +2194,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pQueueFamilyIndices", "*const u32"),
             ],
         )
-        .extensions2(&[&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
+        .extensions2(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2181,7 +2207,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pDrmFormatModifiers", "*const u64"),
             ],
         )
-        .extensions2(&[&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
+        .extensions2(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2195,7 +2221,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pPlaneLayouts", "*const VkSubresourceLayout"),
             ],
         )
-        .extensions2(&[&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
+        .extensions2(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2205,7 +2231,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Sink,
             &[Struct::member("drmFormatModifier", "u64")],
         )
-        .extensions2(&[&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
+        .extensions2(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
     ),
     Element::Struct(
         Struct::new(
@@ -2216,7 +2242,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("drmFormatModifierTilingFeatures", "VkFormatFeatureFlags2KHR"),
             ],
         )
-        .extensions2(&[&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER])
+        .extensions2(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER])
         .available_condition("feature = \"VK_KHR_format_feature_flags2\""),
     ),
     Element::Struct(
@@ -2230,7 +2256,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pDrmFormatModifierProperties", "*mut VkDrmFormatModifierProperties2EXT"),
             ],
         )
-        .extensions2(&[&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER])
+        .extensions2(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER])
         .available_condition("feature = \"VK_KHR_format_feature_flags2\""),
     ),
     Element::Command(
@@ -2243,10 +2269,10 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension2(&VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
+        .extension2(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
     ),
     // VK_EXT_metal_objects
-    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(&VK_EXT_METAL_OBJECTS)),
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_EXT_METAL_OBJECTS)),
     Element::Bitmask(
         Bitmask::new(
             "ExportMetalObjectTypeFlags",
@@ -2261,7 +2287,7 @@ pub const ELEMENTS: &[Element] = &[
                 Bitmask::entry("METAL_SHARED_EVENT", 5),
             ],
         )
-        .extension2(&VK_EXT_METAL_OBJECTS),
+        .extension2(VK_EXT_METAL_OBJECTS),
     ),
     Element::Struct(
         Struct::typed(
@@ -2271,7 +2297,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Source,
             &[Struct::member("exportObjectType", "VkExportMetalObjectTypeFlagBitsEXT")],
         )
-        .extensions2(&[&VK_EXT_METAL_OBJECTS]),
+        .extensions2(&[VK_EXT_METAL_OBJECTS]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2281,7 +2307,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Source,
             &[],
         )
-        .extensions2(&[&VK_EXT_METAL_OBJECTS]),
+        .extensions2(&[VK_EXT_METAL_OBJECTS]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2294,7 +2320,7 @@ pub const ELEMENTS: &[Element] = &[
                 "*mut core::ffi::c_void", /* id<MTLDevice> */
             )],
         )
-        .extensions2(&[&VK_EXT_METAL_OBJECTS]),
+        .extensions2(&[VK_EXT_METAL_OBJECTS]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2310,7 +2336,7 @@ pub const ELEMENTS: &[Element] = &[
                 ),
             ],
         )
-        .extensions2(&[&VK_EXT_METAL_OBJECTS]),
+        .extensions2(&[VK_EXT_METAL_OBJECTS]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2323,7 +2349,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("mtlBuffer", "*mut core::ffi::c_void" /* id<MTLBuffer> */),
             ],
         )
-        .extensions2(&[&VK_EXT_METAL_OBJECTS]),
+        .extensions2(&[VK_EXT_METAL_OBJECTS]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2336,7 +2362,7 @@ pub const ELEMENTS: &[Element] = &[
                 "*mut core::ffi::c_void", /* id<MTLBuffer> */
             )],
         )
-        .extensions2(&[&VK_EXT_METAL_OBJECTS]),
+        .extensions2(&[VK_EXT_METAL_OBJECTS]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2352,7 +2378,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("mtlTexture", "*mut core::ffi::c_void" /* id<MTLTexture> */),
             ],
         )
-        .extensions2(&[&VK_EXT_METAL_OBJECTS]),
+        .extensions2(&[VK_EXT_METAL_OBJECTS]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2365,7 +2391,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("mtlTexture", "*mut core::ffi::c_void" /* id<MTLTexture> */),
             ],
         )
-        .extensions2(&[&VK_EXT_METAL_OBJECTS]),
+        .extensions2(&[VK_EXT_METAL_OBJECTS]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2378,7 +2404,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("ioSurface", "*mut core::ffi::c_void" /* IOSurfaceRef */),
             ],
         )
-        .extensions2(&[&VK_EXT_METAL_OBJECTS]),
+        .extensions2(&[VK_EXT_METAL_OBJECTS]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2391,7 +2417,7 @@ pub const ELEMENTS: &[Element] = &[
                 "*mut core::ffi::c_void", /* IOSurfaceRef */
             )],
         )
-        .extensions2(&[&VK_EXT_METAL_OBJECTS]),
+        .extensions2(&[VK_EXT_METAL_OBJECTS]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2405,7 +2431,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("mtlSharedEvent", "*mut core::ffi::c_void" /* id<MTLSharedEvent> */),
             ],
         )
-        .extensions2(&[&VK_EXT_METAL_OBJECTS]),
+        .extensions2(&[VK_EXT_METAL_OBJECTS]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2418,7 +2444,7 @@ pub const ELEMENTS: &[Element] = &[
                 "*mut core::ffi::c_void", /* id<MTLSharedEvent> */
             )],
         )
-        .extensions2(&[&VK_EXT_METAL_OBJECTS]),
+        .extensions2(&[VK_EXT_METAL_OBJECTS]),
     ),
     Element::Command(
         Command::new(
@@ -2428,10 +2454,10 @@ pub const ELEMENTS: &[Element] = &[
                 ("pMetalObjectsInfo", "*mut VkExportMetalObjectsInfoEXT"),
             ],
         )
-        .extension2(&VK_EXT_METAL_OBJECTS),
+        .extension2(VK_EXT_METAL_OBJECTS),
     ),
     // VK_MVK_macos_surface
-    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(&VK_MVK_MACOS_SURFACE)),
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_MVK_MACOS_SURFACE)),
     Element::Bitmask(
         Bitmask::new(
             "MacOSSurfaceCreateFlags",
@@ -2439,7 +2465,7 @@ pub const ELEMENTS: &[Element] = &[
             "MACOS_SURFACE_CREATE",
             &[],
         )
-        .extension2(&VK_MVK_MACOS_SURFACE),
+        .extension2(VK_MVK_MACOS_SURFACE),
     ),
     Element::Struct(
         Struct::typed(
@@ -2452,7 +2478,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pView", "*const core::ffi::c_void"),
             ],
         )
-        .extensions2(&[&VK_MVK_MACOS_SURFACE]),
+        .extensions2(&[VK_MVK_MACOS_SURFACE]),
     ),
     Element::Command(
         Command::new(
@@ -2466,10 +2492,10 @@ pub const ELEMENTS: &[Element] = &[
         )
         .failable()
         .static_callable()
-        .extension2(&VK_MVK_MACOS_SURFACE),
+        .extension2(VK_MVK_MACOS_SURFACE),
     ),
     // VK_MVK_ios_surface
-    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(&VK_MVK_IOS_SURFACE)),
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_MVK_IOS_SURFACE)),
     Element::Bitmask(
         Bitmask::new(
             "IOSSurfaceCreateFlags",
@@ -2477,7 +2503,7 @@ pub const ELEMENTS: &[Element] = &[
             "IOS_SURFACE_CREATE",
             &[],
         )
-        .extension2(&VK_MVK_IOS_SURFACE),
+        .extension2(VK_MVK_IOS_SURFACE),
     ),
     Element::Struct(
         Struct::typed(
@@ -2490,7 +2516,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pView", "*const core::ffi::c_void"),
             ],
         )
-        .extensions2(&[&VK_MVK_IOS_SURFACE]),
+        .extensions2(&[VK_MVK_IOS_SURFACE]),
     ),
     Element::Command(
         Command::new(
@@ -2504,6 +2530,143 @@ pub const ELEMENTS: &[Element] = &[
         )
         .failable()
         .static_callable()
-        .extension2(&VK_MVK_IOS_SURFACE),
+        .extension2(VK_MVK_IOS_SURFACE),
     ),
+    // VK_EXT_depth_range_unrestricted
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_EXT_DEPTH_RANGE_UNRESTRICTED)),
+    // VK_EXT_direct_mode_display
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_EXT_DIRECT_MODE_DISPLAY)),
+    Element::Command(
+        Command::new(
+            "ReleaseDisplay",
+            &[("physicalDevice", "VkPhysicalDevice"), ("display", "VkDisplayKHR")],
+        )
+        .failable()
+        .extension2(VK_EXT_DIRECT_MODE_DISPLAY),
+    ),
+    // VK_KHR_display_swapchain
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_KHR_DISPLAY_SWAPCHAIN)),
+    Element::Struct(
+        Struct::typed(
+            "DisplayPresentInfo",
+            "DISPLAY_PRESENT_INFO",
+            vk_ext_enum(4, 0) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("srcRect", "VkRect2D"),
+                Struct::member("dstRect", "VkRect2D"),
+                Struct::member("persistent", TY_VK_BOOL),
+            ],
+        )
+        .extensions2(&[VK_KHR_DISPLAY_SWAPCHAIN]),
+    ),
+    Element::Command(
+        Command::new(
+            "CreateSharedSwapchain",
+            &[
+                ("device", "VkDevice"),
+                ("swapchainCount", "u32"),
+                ("pCreateInfos", "*const VkSwapchainCreateInfoKHR"),
+                ("pAllocator", "*const VkAllocationCallbacks"),
+                ("pSwapchains", "*mut VkSwapchainKHR"),
+            ],
+        )
+        .failable()
+        .extension2(VK_KHR_DISPLAY_SWAPCHAIN),
+    ),
+    // VK_AMD_draw_indirect_count
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_AMD_DRAW_INDIRECT_COUNT)),
+    // VK_EXT_external_memory_dma_buf
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_EXT_EXTERNAL_MEMORY_DMA_BUF)),
+    Element::Bitmask(
+        Bitmask::extending(
+            "ExternalMemoryHandleTypeFlagBits",
+            "EXTERNAL_MEMORY_HANDLE_TYPE",
+            &[Bitmask::entry("DMA_BUF", 9).extension2(VK_EXT_EXTERNAL_MEMORY_DMA_BUF)],
+        )
+        .extension("KHR", "external_memory_capabilities"),
+    ),
+    // VK_IMG_filter_cubic
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_IMG_FILTER_CUBIC)),
+    Element::Enum(Enum::extending(
+        "Filter",
+        "FILTER",
+        &[Enum::member("CUBIC", vk_ext_enum(16, 0) as _).extension2(VK_IMG_FILTER_CUBIC)],
+    )),
+    Element::Bitmask(Bitmask::extending(
+        "FormatFeatureFlagBits",
+        "FORMAT_FEATURE",
+        &[Bitmask::entry("SAMPLED_IMAGE_FILTER_CUBIC", 13).extension2(VK_IMG_FILTER_CUBIC)],
+    )),
+    // VK_IMG_format_pvrtc
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_IMG_FORMAT_PVRTC)),
+    Element::Enum(Enum::extending(
+        "Format",
+        "FORMAT",
+        &[
+            Enum::member("PVRTC1_2BPP_UNORM_BLOCK", vk_ext_enum(55, 0) as _).extension2(VK_IMG_FORMAT_PVRTC),
+            Enum::member("PVRTC1_4BPP_UNORM_BLOCK", vk_ext_enum(55, 1) as _).extension2(VK_IMG_FORMAT_PVRTC),
+            Enum::member("PVRTC2_2BPP_UNORM_BLOCK", vk_ext_enum(55, 2) as _).extension2(VK_IMG_FORMAT_PVRTC),
+            Enum::member("PVRTC2_4BPP_UNORM_BLOCK", vk_ext_enum(55, 3) as _).extension2(VK_IMG_FORMAT_PVRTC),
+            Enum::member("PVRTC1_2BPP_SRGB_BLOCK", vk_ext_enum(55, 4) as _).extension2(VK_IMG_FORMAT_PVRTC),
+            Enum::member("PVRTC1_4BPP_SRGB_BLOCK", vk_ext_enum(55, 5) as _).extension2(VK_IMG_FORMAT_PVRTC),
+            Enum::member("PVRTC2_2BPP_SRGB_BLOCK", vk_ext_enum(55, 6) as _).extension2(VK_IMG_FORMAT_PVRTC),
+            Enum::member("PVRTC2_4BPP_SRGB_BLOCK", vk_ext_enum(55, 7) as _).extension2(VK_IMG_FORMAT_PVRTC),
+        ],
+    )),
+    // VK_AMD_gcn_shader
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_AMD_GCN_SHADER)),
+    // VK_NV_geometry_shader_passthrough
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_NV_GEOMETRY_SHADER_PASSTHROUGH)),
+    // VK_NV_glsl_shader
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_NV_GLSL_SHADER)),
+    // VK_AMD_gpu_shader_half_float
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_AMD_GPU_SHADER_HALF_FLOAT)),
+    // VK_AMD_gpu_shader_int16
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_AMD_GPU_SHADER_INT16)),
+    // VK_AMD_mixed_attachment_samples
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_AMD_MIXED_ATTACHMENT_SAMPLES)),
+    // VK_NVX_multiview_per_view_attributes
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES)),
+    Element::Bitmask(Bitmask::extending(
+        "SubpassDescriptionFlagBits",
+        "SUBPASS_DESCRIPTION",
+        &[
+            Bitmask::entry("PER_VIEW_ATTRIBUTES", 0).extension2(VK_NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES),
+            Bitmask::entry("PER_VIEW_POSITION_X_ONLY", 1).extension2(VK_NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES),
+        ],
+    )),
+    Element::Struct(
+        Struct::typed(
+            "PhysicalDeviceMultiviewPerViewAttributesProperties",
+            "PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_ATTRIBUTES_PROPERTIES",
+            vk_ext_enum(98, 0) as _,
+            StructUsage::Sink,
+            &[Struct::member("perViewPositionAllComponents", TY_VK_BOOL)],
+        )
+        .extensions2(&[VK_NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES]),
+    ),
+    // VK_AMD_negative_viewport_height
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_AMD_NEGATIVE_VIEWPORT_HEIGHT)),
+    // VK_EXT_post_depth_coverage
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_EXT_POST_DEPTH_COVERAGE)),
+    // VK_EXT_queue_family_foreign
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_EXT_QUEUE_FAMILY_FOREIGN)),
+    // const defined at main
+    // VK_NV_sample_mask_override_coverage
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_NV_SAMPLE_MASK_OVERRIDE_COVERAGE)),
+    // VK_AMD_shader_ballot
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_AMD_SHADER_BALLOT)),
+    // VK_AMD_shader_explicit_vertex_parameter
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_AMD_SHADER_EXPLICIT_VERTEX_PARAMETER)),
+    // VK_AMD_shader_fragment_mask
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_AMD_SHADER_FRAGMENT_MASK)),
+    // VK_AMD_shader_image_load_store_lod
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_AMD_SHADER_IMAGE_LOAD_STORE_LOD)),
+    // VK_AMD_shader_trinary_minmax
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_AMD_SHADER_TRINARY_MINMAX)),
+    // VK_EXT_swapchain_colorspace
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_EXT_SWAPCHAIN_COLORSPACE)),
+    // VK_NV_viewport_array2
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_NV_VIEWPORT_ARRAY2)),
 ];

@@ -86,7 +86,6 @@ VK_AMD_shader_image_load_store_lod = ["bedrock-vk/VK_AMD_shader_image_load_store
 VK_IMG_format_pvrtc = ["bedrock-vk/VK_IMG_format_pvrtc"]
 VK_EXT_validation_flags = ["bedrock-vk/VK_EXT_validation_flags"]
 VK_NN_vi_surface = ["bedrock-vk/VK_NN_vi_surface"]
-VK_EXT_shader_group_ballot = ["bedrock-vk/VK_EXT_shader_group_ballot"]
 VK_EXT_shader_subgroup_vote = ["bedrock-vk/VK_EXT_shader_subgroup_vote"]
 VK_NVX_device_generated_commands = ["bedrock-vk/VK_NVX_device_generated_commands"]
 VK_NV_clip_space_w_scaling = ["bedrock-vk/VK_NV_clip_space_w_scaling"]

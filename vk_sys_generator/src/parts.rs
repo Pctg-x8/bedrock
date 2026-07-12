@@ -124,6 +124,7 @@ pub struct EnumMember {
     extension: Option<(&'static str, &'static str)>,
     extension2: Option<&'static Extension<'static>>,
     promoted: Option<&'static str>,
+    extra_requirements: Option<&'static str>,
 }
 impl EnumMember {
     pub const fn extension(mut self, suffix: &'static str, name: &'static str) -> Self {
@@ -138,6 +139,11 @@ impl EnumMember {
 
     pub const fn promoted(mut self, version: &'static str) -> Self {
         self.promoted = Some(version);
+        self
+    }
+
+    pub const fn extra_requirements(mut self, req: &'static str) -> Self {
+        self.extra_requirements = Some(req);
         self
     }
 }
@@ -202,6 +208,7 @@ impl Enum {
             extension: None,
             extension2: None,
             promoted: None,
+            extra_requirements: None,
         }
     }
 
@@ -229,6 +236,9 @@ impl Enum {
         }
 
         for member in self.members {
+            if let Some(r) = member.extra_requirements {
+                writeln!(w, "#[cfg({r})]")?;
+            }
             if self.extension2.is_some() || member.extension2.is_some() {
                 match (self.extension2, member.extension2) {
                     (None, None) => {
@@ -396,6 +406,9 @@ impl Enum {
             }
 
             if let Some(v) = member.promoted {
+                if let Some(r) = member.extra_requirements {
+                    writeln!(w, "#[cfg({r})]")?;
+                }
                 if let Some((x, s)) = self.extension {
                     writeln!(w, "#[cfg(feature = \"VK_{s}_{x}\")]")?;
                 }
@@ -1815,5 +1828,13 @@ pub struct Extension<'s> {
 impl<'s> Extension<'s> {
     pub const fn new(tag: &'s str, name: &'s str, version: usize) -> Self {
         Self { tag, name, version }
+    }
+
+    pub const fn khr(name: &'s str, version: usize) -> Self {
+        Self::new("KHR", name, version)
+    }
+
+    pub const fn ext(name: &'s str, version: usize) -> Self {
+        Self::new("EXT", name, version)
     }
 }
