@@ -418,6 +418,9 @@ impl Enum {
                 if let Some((x, s)) = self.extension_old {
                     writeln!(w, "#[cfg(feature = \"VK_{s}_{x}\")]")?;
                 }
+                if let Some(Extension { tag, name, .. }) = self.extension {
+                    writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
+                }
                 writeln!(w, "#[cfg(feature = \"Allow{v}APIs\")]")?;
                 writeln!(w, "#[rustfmt::skip]")?;
                 if is_newtyped {

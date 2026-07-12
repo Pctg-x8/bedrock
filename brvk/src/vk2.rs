@@ -17259,30 +17259,35 @@ pub type VkSamplerYcbcrModelConversion = i32;
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_RGB_IDENTITY_KHR: VkSamplerYcbcrModelConversionKHR = 0;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_RGB_IDENTITY: VkSamplerYcbcrModelConversionKHR = 0;
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_IDENTITY_KHR: VkSamplerYcbcrModelConversionKHR = 1;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_IDENTITY: VkSamplerYcbcrModelConversionKHR = 1;
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_709_KHR: VkSamplerYcbcrModelConversionKHR = 2;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_709: VkSamplerYcbcrModelConversionKHR = 2;
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_601_KHR: VkSamplerYcbcrModelConversionKHR = 3;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_601: VkSamplerYcbcrModelConversionKHR = 3;
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_2020_KHR: VkSamplerYcbcrModelConversionKHR = 4;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_2020: VkSamplerYcbcrModelConversionKHR = 4;
@@ -17296,12 +17301,14 @@ pub type VkChromaLocation = i32;
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 pub const VK_CHROMA_LOCATION_COSITED_EVEN_KHR: VkChromaLocationKHR = 0;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_CHROMA_LOCATION_COSITED_EVEN: VkChromaLocationKHR = 0;
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 pub const VK_CHROMA_LOCATION_MIDPOINT_KHR: VkChromaLocationKHR = 1;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_CHROMA_LOCATION_MIDPOINT: VkChromaLocationKHR = 1;
@@ -17315,12 +17322,14 @@ pub type VkSamplerYcbcrRange = i32;
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_RANGE_ITU_FULL_KHR: VkSamplerYcbcrRangeKHR = 0;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_RANGE_ITU_FULL: VkSamplerYcbcrRangeKHR = 0;
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_RANGE_ITU_NARROW_KHR: VkSamplerYcbcrRangeKHR = 1;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_RANGE_ITU_NARROW: VkSamplerYcbcrRangeKHR = 1;
@@ -17329,6 +17338,7 @@ pub const VK_SAMPLER_YCBCR_RANGE_ITU_NARROW: VkSamplerYcbcrRangeKHR = 1;
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 pub const VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_KHR: VkDebugReportObjectTypeEXT = 1000156000;
+#[cfg(feature = "VK_EXT_debub_report")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION: VkDebugReportObjectTypeEXT = 1000156000;
@@ -18205,12 +18215,14 @@ pub type VkSemaphoreType = i32;
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
 #[rustfmt::skip]
 pub const VK_SEMAPHORE_TYPE_BINARY_KHR: VkSemaphoreTypeKHR = 0;
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub const VK_SEMAPHORE_TYPE_BINARY: VkSemaphoreTypeKHR = 0;
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
 #[rustfmt::skip]
 pub const VK_SEMAPHORE_TYPE_TIMELINE_KHR: VkSemaphoreTypeKHR = 1;
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub const VK_SEMAPHORE_TYPE_TIMELINE: VkSemaphoreTypeKHR = 1;
@@ -18699,18 +18711,21 @@ pub type VkSamplerReductionMode = i32;
 #[cfg(feature = "VK_EXT_sampler_filter_minmax")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE_EXT: VkSamplerReductionModeEXT = 0;
+#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE: VkSamplerReductionModeEXT = 0;
 #[cfg(feature = "VK_EXT_sampler_filter_minmax")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_REDUCTION_MODE_MIN_EXT: VkSamplerReductionModeEXT = 1;
+#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_REDUCTION_MODE_MIN: VkSamplerReductionModeEXT = 1;
 #[cfg(feature = "VK_EXT_sampler_filter_minmax")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_REDUCTION_MODE_MAX_EXT: VkSamplerReductionModeEXT = 2;
+#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_REDUCTION_MODE_MAX: VkSamplerReductionModeEXT = 2;
@@ -18820,18 +18835,21 @@ pub type VkShaderFloatControlsIndependenceKHR = i32;
 #[cfg(feature = "VK_KHR_shader_float_controls")]
 #[rustfmt::skip]
 pub const VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_32_BIT_ONLY_KHR: VkShaderFloatControlsIndependenceKHR = 0;
+#[cfg(feature = "VK_KHR_shader_float_controls")]
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub const VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_32_BIT_ONLY: VkShaderFloatControlsIndependenceKHR = 0;
 #[cfg(feature = "VK_KHR_shader_float_controls")]
 #[rustfmt::skip]
 pub const VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_ALL_KHR: VkShaderFloatControlsIndependenceKHR = 1;
+#[cfg(feature = "VK_KHR_shader_float_controls")]
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub const VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_ALL: VkShaderFloatControlsIndependenceKHR = 1;
 #[cfg(feature = "VK_KHR_shader_float_controls")]
 #[rustfmt::skip]
 pub const VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_NONE_KHR: VkShaderFloatControlsIndependenceKHR = 2;
+#[cfg(feature = "VK_KHR_shader_float_controls")]
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub const VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_NONE: VkShaderFloatControlsIndependenceKHR = 2;
@@ -19182,24 +19200,28 @@ pub type VkQueueGlobalPriority = i32;
 #[cfg(feature = "VK_KHR_global_priority")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_LOW_KHR: VkQueueGlobalPriorityKHR = 128;
+#[cfg(feature = "VK_KHR_global_priority")]
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_LOW: VkQueueGlobalPriorityKHR = 128;
 #[cfg(feature = "VK_KHR_global_priority")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_MEDIUM_KHR: VkQueueGlobalPriorityKHR = 256;
+#[cfg(feature = "VK_KHR_global_priority")]
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_MEDIUM: VkQueueGlobalPriorityKHR = 256;
 #[cfg(feature = "VK_KHR_global_priority")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_HIGH_KHR: VkQueueGlobalPriorityKHR = 512;
+#[cfg(feature = "VK_KHR_global_priority")]
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_HIGH: VkQueueGlobalPriorityKHR = 512;
 #[cfg(feature = "VK_KHR_global_priority")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_REALTIME_KHR: VkQueueGlobalPriorityKHR = 1024;
+#[cfg(feature = "VK_KHR_global_priority")]
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_REALTIME: VkQueueGlobalPriorityKHR = 1024;
