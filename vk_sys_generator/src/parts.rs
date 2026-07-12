@@ -127,12 +127,13 @@ pub struct EnumMember {
     extra_requirements: Option<&'static str>,
 }
 impl EnumMember {
-    pub const fn extension(mut self, suffix: &'static str, name: &'static str) -> Self {
+    #[deprecated = "use new extension specifier"]
+    pub const fn extension_old(mut self, suffix: &'static str, name: &'static str) -> Self {
         self.extension = Some((name, suffix));
         self
     }
 
-    pub const fn extension2(mut self, ext: &'static Extension<'static>) -> Self {
+    pub const fn extension(mut self, ext: &'static Extension<'static>) -> Self {
         self.extension2 = Some(ext);
         self
     }
@@ -153,8 +154,8 @@ pub struct Enum {
     extending: bool,
     prefix: &'static str,
     members: &'static [EnumMember],
-    extension: Option<(&'static str, &'static str)>,
-    extension2: Option<&'static Extension<'static>>,
+    extension_old: Option<(&'static str, &'static str)>,
+    extension: Option<&'static Extension<'static>>,
     promoted: Option<&'static str>,
 }
 impl Enum {
@@ -164,8 +165,8 @@ impl Enum {
             prefix,
             extending: false,
             members,
+            extension_old: None,
             extension: None,
-            extension2: None,
             promoted: None,
         }
     }
@@ -176,8 +177,8 @@ impl Enum {
             prefix,
             extending: true,
             members,
+            extension_old: None,
             extension: None,
-            extension2: None,
             promoted: None,
         }
     }
@@ -186,13 +187,14 @@ impl Enum {
         Self::extending("Result", "ERROR", members)
     }
 
-    pub const fn extension(mut self, suffix: &'static str, name: &'static str) -> Self {
-        self.extension = Some((name, suffix));
+    #[deprecated = "use new extension specifier"]
+    pub const fn extension_old(mut self, suffix: &'static str, name: &'static str) -> Self {
+        self.extension_old = Some((name, suffix));
         self
     }
 
-    pub const fn extension2(mut self, extension: &'static Extension<'static>) -> Self {
-        self.extension2 = Some(extension);
+    pub const fn extension(mut self, extension: &'static Extension<'static>) -> Self {
+        self.extension = Some(extension);
         self
     }
 
@@ -213,9 +215,9 @@ impl Enum {
     }
 
     pub fn emit(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
-        let type_name = if let Some(x) = self.extension2 {
+        let type_name = if let Some(x) = self.extension {
             format!("Vk{}{}", self.name, x.tag)
-        } else if let Some((_, s)) = self.extension {
+        } else if let Some((_, s)) = self.extension_old {
             format!("Vk{}{s}", self.name)
         } else {
             format!("Vk{}", self.name)
@@ -223,9 +225,9 @@ impl Enum {
         let is_newtyped = type_name == "VkResult";
 
         if !self.extending {
-            if let Some(x) = self.extension2 {
+            if let Some(x) = self.extension {
                 writeln!(w, "#[cfg(feature = \"VK_{}_{}\")]", x.tag, x.name)?;
-            } else if let Some((name, suffix)) = self.extension {
+            } else if let Some((name, suffix)) = self.extension_old {
                 writeln!(w, "#[cfg(feature = \"VK_{suffix}_{name}\")]")?;
             }
             emit_c_enum_type(w, &type_name)?;
@@ -239,8 +241,8 @@ impl Enum {
             if let Some(r) = member.extra_requirements {
                 writeln!(w, "#[cfg({r})]")?;
             }
-            if self.extension2.is_some() || member.extension2.is_some() {
-                match (self.extension2, member.extension2) {
+            if self.extension.is_some() || member.extension2.is_some() {
+                match (self.extension, member.extension2) {
                     (None, None) => {
                         writeln!(w, "#[rustfmt::skip]")?;
                         writeln!(
@@ -322,7 +324,7 @@ impl Enum {
                     }
                 }
             } else {
-                match (self.extension, member.extension) {
+                match (self.extension_old, member.extension) {
                     (None, None) => {
                         writeln!(w, "#[rustfmt::skip]")?;
                         writeln!(
@@ -409,7 +411,7 @@ impl Enum {
                 if let Some(r) = member.extra_requirements {
                     writeln!(w, "#[cfg({r})]")?;
                 }
-                if let Some((x, s)) = self.extension {
+                if let Some((x, s)) = self.extension_old {
                     writeln!(w, "#[cfg(feature = \"VK_{s}_{x}\")]")?;
                 }
                 writeln!(w, "#[cfg(feature = \"Allow{v}APIs\")]")?;
@@ -437,20 +439,21 @@ impl Enum {
 pub struct BitmaskEntry {
     name: &'static str,
     bitpos: usize,
-    extension: Option<(&'static str, &'static str)>,
-    extension2: Option<&'static Extension<'static>>,
+    extension_old: Option<(&'static str, &'static str)>,
+    extension: Option<&'static Extension<'static>>,
     extra_requirements: &'static [&'static str],
     promoted: Option<&'static str>,
     version_since: Option<&'static str>,
 }
 impl BitmaskEntry {
-    pub const fn extension(mut self, tag: &'static str, name: &'static str) -> Self {
-        self.extension = Some((tag, name));
+    #[deprecated = "use new extension specifier"]
+    pub const fn extension_old(mut self, tag: &'static str, name: &'static str) -> Self {
+        self.extension_old = Some((tag, name));
         self
     }
 
-    pub const fn extension2(mut self, ext: &'static Extension<'static>) -> Self {
-        self.extension2 = Some(ext);
+    pub const fn extension(mut self, ext: &'static Extension<'static>) -> Self {
+        self.extension = Some(ext);
         self
     }
 
@@ -477,8 +480,8 @@ pub struct Bitmask {
     extending: bool,
     entries: &'static [BitmaskEntry],
     version_since: Option<&'static str>,
-    extension: Option<(&'static str, &'static str)>,
-    extension2: Option<&'static Extension<'static>>,
+    extension_old: Option<(&'static str, &'static str)>,
+    extension: Option<&'static Extension<'static>>,
     extra_requirements: &'static [&'static str],
     promoted: Option<&'static str>,
     long: bool,
@@ -497,8 +500,8 @@ impl Bitmask {
             extending: false,
             entries,
             version_since: None,
+            extension_old: None,
             extension: None,
-            extension2: None,
             extra_requirements: &[],
             promoted: None,
             long: false,
@@ -513,8 +516,8 @@ impl Bitmask {
             extending: true,
             entries,
             version_since: None,
+            extension_old: None,
             extension: None,
-            extension2: None,
             extra_requirements: &[],
             promoted: None,
             long: false,
@@ -531,13 +534,14 @@ impl Bitmask {
         self
     }
 
-    pub const fn extension(mut self, tag: &'static str, name: &'static str) -> Self {
-        self.extension = Some((tag, name));
+    #[deprecated = "use new extension specifier"]
+    pub const fn extension_old(mut self, tag: &'static str, name: &'static str) -> Self {
+        self.extension_old = Some((tag, name));
         self
     }
 
-    pub const fn extension2(mut self, ext: &'static Extension<'static>) -> Self {
-        self.extension2 = Some(ext);
+    pub const fn extension(mut self, ext: &'static Extension<'static>) -> Self {
+        self.extension = Some(ext);
         self
     }
 
@@ -555,8 +559,8 @@ impl Bitmask {
         BitmaskEntry {
             name,
             bitpos,
+            extension_old: None,
             extension: None,
-            extension2: None,
             extra_requirements: &[],
             promoted: None,
             version_since: None,
@@ -565,10 +569,10 @@ impl Bitmask {
 
     pub fn emit(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
         let (type_name, bits_name);
-        if let Some(x) = self.extension2 {
+        if let Some(x) = self.extension {
             type_name = format!("Vk{}{}", self.name, x.tag);
             bits_name = format!("Vk{}{}", self.bits_name, x.tag);
-        } else if let Some((tag, _)) = self.extension {
+        } else if let Some((tag, _)) = self.extension_old {
             type_name = format!("Vk{}{tag}", self.name);
             bits_name = format!("Vk{}{tag}", self.bits_name);
         } else {
@@ -580,10 +584,10 @@ impl Bitmask {
             if let Some(x) = self.version_since {
                 writeln!(w, "#[cfg(feature = \"Allow{x}APIs\")]")?;
             }
-            if let Some((tag, name)) = self.extension {
+            if let Some((tag, name)) = self.extension_old {
                 writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
             }
-            if let Some(Extension { tag, name, .. }) = self.extension2 {
+            if let Some(Extension { tag, name, .. }) = self.extension {
                 writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
             }
             for x in self.extra_requirements {
@@ -598,10 +602,10 @@ impl Bitmask {
             if let Some(x) = self.version_since {
                 writeln!(w, "#[cfg(feature = \"Allow{x}APIs\")]")?;
             }
-            if let Some((tag, name)) = self.extension {
+            if let Some((tag, name)) = self.extension_old {
                 writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
             }
-            if let Some(Extension { tag, name, .. }) = self.extension2 {
+            if let Some(Extension { tag, name, .. }) = self.extension {
                 writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
             }
             for x in self.extra_requirements {
@@ -620,15 +624,15 @@ impl Bitmask {
             feature_requirements.extend(self.version_since.map(|v| format!("Allow{v}APIs")));
             feature_requirements.extend(e.version_since.map(|v| format!("Allow{v}APIs")));
             // guard by typedef's extension because define uses the type
-            feature_requirements.extend(self.extension.map(|(tag, name)| format!("VK_{tag}_{name}")));
-            feature_requirements.extend(e.extension.map(|(tag, name)| format!("VK_{tag}_{name}")));
+            feature_requirements.extend(self.extension_old.map(|(tag, name)| format!("VK_{tag}_{name}")));
+            feature_requirements.extend(e.extension_old.map(|(tag, name)| format!("VK_{tag}_{name}")));
             // guard by typedef's extension because define uses the type
             feature_requirements.extend(
-                self.extension2
+                self.extension
                     .map(|Extension { tag, name, .. }| format!("VK_{tag}_{name}")),
             );
             feature_requirements.extend(
-                e.extension2
+                e.extension
                     .map(|Extension { tag, name, .. }| format!("VK_{tag}_{name}")),
             );
             feature_requirements.extend(self.extra_requirements.iter().copied().map(String::from));
@@ -641,8 +645,8 @@ impl Bitmask {
                 writeln!(w, "#[cfg(feature = \"{x}\")]")?;
             }
 
-            if e.extension.is_none() {
-                match e.extension2 {
+            if e.extension_old.is_none() {
+                match e.extension {
                     Some(Extension { tag, .. }) => {
                         writeln!(w, "#[rustfmt::skip]")?;
                         write!(w, "pub const VK_{}_{}_BIT_{tag}: {bits_name} = 0x", self.prefix, e.name)?;
@@ -653,7 +657,7 @@ impl Bitmask {
                     }
                 }
             } else {
-                match e.extension {
+                match e.extension_old {
                     Some((tag, _)) => {
                         writeln!(w, "#[rustfmt::skip]")?;
                         write!(w, "pub const VK_{}_{}_BIT_{tag}: {bits_name} = 0x", self.prefix, e.name)?;
@@ -857,6 +861,7 @@ impl Struct {
         Self::new(name, members).stype(sty_suffix, sty_value, sty_usage)
     }
 
+    #[deprecated = "use Struct::typed constructor"]
     pub const fn stype(mut self, unique_part: &'static str, value: u32, usage: StructUsage) -> Self {
         self.stype = Some((unique_part, value, usage));
         self
@@ -894,12 +899,13 @@ impl Struct {
         self
     }
 
-    pub const fn extensions(mut self, extensions: &'static [(&'static str, &'static str)]) -> Self {
+    #[deprecated = "use new extensions specifier"]
+    pub const fn extensions_old(mut self, extensions: &'static [(&'static str, &'static str)]) -> Self {
         self.extensions = extensions;
         self
     }
 
-    pub const fn extensions2(mut self, extensions: &'static [&'static Extension<'static>]) -> Self {
+    pub const fn extensions(mut self, extensions: &'static [&'static Extension<'static>]) -> Self {
         self.extensions2 = extensions;
         self
     }
@@ -1412,8 +1418,8 @@ pub struct Command {
     return_type: Option<&'static str>,
     static_callable: bool,
     version_since: Option<&'static str>,
-    extension: Option<(&'static str, &'static str)>,
-    extension2: Option<&'static Extension<'static>>,
+    extension_old: Option<(&'static str, &'static str)>,
+    extension: Option<&'static Extension<'static>>,
     extra_requirements: &'static [&'static str],
     promoted: Option<&'static str>,
 }
@@ -1426,8 +1432,8 @@ impl Command {
             return_type: None,
             static_callable: false,
             version_since: None,
+            extension_old: None,
             extension: None,
-            extension2: None,
             extra_requirements: &[],
             promoted: None,
         }
@@ -1441,8 +1447,8 @@ impl Command {
             return_type: None,
             static_callable: false,
             version_since: None,
+            extension_old: None,
             extension: None,
-            extension2: None,
             extra_requirements: &[],
             promoted: None,
         }
@@ -1467,13 +1473,14 @@ impl Command {
         self
     }
 
-    pub const fn extension(mut self, tag: &'static str, name: &'static str) -> Self {
-        self.extension = Some((tag, name));
+    #[deprecated = "use new extension specifier"]
+    pub const fn extension_old(mut self, tag: &'static str, name: &'static str) -> Self {
+        self.extension_old = Some((tag, name));
         self
     }
 
-    pub const fn extension2(mut self, extension: &'static Extension<'static>) -> Self {
-        self.extension2 = Some(extension);
+    pub const fn extension(mut self, extension: &'static Extension<'static>) -> Self {
+        self.extension = Some(extension);
         self
     }
 
@@ -1521,10 +1528,10 @@ impl Command {
 
     fn emit_feature_gate(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
         w.write_all(b"#[cfg(feature = \"Implements\")]\n")?;
-        if let Some((tag, name)) = self.extension {
+        if let Some((tag, name)) = self.extension_old {
             writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
         }
-        if let Some(Extension { tag, name, .. }) = self.extension2 {
+        if let Some(Extension { tag, name, .. }) = self.extension {
             writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
         }
         if let Some(v) = self.version_since {
@@ -1540,7 +1547,7 @@ impl Command {
 
     pub fn emit(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
         let (type_name, org_fn_name);
-        if let Some(Extension { tag, .. }) = self.extension2 {
+        if let Some(Extension { tag, .. }) = self.extension {
             if self.is_command_buffer_inst {
                 type_name = format!("PFN_vkCmd{}{tag}", self.name);
                 org_fn_name = format!("vkCmd{}{tag}", self.name);
@@ -1549,7 +1556,7 @@ impl Command {
                 org_fn_name = format!("vk{}{tag}", self.name);
             }
         } else {
-            match (self.is_command_buffer_inst, self.extension) {
+            match (self.is_command_buffer_inst, self.extension_old) {
                 (false, None) => {
                     type_name = format!("PFN_vk{}", self.name);
                     org_fn_name = format!("vk{}", self.name);
@@ -1667,11 +1674,11 @@ impl Command {
 
     pub fn emit_static_symbol(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
         if self.static_callable {
-            if let Some((tag, name)) = self.extension {
+            if let Some((tag, name)) = self.extension_old {
                 writeln!(w, "    #[cfg(feature = \"VK_{tag}_{name}\")]")?;
             }
 
-            if let Some(Extension { tag, name, .. }) = self.extension2 {
+            if let Some(Extension { tag, name, .. }) = self.extension {
                 writeln!(w, "    #[cfg(feature = \"VK_{tag}_{name}\")]")?;
             }
 
@@ -1679,14 +1686,14 @@ impl Command {
                 writeln!(w, "    #[cfg(feature = \"Allow{v}APIs\")]")?;
             }
 
-            if let Some(Extension { tag, .. }) = self.extension2 {
+            if let Some(Extension { tag, .. }) = self.extension {
                 if self.is_command_buffer_inst {
                     write!(w, "    pub fn vkCmd{}{tag}(", self.name)?;
                 } else {
                     write!(w, "    pub fn vk{}{tag}(", self.name)?;
                 }
             } else {
-                match (self.is_command_buffer_inst, self.extension) {
+                match (self.is_command_buffer_inst, self.extension_old) {
                     (false, None) => write!(w, "    pub fn vk{}(", self.name)?,
                     (true, None) => write!(w, "    pub fn vkCmd{}(", self.name)?,
                     (false, Some((tag, _))) => write!(w, "    pub fn vk{}{tag}(", self.name)?,

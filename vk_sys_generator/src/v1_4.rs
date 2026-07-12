@@ -19,7 +19,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("supportsNonZeroFirstInstance", TY_VK_BOOL),
             ],
         )
-        .extensions(&[ex_khr("vertex_attribute_divisor")])
+        .extensions_old(&[ex_khr("vertex_attribute_divisor")])
         .promoted(VERSION),
     ),
     Element::Struct(
@@ -27,7 +27,7 @@ pub const ELEMENTS: &[Element] = &[
             "VertexInputBindingDivisorDescription",
             &[Struct::member("binding", "u32"), Struct::member("divisor", "u32")],
         )
-        .extensions(&[ex_khr("vertex_attribute_divisor")])
+        .extensions_old(&[ex_khr("vertex_attribute_divisor")])
         .promoted(VERSION),
     ),
     Element::Struct(
@@ -44,7 +44,7 @@ pub const ELEMENTS: &[Element] = &[
                 ),
             ],
         )
-        .extensions(&[ex_khr("vertex_attribute_divisor")])
+        .extensions_old(&[ex_khr("vertex_attribute_divisor")])
         .promoted(VERSION),
     ),
     Element::Struct(
@@ -58,7 +58,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("vertexAttributeInstanceRateZeroDivisor", TY_VK_BOOL),
             ],
         )
-        .extensions(&[ex_khr("vertex_attribute_divisor")])
+        .extensions_old(&[ex_khr("vertex_attribute_divisor")])
         .promoted(VERSION),
     ),
     // VK_KHR_global_priority
@@ -67,7 +67,7 @@ pub const ELEMENTS: &[Element] = &[
         "NOT_PERMITTED_KHR",
         -vk_ext_enum(175, 1) as _,
     )
-    .extension("KHR", "global_priority")
+    .extension_old("KHR", "global_priority")
     .promoted(VERSION)])),
     Element::Enum(
         Enum::new(
@@ -75,20 +75,20 @@ pub const ELEMENTS: &[Element] = &[
             "QUEUE_GLOBAL_PRIORITY",
             &[
                 Enum::member("LOW", 128)
-                    .extension("KHR", "global_priority")
+                    .extension_old("KHR", "global_priority")
                     .promoted(VERSION),
                 Enum::member("MEDIUM", 256)
-                    .extension("KHR", "global_priority")
+                    .extension_old("KHR", "global_priority")
                     .promoted(VERSION),
                 Enum::member("HIGH", 512)
-                    .extension("KHR", "global_priority")
+                    .extension_old("KHR", "global_priority")
                     .promoted(VERSION),
                 Enum::member("REALTIME", 1024)
-                    .extension("KHR", "global_priority")
+                    .extension_old("KHR", "global_priority")
                     .promoted(VERSION),
             ],
         )
-        .extension("KHR", "global_priority")
+        .extension_old("KHR", "global_priority")
         .promoted(VERSION),
     ),
     Element::Struct(
@@ -99,7 +99,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Source,
             &[Struct::member("globalPriority", "VkQueueGlobalPriorityKHR")],
         )
-        .extensions(&[ex_khr("global_priority")])
+        .extensions_old(&[ex_khr("global_priority")])
         .promoted(VERSION),
     ),
     Element::Struct(
@@ -110,7 +110,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Both,
             &[Struct::member("globalPriorityQuery", TY_VK_BOOL)],
         )
-        .extensions(&[ex_khr("global_priority")])
+        .extensions_old(&[ex_khr("global_priority")])
         .promoted(VERSION),
     ),
     Element::Struct(
@@ -127,7 +127,7 @@ pub const ELEMENTS: &[Element] = &[
                 ),
             ],
         )
-        .extensions(&[ex_khr("global_priority")])
+        .extensions_old(&[ex_khr("global_priority")])
         .promoted(VERSION),
     ),
     // VK_KHR_load_store_op_none
@@ -136,14 +136,14 @@ pub const ELEMENTS: &[Element] = &[
         "AttachmentLoadOp",
         "ATTACHMENT_LOAD_OP",
         &[Enum::member("NONE", vk_ext_enum(401, 0) as _)
-            .extension2(VK_KHR_LOAD_STORE_OP_NONE)
+            .extension(VK_KHR_LOAD_STORE_OP_NONE)
             .promoted(VERSION)],
     )),
     Element::Enum(Enum::extending(
         "AttachmentStoreOp",
         "ATTACHMENT_STORE_OP",
         &[Enum::member("NONE", vk_ext_enum(302, 0) as _)
-            .extension2(VK_KHR_LOAD_STORE_OP_NONE)
+            .extension(VK_KHR_LOAD_STORE_OP_NONE)
             .extra_requirements("not(feature = \"VK_KHR_dynamic_rendering\")") // conflicting definition
             .promoted(VERSION)],
     )),
@@ -157,7 +157,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Both,
             &[Struct::member("shaderExpectAssume", TY_VK_BOOL)],
         )
-        .extensions2(&[VK_KHR_SHADER_EXPECT_ASSUME])
+        .extensions(&[VK_KHR_SHADER_EXPECT_ASSUME])
         .promoted(VERSION),
     ),
     // VK_KHR_shader_float_controls2
@@ -170,7 +170,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Both,
             &[Struct::member("shaderFloatControls2", TY_VK_BOOL)],
         )
-        .extensions2(&[VK_KHR_SHADER_FLOAT_CONTROLS2])
+        .extensions(&[VK_KHR_SHADER_FLOAT_CONTROLS2])
         .promoted(VERSION),
     ),
 ];

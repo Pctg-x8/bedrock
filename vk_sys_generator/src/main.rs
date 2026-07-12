@@ -441,21 +441,21 @@ const ENUMS: &[Enum] = &[
         "CHROMA_LOCATION",
         &[
             Enum::member("COSITED_EVEN", 0)
-                .extension("KHR", "sampler_ycbcr_conversion")
+                .extension_old("KHR", "sampler_ycbcr_conversion")
                 .promoted("1_1"),
             Enum::member("MIDPOINT", 1)
-                .extension("KHR", "sampler_ycbcr_conversion")
+                .extension_old("KHR", "sampler_ycbcr_conversion")
                 .promoted("1_1"),
         ],
     )
-    .extension("KHR", "sampler_ycbcr_conversion")
+    .extension_old("KHR", "sampler_ycbcr_conversion")
     .promoted("1_1"),
     Enum::new(
         "ColorSpace",
         "COLOR_SPACE",
-        &[Enum::member("SRGB_NONLINEAR", 0).extension("KHR", "surface")],
+        &[Enum::member("SRGB_NONLINEAR", 0).extension_old("KHR", "surface")],
     )
-    .extension("KHR", "surface"),
+    .extension_old("KHR", "surface"),
     Enum::new(
         "CommandBufferLevel",
         "COMMAND_BUFFER_LEVEL",
@@ -527,14 +527,14 @@ const ENUMS: &[Enum] = &[
             Enum::member("INDIRECT_COMMANDS_LAYOUT_NVX", 32),
             Enum::member("VALIDATION_CACHE_EXT", 33),
             Enum::member("DESCRIPTOR_UPDATE_TEMPLATE", vk_ext_enum(86, 0) as _)
-                .extension("KHR", "descriptor_update_template")
+                .extension_old("KHR", "descriptor_update_template")
                 .promoted("1_1"),
             Enum::member("SAMPLER_YCBCR_CONVERSION", vk_ext_enum(157, 0) as _)
-                .extension("KHR", "sampler_ycbcr_conversion")
+                .extension_old("KHR", "sampler_ycbcr_conversion")
                 .promoted("1_1"),
         ],
     )
-    .extension("EXT", "debug_report"),
+    .extension_old("EXT", "debug_report"),
     Enum::new(
         "DescriptorType",
         "DESCRIPTOR_TYPE",
@@ -556,10 +556,10 @@ const ENUMS: &[Enum] = &[
         "DescriptorUpdateTemplateType",
         "DESCRIPTOR_UPDATE_TEMPLATE_TYPE",
         &[Enum::member("DESCRIPTOR_SET", 0)
-            .extension("KHR", "descriptor_update_template")
+            .extension_old("KHR", "descriptor_update_template")
             .promoted("1_1")],
     )
-    .extension("KHR", "descriptor_update_template")
+    .extension_old("KHR", "descriptor_update_template")
     .promoted("1_1"),
     Enum::new(
         "DynamicState",
@@ -599,12 +599,12 @@ const ENUMS: &[Enum] = &[
             Enum::member("TRANSFER_SRC_OPTIMAL", 6),
             Enum::member("TRANSFER_DST_OPTIMAL", 7),
             Enum::member("PREINITIALIZED", 8),
-            Enum::member("PRESENT_SRC", vk_ext_enum(2, 2) as _).extension("KHR", "swapchain"),
+            Enum::member("PRESENT_SRC", vk_ext_enum(2, 2) as _).extension_old("KHR", "swapchain"),
             Enum::member("DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL", vk_ext_enum(118, 0) as _)
-                .extension("KHR", "maintenance2")
+                .extension_old("KHR", "maintenance2")
                 .promoted("1_1"),
             Enum::member("DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL", vk_ext_enum(118, 1) as _)
-                .extension("KHR", "maintenance2")
+                .extension_old("KHR", "maintenance2")
                 .promoted("1_1"),
         ],
     ),
@@ -684,14 +684,14 @@ const ENUMS: &[Enum] = &[
         "POINT_CLIPPING_BEHAVIOR",
         &[
             Enum::member("ALL_CLIP_PLANES", 0)
-                .extension("KHR", "maintenance2")
+                .extension_old("KHR", "maintenance2")
                 .promoted("1_1"),
             Enum::member("USER_CLIP_PLANES", 1)
-                .extension("KHR", "maintenance2")
+                .extension_old("KHR", "maintenance2")
                 .promoted("1_1"),
         ],
     )
-    .extension("KHR", "maintenance2")
+    .extension_old("KHR", "maintenance2")
     .promoted("1_1"),
     Enum::new(
         "PolygonMode",
@@ -706,13 +706,13 @@ const ENUMS: &[Enum] = &[
         "PresentMode",
         "PRESENT_MODE",
         &[
-            Enum::member("IMMEDIATE", 0).extension("KHR", "surface"),
-            Enum::member("MAILBOX", 1).extension("KHR", "surface"),
-            Enum::member("FIFO", 2).extension("KHR", "surface"),
-            Enum::member("FIFO_RELAXED", 3).extension("KHR", "surface"),
+            Enum::member("IMMEDIATE", 0).extension_old("KHR", "surface"),
+            Enum::member("MAILBOX", 1).extension_old("KHR", "surface"),
+            Enum::member("FIFO", 2).extension_old("KHR", "surface"),
+            Enum::member("FIFO_RELAXED", 3).extension_old("KHR", "surface"),
         ],
     )
-    .extension("KHR", "surface"),
+    .extension_old("KHR", "surface"),
     Enum::new(
         "PrimitiveTopology",
         "PRIMITIVE_TOPOLOGY",
@@ -759,37 +759,37 @@ const ENUMS: &[Enum] = &[
         "SAMPLER_YCBCR_MODEL_CONVERSION",
         &[
             Enum::member("RGB_IDENTITY", 0)
-                .extension("KHR", "sampler_ycbcr_conversion")
+                .extension_old("KHR", "sampler_ycbcr_conversion")
                 .promoted("1_1"),
             Enum::member("YCBCR_IDENTITY", 1)
-                .extension("KHR", "sampler_ycbcr_conversion")
+                .extension_old("KHR", "sampler_ycbcr_conversion")
                 .promoted("1_1"),
             Enum::member("YCBCR_709", 2)
-                .extension("KHR", "sampler_ycbcr_conversion")
+                .extension_old("KHR", "sampler_ycbcr_conversion")
                 .promoted("1_1"),
             Enum::member("YCBCR_601", 3)
-                .extension("KHR", "sampler_ycbcr_conversion")
+                .extension_old("KHR", "sampler_ycbcr_conversion")
                 .promoted("1_1"),
             Enum::member("YCBCR_2020", 4)
-                .extension("KHR", "sampler_ycbcr_conversion")
+                .extension_old("KHR", "sampler_ycbcr_conversion")
                 .promoted("1_1"),
         ],
     )
-    .extension("KHR", "sampler_ycbcr_conversion")
+    .extension_old("KHR", "sampler_ycbcr_conversion")
     .promoted("1_1"),
     Enum::new(
         "SamplerYcbcrRange",
         "SAMPLER_YCBCR_RANGE",
         &[
             Enum::member("ITU_FULL", 0)
-                .extension("KHR", "sampler_ycbcr_conversion")
+                .extension_old("KHR", "sampler_ycbcr_conversion")
                 .promoted("1_1"),
             Enum::member("ITU_NARROW", 1)
-                .extension("KHR", "sampler_ycbcr_conversion")
+                .extension_old("KHR", "sampler_ycbcr_conversion")
                 .promoted("1_1"),
         ],
     )
-    .extension("KHR", "sampler_ycbcr_conversion")
+    .extension_old("KHR", "sampler_ycbcr_conversion")
     .promoted("1_1"),
     Enum::new(
         "SharingMode",
@@ -831,14 +831,14 @@ const ENUMS: &[Enum] = &[
         "TESSELLATION_DOMAIN_ORIGIN",
         &[
             Enum::member("UPPER_LEFT", 0)
-                .extension("KHR", "maintenance2")
+                .extension_old("KHR", "maintenance2")
                 .promoted("1_1"),
             Enum::member("LOWER_LEFT", 1)
-                .extension("KHR", "maintenance2")
+                .extension_old("KHR", "maintenance2")
                 .promoted("1_1"),
         ],
     )
-    .extension("KHR", "maintenance2")
+    .extension_old("KHR", "maintenance2")
     .promoted("1_1"),
     Enum::new(
         "VertexInputRate",
@@ -870,7 +870,7 @@ const FLAGS: &[Bitmask] = &[
             Bitmask::entry("HOST_WRITE", 14),
             Bitmask::entry("MEMORY_READ", 15),
             Bitmask::entry("MEMORY_WRITE", 16),
-            Bitmask::entry("COLOR_ATTACHMENT_READ_NONCOHERENT", 19).extension("EXT", "blend_operation_advanced"),
+            Bitmask::entry("COLOR_ATTACHMENT_READ_NONCOHERENT", 19).extension_old("EXT", "blend_operation_advanced"),
         ],
     ),
     Bitmask::new(
@@ -879,69 +879,69 @@ const FLAGS: &[Bitmask] = &[
         "ACCESS_2",
         &[
             Bitmask::entry("INDIRECT_COMMAND_READ", 0)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("INDEX_READ", 1)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("VERTEX_ATTRIBUTE_READ", 2)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("UNIFORM_READ", 3)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("INPUT_ATTACHMENT_READ", 4)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("SHADER_READ", 5)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("SHADER_WRITE", 6)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("COLOR_ATTACHMENT_READ", 7)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("COLOR_ATTACHMENT_WRITE", 8)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("DEPTH_STENCIL_ATTACHMENT_READ", 9)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("DEPTH_STENCIL_ATTACHMENT_WRITE", 10)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("TRANSFER_READ", 11)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("TRANSFER_WRITE", 12)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("HOST_READ", 13)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("HOST_WRITE", 14)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("MEMORY_READ", 15)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("MEMORY_WRITE", 16)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("SHADER_SAMPLED_READ", 32)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("SHADER_STORAGE_READ", 33)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("SHADER_STORAGE_WRITE", 34)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
         ],
     )
     .long()
-    .extension("KHR", "synchronization2")
+    .extension_old("KHR", "synchronization2")
     .promoted("1_3"),
     Bitmask::new(
         "AndroidSurfaceCreateFlags",
@@ -949,7 +949,7 @@ const FLAGS: &[Bitmask] = &[
         "ANDROID_SURFACE_CREATE",
         &[],
     )
-    .extension("KHR", "android_surface"),
+    .extension_old("KHR", "android_surface"),
     Bitmask::new(
         "AttachmentDescriptionFlags",
         "AttachmentDescriptionFlagBits",
@@ -1038,20 +1038,20 @@ const FLAGS: &[Bitmask] = &[
         "COMMAND_POOL_TRIM",
         &[],
     )
-    .extension("KHR", "maintenance1")
+    .extension_old("KHR", "maintenance1")
     .promoted("1_1"),
     Bitmask::new(
         "CompositeAlphaFlags",
         "CompositeAlphaFlagBits",
         "COMPOSITE_ALPHA",
         &[
-            Bitmask::entry("OPAQUE", 0).extension("KHR", "surface"),
-            Bitmask::entry("PRE_MULTIPLIED", 1).extension("KHR", "surface"),
-            Bitmask::entry("POST_MULTIPLIED", 2).extension("KHR", "surface"),
-            Bitmask::entry("INHERIT", 3).extension("KHR", "surface"),
+            Bitmask::entry("OPAQUE", 0).extension_old("KHR", "surface"),
+            Bitmask::entry("PRE_MULTIPLIED", 1).extension_old("KHR", "surface"),
+            Bitmask::entry("POST_MULTIPLIED", 2).extension_old("KHR", "surface"),
+            Bitmask::entry("INHERIT", 3).extension_old("KHR", "surface"),
         ],
     )
-    .extension("KHR", "surface"),
+    .extension_old("KHR", "surface"),
     Bitmask::new(
         "CullModeFlags",
         "CullModeFlagBits",
@@ -1063,51 +1063,51 @@ const FLAGS: &[Bitmask] = &[
         "DebugReportFlagBits",
         "DEBUG_REPORT",
         &[
-            Bitmask::entry("INFORMATION", 0).extension("EXT", "debug_report"),
-            Bitmask::entry("WARNING", 1).extension("EXT", "debug_report"),
-            Bitmask::entry("PERFORMANCE_WARNING", 2).extension("EXT", "debug_report"),
-            Bitmask::entry("ERROR", 3).extension("EXT", "debug_report"),
-            Bitmask::entry("DEBUG", 4).extension("EXT", "debug_report"),
+            Bitmask::entry("INFORMATION", 0).extension_old("EXT", "debug_report"),
+            Bitmask::entry("WARNING", 1).extension_old("EXT", "debug_report"),
+            Bitmask::entry("PERFORMANCE_WARNING", 2).extension_old("EXT", "debug_report"),
+            Bitmask::entry("ERROR", 3).extension_old("EXT", "debug_report"),
+            Bitmask::entry("DEBUG", 4).extension_old("EXT", "debug_report"),
         ],
     )
-    .extension("EXT", "debug_report"),
+    .extension_old("EXT", "debug_report"),
     Bitmask::new(
         "DebugUtilsMessageSeverityFlags",
         "DebugUtilsMessageSeverityFlagBits",
         "DEBUG_UTILS_MESSAGE_SEVERITY",
         &[
-            Bitmask::entry("VERBOSE", 0).extension("EXT", "debug_utils"),
-            Bitmask::entry("INFO", 4).extension("EXT", "debug_utils"),
-            Bitmask::entry("WARNING", 8).extension("EXT", "debug_utils"),
-            Bitmask::entry("ERROR", 12).extension("EXT", "debug_utils"),
+            Bitmask::entry("VERBOSE", 0).extension_old("EXT", "debug_utils"),
+            Bitmask::entry("INFO", 4).extension_old("EXT", "debug_utils"),
+            Bitmask::entry("WARNING", 8).extension_old("EXT", "debug_utils"),
+            Bitmask::entry("ERROR", 12).extension_old("EXT", "debug_utils"),
         ],
     )
-    .extension("EXT", "debug_utils"),
+    .extension_old("EXT", "debug_utils"),
     Bitmask::new(
         "DebugUtilsMessageTypeFlags",
         "DebugUtilsMessageTypeFlagBits",
         "DEBUG_UTILS_MESSAGE_TYPE",
         &[
-            Bitmask::entry("GENERAL", 0).extension("EXT", "debug_utils"),
-            Bitmask::entry("VALIDATION", 1).extension("EXT", "debug_utils"),
-            Bitmask::entry("PERFORMANCE", 2).extension("EXT", "debug_utils"),
+            Bitmask::entry("GENERAL", 0).extension_old("EXT", "debug_utils"),
+            Bitmask::entry("VALIDATION", 1).extension_old("EXT", "debug_utils"),
+            Bitmask::entry("PERFORMANCE", 2).extension_old("EXT", "debug_utils"),
         ],
     )
-    .extension("EXT", "debug_utils"),
+    .extension_old("EXT", "debug_utils"),
     Bitmask::new(
         "DebugUtilsMessengerCallbackDataFlags",
         "DebugUtilsMessengerCallbackDataFlagBits",
         "DEBUG_UTILS_MESSENGER_CALLBACK_DATA",
         &[],
     )
-    .extension("EXT", "debug_utils"),
+    .extension_old("EXT", "debug_utils"),
     Bitmask::new(
         "DebugUtilsMessengerCreateFlags",
         "DebugUtilsMessengerCreateFlagBits",
         "DEBUG_UTILS_MESSENGER_CREATE",
         &[],
     )
-    .extension("EXT", "debug_utils"),
+    .extension_old("EXT", "debug_utils"),
     Bitmask::new(
         "DependencyFlags",
         "DependencyFlagBits",
@@ -1115,10 +1115,10 @@ const FLAGS: &[Bitmask] = &[
         &[
             Bitmask::entry("BY_REGION", 0),
             Bitmask::entry("VIEW_LOCAL", 1)
-                .extension("KHR", "multiview")
+                .extension_old("KHR", "multiview")
                 .promoted("1_1"),
             Bitmask::entry("DEVICE_GROUP", 2)
-                .extension("KHR", "device_group")
+                .extension_old("KHR", "device_group")
                 .promoted("1_1"),
         ],
     ),
@@ -1146,7 +1146,7 @@ const FLAGS: &[Bitmask] = &[
         "DESCRIPTOR_UPDATE_TEMPLATE_CREATE",
         &[],
     )
-    .extension("KHR", "descriptor_update_template")
+    .extension_old("KHR", "descriptor_update_template")
     .promoted("1_1"),
     Bitmask::new("DeviceCreateFlags", "DeviceCreateFlagBits", "DEVICE_CREATE", &[]),
     Bitmask::new(
@@ -1155,7 +1155,7 @@ const FLAGS: &[Bitmask] = &[
         "DEVICE_GROUP_PRESENT_MODE",
         &[],
     )
-    .extension("KHR", "device_group")
+    .extension_old("KHR", "device_group")
     .extra_requirements(&["VK_KHR_surface"]),
     Bitmask::new(
         "DeviceQueueCreateFlags",
@@ -1169,26 +1169,26 @@ const FLAGS: &[Bitmask] = &[
         "DISPLAY_MODE_CREATE",
         &[],
     )
-    .extension("KHR", "display"),
+    .extension_old("KHR", "display"),
     Bitmask::new(
         "DisplayPlaneAlphaFlags",
         "DisplayPlaneAlphaFlagBits",
         "DISPLAY_PLANE_ALPHA",
         &[
-            Bitmask::entry("OPAQUE", 0).extension("KHR", "display"),
-            Bitmask::entry("GLOBAL", 1).extension("KHR", "display"),
-            Bitmask::entry("PER_PIXEL", 2).extension("KHR", "display"),
-            Bitmask::entry("PER_PIXEL_PREMULTIPLIED", 3).extension("KHR", "display"),
+            Bitmask::entry("OPAQUE", 0).extension_old("KHR", "display"),
+            Bitmask::entry("GLOBAL", 1).extension_old("KHR", "display"),
+            Bitmask::entry("PER_PIXEL", 2).extension_old("KHR", "display"),
+            Bitmask::entry("PER_PIXEL_PREMULTIPLIED", 3).extension_old("KHR", "display"),
         ],
     )
-    .extension("KHR", "display"),
+    .extension_old("KHR", "display"),
     Bitmask::new(
         "DisplaySurfaceCreateFlags",
         "DisplaySurfaceCreateFlagBits",
         "DISPLAY_SURFACE_CREATE",
         &[],
     )
-    .extension("KHR", "display"),
+    .extension_old("KHR", "display"),
     Bitmask::new("EventCreateFlags", "EventCreateFlagBits", "EVENT_CREATE", &[]),
     Bitmask::new(
         "ExternalFenceFeatureFlags",
@@ -1196,14 +1196,14 @@ const FLAGS: &[Bitmask] = &[
         "EXTERNAL_FENCE_FEATURE",
         &[
             Bitmask::entry("EXPORTABLE", 0)
-                .extension("KHR", "external_fence_capabilities")
+                .extension_old("KHR", "external_fence_capabilities")
                 .promoted("1_1"),
             Bitmask::entry("IMPORTABLE", 1)
-                .extension("KHR", "external_fence_capabilities")
+                .extension_old("KHR", "external_fence_capabilities")
                 .promoted("1_1"),
         ],
     )
-    .extension("KHR", "external_fence_capabilities")
+    .extension_old("KHR", "external_fence_capabilities")
     .promoted("1_1"),
     Bitmask::new(
         "ExternalFenceHandleTypeFlags",
@@ -1211,20 +1211,20 @@ const FLAGS: &[Bitmask] = &[
         "EXTERNAL_FENCE_HANDLE_TYPE",
         &[
             Bitmask::entry("OPAQUE_FD", 0)
-                .extension("KHR", "external_fence_capabilities")
+                .extension_old("KHR", "external_fence_capabilities")
                 .promoted("1_1"),
             Bitmask::entry("OPAQUE_WIN32", 1)
-                .extension("KHR", "external_fence_capabilities")
+                .extension_old("KHR", "external_fence_capabilities")
                 .promoted("1_1"),
             Bitmask::entry("OPAQUE_WIN32_KMT", 2)
-                .extension("KHR", "external_fence_capabilities")
+                .extension_old("KHR", "external_fence_capabilities")
                 .promoted("1_1"),
             Bitmask::entry("SYNC_FD", 3)
-                .extension("KHR", "external_fence_capabilities")
+                .extension_old("KHR", "external_fence_capabilities")
                 .promoted("1_1"),
         ],
     )
-    .extension("KHR", "external_fence_capabilities")
+    .extension_old("KHR", "external_fence_capabilities")
     .promoted("1_1"),
     Bitmask::new(
         "ExternalMemoryFeatureFlags",
@@ -1232,17 +1232,17 @@ const FLAGS: &[Bitmask] = &[
         "EXTERNAL_MEMORY_FEATURE",
         &[
             Bitmask::entry("DEDICATED_ONLY", 0)
-                .extension("KHR", "external_memory_capabilities")
+                .extension_old("KHR", "external_memory_capabilities")
                 .promoted("1_1"),
             Bitmask::entry("EXPORTABLE", 1)
-                .extension("KHR", "external_memory_capabilities")
+                .extension_old("KHR", "external_memory_capabilities")
                 .promoted("1_1"),
             Bitmask::entry("IMPORTABLE", 2)
-                .extension("KHR", "external_memory_capabilities")
+                .extension_old("KHR", "external_memory_capabilities")
                 .promoted("1_1"),
         ],
     )
-    .extension("KHR", "external_memory_capabilities")
+    .extension_old("KHR", "external_memory_capabilities")
     .promoted("1_1"),
     Bitmask::new(
         "ExternalMemoryHandleTypeFlags",
@@ -1250,29 +1250,29 @@ const FLAGS: &[Bitmask] = &[
         "EXTERNAL_MEMORY_HANDLE_TYPE",
         &[
             Bitmask::entry("OPAQUE_FD", 0)
-                .extension("KHR", "external_memory_capabilities")
+                .extension_old("KHR", "external_memory_capabilities")
                 .promoted("1_1"),
             Bitmask::entry("OPAQUE_WIN32", 1)
-                .extension("KHR", "external_memory_capabilities")
+                .extension_old("KHR", "external_memory_capabilities")
                 .promoted("1_1"),
             Bitmask::entry("OPAQUE_WIN32_KMT", 2)
-                .extension("KHR", "external_memory_capabilities")
+                .extension_old("KHR", "external_memory_capabilities")
                 .promoted("1_1"),
             Bitmask::entry("D3D11_TEXTURE", 3)
-                .extension("KHR", "external_memory_capabilities")
+                .extension_old("KHR", "external_memory_capabilities")
                 .promoted("1_1"),
             Bitmask::entry("D3D11_TEXTURE_KMT", 4)
-                .extension("KHR", "external_memory_capabilities")
+                .extension_old("KHR", "external_memory_capabilities")
                 .promoted("1_1"),
             Bitmask::entry("D3D12_HEAP", 5)
-                .extension("KHR", "external_memory_capabilities")
+                .extension_old("KHR", "external_memory_capabilities")
                 .promoted("1_1"),
             Bitmask::entry("D3D12_RESOURCE", 6)
-                .extension("KHR", "external_memory_capabilities")
+                .extension_old("KHR", "external_memory_capabilities")
                 .promoted("1_1"),
         ],
     )
-    .extension("KHR", "external_memory_capabilities")
+    .extension_old("KHR", "external_memory_capabilities")
     .promoted("1_1"),
     Bitmask::new(
         "ExternalSemaphoreFeatureFlags",
@@ -1280,14 +1280,14 @@ const FLAGS: &[Bitmask] = &[
         "EXTERNAL_SEMAPHORE_FEATURE",
         &[
             Bitmask::entry("EXPORTABLE", 0)
-                .extension("KHR", "external_semaphore_capabilities")
+                .extension_old("KHR", "external_semaphore_capabilities")
                 .promoted("1_1"),
             Bitmask::entry("IMPORTABLE", 1)
-                .extension("KHR", "external_semaphore_capabilities")
+                .extension_old("KHR", "external_semaphore_capabilities")
                 .promoted("1_1"),
         ],
     )
-    .extension("KHR", "external_semaphore_capabilities")
+    .extension_old("KHR", "external_semaphore_capabilities")
     .promoted("1_1"),
     Bitmask::new(
         "ExternalSemaphoreHandleTypeFlags",
@@ -1295,25 +1295,25 @@ const FLAGS: &[Bitmask] = &[
         "EXTERNAL_SEMAPHORE_HANDLE_TYPE",
         &[
             Bitmask::entry("OPAQUE_FD", 0)
-                .extension("KHR", "external_semaphore_capabilities")
+                .extension_old("KHR", "external_semaphore_capabilities")
                 .promoted("1_1"),
             Bitmask::entry("OPAQUE_WIN32", 1)
-                .extension("KHR", "external_semaphore_capabilities")
+                .extension_old("KHR", "external_semaphore_capabilities")
                 .promoted("1_1"),
             Bitmask::entry("OPAQUE_WIN32_KMT", 2)
-                .extension("KHR", "external_semaphore_capabilities")
+                .extension_old("KHR", "external_semaphore_capabilities")
                 .promoted("1_1"),
             Bitmask::entry("D3D12_FENCE", 3)
-                .extension("KHR", "external_semaphore_capabilities")
+                .extension_old("KHR", "external_semaphore_capabilities")
                 .promoted("1_1"),
             // promoted special alias
             Bitmask::entry("D3D11_FENCE", 3).version_since("1_1"),
             Bitmask::entry("SYNC_FD", 4)
-                .extension("KHR", "external_semaphore_capabilities")
+                .extension_old("KHR", "external_semaphore_capabilities")
                 .promoted("1_1"),
         ],
     )
-    .extension("KHR", "external_semaphore_capabilities")
+    .extension_old("KHR", "external_semaphore_capabilities")
     .promoted("1_1"),
     Bitmask::new(
         "FenceCreateFlags",
@@ -1326,10 +1326,10 @@ const FLAGS: &[Bitmask] = &[
         "FenceImportFlagBits",
         "FENCE_IMPORT",
         &[Bitmask::entry("TEMPORARY", 0)
-            .extension("KHR", "external_fence")
+            .extension_old("KHR", "external_fence")
             .promoted("1_1")],
     )
-    .extension("KHR", "external_fence")
+    .extension_old("KHR", "external_fence")
     .promoted("1_1"),
     Bitmask::new(
         "FormatFeatureFlags",
@@ -1350,34 +1350,34 @@ const FLAGS: &[Bitmask] = &[
             Bitmask::entry("BLIT_DST", 11),
             Bitmask::entry("SAMPLED_IMAGE_FILTER_LINEAR", 12),
             Bitmask::entry("TRANSFER_SRC", 14)
-                .extension("KHR", "maintenance1")
+                .extension_old("KHR", "maintenance1")
                 .promoted("1_1"),
             Bitmask::entry("TRANSFER_DST", 15)
-                .extension("KHR", "maintenance1")
+                .extension_old("KHR", "maintenance1")
                 .promoted("1_1"),
             Bitmask::entry("MIDPOINT_CHROMA_SAMPLES", 17)
-                .extension("KHR", "sampler_ycbcr_conversion")
+                .extension_old("KHR", "sampler_ycbcr_conversion")
                 .promoted("1_1"),
             Bitmask::entry("SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER", 18)
-                .extension("KHR", "sampler_ycbcr_conversion")
+                .extension_old("KHR", "sampler_ycbcr_conversion")
                 .promoted("1_1"),
             Bitmask::entry("SAMPLED_IMAGE_YCBCR_CONVERSION_SEPARATE_RECONSTRUCTION_FILTER", 19)
-                .extension("KHR", "sampler_ycbcr_conversion")
+                .extension_old("KHR", "sampler_ycbcr_conversion")
                 .promoted("1_1"),
             Bitmask::entry("SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT", 20)
-                .extension("KHR", "sampler_ycbcr_conversion")
+                .extension_old("KHR", "sampler_ycbcr_conversion")
                 .promoted("1_1"),
             Bitmask::entry(
                 "SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_FORCEABLE",
                 21,
             )
-            .extension("KHR", "sampler_ycbcr_conversion")
+            .extension_old("KHR", "sampler_ycbcr_conversion")
             .promoted("1_1"),
             Bitmask::entry("DISJOINT", 22)
-                .extension("KHR", "sampler_ycbcr_conversion")
+                .extension_old("KHR", "sampler_ycbcr_conversion")
                 .promoted("1_1"),
             Bitmask::entry("COSITED_CHROMA_SAMPLES", 23)
-                .extension("KHR", "sampler_ycbcr_conversion")
+                .extension_old("KHR", "sampler_ycbcr_conversion")
                 .promoted("1_1"),
         ],
     ),
@@ -1392,7 +1392,7 @@ const FLAGS: &[Bitmask] = &[
         "InstanceCreateFlagBits",
         "INSTANCE_CREATE",
         &[Bitmask::entry("ENUMERATE_PORTABILITY", 0)
-            .extension("KHR", "portability_enumeration")
+            .extension_old("KHR", "portability_enumeration")
             .promoted("1_1")],
     ),
     Bitmask::new(
@@ -1405,13 +1405,13 @@ const FLAGS: &[Bitmask] = &[
             Bitmask::entry("STENCIL", 2),
             Bitmask::entry("METADATA", 3),
             Bitmask::entry("PLANE_0", 4)
-                .extension("KHR", "sampler_ycbcr_conversion")
+                .extension_old("KHR", "sampler_ycbcr_conversion")
                 .promoted("1_1"),
             Bitmask::entry("PLANE_1", 5)
-                .extension("KHR", "sampler_ycbcr_conversion")
+                .extension_old("KHR", "sampler_ycbcr_conversion")
                 .promoted("1_1"),
             Bitmask::entry("PLANE_2", 6)
-                .extension("KHR", "sampler_ycbcr_conversion")
+                .extension_old("KHR", "sampler_ycbcr_conversion")
                 .promoted("1_1"),
         ],
     ),
@@ -1441,23 +1441,23 @@ const FLAGS: &[Bitmask] = &[
             Bitmask::entry("MUTABLE_FORMAT", 3),
             Bitmask::entry("CUBE_COMPATIBLE", 4),
             Bitmask::entry("2D_ARRAY_COMPATIBLE", 5)
-                .extension("KHR", "maintenance1")
+                .extension_old("KHR", "maintenance1")
                 .promoted("1_1"),
             Bitmask::entry("SPLIT_INSTANCE_BIND_REGIONS", 6)
-                .extension("KHR", "device_group")
+                .extension_old("KHR", "device_group")
                 .extra_requirements(&["VK_KHR_bind_memory2"])
                 .promoted("1_1"),
             Bitmask::entry("BLOCK_TEXEL_VIEW_COMPATIBLE", 7)
-                .extension("KHR", "maintenance2")
+                .extension_old("KHR", "maintenance2")
                 .promoted("1_1"),
             Bitmask::entry("EXTENDED_USAGE", 8)
-                .extension("KHR", "maintenance2")
+                .extension_old("KHR", "maintenance2")
                 .promoted("1_1"),
             Bitmask::entry("DISJOINT", 9)
-                .extension("KHR", "sampler_ycbcr_conversion")
+                .extension_old("KHR", "sampler_ycbcr_conversion")
                 .promoted("1_1"),
             Bitmask::entry("ALIAS", 10)
-                .extension("KHR", "bind_memory2")
+                .extension_old("KHR", "bind_memory2")
                 .promoted("1_1"),
             Bitmask::entry("PROTECTED", 11),
         ],
@@ -1473,10 +1473,10 @@ const FLAGS: &[Bitmask] = &[
         "MemoryAllocateFlagBits",
         "MEMORY_ALLOCATE",
         &[Bitmask::entry("DEVICE_MASK", 0)
-            .extension("KHR", "device_group")
+            .extension_old("KHR", "device_group")
             .promoted("1_1")],
     )
-    .extension("KHR", "device_group")
+    .extension_old("KHR", "device_group")
     .promoted("1_1"),
     Bitmask::new(
         "MemoryHeapFlags",
@@ -1507,27 +1507,27 @@ const FLAGS: &[Bitmask] = &[
         "METAL_SURFACE_CREATE",
         &[],
     )
-    .extension("EXT", "metal_surface"),
+    .extension_old("EXT", "metal_surface"),
     Bitmask::new(
         "PeerMemoryFeatureFlags",
         "PeerMemoryFeatureFlagBits",
         "PEER_MEMORY_FEATURE",
         &[
             Bitmask::entry("COPY_SRC", 0)
-                .extension("KHR", "device_group")
+                .extension_old("KHR", "device_group")
                 .promoted("1_1"),
             Bitmask::entry("COPY_DST", 1)
-                .extension("KHR", "device_group")
+                .extension_old("KHR", "device_group")
                 .promoted("1_1"),
             Bitmask::entry("GENERIC_SRC", 2)
-                .extension("KHR", "device_group")
+                .extension_old("KHR", "device_group")
                 .promoted("1_1"),
             Bitmask::entry("GENERIC_DST", 3)
-                .extension("KHR", "device_group")
+                .extension_old("KHR", "device_group")
                 .promoted("1_1"),
         ],
     )
-    .extension("KHR", "device_group")
+    .extension_old("KHR", "device_group")
     .promoted("1_1"),
     Bitmask::new(
         "PipelineCacheCreateFlags",
@@ -1544,10 +1544,10 @@ const FLAGS: &[Bitmask] = &[
             Bitmask::entry("ALLOW_DERIVATIVES", 1),
             Bitmask::entry("DERIVATIVE", 2),
             Bitmask::entry("VIEW_INDEX_FROM_DEVICE_INDEX", 3)
-                .extension("KHR", "device_group")
+                .extension_old("KHR", "device_group")
                 .promoted("1_1"),
             Bitmask::entry("DISPATCH_BASE", 4)
-                .extension("KHR", "device_group")
+                .extension_old("KHR", "device_group")
                 .promoted("1_1"),
         ],
     ),
@@ -1647,81 +1647,81 @@ const FLAGS: &[Bitmask] = &[
         "PIPELINE_STAGE_2",
         &[
             Bitmask::entry("TOP_OF_PIPE", 0)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("DRAW_INDIRECT", 1)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("VERTEX_INPUT", 2)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("VERTEX_SHADER", 3)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("TESSELLATION_CONTROL_SHADER", 4)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("TESSELLATION_EVALUATION_SHADER", 5)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("GEOMETRY_SHADER", 6)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("FRAGMENT_SHADER", 7)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("EARLY_FRAGMENT_TESTS", 8)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("LATE_FRAGMENT_TESTS", 9)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("COLOR_ATTACHMENT_OUTPUT", 10)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("COMPUTE_SHADER", 11)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("ALL_TRANSFER", 12)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("BOTTOM_OF_PIPE", 13)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("HOST", 14)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("ALL_GRAPHICS", 15)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("ALL_COMMANDS", 16)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("COPY", 32)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("RESOLVE", 33)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("BLIT", 34)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("CLEAR", 35)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("INDEX_INPUT", 36)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("VERTEX_ATTRIBUTE_INPUT", 37)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
             Bitmask::entry("PRE_RASTERIZATION_SHADERS", 38)
-                .extension("KHR", "synchronization2")
+                .extension_old("KHR", "synchronization2")
                 .promoted("1_3"),
         ],
     )
     .long()
-    .extension("KHR", "synchronization2")
+    .extension_old("KHR", "synchronization2")
     .promoted("1_3"),
     Bitmask::new(
         "QueryControlFlags",
@@ -1808,10 +1808,10 @@ const FLAGS: &[Bitmask] = &[
         "SemaphoreImportFlagBits",
         "SEMAPHORE_IMPORT",
         &[Bitmask::entry("TEMPORARY", 0)
-            .extension("KHR", "external_semaphore")
+            .extension_old("KHR", "external_semaphore")
             .promoted("1_1")],
     )
-    .extension("KHR", "external_semaphore")
+    .extension_old("KHR", "external_semaphore")
     .promoted("1_1"),
     Bitmask::new(
         "ShaderModuleCreateFlags",
@@ -1875,10 +1875,10 @@ const FLAGS: &[Bitmask] = &[
         "SubmitFlagBits",
         "SUBMIT",
         &[Bitmask::entry("PROTECTED", 0)
-            .extension("KHR", "synchronization2")
+            .extension_old("KHR", "synchronization2")
             .promoted("1_3")],
     )
-    .extension("KHR", "synchronization2")
+    .extension_old("KHR", "synchronization2")
     .promoted("1_3"),
     Bitmask::new(
         "SubpassDescriptionFlags",
@@ -1891,53 +1891,53 @@ const FLAGS: &[Bitmask] = &[
         "SurfaceTransformFlagBits",
         "SURFACE_TRANSFORM",
         &[
-            Bitmask::entry("IDENTITY", 0).extension("KHR", "surface"),
-            Bitmask::entry("ROTATE_90", 1).extension("KHR", "surface"),
-            Bitmask::entry("ROTATE_180", 2).extension("KHR", "surface"),
-            Bitmask::entry("ROTATE_270", 3).extension("KHR", "surface"),
-            Bitmask::entry("HORIZONTAL_MIRROR", 4).extension("KHR", "surface"),
-            Bitmask::entry("HORIZONTAL_MIRROR_ROTATE_90", 5).extension("KHR", "surface"),
-            Bitmask::entry("HORIZONTAL_MIRROR_ROTATE_180", 6).extension("KHR", "surface"),
-            Bitmask::entry("HORIZONTAL_MIRROR_ROTATE_270", 7).extension("KHR", "surface"),
-            Bitmask::entry("INHERIT", 8).extension("KHR", "surface"),
+            Bitmask::entry("IDENTITY", 0).extension_old("KHR", "surface"),
+            Bitmask::entry("ROTATE_90", 1).extension_old("KHR", "surface"),
+            Bitmask::entry("ROTATE_180", 2).extension_old("KHR", "surface"),
+            Bitmask::entry("ROTATE_270", 3).extension_old("KHR", "surface"),
+            Bitmask::entry("HORIZONTAL_MIRROR", 4).extension_old("KHR", "surface"),
+            Bitmask::entry("HORIZONTAL_MIRROR_ROTATE_90", 5).extension_old("KHR", "surface"),
+            Bitmask::entry("HORIZONTAL_MIRROR_ROTATE_180", 6).extension_old("KHR", "surface"),
+            Bitmask::entry("HORIZONTAL_MIRROR_ROTATE_270", 7).extension_old("KHR", "surface"),
+            Bitmask::entry("INHERIT", 8).extension_old("KHR", "surface"),
         ],
     )
-    .extension("KHR", "surface"),
+    .extension_old("KHR", "surface"),
     Bitmask::new(
         "SwapchainCreateFlags",
         "SwapchainCreateFlagBits",
         "SWAPCHAIN_CREATE",
-        &[Bitmask::entry("SPLIT_INSTNACE_BIND_REGIONS", 0).extension("KHR", "device_group")],
+        &[Bitmask::entry("SPLIT_INSTNACE_BIND_REGIONS", 0).extension_old("KHR", "device_group")],
     )
-    .extension("KHR", "swapchain"),
+    .extension_old("KHR", "swapchain"),
     Bitmask::new(
         "WaylandSurfaceCreateFlags",
         "WaylandSurfaceCreateFlagBits",
         "WAYLAND_SURFACE_CREATE",
         &[],
     )
-    .extension("KHR", "wayland_surface"),
+    .extension_old("KHR", "wayland_surface"),
     Bitmask::new(
         "Win32SurfaceCreateFlags",
         "Win32SurfaceCreateFlagBits",
         "WIN32_SURFACE_CREATE",
         &[],
     )
-    .extension("KHR", "win32_surface"),
+    .extension_old("KHR", "win32_surface"),
     Bitmask::new(
         "XcbSurfaceCreateFlags",
         "XcbSurfaceCreateFlagBits",
         "XCB_SURFACE_CREATE",
         &[],
     )
-    .extension("KHR", "xcb_surface"),
+    .extension_old("KHR", "xcb_surface"),
     Bitmask::new(
         "XlibSurfaceCreateFlags",
         "XlibSurfaceCreateFlagBits",
         "XLIB_SURFACE_CREATE",
         &[],
     )
-    .extension("KHR", "xlib_surface"),
+    .extension_old("KHR", "xlib_surface"),
 ];
 
 const FUNC_POINTERS: &[FuncPointer] = &[
@@ -2030,7 +2030,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("deviceMask", "u32"),
         ],
     )
-    .extensions(&[("KHR", "device_group"), ("KHR", "swapchain")]),
+    .extensions_old(&[("KHR", "device_group"), ("KHR", "swapchain")]),
     Struct::new(
         "AllocationCallbacks",
         &[
@@ -2054,7 +2054,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(9, 0) as _,
         StructUsage::Source,
     )
-    .extensions(&[("KHR", "android_surface")]),
+    .extensions_old(&[("KHR", "android_surface")]),
     Struct::new(
         "ApplicationInfo",
         &[
@@ -2098,7 +2098,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("pDeviceIndices", "*const u32"),
         ],
     )
-    .extensions(&[("KHR", "device_group"), ("KHR", "bind_memory2")])
+    .extensions_old(&[("KHR", "device_group"), ("KHR", "bind_memory2")])
     .promoted("1_1"),
     Struct::typed(
         "BindBufferMemoryInfo",
@@ -2111,7 +2111,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("memoryOffset", DEVICE_SIZE_TYPE),
         ],
     )
-    .extensions(&[("KHR", "bind_memory2")])
+    .extensions_old(&[("KHR", "bind_memory2")])
     .promoted("1_1"),
     Struct::typed(
         "BindImageMemoryDeviceGroupInfo",
@@ -2125,7 +2125,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("pSplitInstanceBindRegions", "*const VkRect2D"),
         ],
     )
-    .extensions(&[("KHR", "device_group"), ("KHR", "bind_memory2")])
+    .extensions_old(&[("KHR", "device_group"), ("KHR", "bind_memory2")])
     .promoted("1_1"),
     Struct::typed(
         "BindImageMemoryInfo",
@@ -2138,7 +2138,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("memoryOffset", DEVICE_SIZE_TYPE),
         ],
     )
-    .extensions(&[("KHR", "bind_memory2")])
+    .extensions_old(&[("KHR", "bind_memory2")])
     .promoted("1_1"),
     Struct::typed(
         "BindImageMemorySwapchainInfo",
@@ -2150,7 +2150,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("imageIndex", "u32"),
         ],
     )
-    .extensions(&[("KHR", "device_group"), ("KHR", "swapchain")]),
+    .extensions_old(&[("KHR", "device_group"), ("KHR", "swapchain")]),
     Struct::typed(
         "BindImagePlaneMemoryInfo",
         "BIND_IMAGE_PLANE_MEMORY_INFO",
@@ -2158,7 +2158,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Source,
         &[Struct::member("planeAspect", "VkImageAspectFlags")],
     )
-    .extensions(&[("KHR", "sampler_ycbcr_conversion")])
+    .extensions_old(&[("KHR", "sampler_ycbcr_conversion")])
     .promoted("1_1"),
     Struct::new(
         "BindSparseInfo",
@@ -2227,7 +2227,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Source,
         &[Struct::member("buffer", "VkBuffer")],
     )
-    .extensions(&[("KHR", "get_memory_requirements2")])
+    .extensions_old(&[("KHR", "get_memory_requirements2")])
     .promoted("1_1"),
     Struct::new(
         "BufferViewCreateInfo",
@@ -2346,7 +2346,7 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .stype("D3D12_FENCE_SUBMIT_INFO", vk_ext_enum(79, 2) as _, StructUsage::Source)
-    .extensions(&[("KHR", "external_semaphore_win32")]),
+    .extensions_old(&[("KHR", "external_semaphore_win32")]),
     Struct::new(
         "DebugReportCallbackCreateInfo",
         &[
@@ -2360,7 +2360,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(12, 0) as _,
         StructUsage::Source,
     )
-    .extensions(&[("EXT", "debug_report")]),
+    .extensions_old(&[("EXT", "debug_report")]),
     Struct::new(
         "DebugUtilsLabel",
         &[
@@ -2369,7 +2369,7 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .stype("DEBUG_UTILS_LABEL", vk_ext_enum(129, 2) as _, StructUsage::Source)
-    .extensions(&[("EXT", "debug_utils")]),
+    .extensions_old(&[("EXT", "debug_utils")]),
     Struct::new(
         "DebugUtilsMessengerCallbackData",
         &[
@@ -2390,7 +2390,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(129, 3) as _,
         StructUsage::Source,
     )
-    .extensions(&[("EXT", "debug_utils")]),
+    .extensions_old(&[("EXT", "debug_utils")]),
     Struct::new(
         "DebugUtilsMessengerCreateInfo",
         &[
@@ -2406,7 +2406,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(129, 4) as _,
         StructUsage::Source,
     )
-    .extensions(&[("EXT", "debug_utils")]),
+    .extensions_old(&[("EXT", "debug_utils")]),
     Struct::new(
         "DebugUtilsObjectNameInfo",
         &[
@@ -2420,7 +2420,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(129, 0) as _,
         StructUsage::Source,
     )
-    .extensions(&[("EXT", "debug_utils")]),
+    .extensions_old(&[("EXT", "debug_utils")]),
     Struct::new(
         "DebugUtilsObjectTagInfo",
         &[
@@ -2436,7 +2436,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(129, 1) as _,
         StructUsage::Source,
     )
-    .extensions(&[("EXT", "debug_utils")]),
+    .extensions_old(&[("EXT", "debug_utils")]),
     Struct::new(
         "DescriptorBufferInfo",
         &[
@@ -2505,7 +2505,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Sink,
         &[Struct::member("supported", "VkBool32")],
     )
-    .extensions(&[("KHR", "maintenance3")])
+    .extensions_old(&[("KHR", "maintenance3")])
     .promoted("1_1"),
     Struct::typed(
         "DescriptorUpdateTemplateCreateInfo",
@@ -2523,7 +2523,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("set", "u32"),
         ],
     )
-    .extensions(&[("KHR", "descriptor_update_template")])
+    .extensions_old(&[("KHR", "descriptor_update_template")])
     .promoted("1_1"),
     Struct::new(
         "DescriptorUpdateTemplateEntry",
@@ -2536,7 +2536,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("stride", "usize"),
         ],
     )
-    .extensions(&[("KHR", "descriptor_update_template")])
+    .extensions_old(&[("KHR", "descriptor_update_template")])
     .promoted("1_1"),
     Struct::new(
         "DeviceCreateInfo",
@@ -2562,7 +2562,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("memoryDeviceIndex", "u32"),
         ],
     )
-    .extensions(&[("KHR", "device_group")])
+    .extensions_old(&[("KHR", "device_group")])
     .promoted("1_1"),
     Struct::typed(
         "DeviceGroupCommandBufferBeginInfo",
@@ -2571,7 +2571,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Source,
         &[Struct::member("deviceMask", "u32")],
     )
-    .extensions(&[("KHR", "device_group")])
+    .extensions_old(&[("KHR", "device_group")])
     .promoted("1_1"),
     Struct::typed(
         "DeviceGroupCreateInfo",
@@ -2583,7 +2583,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("pPhysicalDevices", "*const VkPhysicalDevice"),
         ],
     )
-    .extensions(&[("KHR", "device_group_creation")])
+    .extensions_old(&[("KHR", "device_group_creation")])
     .promoted("1_1"),
     Struct::typed(
         "DeviceGroupPresentCapabilities",
@@ -2595,7 +2595,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("modes", "VkDeviceGroupPresentModeFlagsKHR"),
         ],
     )
-    .extensions(&[("KHR", "device_group"), ("KHR", "surface")]),
+    .extensions_old(&[("KHR", "device_group"), ("KHR", "surface")]),
     Struct::typed(
         "DeviceGroupPresentInfo",
         "DEVICE_GROUP_PRESENT_INFO",
@@ -2607,7 +2607,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("mode", "VkDeviceGroupPresentModeFlagBitsKHR"),
         ],
     )
-    .extensions(&[("KHR", "device_group"), ("KHR", "swapchain")]),
+    .extensions_old(&[("KHR", "device_group"), ("KHR", "swapchain")]),
     Struct::typed(
         "DeviceGroupRenderPassBeginInfo",
         "DEVICE_GROUP_RENDER_PASS_BEGIN_INFO",
@@ -2619,7 +2619,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("pDeviceRenderAreas", "*const VkRect2D"),
         ],
     )
-    .extensions(&[("KHR", "device_group")])
+    .extensions_old(&[("KHR", "device_group")])
     .promoted("1_1"),
     Struct::typed(
         "DeviceGroupSubmitInfo",
@@ -2635,7 +2635,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("pSignalSemaphoreDeviceIndices", "*const u32"),
         ],
     )
-    .extensions(&[("KHR", "device_group")])
+    .extensions_old(&[("KHR", "device_group")])
     .promoted("1_1"),
     Struct::typed(
         "DeviceGroupSwapchainCreateInfo",
@@ -2644,7 +2644,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Source,
         &[Struct::member("modes", "VkDeviceGroupPresentModeFlagsKHR")],
     )
-    .extensions(&[("KHR", "device_group"), ("KHR", "swapchain")]),
+    .extensions_old(&[("KHR", "device_group"), ("KHR", "swapchain")]),
     Struct::new(
         "DeviceQueueCreateInfo",
         &[
@@ -2671,7 +2671,7 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .stype("DISPLAY_MODE_CREATE_INFO", vk_ext_enum(3, 0) as _, StructUsage::Source)
-    .extensions(&[("KHR", "display")]),
+    .extensions_old(&[("KHR", "display")]),
     Struct::new(
         "DisplayModeParameters",
         &[
@@ -2679,7 +2679,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("refreshRate", "u32"),
         ],
     )
-    .extensions(&[("KHR", "display")]),
+    .extensions_old(&[("KHR", "display")]),
     Struct::new(
         "DisplayModeProperties",
         &[
@@ -2687,7 +2687,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("parameters", "VkDisplayModeParametersKHR"),
         ],
     )
-    .extensions(&[("KHR", "display")]),
+    .extensions_old(&[("KHR", "display")]),
     Struct::new(
         "DisplayPlaneCapabilities",
         &[
@@ -2702,7 +2702,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("maxDstExtent", "VkExtent2D"),
         ],
     )
-    .extensions(&[("KHR", "display")]),
+    .extensions_old(&[("KHR", "display")]),
     Struct::new(
         "DisplayPlaneProperties",
         &[
@@ -2710,7 +2710,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("currentStackIndex", "u32"),
         ],
     )
-    .extensions(&[("KHR", "display")]),
+    .extensions_old(&[("KHR", "display")]),
     Struct::new(
         "DisplayProperties",
         &[
@@ -2723,7 +2723,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("persistentContent", "VkBool32"),
         ],
     )
-    .extensions(&[("KHR", "display")]),
+    .extensions_old(&[("KHR", "display")]),
     Struct::new(
         "DisplaySurfaceCreateInfo",
         &[
@@ -2742,7 +2742,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(3, 1) as _,
         StructUsage::Source,
     )
-    .extensions(&[("KHR", "display")]),
+    .extensions_old(&[("KHR", "display")]),
     Struct::new(
         "DrawIndexedIndirectCommand",
         &[
@@ -2771,7 +2771,7 @@ const STRUCTS: &[Struct] = &[
         "ExportFenceCreateInfo",
         &[Struct::member("handleTypes", "VkExternalFenceHandleTypeFlagsKHR")],
     )
-    .extensions(&[("KHR", "external_fence")])
+    .extensions_old(&[("KHR", "external_fence")])
     .promoted("1_1"),
     Struct::new(
         "ExportFenceWin32HandleInfo",
@@ -2786,7 +2786,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(115, 1) as _,
         StructUsage::Source,
     )
-    .extensions(&[("KHR", "external_fence_win32")]),
+    .extensions_old(&[("KHR", "external_fence_win32")]),
     Struct::new(
         "VkExportMemoryAllocateInfo",
         &[Struct::member("handleTypes", "VkExternalMemoryHandleTypeFlagsKHR")],
@@ -2796,7 +2796,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(73, 2) as _,
         StructUsage::Source,
     )
-    .extensions(&[("KHR", "external_memory")])
+    .extensions_old(&[("KHR", "external_memory")])
     .promoted("1_1"),
     Struct::new(
         "ExportMemoryWin32HandleInfo",
@@ -2811,7 +2811,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(74, 1) as _,
         StructUsage::Source,
     )
-    .extensions(&[("KHR", "external_memory_win32")]),
+    .extensions_old(&[("KHR", "external_memory_win32")]),
     Struct::new(
         "ExportSemaphoreCreateInfo",
         &[Struct::member("handleType", "VkExternalSemaphoreHandleTypeFlagsKHR")],
@@ -2821,7 +2821,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(78, 0) as _,
         StructUsage::Source,
     )
-    .extensions(&[("KHR", "external_semaphore")])
+    .extensions_old(&[("KHR", "external_semaphore")])
     .promoted("1_1"),
     Struct::new(
         "ExportSemaphoreWin32HandleInfo",
@@ -2836,7 +2836,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(79, 1) as _,
         StructUsage::Source,
     )
-    .extensions(&[("KHR", "external_semaphore_win32")]),
+    .extensions_old(&[("KHR", "external_semaphore_win32")]),
     Struct::new(
         "ExtensionProperties",
         &[
@@ -2870,7 +2870,7 @@ const STRUCTS: &[Struct] = &[
         )],
     )
     .stype("EXTERNAL_BUFFER_PROPERTIES", vk_ext_enum(72, 3) as _, StructUsage::Sink)
-    .extensions(&[("KHR", "external_memory_capabilities")])
+    .extensions_old(&[("KHR", "external_memory_capabilities")])
     .promoted("1_1"),
     Struct::new(
         "ExternalFenceProperties",
@@ -2881,7 +2881,7 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .stype("EXTERNAL_FENCE_PROPERTIES", vk_ext_enum(113, 1) as _, StructUsage::Sink)
-    .extensions(&[("KHR", "external_fence_capabilities")])
+    .extensions_old(&[("KHR", "external_fence_capabilities")])
     .promoted("1_1"),
     Struct::new(
         "ExternalImageFormatProperties",
@@ -2895,7 +2895,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(72, 1) as _,
         StructUsage::Sink,
     )
-    .extensions(&[("KHR", "external_memory_capabilities")])
+    .extensions_old(&[("KHR", "external_memory_capabilities")])
     .promoted("1_1"),
     Struct::new(
         "ExternalMemoryBufferCreateInfo",
@@ -2906,7 +2906,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(73, 0) as _,
         StructUsage::Source,
     )
-    .extensions(&[("KHR", "external_memory")])
+    .extensions_old(&[("KHR", "external_memory")])
     .promoted("1_1"),
     Struct::new(
         "ExternalMemoryImageCreateInfo",
@@ -2917,7 +2917,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(73, 1) as _,
         StructUsage::Source,
     )
-    .extensions(&[("KHR", "external_memory")])
+    .extensions_old(&[("KHR", "external_memory")])
     .promoted("1_1"),
     Struct::new(
         "ExternalMemoryProperties",
@@ -2927,7 +2927,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("compatibleHandleTypes", "VkExternalMemoryHandleTypeFlagsKHR"),
         ],
     )
-    .extensions(&[("KHR", "external_memory_capabilities")])
+    .extensions_old(&[("KHR", "external_memory_capabilities")])
     .promoted("1_1"),
     Struct::new(
         "ExternalSemaphoreProperties",
@@ -2942,7 +2942,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(77, 1) as _,
         StructUsage::Sink,
     )
-    .extensions(&[("KHR", "external_semaphore_capabilities")])
+    .extensions_old(&[("KHR", "external_semaphore_capabilities")])
     .promoted("1_1"),
     Struct::new("FenceCreateInfo", &[Struct::member("flags", "VkFenceCreateFlags")]).stype(
         "FENCE_CREATE_INFO",
@@ -2957,7 +2957,7 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .stype("FENCE_GET_FD_INFO", vk_ext_enum(116, 1) as _, StructUsage::Source)
-    .extensions(&[("KHR", "external_fence_fd")]),
+    .extensions_old(&[("KHR", "external_fence_fd")]),
     Struct::new(
         "FenceGetWin32HandleInfo",
         &[
@@ -2970,7 +2970,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(115, 2) as _,
         StructUsage::Source,
     )
-    .extensions(&[("KHR", "external_fence_win32")]),
+    .extensions_old(&[("KHR", "external_fence_win32")]),
     Struct::new(
         "FormatProperties",
         &[
@@ -2986,7 +2986,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Sink,
         &[Struct::member("formatProperties", "VkFormatProperties")],
     )
-    .extensions(&[("KHR", "get_physical_device_properties2")])
+    .extensions_old(&[("KHR", "get_physical_device_properties2")])
     .promoted("1_1"),
     Struct::new(
         "FramebufferCreateInfo",
@@ -3079,7 +3079,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Sink,
         &[Struct::member("imageFormatProperties", "VkImageFormatProperties")],
     )
-    .extensions(&[("KHR", "get_physical_device_properties2")])
+    .extensions_old(&[("KHR", "get_physical_device_properties2")])
     .promoted("1_1"),
     Struct::typed(
         "ImageMemoryBarrier",
@@ -3104,7 +3104,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Source,
         &[Struct::member("image", "VkImage")],
     )
-    .extensions(&[("KHR", "get_memory_requirements2")])
+    .extensions_old(&[("KHR", "get_memory_requirements2")])
     .promoted("1_1"),
     Struct::typed(
         "ImagePlaneMemoryRequirementsInfo",
@@ -3113,7 +3113,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Source,
         &[Struct::member("planeAspect", "VkImageAspectFlagBits")],
     )
-    .extensions(&[("KHR", "sampler_ycbcr_conversion")])
+    .extensions_old(&[("KHR", "sampler_ycbcr_conversion")])
     .promoted("1_1"),
     Struct::new(
         "ImageResolve",
@@ -3132,7 +3132,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Source,
         &[Struct::member("image", "VkImage")],
     )
-    .extensions(&[("KHR", "get_memory_requirements2")])
+    .extensions_old(&[("KHR", "get_memory_requirements2")])
     .promoted("1_1"),
     Struct::new(
         "ImageSubresource",
@@ -3168,7 +3168,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Source,
         &[Struct::member("swapchain", "VkSwapchainKHR")],
     )
-    .extensions(&[("KHR", "device_group"), ("KHR", "swapchain")]),
+    .extensions_old(&[("KHR", "device_group"), ("KHR", "swapchain")]),
     Struct::new(
         "ImageViewCreateInfo",
         &[
@@ -3191,7 +3191,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("sliceCount", "u32"),
         ],
     )
-    .extensions(&[("KHR", "maintenance2")])
+    .extensions_old(&[("KHR", "maintenance2")])
     .promoted("1_1"),
     Struct::new(
         "ImportFenceFdInfo",
@@ -3203,7 +3203,7 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .stype("IMPORT_FENCE_FD_INFO", vk_ext_enum(116, 0) as _, StructUsage::Source)
-    .extensions(&[("KHR", "external_fence_fd")]),
+    .extensions_old(&[("KHR", "external_fence_fd")]),
     Struct::new(
         "ImportFenceWin32HandleInfo",
         &[
@@ -3219,7 +3219,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(115, 0) as _,
         StructUsage::Source,
     )
-    .extensions(&[("KHR", "external_fence_win32")]),
+    .extensions_old(&[("KHR", "external_fence_win32")]),
     Struct::new(
         "ImportMemoryFdInfo",
         &[
@@ -3228,7 +3228,7 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .stype("IMPORT_MEMORY_FD_INFO", vk_ext_enum(75, 0) as _, StructUsage::Source)
-    .extensions(&[("KHR", "external_memory_fd")]),
+    .extensions_old(&[("KHR", "external_memory_fd")]),
     Struct::new(
         "ImportMemoryWin32HandleInfo",
         &[
@@ -3242,7 +3242,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(74, 0) as _,
         StructUsage::Source,
     )
-    .extensions(&[("KHR", "external_memory_win32")]),
+    .extensions_old(&[("KHR", "external_memory_win32")]),
     Struct::new(
         "ImportSemaphoreFdInfo",
         &[
@@ -3253,7 +3253,7 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .stype("IMPORT_SEMAPHORE_FD_INFO", vk_ext_enum(80, 0) as _, StructUsage::Source)
-    .extensions(&[("KHR", "external_semaphore_fd")]),
+    .extensions_old(&[("KHR", "external_semaphore_fd")]),
     Struct::new(
         "ImportSemaphoreWin32HandleInfo",
         &[
@@ -3269,7 +3269,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(79, 0) as _,
         StructUsage::Source,
     )
-    .extensions(&[("KHR", "external_semaphore_win32")]),
+    .extensions_old(&[("KHR", "external_semaphore_win32")]),
     Struct::new(
         "InputAttachmentAspectReference",
         &[
@@ -3278,7 +3278,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("aspectMask", "VkImageAspectFlags"),
         ],
     )
-    .extensions(&[("KHR", "maintenance2")])
+    .extensions_old(&[("KHR", "maintenance2")])
     .promoted("1_1"),
     Struct::new(
         "InstanceCreateInfo",
@@ -3322,7 +3322,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(61, 0) as _,
         StructUsage::Source,
     )
-    .extensions(&[("KHR", "device_group")])
+    .extensions_old(&[("KHR", "device_group")])
     .promoted("1_1"),
     Struct::new(
         "MemoryAllocateInfo",
@@ -3350,7 +3350,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("buffer", "Option<VkBuffer>"),
         ],
     )
-    .extensions(&[("KHR", "dedicated_allocation")])
+    .extensions_old(&[("KHR", "dedicated_allocation")])
     .promoted("1_1"),
     Struct::typed(
         "MemoryDedicatedRequirements",
@@ -3362,11 +3362,11 @@ const STRUCTS: &[Struct] = &[
             Struct::member("requiresDedicatedAllocation", "VkBool32"),
         ],
     )
-    .extensions(&[("KHR", "dedicated_allocation")])
+    .extensions_old(&[("KHR", "dedicated_allocation")])
     .promoted("1_1"),
     Struct::new("MemoryFdProperties", &[Struct::member("memoryTypeBits", "u32")])
         .stype("MEMORY_FD_PROPERTIES", vk_ext_enum(75, 1) as _, StructUsage::Sink)
-        .extensions(&[("KHR", "external_memory_fd")]),
+        .extensions_old(&[("KHR", "external_memory_fd")]),
     Struct::new(
         "MemoryGetFdInfo",
         &[
@@ -3375,7 +3375,7 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .stype("MEMORY_GET_FD_INFO", vk_ext_enum(75, 2) as _, StructUsage::Source)
-    .extensions(&[("KHR", "external_memory_fd")]),
+    .extensions_old(&[("KHR", "external_memory_fd")]),
     Struct::new(
         "MemoryGetWin32HandleInfo",
         &[
@@ -3388,7 +3388,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(74, 3) as _,
         StructUsage::Source,
     )
-    .extensions(&[("KHR", "external_memory_win32")]),
+    .extensions_old(&[("KHR", "external_memory_win32")]),
     Struct::new(
         "MemoryRequirements",
         &[
@@ -3404,7 +3404,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Sink,
         &[Struct::member("memoryRequirements", "VkMemoryRequirements")],
     )
-    .extensions(&[("KHR", "get_memory_requirements2")])
+    .extensions_old(&[("KHR", "get_memory_requirements2")])
     .promoted("1_1"),
     Struct::new(
         "MemoryType",
@@ -3429,7 +3429,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(74, 2) as _,
         StructUsage::Sink,
     )
-    .extensions(&[("KHR", "external_memory_win32")]),
+    .extensions_old(&[("KHR", "external_memory_win32")]),
     Struct::typed(
         "MetalSurfaceCreateInfo",
         "METAL_SURFACE_CREATE_INFO",
@@ -3440,7 +3440,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("pLayer", "*const core::ffi::c_void"),
         ],
     )
-    .extensions(&[("EXT", "metal_surface")]),
+    .extensions_old(&[("EXT", "metal_surface")]),
     Struct::new("Offset2D", &[Struct::member("x", "i32"), Struct::member("y", "i32")])
         .copyable()
         .equatable()
@@ -3468,7 +3468,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("storageInputOutput16", "VkBool32"),
         ],
     )
-    .extensions(&[("KHR", "16bit_storage")])
+    .extensions_old(&[("KHR", "16bit_storage")])
     .promoted("1_1"),
     Struct::new(
         "PhysicalDeviceExternalBufferInfo",
@@ -3483,7 +3483,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(72, 2) as _,
         StructUsage::Source,
     )
-    .extensions(&[("KHR", "external_memory_capabilities")])
+    .extensions_old(&[("KHR", "external_memory_capabilities")])
     .promoted("1_1"),
     Struct::new(
         "PhysicalDeviceExternalFenceInfo",
@@ -3494,7 +3494,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(113, 0) as _,
         StructUsage::Source,
     )
-    .extensions(&[("KHR", "external_fence_capabilities")])
+    .extensions_old(&[("KHR", "external_fence_capabilities")])
     .promoted("1_1"),
     Struct::new(
         "PhysicalDeviceExternalImageFormatInfo",
@@ -3505,7 +3505,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(72, 0) as _,
         StructUsage::Source,
     )
-    .extensions(&[("KHR", "external_memory_capabilities")])
+    .extensions_old(&[("KHR", "external_memory_capabilities")])
     .promoted("1_1"),
     Struct::new(
         "PhysicalDeviceExternalSemaphoreInfo",
@@ -3516,7 +3516,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(77, 0) as _,
         StructUsage::Source,
     )
-    .extensions(&[("KHR", "external_semaphore_capabilities")])
+    .extensions_old(&[("KHR", "external_semaphore_capabilities")])
     .promoted("1_1"),
     Struct::new(
         "PhysicalDeviceFeatures",
@@ -3586,7 +3586,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Both,
         &[Struct::member("features", "VkPhysicalDeviceFeatures")],
     )
-    .extensions(&[("KHR", "get_physical_device_properties2")])
+    .extensions_old(&[("KHR", "get_physical_device_properties2")])
     .promoted("1_1"),
     Struct::typed(
         "PhysicalDeviceGroupProperties",
@@ -3599,7 +3599,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("subsetAllocation", "VkBool32"),
         ],
     )
-    .extensions(&[("KHR", "device_group_creation")])
+    .extensions_old(&[("KHR", "device_group_creation")])
     .promoted("1_1"),
     Struct::typed(
         "PhysicalDeviceImageFormatInfo2",
@@ -3614,7 +3614,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("flags", "VkImageCreateFlags"),
         ],
     )
-    .extensions(&[("KHR", "get_physical_device_properties2")])
+    .extensions_old(&[("KHR", "get_physical_device_properties2")])
     .promoted("1_1"),
     Struct::new(
         "PhysicalDeviceLimits",
@@ -3737,7 +3737,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("maxMemoryAllocationSize", DEVICE_SIZE_TYPE),
         ],
     )
-    .extensions(&[("KHR", "maintenance3")])
+    .extensions_old(&[("KHR", "maintenance3")])
     .promoted("1_1"),
     Struct::new(
         "PhysicalDeviceMemoryProperties",
@@ -3755,7 +3755,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Sink,
         &[Struct::member("memoryProperties", "VkPhysicalDeviceMemoryProperties")],
     )
-    .extensions(&[("KHR", "get_physical_device_properties2")])
+    .extensions_old(&[("KHR", "get_physical_device_properties2")])
     .promoted("1_1"),
     Struct::typed(
         "PhysicalDeviceMultiviewFeatures",
@@ -3768,7 +3768,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("multiviewTessellationShader", "VkBool32"),
         ],
     )
-    .extensions(&[("KHR", "multiview")])
+    .extensions_old(&[("KHR", "multiview")])
     .promoted("1_1"),
     Struct::typed(
         "PhysicalDeviceMultiviewProperties",
@@ -3780,7 +3780,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("maxMultiviewInstanceIndex", "u32"),
         ],
     )
-    .extensions(&[("KHR", "multiview")])
+    .extensions_old(&[("KHR", "multiview")])
     .promoted("1_1"),
     Struct::typed(
         "PhysicalDevicePointClippingProperties",
@@ -3789,7 +3789,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Sink,
         &[Struct::member("pointClippingBehavior", "VkPointClippingBehaviorKHR")],
     )
-    .extensions(&[("KHR", "maintenance2")])
+    .extensions_old(&[("KHR", "maintenance2")])
     .promoted("1_1"),
     Struct::new(
         "PhysicalDeviceProperties",
@@ -3812,7 +3812,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Sink,
         &[Struct::member("properties", "VkPhysicalDeviceProperties")],
     )
-    .extensions(&[("KHR", "get_physical_device_properties2")])
+    .extensions_old(&[("KHR", "get_physical_device_properties2")])
     .promoted("1_1"),
     Struct::typed(
         "PhysicalDeviceSamplerYcbcrConversionFeatures",
@@ -3821,7 +3821,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Both,
         &[Struct::member("samplerYcbcrConversion", "VkBool32")],
     )
-    .extensions(&[("KHR", "sampler_ycbcr_conversion")])
+    .extensions_old(&[("KHR", "sampler_ycbcr_conversion")])
     .promoted("1_1"),
     Struct::typed(
         "PhysicalDeviceSparseImageFormatInfo2",
@@ -3836,7 +3836,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("tiling", "VkImageTiling"),
         ],
     )
-    .extensions(&[("KHR", "get_physical_device_properties2")])
+    .extensions_old(&[("KHR", "get_physical_device_properties2")])
     .promoted("1_1"),
     Struct::new(
         "PhysicalDeviceSparseProperties",
@@ -3857,7 +3857,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(120, 0) as _,
         StructUsage::Source,
     )
-    .extensions(&[("KHR", "get_surface_capabilities2")]),
+    .extensions_old(&[("KHR", "get_surface_capabilities2")]),
     Struct::typed(
         "PhysicalDeviceVariablePointersFeatures",
         "PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES",
@@ -3868,7 +3868,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("variablePointers", "VkBool32"),
         ],
     )
-    .extensions(&[("KHR", "variable_pointers")])
+    .extensions_old(&[("KHR", "variable_pointers")])
     .promoted("1_1"),
     Struct::new(
         "PipelineCacheCreateInfo",
@@ -3997,7 +3997,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Source,
         &[Struct::member("domainOrigin", "VkTessellationDomainOriginKHR")],
     )
-    .extensions(&[("KHR", "maintenance2")])
+    .extensions_old(&[("KHR", "maintenance2")])
     .promoted("1_1"),
     Struct::new(
         "PipelineTessellationStateCreateInfo",
@@ -4044,7 +4044,7 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .stype("PRESENT_INFO", vk_ext_enum(2, 1) as _, StructUsage::Source)
-    .extensions(&[("KHR", "swapchain")]),
+    .extensions_old(&[("KHR", "swapchain")]),
     Struct::new(
         "PushConstantRange",
         &[
@@ -4079,7 +4079,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Sink,
         &[Struct::member("queueFamilyProperties", "VkQueueFamilyProperties")],
     )
-    .extensions(&[("KHR", "get_physical_device_properties2")])
+    .extensions_old(&[("KHR", "get_physical_device_properties2")])
     .promoted("1_1"),
     Struct::new(
         "Rect2D",
@@ -4125,7 +4125,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("pAspectReferences", "*const VkInputAttachmentAspectReferenceKHR"),
         ],
     )
-    .extensions(&[("KHR", "maintenance2")])
+    .extensions_old(&[("KHR", "maintenance2")])
     .promoted("1_1"),
     Struct::typed(
         "RenderPassMultiviewCreateInfo",
@@ -4141,7 +4141,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("pCorrelationMasks", "*const u32"),
         ],
     )
-    .extensions(&[("KHR", "multiview")])
+    .extensions_old(&[("KHR", "multiview")])
     .promoted("1_1"),
     Struct::new(
         "SamplerCreateInfo",
@@ -4181,7 +4181,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("forceExplicitReconstruction", "VkBool32"),
         ],
     )
-    .extensions(&[("KHR", "sampler_ycbcr_conversion")])
+    .extensions_old(&[("KHR", "sampler_ycbcr_conversion")])
     .promoted("1_1"),
     Struct::typed(
         "SamplerYcbcrConversionImageFormatProperties",
@@ -4190,7 +4190,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Sink,
         &[Struct::member("combinedImageSamplerDescriptorCount", "u32")],
     )
-    .extensions(&[("KHR", "sampler_ycbcr_conversion")])
+    .extensions_old(&[("KHR", "sampler_ycbcr_conversion")])
     .promoted("1_1"),
     Struct::typed(
         "SamplerYcbcrConversionInfo",
@@ -4199,7 +4199,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Source,
         &[Struct::member("conversion", "VkSamplerYcbcrConversion")],
     )
-    .extensions(&[("KHR", "sampler_ycbcr_conversion")])
+    .extensions_old(&[("KHR", "sampler_ycbcr_conversion")])
     .promoted("1_1"),
     Struct::new(
         "SemaphoreCreateInfo",
@@ -4214,7 +4214,7 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .stype("SEMAPHORE_GET_FD_INFO", vk_ext_enum(80, 1) as _, StructUsage::Source)
-    .extensions(&[("KHR", "external_semaphore_fd")]),
+    .extensions_old(&[("KHR", "external_semaphore_fd")]),
     Struct::new(
         "SemaphoreGetWin32HandleInfo",
         &[
@@ -4227,7 +4227,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(79, 3) as _,
         StructUsage::Source,
     )
-    .extensions(&[("KHR", "external_semaphore_win32")]),
+    .extensions_old(&[("KHR", "external_semaphore_win32")]),
     Struct::new(
         "ShaderModuleCreateInfo",
         &[
@@ -4260,7 +4260,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Sink,
         &[Struct::member("properties", "VkSparseImageFormatProperties")],
     )
-    .extensions(&[("KHR", "get_physical_device_properties2")])
+    .extensions_old(&[("KHR", "get_physical_device_properties2")])
     .promoted("1_1"),
     Struct::new(
         "SparseImageMemoryBind",
@@ -4298,7 +4298,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Sink,
         &[Struct::member("memoryRequirements", "VkSparseImageMemoryRequirements")],
     )
-    .extensions(&[("KHR", "get_memory_requirements2")])
+    .extensions_old(&[("KHR", "get_memory_requirements2")])
     .promoted("1_1"),
     Struct::new(
         "SparseImageOpaqueMemoryBindInfo",
@@ -4412,7 +4412,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("supportedUsageFlags", "VkImageUsageFlags"),
         ],
     )
-    .extensions(&[("KHR", "surface")]),
+    .extensions_old(&[("KHR", "surface")]),
     Struct::typed(
         "SurfaceCapabilities2",
         "SURFACE_CAPABILITIES_2",
@@ -4420,7 +4420,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Sink,
         &[Struct::member("surfaceCapabilities", "VkSurfaceCapabilitiesKHR")],
     )
-    .extensions(&[("KHR", "get_surface_capabilities2")]),
+    .extensions_old(&[("KHR", "get_surface_capabilities2")]),
     Struct::new(
         "SurfaceFormat",
         &[
@@ -4429,7 +4429,7 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .copyable()
-    .extensions(&[("KHR", "surface")]),
+    .extensions_old(&[("KHR", "surface")]),
     Struct::typed(
         "SurfaceFormat2",
         "SURFACE_FORMAT_2",
@@ -4437,7 +4437,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Sink,
         &[Struct::member("surfaceFormat", "VkSurfaceFormatKHR")],
     )
-    .extensions(&[("KHR", "get_surface_capabilities2")]),
+    .extensions_old(&[("KHR", "get_surface_capabilities2")]),
     Struct::new(
         "SwapchainCreateInfo",
         &[
@@ -4460,7 +4460,7 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .stype("SWAPCHAIN_CREATE_INFO", vk_ext_enum(2, 0) as _, StructUsage::Source)
-    .extensions(&[("KHR", "swapchain")]),
+    .extensions_old(&[("KHR", "swapchain")]),
     Struct::new(
         "VertexInputAttributeDescription",
         &[
@@ -4504,7 +4504,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(7, 0) as _,
         StructUsage::Source,
     )
-    .extensions(&[("KHR", "wayland_surface")]),
+    .extensions_old(&[("KHR", "wayland_surface")]),
     Struct::new(
         "Win32KeyedMutexAcquireReleaseInfo",
         &[
@@ -4522,7 +4522,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(76, 0) as _,
         StructUsage::Source,
     )
-    .extensions(&[("KHR", "win32_keyed_mutex")]),
+    .extensions_old(&[("KHR", "win32_keyed_mutex")]),
     Struct::new(
         "Win32SurfaceCreateInfo",
         &[
@@ -4536,7 +4536,7 @@ const STRUCTS: &[Struct] = &[
         vk_ext_enum(10, 0) as _,
         StructUsage::Source,
     )
-    .extensions(&[("KHR", "win32_surface")]),
+    .extensions_old(&[("KHR", "win32_surface")]),
     Struct::new(
         "WriteDescriptorSet",
         &[
@@ -4560,7 +4560,7 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .stype("XCB_SURFACE_CREATE_INFO", vk_ext_enum(6, 0) as _, StructUsage::Source)
-    .extensions(&[("KHR", "xcb_surface")]),
+    .extensions_old(&[("KHR", "xcb_surface")]),
     Struct::new(
         "XlibSurfaceCreateInfo",
         &[
@@ -4570,7 +4570,7 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .stype("XLIB_SURFACE_CREATE_INFO", vk_ext_enum(5, 0) as _, StructUsage::Source)
-    .extensions(&[("KHR", "xlib_surface")]),
+    .extensions_old(&[("KHR", "xlib_surface")]),
     Struct::typed(
         "MemoryBarrier2",
         "MEMORY_BARRIER_2",
@@ -4583,7 +4583,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("dstAccessMask", "VkAccessFlags2KHR"),
         ],
     )
-    .extensions(&[("KHR", "synchronization2")])
+    .extensions_old(&[("KHR", "synchronization2")])
     .promoted("1_3"),
     Struct::typed(
         "BufferMemoryBarrier2",
@@ -4602,7 +4602,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("size", DEVICE_SIZE_TYPE),
         ],
     )
-    .extensions(&[("KHR", "synchronization2")])
+    .extensions_old(&[("KHR", "synchronization2")])
     .promoted("1_3"),
     Struct::typed(
         "ImageMemoryBarrier2",
@@ -4622,7 +4622,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("subresourceRange", "VkImageSubresourceRange"),
         ],
     )
-    .extensions(&[("KHR", "synchronization2")])
+    .extensions_old(&[("KHR", "synchronization2")])
     .promoted("1_3"),
     Struct::typed(
         "DependencyInfo",
@@ -4639,7 +4639,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("pImageMemoryBarriers", "*const VkImageMemoryBarrier2KHR"),
         ],
     )
-    .extensions(&[("KHR", "synchronization2")])
+    .extensions_old(&[("KHR", "synchronization2")])
     .promoted("1_3"),
     Struct::typed(
         "SubmitInfo2",
@@ -4656,7 +4656,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("pSignalSemaphoreInfos", "*const VkSemaphoreSubmitInfoKHR"),
         ],
     )
-    .extensions(&[("KHR", "synchronization2")])
+    .extensions_old(&[("KHR", "synchronization2")])
     .promoted("1_3"),
     Struct::typed(
         "SemaphoreSubmitInfo",
@@ -4670,7 +4670,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("deviceIndex", "u32"),
         ],
     )
-    .extensions(&[("KHR", "synchronization2")])
+    .extensions_old(&[("KHR", "synchronization2")])
     .promoted("1_3"),
     Struct::typed(
         "CommandBufferSubmitInfo",
@@ -4682,7 +4682,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("deviceMask", "u32"),
         ],
     )
-    .extensions(&[("KHR", "synchronization2")])
+    .extensions_old(&[("KHR", "synchronization2")])
     .promoted("1_3"),
     Struct::typed(
         "PhysicalDeviceSynchronization2Features",
@@ -4691,7 +4691,7 @@ const STRUCTS: &[Struct] = &[
         StructUsage::Both,
         &[Struct::member("synchronization2", "VkBool32")],
     )
-    .extensions(&[("KHR", "synchronization2")])
+    .extensions_old(&[("KHR", "synchronization2")])
     .promoted("1_3"),
 ];
 
@@ -5602,7 +5602,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .static_callable()
-    .extension("KHR", "surface"),
+    .extension_old("KHR", "surface"),
     Command::new(
         "GetPhysicalDeviceSurfaceSupport",
         &[
@@ -5614,7 +5614,7 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .static_callable()
-    .extension("KHR", "surface"),
+    .extension_old("KHR", "surface"),
     Command::new(
         "GetPhysicalDeviceSurfaceCapabilities",
         &[
@@ -5625,7 +5625,7 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .static_callable()
-    .extension("KHR", "surface"),
+    .extension_old("KHR", "surface"),
     Command::new(
         "GetPhysicalDeviceSurfaceFormats",
         &[
@@ -5637,7 +5637,7 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .static_callable()
-    .extension("KHR", "surface"),
+    .extension_old("KHR", "surface"),
     Command::new(
         "GetPhysicalDeviceSurfacePresentModes",
         &[
@@ -5649,7 +5649,7 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .static_callable()
-    .extension("KHR", "surface"),
+    .extension_old("KHR", "surface"),
     Command::new(
         "CreateSwapchain",
         &[
@@ -5661,7 +5661,7 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .static_callable()
-    .extension("KHR", "swapchain"),
+    .extension_old("KHR", "swapchain"),
     Command::new(
         "DestroySwapchain",
         &[
@@ -5671,7 +5671,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .static_callable()
-    .extension("KHR", "swapchain"),
+    .extension_old("KHR", "swapchain"),
     Command::new(
         "GetSwapchainImages",
         &[
@@ -5683,7 +5683,7 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .static_callable()
-    .extension("KHR", "swapchain"),
+    .extension_old("KHR", "swapchain"),
     Command::new(
         "AcquireNextImage",
         &[
@@ -5697,14 +5697,14 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .static_callable()
-    .extension("KHR", "swapchain"),
+    .extension_old("KHR", "swapchain"),
     Command::new(
         "QueuePresent",
         &[("queue", "VkQueue"), ("pPresentInfo", "*const VkPresentInfoKHR")],
     )
     .failable()
     .static_callable()
-    .extension("KHR", "swapchain"),
+    .extension_old("KHR", "swapchain"),
     Command::new(
         "GetPhysicalDeviceDisplayProperties",
         &[
@@ -5715,7 +5715,7 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .static_callable()
-    .extension("KHR", "display"),
+    .extension_old("KHR", "display"),
     Command::new(
         "GetPhysicalDeviceDisplayPlaneProperties",
         &[
@@ -5726,7 +5726,7 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .static_callable()
-    .extension("KHR", "display"),
+    .extension_old("KHR", "display"),
     Command::new(
         "GetDisplayPlaneSupportedDisplays",
         &[
@@ -5738,7 +5738,7 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .static_callable()
-    .extension("KHR", "display"),
+    .extension_old("KHR", "display"),
     Command::new(
         "GetDisplayModeProperties",
         &[
@@ -5750,7 +5750,7 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .static_callable()
-    .extension("KHR", "display"),
+    .extension_old("KHR", "display"),
     Command::new(
         "CreateDisplayMode",
         &[
@@ -5763,7 +5763,7 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .static_callable()
-    .extension("KHR", "display"),
+    .extension_old("KHR", "display"),
     Command::new(
         "GetDisplayPlaneCapabilities",
         &[
@@ -5775,7 +5775,7 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .static_callable()
-    .extension("KHR", "display"),
+    .extension_old("KHR", "display"),
     Command::new(
         "CreateDisplayPlaneSurface",
         &[
@@ -5787,7 +5787,7 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .static_callable()
-    .extension("KHR", "display"),
+    .extension_old("KHR", "display"),
     Command::new(
         "CreateXlibSurface",
         &[
@@ -5799,7 +5799,7 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .static_callable()
-    .extension("KHR", "xlib_surface"),
+    .extension_old("KHR", "xlib_surface"),
     Command::new(
         "GetPhysicalDeviceXlibPresentationSupport",
         &[
@@ -5811,7 +5811,7 @@ const COMMANDS: &[Command] = &[
     )
     .returns("VkBool32")
     .static_callable()
-    .extension("KHR", "xlib_surface"),
+    .extension_old("KHR", "xlib_surface"),
     Command::new(
         "CreateXcbSurface",
         &[
@@ -5823,7 +5823,7 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .static_callable()
-    .extension("KHR", "xcb_surface"),
+    .extension_old("KHR", "xcb_surface"),
     Command::new(
         "GetPhysicalDeviceXcbPresentationSupport",
         &[
@@ -5835,7 +5835,7 @@ const COMMANDS: &[Command] = &[
     )
     .returns("VkBool32")
     .static_callable()
-    .extension("KHR", "xcb_surface"),
+    .extension_old("KHR", "xcb_surface"),
     Command::new(
         "CreateWaylandSurface",
         &[
@@ -5847,7 +5847,7 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .static_callable()
-    .extension("KHR", "wayland_surface"),
+    .extension_old("KHR", "wayland_surface"),
     Command::new(
         "GetPhysicalDeviceWaylandPresentationSupport",
         &[
@@ -5858,7 +5858,7 @@ const COMMANDS: &[Command] = &[
     )
     .returns("VkBool32")
     .static_callable()
-    .extension("KHR", "wayland_surface"),
+    .extension_old("KHR", "wayland_surface"),
     Command::new(
         "CreateAndroidSurface",
         &[
@@ -5870,7 +5870,7 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .static_callable()
-    .extension("KHR", "android_surface"),
+    .extension_old("KHR", "android_surface"),
     Command::new(
         "CreateWin32Surface",
         &[
@@ -5882,14 +5882,14 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .static_callable()
-    .extension("KHR", "win32_surface"),
+    .extension_old("KHR", "win32_surface"),
     Command::new(
         "GetPhysicalDeviceWin32PresentationSupport",
         &[("physicalDevice", "VkPhysicalDevice"), ("queueFamilyIndex", "u32")],
     )
     .returns("VkBool32")
     .static_callable()
-    .extension("KHR", "win32_surface"),
+    .extension_old("KHR", "win32_surface"),
     Command::new(
         "CreateMetalSurface",
         &[
@@ -5901,7 +5901,7 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .static_callable()
-    .extension("EXT", "metal_surface"),
+    .extension_old("EXT", "metal_surface"),
     Command::new(
         "GetMemoryWin32Handle",
         &[
@@ -5911,7 +5911,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("KHR", "external_memory_win32"),
+    .extension_old("KHR", "external_memory_win32"),
     Command::new(
         "GetMemoryWin32HandleProperties",
         &[
@@ -5922,7 +5922,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("KHR", "external_memory_win32"),
+    .extension_old("KHR", "external_memory_win32"),
     Command::new(
         "GetMemoryFd",
         &[
@@ -5932,7 +5932,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("KHR", "external_memory_fd"),
+    .extension_old("KHR", "external_memory_fd"),
     Command::new(
         "GetMemoryFdProperties",
         &[
@@ -5943,7 +5943,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("KHR", "external_memory_fd"),
+    .extension_old("KHR", "external_memory_fd"),
     Command::new(
         "ImportSemaphoreWin32Handle",
         &[
@@ -5955,7 +5955,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("KHR", "external_semaphore_win32"),
+    .extension_old("KHR", "external_semaphore_win32"),
     Command::new(
         "GetSemaphoreWin32Handle",
         &[
@@ -5965,7 +5965,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("KHR", "external_semaphore_win32"),
+    .extension_old("KHR", "external_semaphore_win32"),
     Command::new(
         "ImportSemaphoreFd",
         &[
@@ -5974,7 +5974,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("KHR", "external_semaphore_fd"),
+    .extension_old("KHR", "external_semaphore_fd"),
     Command::new(
         "GetSemaphoreFd",
         &[
@@ -5984,7 +5984,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("KHR", "external_semaphore_fd"),
+    .extension_old("KHR", "external_semaphore_fd"),
     Command::new(
         "ImportFenceWin32Handle",
         &[
@@ -5993,7 +5993,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("KHR", "external_fence_win32"),
+    .extension_old("KHR", "external_fence_win32"),
     Command::new(
         "GetFenceWin32Handle",
         &[
@@ -6003,7 +6003,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("KHR", "external_fence_win32"),
+    .extension_old("KHR", "external_fence_win32"),
     Command::new(
         "ImportFenceFd",
         &[
@@ -6012,7 +6012,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("KHR", "external_fence_fd"),
+    .extension_old("KHR", "external_fence_fd"),
     Command::new(
         "GetFenceFd",
         &[
@@ -6022,7 +6022,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("KHR", "external_fence_fd"),
+    .extension_old("KHR", "external_fence_fd"),
     Command::new(
         "GetPhysicalDeviceSurfaceCapabilities2",
         &[
@@ -6032,7 +6032,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("KHR", "get_surface_capabilities2"),
+    .extension_old("KHR", "get_surface_capabilities2"),
     Command::new(
         "GetPhysicalDeviceSurfaceFormats2",
         &[
@@ -6043,7 +6043,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("KHR", "get_surface_capabilities2"),
+    .extension_old("KHR", "get_surface_capabilities2"),
     Command::new(
         "CreateDebugReportCallback",
         &[
@@ -6054,7 +6054,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("EXT", "debug_report"),
+    .extension_old("EXT", "debug_report"),
     Command::new(
         "DestroyDebugReportCallback",
         &[
@@ -6063,7 +6063,7 @@ const COMMANDS: &[Command] = &[
             ("pAllocator", "*const VkAllocationCallbacks"),
         ],
     )
-    .extension("EXT", "debug_report"),
+    .extension_old("EXT", "debug_report"),
     Command::new(
         "DebugReportMessage",
         &[
@@ -6077,7 +6077,7 @@ const COMMANDS: &[Command] = &[
             ("pMessage", "*const core::ffi::c_char"),
         ],
     )
-    .extension("EXT", "debug_report"),
+    .extension_old("EXT", "debug_report"),
     Command::new(
         "SetDebugUtilsObjectName",
         &[
@@ -6086,7 +6086,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("EXT", "debug_utils"),
+    .extension_old("EXT", "debug_utils"),
     Command::new(
         "SetDebugUtilsObjectTag",
         &[
@@ -6095,18 +6095,18 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("EXT", "debug_utils"),
+    .extension_old("EXT", "debug_utils"),
     Command::new(
         "QueueBeginDebugUtilsLabel",
         &[("queue", "VkQueue"), ("pLabelInfo", "*const VkDebugUtilsLabelEXT")],
     )
-    .extension("EXT", "debug_utils"),
-    Command::new("QueueEndDebugUtilsLabel", &[("queue", "VkQueue")]).extension("EXT", "debug_utils"),
+    .extension_old("EXT", "debug_utils"),
+    Command::new("QueueEndDebugUtilsLabel", &[("queue", "VkQueue")]).extension_old("EXT", "debug_utils"),
     Command::new(
         "QueueInsertDebugUtilsLabel",
         &[("queue", "VkQueue"), ("pLabelInfo", "*const VkDebugUtilsLabelEXT")],
     )
-    .extension("EXT", "debug_utils"),
+    .extension_old("EXT", "debug_utils"),
     Command::new(
         "CreateDebugUtilsMessenger",
         &[
@@ -6117,7 +6117,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("EXT", "debug_utils"),
+    .extension_old("EXT", "debug_utils"),
     Command::new(
         "DestroyDebugUtilsMessenger",
         &[
@@ -6126,7 +6126,7 @@ const COMMANDS: &[Command] = &[
             ("pAllocator", "*const VkAllocationCallbacks"),
         ],
     )
-    .extension("EXT", "debug_utils"),
+    .extension_old("EXT", "debug_utils"),
     Command::new(
         "SubmitDebugUtilsMessage",
         &[
@@ -6136,7 +6136,7 @@ const COMMANDS: &[Command] = &[
             ("pCallbackData", "*const VkDebugUtilsMessengerCallbackDataEXT"),
         ],
     )
-    .extension("EXT", "debug_utils"),
+    .extension_old("EXT", "debug_utils"),
     Command::new(
         "GetPhysicalDeviceExternalBufferProperties",
         &[
@@ -6145,7 +6145,7 @@ const COMMANDS: &[Command] = &[
             ("pExternalBufferProperties", "*mut VkExternalBufferPropertiesKHR"),
         ],
     )
-    .extension("KHR", "external_memory_capabilities")
+    .extension_old("KHR", "external_memory_capabilities")
     .promoted("1_1"),
     Command::new(
         "GetPhysicalDeviceExternalSemaphoreProperties",
@@ -6158,7 +6158,7 @@ const COMMANDS: &[Command] = &[
             ("pExternalSemaphoreProperties", "*mut VkExternalSemaphorePropertiesKHR"),
         ],
     )
-    .extension("KHR", "external_semaphore_capabilities")
+    .extension_old("KHR", "external_semaphore_capabilities")
     .promoted("1_1"),
     Command::new(
         "GetPhysicalDeviceExternalFenceProperties",
@@ -6168,7 +6168,7 @@ const COMMANDS: &[Command] = &[
             ("pExternalFenceProperties", "*mut VkExternalFencePropertiesKHR"),
         ],
     )
-    .extension("KHR", "external_fence_capabilities")
+    .extension_old("KHR", "external_fence_capabilities")
     .promoted("1_1"),
     Command::new(
         "GetDeviceGroupPeerMemoryFeatures",
@@ -6180,7 +6180,7 @@ const COMMANDS: &[Command] = &[
             ("pPeerMemoryFeatures", "*mut VkPeerMemoryFeatureFlags"),
         ],
     )
-    .extension("KHR", "device_group")
+    .extension_old("KHR", "device_group")
     .promoted("1_1"),
     Command::new(
         "GetDeviceGroupPresentCapabilities",
@@ -6193,7 +6193,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("KHR", "device_group")
+    .extension_old("KHR", "device_group")
     .extra_requirements(&["VK_KHR_surface"]),
     Command::new(
         "GetDeviceGroupSurfacePresentModes",
@@ -6204,7 +6204,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("KHR", "device_group")
+    .extension_old("KHR", "device_group")
     .extra_requirements(&["VK_KHR_surface"]),
     Command::new(
         "GetPhysicalDevicePresentRectangles",
@@ -6216,7 +6216,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("KHR", "device_group")
+    .extension_old("KHR", "device_group")
     .extra_requirements(&["VK_KHR_surface"]),
     Command::new(
         "AcquireNextImage2",
@@ -6227,7 +6227,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("KHR", "device_group")
+    .extension_old("KHR", "device_group")
     .extra_requirements(&["VK_KHR_swapchain"]),
     Command::new(
         "GetPhysicalDeviceFeatures2",
@@ -6236,7 +6236,7 @@ const COMMANDS: &[Command] = &[
             ("pFeatures", "*mut VkPhysicalDeviceFeatures2KHR"),
         ],
     )
-    .extension("KHR", "get_physical_device_properties2")
+    .extension_old("KHR", "get_physical_device_properties2")
     .promoted("1_1"),
     Command::new(
         "GetPhysicalDeviceProperties2",
@@ -6245,7 +6245,7 @@ const COMMANDS: &[Command] = &[
             ("pProperties", "*mut VkPhysicalDeviceProperties2KHR"),
         ],
     )
-    .extension("KHR", "get_physical_device_properties2")
+    .extension_old("KHR", "get_physical_device_properties2")
     .promoted("1_1"),
     Command::new(
         "GetPhysicalDeviceFormatProperties2",
@@ -6255,7 +6255,7 @@ const COMMANDS: &[Command] = &[
             ("pFormatProperties", "*mut VkFormatProperties2KHR"),
         ],
     )
-    .extension("KHR", "get_physical_device_properties2")
+    .extension_old("KHR", "get_physical_device_properties2")
     .promoted("1_1"),
     Command::new(
         "GetPhysicalDeviceImageFormatProperties2",
@@ -6266,7 +6266,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("KHR", "get_physical_device_properties2")
+    .extension_old("KHR", "get_physical_device_properties2")
     .promoted("1_1"),
     Command::new(
         "GetPhysicalDeviceQueueFamilyProperties2",
@@ -6276,7 +6276,7 @@ const COMMANDS: &[Command] = &[
             ("pQueueFamilyProperties", "*mut VkQueueFamilyProperties2KHR"),
         ],
     )
-    .extension("KHR", "get_physical_device_properties2")
+    .extension_old("KHR", "get_physical_device_properties2")
     .promoted("1_1"),
     Command::new(
         "GetPhysicalDeviceMemoryProperties2",
@@ -6285,7 +6285,7 @@ const COMMANDS: &[Command] = &[
             ("pMemoryProperties", "*mut VkPhysicalDeviceMemoryProperties2KHR"),
         ],
     )
-    .extension("KHR", "get_physical_device_properties2")
+    .extension_old("KHR", "get_physical_device_properties2")
     .promoted("1_1"),
     Command::new(
         "GetPhysicalDeviceSparseImageFormatProperties2",
@@ -6296,7 +6296,7 @@ const COMMANDS: &[Command] = &[
             ("pProperties", "*mut VkSparseImageFormatProperties2KHR"),
         ],
     )
-    .extension("KHR", "get_physical_device_properties2")
+    .extension_old("KHR", "get_physical_device_properties2")
     .promoted("1_1"),
     Command::new(
         "EnumeratePhysicalDeviceGroup",
@@ -6310,7 +6310,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("KHR", "device_group_creation")
+    .extension_old("KHR", "device_group_creation")
     .promoted("1_1"),
     Command::new(
         "GetImageMemoryRequirements2",
@@ -6320,7 +6320,7 @@ const COMMANDS: &[Command] = &[
             ("pMemoryRequirements", "*mut VkMemoryRequirements2KHR"),
         ],
     )
-    .extension("KHR", "get_memory_requirements2")
+    .extension_old("KHR", "get_memory_requirements2")
     .promoted("1_1"),
     Command::new(
         "GetBufferMemoryRequirements2",
@@ -6330,7 +6330,7 @@ const COMMANDS: &[Command] = &[
             ("pMemoryRequirements", "*mut VkMemoryRequirements2KHR"),
         ],
     )
-    .extension("KHR", "get_memory_requirements2")
+    .extension_old("KHR", "get_memory_requirements2")
     .promoted("1_1"),
     Command::new(
         "GetImageSparseMemoryRequirements2",
@@ -6341,7 +6341,7 @@ const COMMANDS: &[Command] = &[
             ("pSparseMemoryRequirements", "*mut VkSparseImageMemoryRequirements2KHR"),
         ],
     )
-    .extension("KHR", "get_memory_requirements2")
+    .extension_old("KHR", "get_memory_requirements2")
     .promoted("1_1"),
     Command::new(
         "BindBufferMemory2",
@@ -6352,7 +6352,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("KHR", "bind_memory2")
+    .extension_old("KHR", "bind_memory2")
     .promoted("1_1"),
     Command::new(
         "BindImageMemory2",
@@ -6363,7 +6363,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("KHR", "bind_memory2")
+    .extension_old("KHR", "bind_memory2")
     .promoted("1_1"),
     Command::new(
         "CreateDescriptorUpdateTemplate",
@@ -6375,7 +6375,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("KHR", "descriptor_update_template")
+    .extension_old("KHR", "descriptor_update_template")
     .promoted("1_1"),
     Command::new(
         "DestroyDescriptorUpdateTemplate",
@@ -6385,7 +6385,7 @@ const COMMANDS: &[Command] = &[
             ("pAllocator", "*const VkAllocationCallbacks"),
         ],
     )
-    .extension("KHR", "descriptor_update_template")
+    .extension_old("KHR", "descriptor_update_template")
     .promoted("1_1"),
     Command::new(
         "UpdateDescriptorSetWithTemplate",
@@ -6396,7 +6396,7 @@ const COMMANDS: &[Command] = &[
             ("pData", "*const core::ffi::c_void"),
         ],
     )
-    .extension("KHR", "descriptor_update_template")
+    .extension_old("KHR", "descriptor_update_template")
     .promoted("1_1"),
     Command::new(
         "CreateSamplerYcbcrConversion",
@@ -6408,7 +6408,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("KHR", "sampler_ycbcr_conversion")
+    .extension_old("KHR", "sampler_ycbcr_conversion")
     .promoted("1_1"),
     Command::new(
         "DestroySamplerYcbcrConversion",
@@ -6418,7 +6418,7 @@ const COMMANDS: &[Command] = &[
             ("pAllocator", "*const VkAllocationCallbacks"),
         ],
     )
-    .extension("KHR", "sampler_ycbcr_conversion")
+    .extension_old("KHR", "sampler_ycbcr_conversion")
     .promoted("1_1"),
     Command::new(
         "TrimCommandPool",
@@ -6428,7 +6428,7 @@ const COMMANDS: &[Command] = &[
             ("flags", "VkCommandPoolTrimFlagsKHR"),
         ],
     )
-    .extension("KHR", "maintenance1")
+    .extension_old("KHR", "maintenance1")
     .promoted("1_1"),
     Command::new(
         "GetDescriptorSetLayoutSupport",
@@ -6438,7 +6438,7 @@ const COMMANDS: &[Command] = &[
             ("pSupport", "*mut VkDescriptorSetLayoutSupport"),
         ],
     )
-    .extension("KHR", "maintenance3")
+    .extension_old("KHR", "maintenance3")
     .promoted("1_1"),
     Command::new(
         "QueueSubmit2",
@@ -6450,7 +6450,7 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .failable()
-    .extension("KHR", "synchronization2")
+    .extension_old("KHR", "synchronization2")
     .promoted("1_3"),
     // command buffer instructions
     Command::inst(
@@ -6826,15 +6826,15 @@ const COMMANDS: &[Command] = &[
     )
     .static_callable(),
     Command::inst("BeginDebugUtilsLabel", &[("pLabelInfo", "*const VkDebugUtilsLabelEXT")])
-        .extension("EXT", "debug_utils"),
-    Command::inst("EndDebugUtilsLabel", &[]).extension("EXT", "debug_utils"),
+        .extension_old("EXT", "debug_utils"),
+    Command::inst("EndDebugUtilsLabel", &[]).extension_old("EXT", "debug_utils"),
     Command::inst(
         "InsertDebugUtilsLabel",
         &[("pLabelInfo", "*const VkDebugUtilsLabelEXT")],
     )
-    .extension("EXT", "debug_utils"),
+    .extension_old("EXT", "debug_utils"),
     Command::inst("SetDeviceMask", &[("deviceMask", "u32")])
-        .extension("KHR", "device_group")
+        .extension_old("KHR", "device_group")
         .promoted("1_1"),
     Command::inst(
         "DispatchBase",
@@ -6847,19 +6847,19 @@ const COMMANDS: &[Command] = &[
             ("groupCountZ", "u32"),
         ],
     )
-    .extension("KHR", "device_group")
+    .extension_old("KHR", "device_group")
     .promoted("1_1"),
     Command::inst(
         "SetEvent2",
         &[("event", "VkEvent"), ("pDependencyInfo", "*const VkDependencyInfoKHR")],
     )
-    .extension("KHR", "synchronization2")
+    .extension_old("KHR", "synchronization2")
     .promoted("1_3"),
     Command::inst(
         "ResetEvent2",
         &[("event", "VkEvent"), ("stageMask", "VkPipelineStageFlags2KHR")],
     )
-    .extension("KHR", "synchronization2")
+    .extension_old("KHR", "synchronization2")
     .promoted("1_3"),
     Command::inst(
         "WaitEvents2",
@@ -6869,10 +6869,10 @@ const COMMANDS: &[Command] = &[
             ("pDependencyInfos", "*const VkDependencyInfoKHR"),
         ],
     )
-    .extension("KHR", "synchronization2")
+    .extension_old("KHR", "synchronization2")
     .promoted("1_3"),
     Command::inst("PipelineBarrier2", &[("pDependencyInfo", "*const VkDependencyInfoKHR")])
-        .extension("KHR", "synchronization2")
+        .extension_old("KHR", "synchronization2")
         .promoted("1_3"),
     Command::inst(
         "WriteTimestamp2",
@@ -6882,7 +6882,7 @@ const COMMANDS: &[Command] = &[
             ("query", "u32"),
         ],
     )
-    .extension("KHR", "synchronization2")
+    .extension_old("KHR", "synchronization2")
     .promoted("1_3"),
 ];
 

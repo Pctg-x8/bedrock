@@ -48,7 +48,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .long()
-        .extension2(&VK_KHR_FORMAT_FEATURE_FLAGS2)
+        .extension(&VK_KHR_FORMAT_FEATURE_FLAGS2)
         .promoted(VERSION),
     ),
     Element::Struct(
@@ -63,7 +63,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("bufferFeatures", "VkFormatFeatureFlags2KHR"),
             ],
         )
-        .extensions2(&[&VK_KHR_FORMAT_FEATURE_FLAGS2])
+        .extensions(&[&VK_KHR_FORMAT_FEATURE_FLAGS2])
         .promoted(VERSION),
     ),
 ];

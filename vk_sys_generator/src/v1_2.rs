@@ -3,165 +3,13 @@
 use crate::{parts::*, vk_ext_enum};
 
 const VERSION: &str = "1_2";
+const VK_KHR_BUFFER_DEVICE_ADDRESS: &Extension = &Extension::khr("buffer_device_address", 1);
+const VK_KHR_TIMELINE_SEMAPHORE: &Extension = &Extension::khr("timeline_semaphore", 2);
 const VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE: &Extension = &Extension::khr("sampler_mirror_clamp_to_edge", 3);
 const VK_KHR_SHADER_FLOAT_CONTROLS: &Extension = &Extension::khr("shader_float_controls", 4);
 const VK_EXT_SHADER_VIEWPORT_INDEX_LAYER: &Extension = &Extension::ext("shader_viewport_index_layer", 1);
 
 pub const ELEMENTS: &[Element] = &[
-    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_KHR_buffer_device_address", 1)),
-    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_KHR_timeline_semaphore", 2)),
-    Element::Enum(Enum::extending_error(&[Enum::member(
-        "INVALID_OPAQUE_CAPTURE_ADDRESS",
-        -vk_ext_enum(258, 0) as _,
-    )
-    .extension("KHR", "buffer_device_address")
-    .promoted("1_2")])),
-    Element::Enum(
-        Enum::new(
-            "SemaphoreType",
-            "SEMAPHORE_TYPE",
-            &[
-                Enum::member("BINARY", 0)
-                    .extension("KHR", "timeline_semaphore")
-                    .promoted("1_2"),
-                Enum::member("TIMELINE", 1)
-                    .extension("KHR", "timeline_semaphore")
-                    .promoted("1_2"),
-            ],
-        )
-        .extension("KHR", "timeline_semaphore")
-        .promoted("1_2"),
-    ),
-    Element::Bitmask(Bitmask::extending(
-        "BufferCreateFlagBits",
-        "BUFFER_CREATE",
-        &[Bitmask::entry("DEVICE_ADDRESS_CAPTURE_REPLAY", 4)
-            .extension("KHR", "buffer_device_address")
-            .promoted("1_2")],
-    )),
-    Element::Bitmask(Bitmask::extending(
-        "BufferUsageFlagBits",
-        "BUFFER_USAGE",
-        &[Bitmask::entry("SHADER_DEVICE_ADDRESS", 17)
-            .extension("KHR", "buffer_device_address")
-            .promoted("1_2")],
-    )),
-    Element::Bitmask(Bitmask::extending(
-        "MemoryAllocateFlagBits",
-        "MEMORY_ALLOCATE",
-        &[
-            Bitmask::entry("DEVICE_ADDRESS", 1)
-                .extension("KHR", "buffer_device_address")
-                .promoted("1_2"),
-            Bitmask::entry("DEVICE_ADDRESS_CAPTURE_REPLAY", 2)
-                .extension("KHR", "buffer_device_address")
-                .promoted("1_2"),
-        ],
-    )),
-    Element::Bitmask(
-        Bitmask::new(
-            "SemaphoreWaitFlags",
-            "SemaphoreWaitFlagBits",
-            "SEMAPHORE_WAIT",
-            &[Bitmask::entry("ANY", 0)
-                .extension("KHR", "timeline_semaphore")
-                .promoted("1_2")],
-        )
-        .extension("KHR", "timeline_semaphore")
-        .promoted("1_2"),
-    ),
-    Element::Struct(
-        Struct::new("BufferDeviceAddressInfo", &[Struct::member("buffer", "VkBuffer")])
-            .stype(
-                "BUFFER_DEVICE_ADDRESS_INFO",
-                vk_ext_enum(245, 1) as _,
-                StructUsage::Source,
-            )
-            .extensions(&[("KHR", "buffer_device_address")])
-            .promoted("1_2"),
-    ),
-    Element::Struct(
-        Struct::new(
-            "BufferOpaqueCaptureAddressCreateInfo",
-            &[Struct::member("opaqueCaptureAddress", "u64")],
-        )
-        .stype(
-            "BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO",
-            vk_ext_enum(258, 2) as _,
-            StructUsage::Source,
-        )
-        .extensions(&[("KHR", "buffer_device_address")])
-        .promoted("1_2"),
-    ),
-    Element::Struct(
-        Struct::new(
-            "DeviceMemoryOpaqueCaptureAddressInfo",
-            &[Struct::member("memory", "VkDeviceMemory")],
-        )
-        .stype(
-            "DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO",
-            vk_ext_enum(258, 4) as _,
-            StructUsage::Source,
-        )
-        .extensions(&[("KHR", "buffer_device_address")])
-        .promoted("1_2"),
-    ),
-    Element::Struct(
-        Struct::new(
-            "MemoryOpaqueCaptureAddressAllocateInfo",
-            &[Struct::member("opaqueCaptureAddress", "u64")],
-        )
-        .stype(
-            "MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO",
-            vk_ext_enum(258, 3) as _,
-            StructUsage::Source,
-        )
-        .extensions(&[("KHR", "buffer_device_address")])
-        .promoted("1_2"),
-    ),
-    Element::Struct(
-        Struct::new(
-            "PhysicalDeviceBufferDeviceAddressFeatures",
-            &[
-                Struct::member("bufferDeviceAddress", "VkBool32"),
-                Struct::member("bufferDeviceAddressCaptureReplay", "VkBool32"),
-                Struct::member("bufferDeviceAddressMultiDevice", "VkBool32"),
-            ],
-        )
-        .stype(
-            "PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES",
-            vk_ext_enum(258, 0) as _,
-            StructUsage::Both,
-        )
-        .extensions(&[("KHR", "buffer_device_address")])
-        .promoted("1_2"),
-    ),
-    Element::Struct(
-        Struct::new(
-            "PhysicalDeviceTimelineSemaphoreFeatures",
-            &[Struct::member("timelineSemaphore", "VkBool32")],
-        )
-        .stype(
-            "PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES",
-            vk_ext_enum(208, 0) as _,
-            StructUsage::Both,
-        )
-        .extensions(&[("KHR", "timeline_semaphore")])
-        .promoted("1_2"),
-    ),
-    Element::Struct(
-        Struct::new(
-            "PhysicalDeviceTimelineSemaphoreProperties",
-            &[Struct::member("maxTimelineSemaphoreValueDifference", "u64")],
-        )
-        .stype(
-            "PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES",
-            vk_ext_enum(208, 1) as _,
-            StructUsage::Sink,
-        )
-        .extensions(&[("KHR", "timeline_semaphore")])
-        .promoted("1_2"),
-    ),
     Element::Struct(
         Struct::typed(
             "PhysicalDeviceVulkan11Features",
@@ -212,65 +60,98 @@ pub const ELEMENTS: &[Element] = &[
         )
         .available_condition("feature = \"Allow1_2APIs\""),
     ),
+    // VK_KHR_buffer_device_address
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_KHR_BUFFER_DEVICE_ADDRESS)),
+    Element::Enum(Enum::extending_error(&[Enum::member(
+        "INVALID_OPAQUE_CAPTURE_ADDRESS",
+        -vk_ext_enum(258, 0) as _,
+    )
+    .extension(VK_KHR_BUFFER_DEVICE_ADDRESS)
+    .promoted(VERSION)])),
+    Element::Bitmask(Bitmask::extending(
+        "BufferCreateFlagBits",
+        "BUFFER_CREATE",
+        &[Bitmask::entry("DEVICE_ADDRESS_CAPTURE_REPLAY", 4)
+            .extension(VK_KHR_BUFFER_DEVICE_ADDRESS)
+            .promoted(VERSION)],
+    )),
+    Element::Bitmask(Bitmask::extending(
+        "BufferUsageFlagBits",
+        "BUFFER_USAGE",
+        &[Bitmask::entry("SHADER_DEVICE_ADDRESS", 17)
+            .extension(VK_KHR_BUFFER_DEVICE_ADDRESS)
+            .promoted(VERSION)],
+    )),
+    Element::Bitmask(Bitmask::extending(
+        "MemoryAllocateFlagBits",
+        "MEMORY_ALLOCATE",
+        &[
+            Bitmask::entry("DEVICE_ADDRESS", 1)
+                .extension(VK_KHR_BUFFER_DEVICE_ADDRESS)
+                .promoted(VERSION),
+            Bitmask::entry("DEVICE_ADDRESS_CAPTURE_REPLAY", 2)
+                .extension(VK_KHR_BUFFER_DEVICE_ADDRESS)
+                .promoted(VERSION),
+        ],
+    )),
     Element::Struct(
-        Struct::new(
-            "SemaphoreSignalInfo",
-            &[
-                Struct::member("semaphore", "VkSemaphore"),
-                Struct::member("value", "u64"),
-            ],
-        )
-        .stype("SEMAPHORE_SIGNAL_INFO", vk_ext_enum(208, 5) as _, StructUsage::Source)
-        .extensions(&[("KHR", "timeline_semaphore")])
-        .promoted("1_2"),
-    ),
-    Element::Struct(
-        Struct::new(
-            "SemaphoreTypeCreateInfo",
-            &[
-                Struct::member("semaphoreType", "VkSemaphoreTypeKHR"),
-                Struct::member("initialValue", "u64"),
-            ],
-        )
-        .stype(
-            "SEMAPHORE_TYPE_CREATE_INFO",
-            vk_ext_enum(208, 2) as _,
+        Struct::typed(
+            "BufferDeviceAddressInfo",
+            "BUFFER_DEVICE_ADDRESS_INFO",
+            vk_ext_enum(245, 1) as _,
             StructUsage::Source,
+            &[Struct::member("buffer", "VkBuffer")],
         )
-        .extensions(&[("KHR", "timeline_semaphore")])
-        .promoted("1_2"),
+        .extensions(&[VK_KHR_BUFFER_DEVICE_ADDRESS])
+        .promoted(VERSION),
     ),
     Element::Struct(
-        Struct::new(
-            "SemaphoreWaitInfo",
-            &[
-                Struct::member("flags", "VkSemaphoreWaitFlagsKHR"),
-                Struct::member("semaphoreCount", "u32"),
-                Struct::member("pSemaphores", "*const VkSemaphore"),
-                Struct::member("pValues", "*const u64"),
-            ],
-        )
-        .stype("SEMAPHORE_WAIT_INFO", vk_ext_enum(208, 4) as _, StructUsage::Source)
-        .extensions(&[("KHR", "timeline_semaphore")])
-        .promoted("1_2"),
-    ),
-    Element::Struct(
-        Struct::new(
-            "TimelineSemaphoreSubmitInfo",
-            &[
-                Struct::member("waitSemaphoreValueCount", "u32"),
-                Struct::member("pWaitSemaphoreValues", "*const u64"),
-                Struct::member("signalSemaphoreValueCount", "u32"),
-                Struct::member("pSignalSemaphoreValues", "*const u64"),
-            ],
-        )
-        .stype(
-            "TIMELINE_SEMAPHORE_SUBMIT_INFO",
-            vk_ext_enum(208, 3) as _,
+        Struct::typed(
+            "BufferOpaqueCaptureAddressCreateInfo",
+            "BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO",
+            vk_ext_enum(258, 2) as _,
             StructUsage::Source,
+            &[Struct::member("opaqueCaptureAddress", "u64")],
         )
-        .extensions(&[("KHR", "timeline_semaphore")])
-        .promoted("1_2"),
+        .extensions(&[VK_KHR_BUFFER_DEVICE_ADDRESS])
+        .promoted(VERSION),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "DeviceMemoryOpaqueCaptureAddressInfo",
+            "DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO",
+            vk_ext_enum(258, 4) as _,
+            StructUsage::Source,
+            &[Struct::member("memory", "VkDeviceMemory")],
+        )
+        .extensions(&[VK_KHR_BUFFER_DEVICE_ADDRESS])
+        .promoted(VERSION),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "MemoryOpaqueCaptureAddressAllocateInfo",
+            "MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO",
+            vk_ext_enum(258, 3) as _,
+            StructUsage::Source,
+            &[Struct::member("opaqueCaptureAddress", "u64")],
+        )
+        .extensions(&[VK_KHR_BUFFER_DEVICE_ADDRESS])
+        .promoted(VERSION),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "PhysicalDeviceBufferDeviceAddressFeatures",
+            "PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES",
+            vk_ext_enum(258, 0) as _,
+            StructUsage::Both,
+            &[
+                Struct::member("bufferDeviceAddress", "VkBool32"),
+                Struct::member("bufferDeviceAddressCaptureReplay", "VkBool32"),
+                Struct::member("bufferDeviceAddressMultiDevice", "VkBool32"),
+            ],
+        )
+        .extensions(&[VK_KHR_BUFFER_DEVICE_ADDRESS])
+        .promoted(VERSION),
     ),
     Element::Command(
         Command::new(
@@ -278,8 +159,8 @@ pub const ELEMENTS: &[Element] = &[
             &[("device", "VkDevice"), ("pInfo", "*const VkBufferDeviceAddressInfoKHR")],
         )
         .returns("VkDeviceAddress")
-        .extension("KHR", "buffer_device_address")
-        .promoted("1_2"),
+        .extension(VK_KHR_BUFFER_DEVICE_ADDRESS)
+        .promoted(VERSION),
     ),
     Element::Command(
         Command::new(
@@ -287,8 +168,8 @@ pub const ELEMENTS: &[Element] = &[
             &[("device", "VkDevice"), ("pInfo", "*const VkBufferDeviceAddressInfoKHR")],
         )
         .returns("u64")
-        .extension("KHR", "buffer_device_address")
-        .promoted("1_2"),
+        .extension(VK_KHR_BUFFER_DEVICE_ADDRESS)
+        .promoted(VERSION),
     ),
     Element::Command(
         Command::new(
@@ -299,8 +180,120 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .returns("u64")
-        .extension("KHR", "buffer_device_address")
-        .promoted("1_2"),
+        .extension(VK_KHR_BUFFER_DEVICE_ADDRESS)
+        .promoted(VERSION),
+    ),
+    // VK_KHR_timeline_semaphore
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_KHR_TIMELINE_SEMAPHORE)),
+    Element::Enum(
+        Enum::new(
+            "SemaphoreType",
+            "SEMAPHORE_TYPE",
+            &[
+                Enum::member("BINARY", 0)
+                    .extension(VK_KHR_TIMELINE_SEMAPHORE)
+                    .promoted(VERSION),
+                Enum::member("TIMELINE", 1)
+                    .extension(VK_KHR_TIMELINE_SEMAPHORE)
+                    .promoted(VERSION),
+            ],
+        )
+        .extension(VK_KHR_TIMELINE_SEMAPHORE)
+        .promoted(VERSION),
+    ),
+    Element::Bitmask(
+        Bitmask::new(
+            "SemaphoreWaitFlags",
+            "SemaphoreWaitFlagBits",
+            "SEMAPHORE_WAIT",
+            &[Bitmask::entry("ANY", 0)
+                .extension_old("KHR", "timeline_semaphore")
+                .promoted("1_2")],
+        )
+        .extension(VK_KHR_TIMELINE_SEMAPHORE)
+        .promoted(VERSION),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "PhysicalDeviceTimelineSemaphoreFeatures",
+            "PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES",
+            vk_ext_enum(208, 0) as _,
+            StructUsage::Both,
+            &[Struct::member("timelineSemaphore", "VkBool32")],
+        )
+        .extensions(&[VK_KHR_TIMELINE_SEMAPHORE])
+        .promoted(VERSION),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "PhysicalDeviceTimelineSemaphoreProperties",
+            "PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES",
+            vk_ext_enum(208, 1) as _,
+            StructUsage::Sink,
+            &[Struct::member("maxTimelineSemaphoreValueDifference", "u64")],
+        )
+        .extensions(&[VK_KHR_TIMELINE_SEMAPHORE])
+        .promoted(VERSION),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "SemaphoreSignalInfo",
+            "SEMAPHORE_SIGNAL_INFO",
+            vk_ext_enum(208, 5) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("semaphore", "VkSemaphore"),
+                Struct::member("value", "u64"),
+            ],
+        )
+        .extensions(&[VK_KHR_TIMELINE_SEMAPHORE])
+        .promoted(VERSION),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "SemaphoreTypeCreateInfo",
+            "SEMAPHORE_TYPE_CREATE_INFO",
+            vk_ext_enum(208, 2) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("semaphoreType", "VkSemaphoreTypeKHR"),
+                Struct::member("initialValue", "u64"),
+            ],
+        )
+        .extensions(&[VK_KHR_TIMELINE_SEMAPHORE])
+        .promoted(VERSION),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "SemaphoreWaitInfo",
+            "SEMAPHORE_WAIT_INFO",
+            vk_ext_enum(208, 4) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("flags", "VkSemaphoreWaitFlagsKHR"),
+                Struct::member("semaphoreCount", "u32"),
+                Struct::member("pSemaphores", "*const VkSemaphore"),
+                Struct::member("pValues", "*const u64"),
+            ],
+        )
+        .extensions(&[VK_KHR_TIMELINE_SEMAPHORE])
+        .promoted(VERSION),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "TimelineSemaphoreSubmitInfo",
+            "TIMELINE_SEMAPHORE_SUBMIT_INFO",
+            vk_ext_enum(208, 3) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("waitSemaphoreValueCount", "u32"),
+                Struct::member("pWaitSemaphoreValues", "*const u64"),
+                Struct::member("signalSemaphoreValueCount", "u32"),
+                Struct::member("pSignalSemaphoreValues", "*const u64"),
+            ],
+        )
+        .extensions(&[VK_KHR_TIMELINE_SEMAPHORE])
+        .promoted(VERSION),
     ),
     Element::Command(
         Command::new(
@@ -312,8 +305,8 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("KHR", "timeline_semaphore")
-        .promoted("1_2"),
+        .extension(VK_KHR_TIMELINE_SEMAPHORE)
+        .promoted(VERSION),
     ),
     Element::Command(
         Command::new(
@@ -324,8 +317,8 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("KHR", "timeline_semaphore")
-        .promoted("1_2"),
+        .extension(VK_KHR_TIMELINE_SEMAPHORE)
+        .promoted(VERSION),
     ),
     Element::Command(
         Command::new(
@@ -337,8 +330,8 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("KHR", "timeline_semaphore")
-        .promoted("1_2"),
+        .extension(VK_KHR_TIMELINE_SEMAPHORE)
+        .promoted(VERSION),
     ),
     // VK_KHR_image_format_list
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_KHR_image_format_list", 1)),
@@ -353,7 +346,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pViewFormats", "*const VkFormat"),
             ],
         )
-        .extensions(&[ex_khr("image_format_list")])
+        .extensions_old(&[ex_khr("image_format_list")])
         .promoted(VERSION),
     ),
     // VK_EXT_sampler_filter_minmax
@@ -364,24 +357,24 @@ pub const ELEMENTS: &[Element] = &[
             "SAMPLER_REDUCTION_MODE",
             &[
                 Enum::member("WEIGHTED_AVERAGE", 0)
-                    .extension("EXT", "sampler_filter_minmax")
+                    .extension_old("EXT", "sampler_filter_minmax")
                     .promoted(VERSION),
                 Enum::member("MIN", 1)
-                    .extension("EXT", "sampler_filter_minmax")
+                    .extension_old("EXT", "sampler_filter_minmax")
                     .promoted(VERSION),
                 Enum::member("MAX", 2)
-                    .extension("EXT", "sampler_filter_minmax")
+                    .extension_old("EXT", "sampler_filter_minmax")
                     .promoted(VERSION),
             ],
         )
-        .extension("EXT", "sampler_filter_minmax")
+        .extension_old("EXT", "sampler_filter_minmax")
         .promoted(VERSION),
     ),
     Element::Bitmask(Bitmask::extending(
         "FormatFeatureFlagBits",
         "FORMAT_FEATURE",
         &[Bitmask::entry("SAMPLED_IMAGE_FILTER_MINMAX", 16)
-            .extension("EXT", "sampler_filter_minmax")
+            .extension_old("EXT", "sampler_filter_minmax")
             .promoted(VERSION)],
     )),
     Element::Struct(
@@ -392,7 +385,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Source,
             &[Struct::member("reductionMode", "VkSamplerReductionModeEXT")],
         )
-        .extensions(&[ex_ext("sampler_filter_minmax")])
+        .extensions_old(&[ex_ext("sampler_filter_minmax")])
         .promoted(VERSION),
     ),
     Element::Struct(
@@ -406,7 +399,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("filterMinmaxImageComponentMapping", TY_VK_BOOL),
             ],
         )
-        .extensions(&[ex_ext("sampler_filter_minmax")])
+        .extensions_old(&[ex_ext("sampler_filter_minmax")])
         .promoted(VERSION),
     ),
     // VK_KHR_sampler_mirror_clamp_to_edge
@@ -415,7 +408,7 @@ pub const ELEMENTS: &[Element] = &[
         "SamplerAddressMode",
         "SAMPLER_ADDRESS_MODE",
         &[Enum::member("MIRROR_CLAMP_TO_EDGE", 4)
-            .extension2(VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE)
+            .extension(VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE)
             .promoted(VERSION)],
     )),
     // VK_KHR_shader_float_controls
@@ -426,17 +419,17 @@ pub const ELEMENTS: &[Element] = &[
             "SHADER_FLOAT_CONTROLS_INDEPENDENCE",
             &[
                 Enum::member("32_BIT_ONLY", 0)
-                    .extension2(VK_KHR_SHADER_FLOAT_CONTROLS)
+                    .extension(VK_KHR_SHADER_FLOAT_CONTROLS)
                     .promoted(VERSION),
                 Enum::member("ALL", 1)
-                    .extension2(VK_KHR_SHADER_FLOAT_CONTROLS)
+                    .extension(VK_KHR_SHADER_FLOAT_CONTROLS)
                     .promoted(VERSION),
                 Enum::member("NONE", 2)
-                    .extension2(VK_KHR_SHADER_FLOAT_CONTROLS)
+                    .extension(VK_KHR_SHADER_FLOAT_CONTROLS)
                     .promoted(VERSION),
             ],
         )
-        .extension2(VK_KHR_SHADER_FLOAT_CONTROLS),
+        .extension(VK_KHR_SHADER_FLOAT_CONTROLS),
     ),
     Element::Struct(
         Struct::typed(
@@ -464,7 +457,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("shaderRoundingModeRTZFloat64", TY_VK_BOOL),
             ],
         )
-        .extensions2(&[VK_KHR_SHADER_FLOAT_CONTROLS])
+        .extensions(&[VK_KHR_SHADER_FLOAT_CONTROLS])
         .promoted(VERSION),
     ),
     // VK_EXT_shader_viewport_index_layer

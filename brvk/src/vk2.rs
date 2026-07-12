@@ -17684,6 +17684,107 @@ pub const VK_EXT_SHADER_SUBGROUP_VOTE_EXTENSION_NAME: &str = "VK_EXT_shader_subg
 #[rustfmt::skip]
 pub const VK_EXT_SHADER_SUBGROUP_VOTE_SPEC_VERSION: usize = 1;
 
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+#[cfg(feature = "Allow1_2APIs")]
+pub struct VkPhysicalDeviceVulkan11Features {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub storageBuffer16BitAccess: VkBool32,
+    pub uniformAndStorageBuffer16BitAccess: VkBool32,
+    pub storagePushConstant16: VkBool32,
+    pub storageInputOutput16: VkBool32,
+    pub multiview: VkBool32,
+    pub multiviewGeometryShader: VkBool32,
+    pub multiviewTessellationShader: VkBool32,
+    pub variablePointersStorageBuffer: VkBool32,
+    pub variablePointers: VkBool32,
+    pub protectedMemory: VkBool32,
+    pub samplerYcbcrConversion: VkBool32,
+    pub shaderDrawParameters: VkBool32,
+}
+#[rustfmt::skip]
+#[cfg(feature = "Allow1_2APIs")]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES: VkStructureType = 49;
+#[rustfmt::skip]
+#[cfg(feature = "Allow1_2APIs")]
+unsafe impl crate::VulkanStructure for VkPhysicalDeviceVulkan11Features {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[rustfmt::skip]
+#[cfg(feature = "Allow1_2APIs")]
+impl crate::TypedVulkanStructure for VkPhysicalDeviceVulkan11Features { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES; }
+#[rustfmt::skip]
+#[cfg(feature = "Allow1_2APIs")]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceVulkan11Features {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[rustfmt::skip]
+#[cfg(feature = "Allow1_2APIs")]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceVulkan11Features { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES; }
+#[rustfmt::skip]
+#[cfg(feature = "Allow1_2APIs")]
+impl Default for VkPhysicalDeviceVulkan11Features {
+    #[inline(always)]
+    fn default() -> Self {
+        let mut p = core::mem::MaybeUninit::<Self>::zeroed();
+        unsafe { core::ptr::addr_of_mut!((*p.as_mut_ptr()).sType).write(VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES); }
+        unsafe { p.assume_init() }
+    }
+}
+
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+#[cfg(feature = "Allow1_2APIs")]
+pub struct VkPhysicalDeviceVulkan11Properties {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub deviceUUID: [u8; VK_UUID_SIZE],
+    pub driverUUID: [u8; VK_UUID_SIZE],
+    pub deviceLUID: [u8; VK_LUID_SIZE],
+    pub deviceNodeMask: u32,
+    pub deviceLUIDValid: VkBool32,
+    pub subgroupSize: u32,
+    pub subgroupSupportedStages: VkShaderStageFlags,
+    pub subgroupSupportedOperations: VkSubgroupFeatureFlags,
+    pub subgroupQuadOperationsInAllStages: VkBool32,
+    pub pointClippingBehavior: VkPointClippingBehavior,
+    pub maxMultiviewViewCount: u32,
+    pub maxMultiviewInstanceIndex: u32,
+    pub protectedNoFault: VkBool32,
+    pub maxPerSetDescriptors: u32,
+    pub maxMemoryAllocationSize: VkDeviceSize,
+}
+#[rustfmt::skip]
+#[cfg(feature = "Allow1_2APIs")]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES: VkStructureType = 50;
+#[rustfmt::skip]
+#[cfg(feature = "Allow1_2APIs")]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceVulkan11Properties {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[rustfmt::skip]
+#[cfg(feature = "Allow1_2APIs")]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceVulkan11Properties { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES; }
+
 #[cfg(feature = "VK_KHR_buffer_device_address")]
 #[rustfmt::skip]
 pub const VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME: &str = "VK_KHR_buffer_device_address";
@@ -17691,40 +17792,12 @@ pub const VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME: &str = "VK_KHR_buffer_dev
 #[rustfmt::skip]
 pub const VK_KHR_BUFFER_DEVICE_ADDRESS_SPEC_VERSION: usize = 1;
 
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-pub const VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME: &str = "VK_KHR_timeline_semaphore";
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-pub const VK_KHR_TIMELINE_SEMAPHORE_SPEC_VERSION: usize = 2;
-
 #[cfg(feature = "VK_KHR_buffer_device_address")]
 #[rustfmt::skip]
 pub const VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR: VkResult = VkResult(-1000257000);
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub const VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS: VkResult = VkResult(-1000257000);
-
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-pub type VkSemaphoreTypeKHR = i32;
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-pub type VkSemaphoreType = i32;
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-pub const VK_SEMAPHORE_TYPE_BINARY_KHR: VkSemaphoreTypeKHR = 0;
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-pub const VK_SEMAPHORE_TYPE_BINARY: VkSemaphoreTypeKHR = 0;
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-pub const VK_SEMAPHORE_TYPE_TIMELINE_KHR: VkSemaphoreTypeKHR = 1;
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-pub const VK_SEMAPHORE_TYPE_TIMELINE: VkSemaphoreTypeKHR = 1;
 
 #[cfg(feature = "VK_KHR_buffer_device_address")]
 #[rustfmt::skip]
@@ -17752,25 +17825,6 @@ pub const VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT_KHR: VkMemoryAllo
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub const VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT: VkMemoryAllocateFlagBits = 0x00000004;
-
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-pub type VkSemaphoreWaitFlagsKHR = VkFlags;
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-pub type VkSemaphoreWaitFlags = VkSemaphoreWaitFlagsKHR;
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-pub type VkSemaphoreWaitFlagBitsKHR = VkFlags;
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-pub type VkSemaphoreWaitFlagBits = VkSemaphoreWaitFlagBitsKHR;
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-pub const VK_SEMAPHORE_WAIT_ANY_BIT_KHR: VkSemaphoreWaitFlagBitsKHR = 0x00000001;
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-pub const VK_SEMAPHORE_WAIT_ANY_BIT: VkSemaphoreWaitFlagBitsKHR = 0x00000001;
 
 #[cfg(feature = "VK_KHR_buffer_device_address")]
 #[derive(Debug, Clone)]
@@ -17961,333 +18015,6 @@ pub type VkPhysicalDeviceBufferDeviceAddressFeatures = VkPhysicalDeviceBufferDev
 #[rustfmt::skip]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES_KHR;
 
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[derive(Debug, Clone)]
-#[repr(C)]
-#[rustfmt::skip]
-pub struct VkPhysicalDeviceTimelineSemaphoreFeaturesKHR {
-    pub sType: VkStructureType,
-    pub pNext: *mut core::ffi::c_void,
-    pub timelineSemaphore: VkBool32,
-}
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR: VkStructureType = 1000207000;
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-unsafe impl crate::VulkanStructure for VkPhysicalDeviceTimelineSemaphoreFeaturesKHR {
-    #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
-
-    #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
-}
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-impl crate::TypedVulkanStructure for VkPhysicalDeviceTimelineSemaphoreFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR; }
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceTimelineSemaphoreFeaturesKHR {
-    #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
-
-    #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
-}
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceTimelineSemaphoreFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR; }
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-pub type VkPhysicalDeviceTimelineSemaphoreFeatures = VkPhysicalDeviceTimelineSemaphoreFeaturesKHR;
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR;
-
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[derive(Debug, Clone)]
-#[repr(C)]
-#[rustfmt::skip]
-pub struct VkPhysicalDeviceTimelineSemaphorePropertiesKHR {
-    pub sType: VkStructureType,
-    pub pNext: *mut core::ffi::c_void,
-    pub maxTimelineSemaphoreValueDifference: u64,
-}
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES_KHR: VkStructureType = 1000207001;
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceTimelineSemaphorePropertiesKHR {
-    #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
-
-    #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
-}
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceTimelineSemaphorePropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES_KHR; }
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-pub type VkPhysicalDeviceTimelineSemaphoreProperties = VkPhysicalDeviceTimelineSemaphorePropertiesKHR;
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES_KHR;
-
-#[derive(Debug, Clone)]
-#[repr(C)]
-#[rustfmt::skip]
-#[cfg(feature = "Allow1_2APIs")]
-pub struct VkPhysicalDeviceVulkan11Features {
-    pub sType: VkStructureType,
-    pub pNext: *mut core::ffi::c_void,
-    pub storageBuffer16BitAccess: VkBool32,
-    pub uniformAndStorageBuffer16BitAccess: VkBool32,
-    pub storagePushConstant16: VkBool32,
-    pub storageInputOutput16: VkBool32,
-    pub multiview: VkBool32,
-    pub multiviewGeometryShader: VkBool32,
-    pub multiviewTessellationShader: VkBool32,
-    pub variablePointersStorageBuffer: VkBool32,
-    pub variablePointers: VkBool32,
-    pub protectedMemory: VkBool32,
-    pub samplerYcbcrConversion: VkBool32,
-    pub shaderDrawParameters: VkBool32,
-}
-#[rustfmt::skip]
-#[cfg(feature = "Allow1_2APIs")]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES: VkStructureType = 49;
-#[rustfmt::skip]
-#[cfg(feature = "Allow1_2APIs")]
-unsafe impl crate::VulkanStructure for VkPhysicalDeviceVulkan11Features {
-    #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
-
-    #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
-}
-#[rustfmt::skip]
-#[cfg(feature = "Allow1_2APIs")]
-impl crate::TypedVulkanStructure for VkPhysicalDeviceVulkan11Features { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES; }
-#[rustfmt::skip]
-#[cfg(feature = "Allow1_2APIs")]
-unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceVulkan11Features {
-    #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
-
-    #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
-}
-#[rustfmt::skip]
-#[cfg(feature = "Allow1_2APIs")]
-impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceVulkan11Features { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES; }
-#[rustfmt::skip]
-#[cfg(feature = "Allow1_2APIs")]
-impl Default for VkPhysicalDeviceVulkan11Features {
-    #[inline(always)]
-    fn default() -> Self {
-        let mut p = core::mem::MaybeUninit::<Self>::zeroed();
-        unsafe { core::ptr::addr_of_mut!((*p.as_mut_ptr()).sType).write(VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES); }
-        unsafe { p.assume_init() }
-    }
-}
-
-#[derive(Debug, Clone)]
-#[repr(C)]
-#[rustfmt::skip]
-#[cfg(feature = "Allow1_2APIs")]
-pub struct VkPhysicalDeviceVulkan11Properties {
-    pub sType: VkStructureType,
-    pub pNext: *mut core::ffi::c_void,
-    pub deviceUUID: [u8; VK_UUID_SIZE],
-    pub driverUUID: [u8; VK_UUID_SIZE],
-    pub deviceLUID: [u8; VK_LUID_SIZE],
-    pub deviceNodeMask: u32,
-    pub deviceLUIDValid: VkBool32,
-    pub subgroupSize: u32,
-    pub subgroupSupportedStages: VkShaderStageFlags,
-    pub subgroupSupportedOperations: VkSubgroupFeatureFlags,
-    pub subgroupQuadOperationsInAllStages: VkBool32,
-    pub pointClippingBehavior: VkPointClippingBehavior,
-    pub maxMultiviewViewCount: u32,
-    pub maxMultiviewInstanceIndex: u32,
-    pub protectedNoFault: VkBool32,
-    pub maxPerSetDescriptors: u32,
-    pub maxMemoryAllocationSize: VkDeviceSize,
-}
-#[rustfmt::skip]
-#[cfg(feature = "Allow1_2APIs")]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES: VkStructureType = 50;
-#[rustfmt::skip]
-#[cfg(feature = "Allow1_2APIs")]
-unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceVulkan11Properties {
-    #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
-
-    #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
-}
-#[rustfmt::skip]
-#[cfg(feature = "Allow1_2APIs")]
-impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceVulkan11Properties { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES; }
-
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[derive(Debug, Clone)]
-#[repr(C)]
-#[rustfmt::skip]
-pub struct VkSemaphoreSignalInfoKHR {
-    pub sType: VkStructureType,
-    pub pNext: *const core::ffi::c_void,
-    pub semaphore: VkSemaphore,
-    pub value: u64,
-}
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO_KHR: VkStructureType = 1000207005;
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-unsafe impl crate::VulkanStructure for VkSemaphoreSignalInfoKHR {
-    #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
-
-    #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
-}
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-impl crate::TypedVulkanStructure for VkSemaphoreSignalInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO_KHR; }
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-pub type VkSemaphoreSignalInfo = VkSemaphoreSignalInfoKHR;
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO_KHR;
-
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[derive(Debug, Clone)]
-#[repr(C)]
-#[rustfmt::skip]
-pub struct VkSemaphoreTypeCreateInfoKHR {
-    pub sType: VkStructureType,
-    pub pNext: *const core::ffi::c_void,
-    pub semaphoreType: VkSemaphoreTypeKHR,
-    pub initialValue: u64,
-}
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO_KHR: VkStructureType = 1000207002;
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-unsafe impl crate::VulkanStructure for VkSemaphoreTypeCreateInfoKHR {
-    #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
-
-    #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
-}
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-impl crate::TypedVulkanStructure for VkSemaphoreTypeCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO_KHR; }
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-pub type VkSemaphoreTypeCreateInfo = VkSemaphoreTypeCreateInfoKHR;
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO_KHR;
-
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[derive(Debug, Clone)]
-#[repr(C)]
-#[rustfmt::skip]
-pub struct VkSemaphoreWaitInfoKHR {
-    pub sType: VkStructureType,
-    pub pNext: *const core::ffi::c_void,
-    pub flags: VkSemaphoreWaitFlagsKHR,
-    pub semaphoreCount: u32,
-    pub pSemaphores: *const VkSemaphore,
-    pub pValues: *const u64,
-}
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO_KHR: VkStructureType = 1000207004;
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-unsafe impl crate::VulkanStructure for VkSemaphoreWaitInfoKHR {
-    #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
-
-    #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
-}
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-impl crate::TypedVulkanStructure for VkSemaphoreWaitInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO_KHR; }
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-pub type VkSemaphoreWaitInfo = VkSemaphoreWaitInfoKHR;
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO_KHR;
-
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[derive(Debug, Clone)]
-#[repr(C)]
-#[rustfmt::skip]
-pub struct VkTimelineSemaphoreSubmitInfoKHR {
-    pub sType: VkStructureType,
-    pub pNext: *const core::ffi::c_void,
-    pub waitSemaphoreValueCount: u32,
-    pub pWaitSemaphoreValues: *const u64,
-    pub signalSemaphoreValueCount: u32,
-    pub pSignalSemaphoreValues: *const u64,
-}
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO_KHR: VkStructureType = 1000207003;
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-unsafe impl crate::VulkanStructure for VkTimelineSemaphoreSubmitInfoKHR {
-    #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
-
-    #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
-}
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-impl crate::TypedVulkanStructure for VkTimelineSemaphoreSubmitInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO_KHR; }
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-pub type VkTimelineSemaphoreSubmitInfo = VkTimelineSemaphoreSubmitInfoKHR;
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO: VkStructureType = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO_KHR;
-
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_buffer_device_address")]
 #[repr(transparent)]
@@ -18467,6 +18194,277 @@ unsafe impl crate::FromPtr for PFN_vkGetDeviceMemoryOpaqueCaptureAddress {
 impl crate::StaticCallable for PFN_vkGetDeviceMemoryOpaqueCaptureAddress {
     const STATIC: Self = Self(vkGetDeviceMemoryOpaqueCaptureAddress);
 }
+
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+pub const VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME: &str = "VK_KHR_timeline_semaphore";
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+pub const VK_KHR_TIMELINE_SEMAPHORE_SPEC_VERSION: usize = 2;
+
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+pub type VkSemaphoreTypeKHR = i32;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkSemaphoreType = i32;
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+pub const VK_SEMAPHORE_TYPE_BINARY_KHR: VkSemaphoreTypeKHR = 0;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_SEMAPHORE_TYPE_BINARY: VkSemaphoreTypeKHR = 0;
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+pub const VK_SEMAPHORE_TYPE_TIMELINE_KHR: VkSemaphoreTypeKHR = 1;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_SEMAPHORE_TYPE_TIMELINE: VkSemaphoreTypeKHR = 1;
+
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+pub type VkSemaphoreWaitFlagsKHR = VkFlags;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkSemaphoreWaitFlags = VkSemaphoreWaitFlagsKHR;
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+pub type VkSemaphoreWaitFlagBitsKHR = VkFlags;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkSemaphoreWaitFlagBits = VkSemaphoreWaitFlagBitsKHR;
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+pub const VK_SEMAPHORE_WAIT_ANY_BIT_KHR: VkSemaphoreWaitFlagBitsKHR = 0x00000001;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_SEMAPHORE_WAIT_ANY_BIT: VkSemaphoreWaitFlagBitsKHR = 0x00000001;
+
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceTimelineSemaphoreFeaturesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub timelineSemaphore: VkBool32,
+}
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR: VkStructureType = 1000207000;
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPhysicalDeviceTimelineSemaphoreFeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPhysicalDeviceTimelineSemaphoreFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR; }
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceTimelineSemaphoreFeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceTimelineSemaphoreFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR; }
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkPhysicalDeviceTimelineSemaphoreFeatures = VkPhysicalDeviceTimelineSemaphoreFeaturesKHR;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR;
+
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceTimelineSemaphorePropertiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub maxTimelineSemaphoreValueDifference: u64,
+}
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES_KHR: VkStructureType = 1000207001;
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceTimelineSemaphorePropertiesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceTimelineSemaphorePropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES_KHR; }
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkPhysicalDeviceTimelineSemaphoreProperties = VkPhysicalDeviceTimelineSemaphorePropertiesKHR;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES_KHR;
+
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkSemaphoreSignalInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub semaphore: VkSemaphore,
+    pub value: u64,
+}
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO_KHR: VkStructureType = 1000207005;
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkSemaphoreSignalInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkSemaphoreSignalInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO_KHR; }
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkSemaphoreSignalInfo = VkSemaphoreSignalInfoKHR;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO_KHR;
+
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkSemaphoreTypeCreateInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub semaphoreType: VkSemaphoreTypeKHR,
+    pub initialValue: u64,
+}
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO_KHR: VkStructureType = 1000207002;
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkSemaphoreTypeCreateInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkSemaphoreTypeCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO_KHR; }
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkSemaphoreTypeCreateInfo = VkSemaphoreTypeCreateInfoKHR;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO_KHR;
+
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkSemaphoreWaitInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkSemaphoreWaitFlagsKHR,
+    pub semaphoreCount: u32,
+    pub pSemaphores: *const VkSemaphore,
+    pub pValues: *const u64,
+}
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO_KHR: VkStructureType = 1000207004;
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkSemaphoreWaitInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkSemaphoreWaitInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO_KHR; }
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkSemaphoreWaitInfo = VkSemaphoreWaitInfoKHR;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO_KHR;
+
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkTimelineSemaphoreSubmitInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub waitSemaphoreValueCount: u32,
+    pub pWaitSemaphoreValues: *const u64,
+    pub signalSemaphoreValueCount: u32,
+    pub pSignalSemaphoreValues: *const u64,
+}
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO_KHR: VkStructureType = 1000207003;
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkTimelineSemaphoreSubmitInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkTimelineSemaphoreSubmitInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO_KHR; }
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkTimelineSemaphoreSubmitInfo = VkTimelineSemaphoreSubmitInfoKHR;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO: VkStructureType = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO_KHR;
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_timeline_semaphore")]

@@ -46,7 +46,7 @@ pub const ELEMENTS: &[Element] = &[
             "VALIDATION_CACHE_CREATE_FLAGS",
             &[],
         )
-        .extension("EXT", "validation_cache"),
+        .extension_old("EXT", "validation_cache"),
     ),
     Element::Object(
         Object::new("VkValidationCacheEXT", "VALIDATION_CACHE_EXT", vk_ext_enum(161, 0) as _)
@@ -56,52 +56,53 @@ pub const ELEMENTS: &[Element] = &[
         "BlendOp",
         "BLEND_OP",
         &[
-            Enum::member("ZERO", vk_ext_enum(149, 0) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("SRC", vk_ext_enum(149, 1) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("DST", vk_ext_enum(149, 2) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("SRC_OVER", vk_ext_enum(149, 3) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("DST_OVER", vk_ext_enum(149, 4) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("SRC_IN", vk_ext_enum(149, 5) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("DST_IN", vk_ext_enum(149, 6) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("SRC_OUT", vk_ext_enum(149, 7) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("DST_OUT", vk_ext_enum(149, 8) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("SRC_ATOP", vk_ext_enum(149, 9) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("DST_ATOP", vk_ext_enum(149, 10) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("XOR", vk_ext_enum(149, 11) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("MULTIPLY", vk_ext_enum(149, 12) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("SCREEN", vk_ext_enum(149, 13) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("OVERLAY", vk_ext_enum(149, 14) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("DARKEN", vk_ext_enum(149, 15) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("LIGHTEN", vk_ext_enum(149, 16) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("COLORDODGE", vk_ext_enum(149, 17) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("COLORBURN", vk_ext_enum(149, 18) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("HARDLIGHT", vk_ext_enum(149, 19) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("SOFTLIGHT", vk_ext_enum(149, 20) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("DIFFERENCE", vk_ext_enum(149, 21) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("EXCLUSION", vk_ext_enum(149, 22) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("INVERT", vk_ext_enum(149, 23) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("INVERT_RGB", vk_ext_enum(149, 24) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("LINEARDODGE", vk_ext_enum(149, 25) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("LINEARBURN", vk_ext_enum(149, 26) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("VIVIDLIGHT", vk_ext_enum(149, 27) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("LINEARLIGHT", vk_ext_enum(149, 28) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("PINLIGHT", vk_ext_enum(149, 29) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("HARDMIX", vk_ext_enum(149, 30) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("HSL_HUE", vk_ext_enum(149, 31) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("HSL_SATURATION", vk_ext_enum(149, 32) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("HSL_COLOR", vk_ext_enum(149, 33) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("HSL_LUMINOSITY", vk_ext_enum(149, 34) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("PLUS", vk_ext_enum(149, 35) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("PLUS_CLAMPED", vk_ext_enum(149, 36) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("PLUS_CLAMPED_ALHPA", vk_ext_enum(149, 37) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("PLUS_DARKER", vk_ext_enum(149, 38) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("MINUS", vk_ext_enum(149, 39) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("MINUS_CLAMPED", vk_ext_enum(149, 40) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("CONTRAST", vk_ext_enum(149, 41) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("INVERT_OVG", vk_ext_enum(149, 42) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("RED", vk_ext_enum(149, 43) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("GREEN", vk_ext_enum(149, 44) as _).extension("EXT", "blend_operation_advanced"),
-            Enum::member("BLUE", vk_ext_enum(149, 45) as _).extension("EXT", "blend_operation_advanced"),
+            Enum::member("ZERO", vk_ext_enum(149, 0) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("SRC", vk_ext_enum(149, 1) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("DST", vk_ext_enum(149, 2) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("SRC_OVER", vk_ext_enum(149, 3) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("DST_OVER", vk_ext_enum(149, 4) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("SRC_IN", vk_ext_enum(149, 5) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("DST_IN", vk_ext_enum(149, 6) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("SRC_OUT", vk_ext_enum(149, 7) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("DST_OUT", vk_ext_enum(149, 8) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("SRC_ATOP", vk_ext_enum(149, 9) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("DST_ATOP", vk_ext_enum(149, 10) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("XOR", vk_ext_enum(149, 11) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("MULTIPLY", vk_ext_enum(149, 12) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("SCREEN", vk_ext_enum(149, 13) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("OVERLAY", vk_ext_enum(149, 14) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("DARKEN", vk_ext_enum(149, 15) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("LIGHTEN", vk_ext_enum(149, 16) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("COLORDODGE", vk_ext_enum(149, 17) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("COLORBURN", vk_ext_enum(149, 18) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("HARDLIGHT", vk_ext_enum(149, 19) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("SOFTLIGHT", vk_ext_enum(149, 20) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("DIFFERENCE", vk_ext_enum(149, 21) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("EXCLUSION", vk_ext_enum(149, 22) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("INVERT", vk_ext_enum(149, 23) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("INVERT_RGB", vk_ext_enum(149, 24) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("LINEARDODGE", vk_ext_enum(149, 25) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("LINEARBURN", vk_ext_enum(149, 26) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("VIVIDLIGHT", vk_ext_enum(149, 27) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("LINEARLIGHT", vk_ext_enum(149, 28) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("PINLIGHT", vk_ext_enum(149, 29) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("HARDMIX", vk_ext_enum(149, 30) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("HSL_HUE", vk_ext_enum(149, 31) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("HSL_SATURATION", vk_ext_enum(149, 32) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("HSL_COLOR", vk_ext_enum(149, 33) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("HSL_LUMINOSITY", vk_ext_enum(149, 34) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("PLUS", vk_ext_enum(149, 35) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("PLUS_CLAMPED", vk_ext_enum(149, 36) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("PLUS_CLAMPED_ALHPA", vk_ext_enum(149, 37) as _)
+                .extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("PLUS_DARKER", vk_ext_enum(149, 38) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("MINUS", vk_ext_enum(149, 39) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("MINUS_CLAMPED", vk_ext_enum(149, 40) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("CONTRAST", vk_ext_enum(149, 41) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("INVERT_OVG", vk_ext_enum(149, 42) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("RED", vk_ext_enum(149, 43) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("GREEN", vk_ext_enum(149, 44) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("BLUE", vk_ext_enum(149, 45) as _).extension_old("EXT", "blend_operation_advanced"),
         ],
     )),
     Element::Enum(
@@ -109,31 +110,31 @@ pub const ELEMENTS: &[Element] = &[
             "BlendOverlap",
             "BLEND_OVERLAP",
             &[
-                Enum::member("UNCORRELATED", 0).extension("EXT", "blend_operation_advanced"),
-                Enum::member("DISJOINT", 1).extension("EXT", "blend_operation_advanced"),
-                Enum::member("CONJOINT", 2).extension("EXT", "blend_operation_advanced"),
+                Enum::member("UNCORRELATED", 0).extension_old("EXT", "blend_operation_advanced"),
+                Enum::member("DISJOINT", 1).extension_old("EXT", "blend_operation_advanced"),
+                Enum::member("CONJOINT", 2).extension_old("EXT", "blend_operation_advanced"),
             ],
         )
-        .extension("EXT", "blend_operation_advanced"),
+        .extension_old("EXT", "blend_operation_advanced"),
     ),
     Element::Enum(
         Enum::new(
             "ValidationCacheHeaderVersion",
             "VALIDATION_CACHE_HEADER_VERSION",
-            &[Enum::member("ONE", 1).extension("EXT", "validation_cache")],
+            &[Enum::member("ONE", 1).extension_old("EXT", "validation_cache")],
         )
-        .extension("EXT", "validation_cache"),
+        .extension_old("EXT", "validation_cache"),
     ),
     Element::Enum(
         Enum::new(
             "ValidationCheck",
             "VALIDATION_CHECK",
             &[
-                Enum::member("ALL", 0).extension("EXT", "validation_flags"),
-                Enum::member("SHADERS", 1).extension("EXT", "validation_flags"),
+                Enum::member("ALL", 0).extension_old("EXT", "validation_flags"),
+                Enum::member("SHADERS", 1).extension_old("EXT", "validation_flags"),
             ],
         )
-        .extension("EXT", "validation_flags"),
+        .extension_old("EXT", "validation_flags"),
     ),
     Element::Struct(
         Struct::new(
@@ -145,7 +146,7 @@ pub const ELEMENTS: &[Element] = &[
             vk_ext_enum(149, 0) as _,
             StructUsage::Both,
         )
-        .extensions(&[("EXT", "blend_operation_advanced")]),
+        .extensions_old(&[("EXT", "blend_operation_advanced")]),
     ),
     Element::Struct(
         Struct::new(
@@ -164,7 +165,7 @@ pub const ELEMENTS: &[Element] = &[
             vk_ext_enum(149, 1) as _,
             StructUsage::Sink,
         )
-        .extensions(&[("EXT", "blend_operation_advanced")]),
+        .extensions_old(&[("EXT", "blend_operation_advanced")]),
     ),
     Element::Struct(
         Struct::new(
@@ -180,7 +181,7 @@ pub const ELEMENTS: &[Element] = &[
             vk_ext_enum(149, 2) as _,
             StructUsage::Source,
         )
-        .extensions(&[("EXT", "blend_operation_advanced")]),
+        .extensions_old(&[("EXT", "blend_operation_advanced")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -190,7 +191,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Source,
             &[Struct::member("validationCache", "VkValidationCacheEXT")],
         )
-        .extensions(&[("EXT", "validation_cache")]),
+        .extensions_old(&[("EXT", "validation_cache")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -204,7 +205,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pInitialData", "*const core::ffi::c_void"),
             ],
         )
-        .extensions(&[("EXT", "validation_cache")]),
+        .extensions_old(&[("EXT", "validation_cache")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -217,7 +218,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pDisabledValidationChecks", "*mut VkValidationCheckEXT"),
             ],
         )
-        .extensions(&[("EXT", "validation_flags")]),
+        .extensions_old(&[("EXT", "validation_flags")]),
     ),
     Element::Command(
         Command::new(
@@ -229,7 +230,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("EXT", "acquire_drm_display"),
+        .extension_old("EXT", "acquire_drm_display"),
     ),
     Element::Command(
         Command::new(
@@ -237,7 +238,7 @@ pub const ELEMENTS: &[Element] = &[
             &[("physicalDevice", "VkPhysicalDevice"), ("display", "VkDisplayKHR")],
         )
         .failable()
-        .extension("NV", "acquire_winrt_display"),
+        .extension_old("NV", "acquire_winrt_display"),
     ),
     Element::Command(
         Command::new(
@@ -249,7 +250,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("EXT", "acquire_xlib_display"),
+        .extension_old("EXT", "acquire_xlib_display"),
     ),
     Element::Command(
         Command::new(
@@ -262,7 +263,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("EXT", "validation_cache"),
+        .extension_old("EXT", "validation_cache"),
     ),
     Element::Command(
         Command::new(
@@ -273,7 +274,7 @@ pub const ELEMENTS: &[Element] = &[
                 ("pAllocator", "*const VkAllocationCallbacks"),
             ],
         )
-        .extension("EXT", "validation_cache"),
+        .extension_old("EXT", "validation_cache"),
     ),
     Element::Command(
         Command::new(
@@ -286,7 +287,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("EXT", "acquire_drm_display"),
+        .extension_old("EXT", "acquire_drm_display"),
     ),
     Element::Command(
         Command::new(
@@ -299,7 +300,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("EXT", "acquire_xlib_display"),
+        .extension_old("EXT", "acquire_xlib_display"),
     ),
     Element::Command(
         Command::new(
@@ -312,7 +313,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("EXT", "validation_cache"),
+        .extension_old("EXT", "validation_cache"),
     ),
     Element::Command(
         Command::new(
@@ -324,7 +325,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("NV", "acquire_winrt_display"),
+        .extension_old("NV", "acquire_winrt_display"),
     ),
     Element::Command(
         Command::new(
@@ -337,7 +338,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("EXT", "validation_cache"),
+        .extension_old("EXT", "validation_cache"),
     ),
     Element::Command(
         Command::inst(
@@ -349,7 +350,7 @@ pub const ELEMENTS: &[Element] = &[
                 ("marker", "u32"),
             ],
         )
-        .extension("AMD", "buffer_marker"),
+        .extension_old("AMD", "buffer_marker"),
     ),
     // VK_EXT_layer_settings: 497
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_layer_settings", 2)),
@@ -358,17 +359,17 @@ pub const ELEMENTS: &[Element] = &[
             "LayerSettingType",
             "LAYER_SETTING_TYPE",
             &[
-                Enum::member("BOOL32", 0).extension("EXT", "layer_settings"),
-                Enum::member("INT32", 1).extension("EXT", "layer_settings"),
-                Enum::member("INT64", 2).extension("EXT", "layer_settings"),
-                Enum::member("UINT32", 3).extension("EXT", "layer_settings"),
-                Enum::member("UINT64", 4).extension("EXT", "layer_settings"),
-                Enum::member("FLOAT32", 5).extension("EXT", "layer_settings"),
-                Enum::member("FLOAT64", 6).extension("EXT", "layer_settings"),
-                Enum::member("STRING", 7).extension("EXT", "layer_settings"),
+                Enum::member("BOOL32", 0).extension_old("EXT", "layer_settings"),
+                Enum::member("INT32", 1).extension_old("EXT", "layer_settings"),
+                Enum::member("INT64", 2).extension_old("EXT", "layer_settings"),
+                Enum::member("UINT32", 3).extension_old("EXT", "layer_settings"),
+                Enum::member("UINT64", 4).extension_old("EXT", "layer_settings"),
+                Enum::member("FLOAT32", 5).extension_old("EXT", "layer_settings"),
+                Enum::member("FLOAT64", 6).extension_old("EXT", "layer_settings"),
+                Enum::member("STRING", 7).extension_old("EXT", "layer_settings"),
             ],
         )
-        .extension("EXT", "layer_settings"),
+        .extension_old("EXT", "layer_settings"),
     ),
     Element::Struct(
         Struct::new(
@@ -381,7 +382,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pValues", "*const core::ffi::c_void"),
             ],
         )
-        .extensions(&[("EXT", "layer_settings")]),
+        .extensions_old(&[("EXT", "layer_settings")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -394,7 +395,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pSettings", "*const VkLayerSettingEXT"),
             ],
         )
-        .extensions(&[("EXT", "layer_settings")]),
+        .extensions_old(&[("EXT", "layer_settings")]),
     ),
     // VK_EXT_descriptor_buffer
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_descriptor_buffer", 1)),
@@ -440,7 +441,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("descriptorBufferAddressSpaceSize", "VkDeviceSize"),
             ],
         )
-        .extensions(&[("EXT", "descriptor_buffer")]),
+        .extensions_old(&[("EXT", "descriptor_buffer")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -450,7 +451,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Sink,
             &[Struct::member("combinedImageSamplerDensityMapDescriptorSize", "usize")],
         )
-        .extensions(&[("EXT", "descriptor_buffer")]),
+        .extensions_old(&[("EXT", "descriptor_buffer")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -465,7 +466,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("descriptorBufferPushDescriptors", "VkBool32"),
             ],
         )
-        .extensions(&[("EXT", "descriptor_buffer")]),
+        .extensions_old(&[("EXT", "descriptor_buffer")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -479,7 +480,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("format", "VkFormat"),
             ],
         )
-        .extensions(&[("EXT", "descriptor_buffer")]),
+        .extensions_old(&[("EXT", "descriptor_buffer")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -492,7 +493,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("usage", "VkBufferUsageFlags"),
             ],
         )
-        .extensions(&[("EXT", "descriptor_buffer")]),
+        .extensions_old(&[("EXT", "descriptor_buffer")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -502,7 +503,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Sink,
             &[Struct::member("buffer", "VkBuffer")],
         )
-        .extensions(&[("EXT", "descriptor_buffer")]),
+        .extensions_old(&[("EXT", "descriptor_buffer")]),
     ),
     Element::Union(
         Union::new(
@@ -533,7 +534,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("data", "VkDescriptorDataEXT"),
             ],
         )
-        .extensions(&[("EXT", "descriptor_buffer")])
+        .extensions_old(&[("EXT", "descriptor_buffer")])
         .non_debuggable(),
     ),
     Element::Struct(
@@ -544,7 +545,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Source,
             &[Struct::member("buffer", "VkBuffer")],
         )
-        .extensions(&[("EXT", "descriptor_buffer")]),
+        .extensions_old(&[("EXT", "descriptor_buffer")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -554,7 +555,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Source,
             &[Struct::member("image", "VkImage")],
         )
-        .extensions(&[("EXT", "descriptor_buffer")]),
+        .extensions_old(&[("EXT", "descriptor_buffer")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -564,7 +565,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Source,
             &[Struct::member("imageView", "VkImageView")],
         )
-        .extensions(&[("EXT", "descriptor_buffer")]),
+        .extensions_old(&[("EXT", "descriptor_buffer")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -574,7 +575,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Source,
             &[Struct::member("sampler", "VkSampler")],
         )
-        .extensions(&[("EXT", "descriptor_buffer")]),
+        .extensions_old(&[("EXT", "descriptor_buffer")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -587,7 +588,7 @@ pub const ELEMENTS: &[Element] = &[
                 "*const core::ffi::c_void",
             )],
         )
-        .extensions(&[("EXT", "descriptor_buffer")]),
+        .extensions_old(&[("EXT", "descriptor_buffer")]),
     ),
     Element::Command(
         Command::new(
@@ -598,7 +599,7 @@ pub const ELEMENTS: &[Element] = &[
                 ("pLayoutSizeInBytes", "*mut VkDeviceSize"),
             ],
         )
-        .extension("EXT", "descriptor_buffer"),
+        .extension_old("EXT", "descriptor_buffer"),
     ),
     Element::Command(
         Command::new(
@@ -610,7 +611,7 @@ pub const ELEMENTS: &[Element] = &[
                 ("pOffset", "*mut VkDeviceSize"),
             ],
         )
-        .extension("EXT", "descriptor_buffer"),
+        .extension_old("EXT", "descriptor_buffer"),
     ),
     Element::Command(
         Command::new(
@@ -622,7 +623,7 @@ pub const ELEMENTS: &[Element] = &[
                 ("pDescriptor", "*mut core::ffi::c_void"),
             ],
         )
-        .extension("EXT", "descriptor_buffer"),
+        .extension_old("EXT", "descriptor_buffer"),
     ),
     Element::Command(
         Command::inst(
@@ -632,7 +633,7 @@ pub const ELEMENTS: &[Element] = &[
                 ("pBindingInfos", "*const VkDescriptorBufferBindingInfoEXT"),
             ],
         )
-        .extension("EXT", "descriptor_buffer"),
+        .extension_old("EXT", "descriptor_buffer"),
     ),
     Element::Command(
         Command::inst(
@@ -646,7 +647,7 @@ pub const ELEMENTS: &[Element] = &[
                 ("pOffsets", "*const VkDeviceSize"),
             ],
         )
-        .extension("EXT", "descriptor_buffer"),
+        .extension_old("EXT", "descriptor_buffer"),
     ),
     Element::Command(
         Command::inst(
@@ -657,7 +658,7 @@ pub const ELEMENTS: &[Element] = &[
                 ("set", "u32"),
             ],
         )
-        .extension("EXT", "descriptor_buffer"),
+        .extension_old("EXT", "descriptor_buffer"),
     ),
     Element::Command(
         Command::new(
@@ -669,7 +670,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("EXT", "descriptor_buffer"),
+        .extension_old("EXT", "descriptor_buffer"),
     ),
     Element::Command(
         Command::new(
@@ -681,7 +682,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("EXT", "descriptor_buffer"),
+        .extension_old("EXT", "descriptor_buffer"),
     ),
     Element::Command(
         Command::new(
@@ -693,7 +694,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("EXT", "descriptor_buffer"),
+        .extension_old("EXT", "descriptor_buffer"),
     ),
     Element::Command(
         Command::new(
@@ -705,7 +706,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("EXT", "descriptor_buffer"),
+        .extension_old("EXT", "descriptor_buffer"),
     ),
     // VK_EXT_external_memory_host
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_external_memory_host", 1)),
@@ -714,11 +715,11 @@ pub const ELEMENTS: &[Element] = &[
             "ExternalMemoryHandleTypeFlagBits",
             "EXTERNAL_MEMORY_HANDLE_TYPE",
             &[
-                Bitmask::entry("HOST_ALLOCATION", 7).extension("EXT", "external_memory_host"),
-                Bitmask::entry("HOST_MAPPED_FOREIGN_MEMORY", 8).extension("EXT", "external_memory_host"),
+                Bitmask::entry("HOST_ALLOCATION", 7).extension_old("EXT", "external_memory_host"),
+                Bitmask::entry("HOST_MAPPED_FOREIGN_MEMORY", 8).extension_old("EXT", "external_memory_host"),
             ],
         )
-        .extension("KHR", "external_memory"),
+        .extension_old("KHR", "external_memory"),
     ),
     Element::Struct(
         Struct::typed(
@@ -731,7 +732,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pHostPointer", "*mut core::ffi::c_void"),
             ],
         )
-        .extensions(&[("EXT", "external_memory_host")]),
+        .extensions_old(&[("EXT", "external_memory_host")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -741,7 +742,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Sink,
             &[Struct::member("memoryTypeBits", "u32")],
         )
-        .extensions(&[("EXT", "external_memory_host")]),
+        .extensions_old(&[("EXT", "external_memory_host")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -751,7 +752,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Sink,
             &[Struct::member("minImportedHostPointerAlignment", "VkDeviceSize")],
         )
-        .extensions(&[("EXT", "external_memory_host")]),
+        .extensions_old(&[("EXT", "external_memory_host")]),
     ),
     Element::Command(
         Command::new(
@@ -764,7 +765,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("EXT", "external_memory_host"),
+        .extension_old("EXT", "external_memory_host"),
     ),
     // VK_EXT_vertex_attribute_divisor
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_vertex_attribute_divisor", 1)),
@@ -776,14 +777,14 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Sink,
             &[Struct::member("maxVertexAttribDivisor", "u32")],
         )
-        .extensions(&[("EXT", "vertex_attribute_divisor")]),
+        .extensions_old(&[("EXT", "vertex_attribute_divisor")]),
     ),
     Element::Struct(
         Struct::new(
             "VertexInputBindingDivisorDescription",
             &[Struct::member("binding", "u32"), Struct::member("divisor", "u32")],
         )
-        .extensions(&[("EXT", "vertex_attribute_divisor")]),
+        .extensions_old(&[("EXT", "vertex_attribute_divisor")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -799,14 +800,14 @@ pub const ELEMENTS: &[Element] = &[
                 ),
             ],
         )
-        .extensions(&[("EXT", "vertex_attribute_divisor")]),
+        .extensions_old(&[("EXT", "vertex_attribute_divisor")]),
     ),
     // VK_EXT_sample_locations
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_sample_locations", 1)),
     Element::Bitmask(Bitmask::extending(
         "ImageCreateFlagBits",
         "IMAGE_CREATE",
-        &[Bitmask::entry("SAMPLE_LOCATIONS_COMPATIBLE_DEPTH", 12).extension("EXT", "sample_locations")],
+        &[Bitmask::entry("SAMPLE_LOCATIONS_COMPATIBLE_DEPTH", 12).extension_old("EXT", "sample_locations")],
     )),
     Element::Struct(
         Struct::new(
@@ -816,7 +817,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("y", "core::ffi::c_float"),
             ],
         )
-        .extensions(&[ex_ext("sample_locations")]),
+        .extensions_old(&[ex_ext("sample_locations")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -831,7 +832,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pSampleLocations", "*const VkSampleLocationEXT"),
             ],
         )
-        .extensions(&[ex_ext("sample_locations")]),
+        .extensions_old(&[ex_ext("sample_locations")]),
     ),
     Element::Struct(
         Struct::new(
@@ -841,7 +842,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("sampleLocationsInfo", "VkSampleLocationsInfoEXT"),
             ],
         )
-        .extensions(&[ex_ext("sample_locations")]),
+        .extensions_old(&[ex_ext("sample_locations")]),
     ),
     Element::Struct(
         Struct::new(
@@ -851,7 +852,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("sampleLocationsInfo", "VkSampleLocationsInfoEXT"),
             ],
         )
-        .extensions(&[ex_ext("sample_locations")]),
+        .extensions_old(&[ex_ext("sample_locations")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -869,7 +870,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pPostSubpassSampleLocations", "*const VkSubpassSampleLocationsEXT"),
             ],
         )
-        .extensions(&[ex_ext("sample_locations")]),
+        .extensions_old(&[ex_ext("sample_locations")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -882,7 +883,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("sampleLocationsInfo", "VkSampleLocationsInfoEXT"),
             ],
         )
-        .extensions(&[ex_ext("sample_locations")]),
+        .extensions_old(&[ex_ext("sample_locations")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -898,7 +899,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("variableSampleLocations", TY_VK_BOOL),
             ],
         )
-        .extensions(&[ex_ext("sample_locations")]),
+        .extensions_old(&[ex_ext("sample_locations")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -908,14 +909,14 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Sink,
             &[Struct::member("maxSampleLocationGridSize", "VkExtent2D")],
         )
-        .extensions(&[ex_ext("sample_locations")]),
+        .extensions_old(&[ex_ext("sample_locations")]),
     ),
     Element::Command(
         Command::inst(
             "SetSampleLocations",
             &[("pSampleLocationsInfo", "*const VkSampleLocationsInfoEXT")],
         )
-        .extension("EXT", "sample_locations"),
+        .extension_old("EXT", "sample_locations"),
     ),
     Element::Command(
         Command::new(
@@ -926,7 +927,7 @@ pub const ELEMENTS: &[Element] = &[
                 ("pMultisampleProperties", "*mut VkMultisamplePropertiesEXT"),
             ],
         )
-        .extension("EXT", "sample_locations"),
+        .extension_old("EXT", "sample_locations"),
     ),
     // VK_NV_fragment_coverage_to_color
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_NV_fragment_coverage_to_color", 1)),
@@ -937,7 +938,7 @@ pub const ELEMENTS: &[Element] = &[
             "PIPELINE_COVERAGE_TO_COLOR_STATE_CREATE",
             &[],
         )
-        .extension("NV", "fragment_coverage_to_color"),
+        .extension_old("NV", "fragment_coverage_to_color"),
     ),
     Element::Struct(
         Struct::typed(
@@ -951,7 +952,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("coverageToColorLocation", "u32"),
             ],
         )
-        .extensions(&[("NV", "fragment_coverage_to_color")]),
+        .extensions_old(&[("NV", "fragment_coverage_to_color")]),
     ),
     // VK_NV_framebuffer_mixed_samples
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_NV_framebuffer_mixed_samples", 1)),
@@ -960,13 +961,13 @@ pub const ELEMENTS: &[Element] = &[
             "CoverageModulationMode",
             "COVERAGE_MODULATION_MODE",
             &[
-                Enum::member("NONE", 0).extension("NV", "framebuffer_mixed_samples"),
-                Enum::member("RGB", 1).extension("NV", "framebuffer_mixed_samples"),
-                Enum::member("ALPHA", 2).extension("NV", "framebuffer_mixed_samples"),
-                Enum::member("RGBA", 3).extension("NV", "framebuffer_mixed_samples"),
+                Enum::member("NONE", 0).extension_old("NV", "framebuffer_mixed_samples"),
+                Enum::member("RGB", 1).extension_old("NV", "framebuffer_mixed_samples"),
+                Enum::member("ALPHA", 2).extension_old("NV", "framebuffer_mixed_samples"),
+                Enum::member("RGBA", 3).extension_old("NV", "framebuffer_mixed_samples"),
             ],
         )
-        .extension("NV", "framebuffer_mixed_samples"),
+        .extension_old("NV", "framebuffer_mixed_samples"),
     ),
     Element::Bitmask(
         Bitmask::new(
@@ -975,7 +976,7 @@ pub const ELEMENTS: &[Element] = &[
             "PIPELINE_COVERAGE_MODULATION_STATE_CREATE",
             &[],
         )
-        .extension("NV", "framebuffer_mixed_samples"),
+        .extension_old("NV", "framebuffer_mixed_samples"),
     ),
     Element::Struct(
         Struct::typed(
@@ -991,7 +992,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pCoverageModulationTable", "*const core::ffi::c_float"),
             ],
         )
-        .extensions(&[("NV", "framebuffer_mixed_samples")]),
+        .extensions_old(&[("NV", "framebuffer_mixed_samples")]),
     ),
     // VK_EXT_global_priority
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_global_priority", 2)),
@@ -1000,13 +1001,13 @@ pub const ELEMENTS: &[Element] = &[
             "QueueGlobalPriority",
             "QUEUE_GLOBAL_PRIORITY",
             &[
-                Enum::member("LOW", 128).extension("EXT", "global_priority"),
-                Enum::member("MEDIUM", 256).extension("EXT", "global_priority"),
-                Enum::member("HIGH", 512).extension("EXT", "global_priority"),
-                Enum::member("REALTIME", 1024).extension("EXT", "global_priority"),
+                Enum::member("LOW", 128).extension_old("EXT", "global_priority"),
+                Enum::member("MEDIUM", 256).extension_old("EXT", "global_priority"),
+                Enum::member("HIGH", 512).extension_old("EXT", "global_priority"),
+                Enum::member("REALTIME", 1024).extension_old("EXT", "global_priority"),
             ],
         )
-        .extension("EXT", "global_priority"),
+        .extension_old("EXT", "global_priority"),
     ),
     Element::Struct(
         Struct::typed(
@@ -1016,7 +1017,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Source,
             &[Struct::member("globalPriority", "VkQueueGlobalPriorityEXT")],
         )
-        .extensions(&[ex_ext("global_priority")]),
+        .extensions_old(&[ex_ext("global_priority")]),
     ),
     // VK_NV_viewport_swizzle
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_NV_viewport_swizzle", 1)),
@@ -1025,17 +1026,17 @@ pub const ELEMENTS: &[Element] = &[
             "ViewportCoordinateSwizzle",
             "VIEWPORT_COORDINATE_SWIZZLE",
             &[
-                Enum::member("POSITIVE_X", 0).extension("NV", "viewport_swizzle"),
-                Enum::member("NEGATIVE_X", 1).extension("NV", "viewport_swizzle"),
-                Enum::member("POSITIVE_Y", 2).extension("NV", "viewport_swizzle"),
-                Enum::member("NEGATIVE_Y", 3).extension("NV", "viewport_swizzle"),
-                Enum::member("POSITIVE_Z", 4).extension("NV", "viewport_swizzle"),
-                Enum::member("NEGATIVE_Z", 5).extension("NV", "viewport_swizzle"),
-                Enum::member("POSITIVE_W", 6).extension("NV", "viewport_swizzle"),
-                Enum::member("NEGATIVE_W", 7).extension("NV", "viewport_swizzle"),
+                Enum::member("POSITIVE_X", 0).extension_old("NV", "viewport_swizzle"),
+                Enum::member("NEGATIVE_X", 1).extension_old("NV", "viewport_swizzle"),
+                Enum::member("POSITIVE_Y", 2).extension_old("NV", "viewport_swizzle"),
+                Enum::member("NEGATIVE_Y", 3).extension_old("NV", "viewport_swizzle"),
+                Enum::member("POSITIVE_Z", 4).extension_old("NV", "viewport_swizzle"),
+                Enum::member("NEGATIVE_Z", 5).extension_old("NV", "viewport_swizzle"),
+                Enum::member("POSITIVE_W", 6).extension_old("NV", "viewport_swizzle"),
+                Enum::member("NEGATIVE_W", 7).extension_old("NV", "viewport_swizzle"),
             ],
         )
-        .extension("NV", "viewport_swizzle"),
+        .extension_old("NV", "viewport_swizzle"),
     ),
     Element::Bitmask(
         Bitmask::new(
@@ -1044,7 +1045,7 @@ pub const ELEMENTS: &[Element] = &[
             "PIPELINE_VIEWPORT_SWIZZLE_STATE_CREATE",
             &[],
         )
-        .extension("NV", "viewport_swizzle"),
+        .extension_old("NV", "viewport_swizzle"),
     ),
     Element::Struct(
         Struct::new(
@@ -1056,7 +1057,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("w", "VkViewportCoordinateSwizzleNV"),
             ],
         )
-        .extensions(&[("NV", "viewport_swizzle")]),
+        .extensions_old(&[("NV", "viewport_swizzle")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -1069,7 +1070,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pViewportSwizzles", "*const VkViewportSwizzleNV"),
             ],
         )
-        .extensions(&[("NV", "viewport_swizzle")]),
+        .extensions_old(&[("NV", "viewport_swizzle")]),
     ),
     // VK_EXT_hdr_metadata
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_hdr_metadata", 1)),
@@ -1081,7 +1082,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("y", "core::ffi::c_float"),
             ],
         )
-        .extensions(&[ex_ext("hdr_metadata")]),
+        .extensions_old(&[ex_ext("hdr_metadata")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -1100,7 +1101,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("maxFrameAverageLightLevel", "core::ffi::c_float"),
             ],
         )
-        .extensions(&[ex_ext("hdr_metadata")]),
+        .extensions_old(&[ex_ext("hdr_metadata")]),
     ),
     // VK_EXT_display_control
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_display_control", 1)),
@@ -1109,28 +1110,28 @@ pub const ELEMENTS: &[Element] = &[
             "DisplayPowerState",
             "DISPLAY_POWER_STATE",
             &[
-                Enum::member("OFF", 0).extension("EXT", "display_control"),
-                Enum::member("SUSPEND", 1).extension("EXT", "display_control"),
-                Enum::member("ON", 2).extension("EXT", "display_control"),
+                Enum::member("OFF", 0).extension_old("EXT", "display_control"),
+                Enum::member("SUSPEND", 1).extension_old("EXT", "display_control"),
+                Enum::member("ON", 2).extension_old("EXT", "display_control"),
             ],
         )
-        .extension("EXT", "display_control"),
+        .extension_old("EXT", "display_control"),
     ),
     Element::Enum(
         Enum::new(
             "DeviceEventType",
             "DEVICE_EVENT_TYPE",
-            &[Enum::member("DISPLAY_HOTPLUG", 0).extension("EXT", "display_control")],
+            &[Enum::member("DISPLAY_HOTPLUG", 0).extension_old("EXT", "display_control")],
         )
-        .extension("EXT", "display_control"),
+        .extension_old("EXT", "display_control"),
     ),
     Element::Enum(
         Enum::new(
             "DisplayEventType",
             "DISPLAY_EVENT_TYPE",
-            &[Enum::member("FIRST_PIXEL_OUT", 0).extension("EXT", "display_control")],
+            &[Enum::member("FIRST_PIXEL_OUT", 0).extension_old("EXT", "display_control")],
         )
-        .extension("EXT", "display_control"),
+        .extension_old("EXT", "display_control"),
     ),
     Element::Struct(
         Struct::typed(
@@ -1140,7 +1141,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Source,
             &[Struct::member("powerState", "VkDisplayPowerStateEXT")],
         )
-        .extensions(&[ex_ext("display_control")]),
+        .extensions_old(&[ex_ext("display_control")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -1150,7 +1151,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Source,
             &[Struct::member("deviceEvent", "VkDeviceEventTypeEXT")],
         )
-        .extensions(&[ex_ext("display_control")]),
+        .extensions_old(&[ex_ext("display_control")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -1160,7 +1161,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Source,
             &[Struct::member("displayEVent", "VkDisplayEventTypeEXT")],
         )
-        .extensions(&[ex_ext("display_control")]),
+        .extensions_old(&[ex_ext("display_control")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -1170,7 +1171,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Source,
             &[Struct::member("surfaceCounters", "VkSurfaceCounterFlagsEXT")],
         )
-        .extensions(&[ex_ext("display_control")]),
+        .extensions_old(&[ex_ext("display_control")]),
     ),
     Element::Command(
         Command::new(
@@ -1182,7 +1183,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("EXT", "display_control"),
+        .extension_old("EXT", "display_control"),
     ),
     Element::Command(
         Command::new(
@@ -1195,7 +1196,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("EXT", "display_control"),
+        .extension_old("EXT", "display_control"),
     ),
     Element::Command(
         Command::new(
@@ -1208,7 +1209,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("EXT", "display_control"),
+        .extension_old("EXT", "display_control"),
     ),
     Element::Command(
         Command::new(
@@ -1221,13 +1222,13 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("EXT", "display_control"),
+        .extension_old("EXT", "display_control"),
     ),
     // VK_GOOGLE_display_timing
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_GOOGLE_display_timing", 1)),
     Element::Struct(
         Struct::new("RefreshCycleDuration", &[Struct::member("refreshDuration", "u64")])
-            .extensions(&[("GOOGLE", "display_timing")]),
+            .extensions_old(&[("GOOGLE", "display_timing")]),
     ),
     Element::Struct(
         Struct::new(
@@ -1240,7 +1241,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("presentMargin", "u64"),
             ],
         )
-        .extensions(&[("GOOGLE", "display_timing")]),
+        .extensions_old(&[("GOOGLE", "display_timing")]),
     ),
     Element::Struct(
         Struct::new(
@@ -1250,7 +1251,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("desiredPresentTime", "u64"),
             ],
         )
-        .extensions(&[("GOOGLE", "display_timing")]),
+        .extensions_old(&[("GOOGLE", "display_timing")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -1263,7 +1264,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pTimes", "*const VkPresentTimeGOOGLE"),
             ],
         )
-        .extensions(&[("GOOGLE", "display_timing")]),
+        .extensions_old(&[("GOOGLE", "display_timing")]),
     ),
     Element::Command(
         Command::new(
@@ -1275,7 +1276,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("GOOGLE", "display_timing"),
+        .extension_old("GOOGLE", "display_timing"),
     ),
     Element::Command(
         Command::new(
@@ -1288,14 +1289,14 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("GOOGLE", "display_timing"),
+        .extension_old("GOOGLE", "display_timing"),
     ),
     // VK_KHR_shared_presentable_image
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_KHR_shared_presentable_image", 1)),
     Element::Enum(Enum::extending(
         "ImageLayout",
         "IMAGE_LAYOUT",
-        &[Enum::member("SHARED_PRESENT", vk_ext_enum(112, 0) as _).extension("KHR", "shared_presentable_image")],
+        &[Enum::member("SHARED_PRESENT", vk_ext_enum(112, 0) as _).extension_old("KHR", "shared_presentable_image")],
     )),
     Element::Struct(
         Struct::typed(
@@ -1305,7 +1306,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Sink,
             &[Struct::member("sharedPresentSupportedUsageFlags", "VkImageUsageFlags")],
         )
-        .extensions(&[ex_khr("shared_presentable_image")]),
+        .extensions_old(&[ex_khr("shared_presentable_image")]),
     ),
     Element::Command(
         Command::new(
@@ -1313,7 +1314,7 @@ pub const ELEMENTS: &[Element] = &[
             &[("device", "VkDevice"), ("swapchain", "VkSwapchainKHR")],
         )
         .failable()
-        .extension("KHR", "shared_presentable_image"),
+        .extension_old("KHR", "shared_presentable_image"),
     ),
     // VK_AMD_rasterization_order
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_AMD_rasterization_order", 1)),
@@ -1322,11 +1323,11 @@ pub const ELEMENTS: &[Element] = &[
             "RasterizationOrder",
             "RASTERIZATION_ORDER",
             &[
-                Enum::member("STRICT", 0).extension("AMD", "rasterization_order"),
-                Enum::member("RELAXED", 1).extension("AMD", "rasterization_order"),
+                Enum::member("STRICT", 0).extension_old("AMD", "rasterization_order"),
+                Enum::member("RELAXED", 1).extension_old("AMD", "rasterization_order"),
             ],
         )
-        .extension("AMD", "rasterization_order"),
+        .extension_old("AMD", "rasterization_order"),
     ),
     Element::Struct(
         Struct::typed(
@@ -1336,7 +1337,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Source,
             &[Struct::member("rasterizationOrder", "VkRasterizationOrderAMD")],
         )
-        .extensions(&[("AMD", "rasterization_order")]),
+        .extensions_old(&[("AMD", "rasterization_order")]),
     ),
     // VK_AMD_texture_gather_bias_lod
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_AMD_texture_gather_bias_lod", 1)),
@@ -1348,7 +1349,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Sink,
             &[Struct::member("supportsTextureGatherLODBiasAMD", TY_VK_BOOL)],
         )
-        .extensions(&[("AMD", "texture_gather_bias_lod")]),
+        .extensions_old(&[("AMD", "texture_gather_bias_lod")]),
     ),
     // VK_NN_vi_surface
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_NN_vi_surface", 1)),
@@ -1359,7 +1360,7 @@ pub const ELEMENTS: &[Element] = &[
             "VI_SURFACE_CREATE",
             &[],
         )
-        .extension("NN", "vi_surface"),
+        .extension_old("NN", "vi_surface"),
     ),
     Element::Struct(
         Struct::typed(
@@ -1372,7 +1373,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("window", "*mut core::ffi::c_void"),
             ],
         )
-        .extensions(&[("NN", "vi_surface")]),
+        .extensions_old(&[("NN", "vi_surface")]),
     ),
     Element::Command(
         Command::new(
@@ -1386,7 +1387,7 @@ pub const ELEMENTS: &[Element] = &[
         )
         .failable()
         .static_callable()
-        .extension("NN", "vi_surface"),
+        .extension_old("NN", "vi_surface"),
     ),
     // VK_EXT_display_surface_counter
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_display_surface_counter", 1)),
@@ -1395,9 +1396,9 @@ pub const ELEMENTS: &[Element] = &[
             "SurfaceCounterFlags",
             "SurfaceCounterFlagBits",
             "SURFACE_COUNTER",
-            &[Bitmask::entry("VBLANK", 0).extension("EXT", "display_surface_counter")],
+            &[Bitmask::entry("VBLANK", 0).extension_old("EXT", "display_surface_counter")],
         )
-        .extension("EXT", "display_surface_counter"),
+        .extension_old("EXT", "display_surface_counter"),
     ),
     Element::Struct(
         Struct::typed(
@@ -1419,7 +1420,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("supportedSurfaceCounters", "VkSurfaceCounterFlagsEXT"),
             ],
         )
-        .extensions(&[ex_ext("display_surface_counter")]),
+        .extensions_old(&[ex_ext("display_surface_counter")]),
     ),
     Element::Command(
         Command::new(
@@ -1431,7 +1432,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("EXT", "display_surface_counter"),
+        .extension_old("EXT", "display_surface_counter"),
     ),
     // VK_EXT_debug_marker
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_debug_marker", 4)),
@@ -1447,7 +1448,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pObjectName", "*const core::ffi::c_char"),
             ],
         )
-        .extensions(&[ex_ext("debug_marker")]),
+        .extensions_old(&[ex_ext("debug_marker")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -1463,7 +1464,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pTag", "*const core::ffi::c_void"),
             ],
         )
-        .extensions(&[ex_ext("debug_marker")]),
+        .extensions_old(&[ex_ext("debug_marker")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -1476,7 +1477,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("color", "[core::ffi::c_float; 4]"),
             ],
         )
-        .extensions(&[ex_ext("debug_marker")]),
+        .extensions_old(&[ex_ext("debug_marker")]),
     ),
     Element::Command(
         Command::new(
@@ -1487,7 +1488,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("EXT", "debug_marker"),
+        .extension_old("EXT", "debug_marker"),
     ),
     Element::Command(
         Command::new(
@@ -1498,22 +1499,22 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("EXT", "debug_marker"),
+        .extension_old("EXT", "debug_marker"),
     ),
     Element::Command(
         Command::inst(
             "DebugMarkerBegin",
             &[("pMarkerInfo", "*const VkDebugMarkerMarkerInfoEXT")],
         )
-        .extension("EXT", "debug_marker"),
+        .extension_old("EXT", "debug_marker"),
     ),
-    Element::Command(Command::inst("DebugMarkerEnd", &[]).extension("EXT", "debug_marker")),
+    Element::Command(Command::inst("DebugMarkerEnd", &[]).extension_old("EXT", "debug_marker")),
     Element::Command(
         Command::inst(
             "DebugMarkerInsert",
             &[("pMarkerInfo", "*const VkDebugMarkerMarkerInfoEXT")],
         )
-        .extension("EXT", "debug_marker"),
+        .extension_old("EXT", "debug_marker"),
     ),
     // VK_NVX_device_generated_commands
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_NVX_device_generated_commands", 1)),
@@ -1534,31 +1535,31 @@ pub const ELEMENTS: &[Element] = &[
             "IndirectCommandsTokenType",
             "INDIRECT_COMMANDS_TOKEN_TYPE",
             &[
-                Enum::member("PIPELINE", 0).extension("NVX", "device_generated_commands"),
-                Enum::member("DESCRIPTOR_SET", 1).extension("NVX", "device_generated_commands"),
-                Enum::member("INDEX_BUFFER", 2).extension("NVX", "device_generated_commands"),
-                Enum::member("VERTEX_BUFFER", 3).extension("NVX", "device_generated_commands"),
-                Enum::member("PUSH_CONSTANT", 4).extension("NVX", "device_generated_commands"),
-                Enum::member("DRAW_INDEXED", 5).extension("NVX", "device_generated_commands"),
-                Enum::member("DRAW", 6).extension("NVX", "device_generated_commands"),
-                Enum::member("DISPATCH", 7).extension("NVX", "device_generated_commands"),
+                Enum::member("PIPELINE", 0).extension_old("NVX", "device_generated_commands"),
+                Enum::member("DESCRIPTOR_SET", 1).extension_old("NVX", "device_generated_commands"),
+                Enum::member("INDEX_BUFFER", 2).extension_old("NVX", "device_generated_commands"),
+                Enum::member("VERTEX_BUFFER", 3).extension_old("NVX", "device_generated_commands"),
+                Enum::member("PUSH_CONSTANT", 4).extension_old("NVX", "device_generated_commands"),
+                Enum::member("DRAW_INDEXED", 5).extension_old("NVX", "device_generated_commands"),
+                Enum::member("DRAW", 6).extension_old("NVX", "device_generated_commands"),
+                Enum::member("DISPATCH", 7).extension_old("NVX", "device_generated_commands"),
             ],
         )
-        .extension("NVX", "device_generated_commands"),
+        .extension_old("NVX", "device_generated_commands"),
     ),
     Element::Enum(
         Enum::new(
             "ObjectEntryType",
             "OBJECT_ENTRY_TYPE",
             &[
-                Enum::member("DESCRIPTOR_SET", 0).extension("NVX", "device_generated_commands"),
-                Enum::member("PIPELINE", 1).extension("NVX", "device_generated_commands"),
-                Enum::member("INDEX_BUFFER", 2).extension("NVX", "device_generated_commands"),
-                Enum::member("VERTEX_BUFFER", 3).extension("NVX", "device_generated_commands"),
-                Enum::member("PUSH_CONSTANT", 4).extension("NVX", "device_generated_commands"),
+                Enum::member("DESCRIPTOR_SET", 0).extension_old("NVX", "device_generated_commands"),
+                Enum::member("PIPELINE", 1).extension_old("NVX", "device_generated_commands"),
+                Enum::member("INDEX_BUFFER", 2).extension_old("NVX", "device_generated_commands"),
+                Enum::member("VERTEX_BUFFER", 3).extension_old("NVX", "device_generated_commands"),
+                Enum::member("PUSH_CONSTANT", 4).extension_old("NVX", "device_generated_commands"),
             ],
         )
-        .extension("NVX", "device_generated_commands"),
+        .extension_old("NVX", "device_generated_commands"),
     ),
     Element::Bitmask(
         Bitmask::new(
@@ -1566,13 +1567,13 @@ pub const ELEMENTS: &[Element] = &[
             "IndirectCommandsLayoutUsageFlagBits",
             "INDIRECT_COMMANDS_LAYOUT_USAGE",
             &[
-                Bitmask::entry("UNORDERED_SEQUENCES", 0).extension("NVX", "device_generated_commands"),
-                Bitmask::entry("SPARSE_SEQUENCES", 1).extension("NVX", "device_generated_commands"),
-                Bitmask::entry("EMPTY_EXECUTIONS", 2).extension("NVX", "device_generated_commands"),
-                Bitmask::entry("INDEXED_SEQUENCES", 3).extension("NVX", "device_generated_commands"),
+                Bitmask::entry("UNORDERED_SEQUENCES", 0).extension_old("NVX", "device_generated_commands"),
+                Bitmask::entry("SPARSE_SEQUENCES", 1).extension_old("NVX", "device_generated_commands"),
+                Bitmask::entry("EMPTY_EXECUTIONS", 2).extension_old("NVX", "device_generated_commands"),
+                Bitmask::entry("INDEXED_SEQUENCES", 3).extension_old("NVX", "device_generated_commands"),
             ],
         )
-        .extension("NVX", "device_generated_commands"),
+        .extension_old("NVX", "device_generated_commands"),
     ),
     Element::Bitmask(
         Bitmask::new(
@@ -1580,23 +1581,23 @@ pub const ELEMENTS: &[Element] = &[
             "ObjectEntryUsageFlagBits",
             "OBJECT_ENTRY_USAGE",
             &[
-                Bitmask::entry("GRAPHICS", 0).extension("NVX", "device_generated_commands"),
-                Bitmask::entry("COMPUTE", 1).extension("NVX", "device_generated_commands"),
+                Bitmask::entry("GRAPHICS", 0).extension_old("NVX", "device_generated_commands"),
+                Bitmask::entry("COMPUTE", 1).extension_old("NVX", "device_generated_commands"),
             ],
         )
-        .extension("NVX", "device_generated_commands"),
+        .extension_old("NVX", "device_generated_commands"),
     ),
     Element::Bitmask(Bitmask::extending(
         "PipelineStageFlagBits",
         "PIPELINE_STAGE",
-        &[Bitmask::entry("COMMAND_PROCESS", 17).extension("NVX", "device_generated_commands")],
+        &[Bitmask::entry("COMMAND_PROCESS", 17).extension_old("NVX", "device_generated_commands")],
     )),
     Element::Bitmask(Bitmask::extending(
         "AccessFlagBits",
         "ACCESS",
         &[
-            Bitmask::entry("COMMAND_PROCESS_READ", 17).extension("NVX", "device_generated_commands"),
-            Bitmask::entry("COMMAND_PROCESS_WRITE", 18).extension("NVX", "device_generated_commands"),
+            Bitmask::entry("COMMAND_PROCESS_READ", 17).extension_old("NVX", "device_generated_commands"),
+            Bitmask::entry("COMMAND_PROCESS_WRITE", 18).extension_old("NVX", "device_generated_commands"),
         ],
     )),
     Element::Struct(
@@ -1607,7 +1608,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Source,
             &[Struct::member("computeBindingPointSupport", TY_VK_BOOL)],
         )
-        .extensions(&[("NVX", "device_generated_commands")]),
+        .extensions_old(&[("NVX", "device_generated_commands")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -1623,7 +1624,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("minCommandsTokenBufferOffsetAlignment", "u32"),
             ],
         )
-        .extensions(&[("NVX", "device_generated_commands")]),
+        .extensions_old(&[("NVX", "device_generated_commands")]),
     ),
     Element::Struct(
         Struct::new(
@@ -1634,7 +1635,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("offset", "VkDeviceSize"),
             ],
         )
-        .extensions(&[("NVX", "device_generated_commands")]),
+        .extensions_old(&[("NVX", "device_generated_commands")]),
     ),
     Element::Struct(
         Struct::new(
@@ -1646,7 +1647,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("divisor", "u32"),
             ],
         )
-        .extensions(&[("NVX", "device_generated_commands")]),
+        .extensions_old(&[("NVX", "device_generated_commands")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -1661,7 +1662,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pTokens", "*const VkIndirectCommandsLayoutTokenNVX"),
             ],
         )
-        .extensions(&[("NVX", "device_generated_commands")]),
+        .extensions_old(&[("NVX", "device_generated_commands")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -1682,7 +1683,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("sequencesIndexOffset", "VkDeviceSize"),
             ],
         )
-        .extensions(&[("NVX", "device_generated_commands")]),
+        .extensions_old(&[("NVX", "device_generated_commands")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -1696,7 +1697,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("maxSequencesCount", "u32"),
             ],
         )
-        .extensions(&[("NVX", "device_generated_commands")]),
+        .extensions_old(&[("NVX", "device_generated_commands")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -1716,7 +1717,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("maxPipelineLayouts", "u32"),
             ],
         )
-        .extensions(&[("NVX", "device_generated_commands")]),
+        .extensions_old(&[("NVX", "device_generated_commands")]),
     ),
     Element::Struct(
         Struct::new(
@@ -1726,7 +1727,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("flags", "VkObjectEntryUsageFlagsNVX"),
             ],
         )
-        .extensions(&[("NVX", "device_generated_commands")]),
+        .extensions_old(&[("NVX", "device_generated_commands")]),
     ),
     Element::Struct(
         Struct::new(
@@ -1737,7 +1738,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pipeline", "VkPipeline"),
             ],
         )
-        .extensions(&[("NVX", "device_generated_commands")]),
+        .extensions_old(&[("NVX", "device_generated_commands")]),
     ),
     Element::Struct(
         Struct::new(
@@ -1749,7 +1750,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("descriptorSet", "VkDescriptorSet"),
             ],
         )
-        .extensions(&[("NVX", "device_generated_commands")]),
+        .extensions_old(&[("NVX", "device_generated_commands")]),
     ),
     Element::Struct(
         Struct::new(
@@ -1760,7 +1761,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("buffer", "VkBuffer"),
             ],
         )
-        .extensions(&[("NVX", "device_generated_commands")]),
+        .extensions_old(&[("NVX", "device_generated_commands")]),
     ),
     Element::Struct(
         Struct::new(
@@ -1772,7 +1773,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("indexType", "VkIndexType"),
             ],
         )
-        .extensions(&[("NVX", "device_generated_commands")]),
+        .extensions_old(&[("NVX", "device_generated_commands")]),
     ),
     Element::Struct(
         Struct::new(
@@ -1784,21 +1785,21 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("stageFlags", "VkShaderStageFlags"),
             ],
         )
-        .extensions(&[("NVX", "device_generated_commands")]),
+        .extensions_old(&[("NVX", "device_generated_commands")]),
     ),
     Element::Command(
         Command::inst(
             "ProcessCommands",
             &[("pProcessCommandsInfo", "*const VkCmdProcessCommandsInfoNVX")],
         )
-        .extension("NVX", "device_generated_commands"),
+        .extension_old("NVX", "device_generated_commands"),
     ),
     Element::Command(
         Command::inst(
             "ReserveSpaceForCommands",
             &[("pReserveSpaceInfo", "*const VkCmdReserveSpaceForCommandsInfoNVX")],
         )
-        .extension("NVX", "device_generated_commands"),
+        .extension_old("NVX", "device_generated_commands"),
     ),
     Element::Command(
         Command::new(
@@ -1811,7 +1812,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("NVX", "device_generated_commands"),
+        .extension_old("NVX", "device_generated_commands"),
     ),
     Element::Command(
         Command::new(
@@ -1822,7 +1823,7 @@ pub const ELEMENTS: &[Element] = &[
                 ("pAllocator", "*const VkAllocationCallbacks"),
             ],
         )
-        .extension("NVX", "device_generated_commands"),
+        .extension_old("NVX", "device_generated_commands"),
     ),
     Element::Command(
         Command::new(
@@ -1835,7 +1836,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("NVX", "device_generated_commands"),
+        .extension_old("NVX", "device_generated_commands"),
     ),
     Element::Command(
         Command::new(
@@ -1846,7 +1847,7 @@ pub const ELEMENTS: &[Element] = &[
                 ("pAllocator", "*const VkAllocationCallbacks"),
             ],
         )
-        .extension("NVX", "device_generated_commands"),
+        .extension_old("NVX", "device_generated_commands"),
     ),
     Element::Command(
         Command::new(
@@ -1860,7 +1861,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("NVX", "device_generated_commands"),
+        .extension_old("NVX", "device_generated_commands"),
     ),
     Element::Command(
         Command::new(
@@ -1874,7 +1875,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension("NVX", "device_generated_commands"),
+        .extension_old("NVX", "device_generated_commands"),
     ),
     Element::Command(
         Command::new(
@@ -1885,7 +1886,7 @@ pub const ELEMENTS: &[Element] = &[
                 ("pLimits", "*mut VkDeviceGeneratedCommandsLimitsNVX"),
             ],
         )
-        .extension("NVX", "device_generated_commands"),
+        .extension_old("NVX", "device_generated_commands"),
     ),
     // VK_KHR_incremental_present
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_KHR_incremental_present", 1)),
@@ -1898,7 +1899,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("layer", "u32"),
             ],
         )
-        .extensions(&[ex_khr("incremental_present")]),
+        .extensions_old(&[ex_khr("incremental_present")]),
     ),
     Element::Struct(
         Struct::new(
@@ -1908,7 +1909,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pRectangles", "*const VkRectLayerKHR"),
             ],
         )
-        .extensions(&[ex_khr("incremental_present")]),
+        .extensions_old(&[ex_khr("incremental_present")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -1921,14 +1922,14 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pRegions", "*const VkPresentRegionKHR"),
             ],
         )
-        .extensions(&[ex_khr("incremental_present")]),
+        .extensions_old(&[ex_khr("incremental_present")]),
     ),
     // VK_NV_clip_space_w_scaling
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_NV_clip_space_w_scaling", 1)),
     Element::Enum(Enum::extending(
         "DynamicState",
         "DYNAMIC_STATE",
-        &[Enum::member("VIEWPORT_W_SCALING", vk_ext_enum(88, 0) as _).extension("NV", "clip_space_w_scaling")],
+        &[Enum::member("VIEWPORT_W_SCALING", vk_ext_enum(88, 0) as _).extension_old("NV", "clip_space_w_scaling")],
     )),
     Element::Struct(
         Struct::new(
@@ -1938,7 +1939,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("ycoeff", "core::ffi::c_float"),
             ],
         )
-        .extensions(&[("NV", "clip_space_w_scaling")]),
+        .extensions_old(&[("NV", "clip_space_w_scaling")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -1952,7 +1953,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pViewportWScalings", "*const VkViewportWScalingNV"),
             ],
         )
-        .extensions(&[("NV", "clip_space_w_scaling")]),
+        .extensions_old(&[("NV", "clip_space_w_scaling")]),
     ),
     Element::Command(
         Command::inst(
@@ -1963,14 +1964,14 @@ pub const ELEMENTS: &[Element] = &[
                 ("pViewportWScalings", "*const VkViewportWScalingNV"),
             ],
         )
-        .extension("NV", "clip_space_w_scaling"),
+        .extension_old("NV", "clip_space_w_scaling"),
     ),
     // VK_NV_fill_rectangle
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_NV_fill_rectangle", 1)),
     Element::Enum(Enum::extending(
         "PolygonMode",
         "POLYGON_MODE",
-        &[Enum::member("FILL_RECTANGLE", vk_ext_enum(154, 0) as _).extension("NV", "fill_rectangle")],
+        &[Enum::member("FILL_RECTANGLE", vk_ext_enum(154, 0) as _).extension_old("NV", "fill_rectangle")],
     )),
     // VK_EXT_conservative_rasterization
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_conservative_rasterization", 1)),
@@ -1979,12 +1980,12 @@ pub const ELEMENTS: &[Element] = &[
             "ConservativeRasterizationMode",
             "CONSERVATIVE_RASTERIZATION_MODE",
             &[
-                Enum::member("DISABLED", 0).extension("EXT", "conservative_rasterization"),
-                Enum::member("OVERESTIMATE", 1).extension("EXT", "conservative_rasterization"),
-                Enum::member("UNDERESTIMATE", 2).extension("EXT", "conservative_rasterization"),
+                Enum::member("DISABLED", 0).extension_old("EXT", "conservative_rasterization"),
+                Enum::member("OVERESTIMATE", 1).extension_old("EXT", "conservative_rasterization"),
+                Enum::member("UNDERESTIMATE", 2).extension_old("EXT", "conservative_rasterization"),
             ],
         )
-        .extension("EXT", "conservative_rasterization"),
+        .extension_old("EXT", "conservative_rasterization"),
     ),
     Element::Bitmask(
         Bitmask::new(
@@ -1993,7 +1994,7 @@ pub const ELEMENTS: &[Element] = &[
             "PIPELINE_RASTERIZATION_CONSERVATIVE_STATE",
             &[],
         )
-        .extension("EXT", "conservative_rasterization"),
+        .extension_old("EXT", "conservative_rasterization"),
     ),
     Element::Struct(
         Struct::typed(
@@ -2013,7 +2014,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("conservativeRasterizationPostDepthCoverage", TY_VK_BOOL),
             ],
         )
-        .extensions(&[ex_ext("conservative_rasterization")]),
+        .extensions_old(&[ex_ext("conservative_rasterization")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2027,25 +2028,25 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("extraPrimitiveOverestimationSize", "core::ffi::c_float"),
             ],
         )
-        .extensions(&[ex_ext("conservative_rasterization")]),
+        .extensions_old(&[ex_ext("conservative_rasterization")]),
     ),
     // VK_EXT_discard_rectangles
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_discard_rectangles", 1)),
     Element::Enum(Enum::extending(
         "DynamicState",
         "DYNAMIC_STATE",
-        &[Enum::member("DISCARD_RECTANGLE", vk_ext_enum(100, 0) as _).extension("EXT", "discard_rectangles")],
+        &[Enum::member("DISCARD_RECTANGLE", vk_ext_enum(100, 0) as _).extension_old("EXT", "discard_rectangles")],
     )),
     Element::Enum(
         Enum::new(
             "DiscardRectangleMode",
             "DISCARD_RECTANGLE_MODE",
             &[
-                Enum::member("INCLUSIVE", 0).extension("EXT", "discard_rectangles"),
-                Enum::member("EXCLUSIVE", 1).extension("EXT", "discard_rectangles"),
+                Enum::member("INCLUSIVE", 0).extension_old("EXT", "discard_rectangles"),
+                Enum::member("EXCLUSIVE", 1).extension_old("EXT", "discard_rectangles"),
             ],
         )
-        .extension("EXT", "discard_rectangles"),
+        .extension_old("EXT", "discard_rectangles"),
     ),
     Element::Bitmask(
         Bitmask::new(
@@ -2054,7 +2055,7 @@ pub const ELEMENTS: &[Element] = &[
             "PIPELINE_DISCARD_RECTANGLE_STATE",
             &[],
         )
-        .extension("EXT", "discard_rectangles"),
+        .extension_old("EXT", "discard_rectangles"),
     ),
     Element::Struct(
         Struct::typed(
@@ -2064,7 +2065,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Sink,
             &[Struct::member("maxDiscardRectangles", "u32")],
         )
-        .extensions(&[ex_ext("discard_rectangles")]),
+        .extensions_old(&[ex_ext("discard_rectangles")]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2079,7 +2080,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pDiscardRectangles", "*const VkRect2D"),
             ],
         )
-        .extensions(&[ex_ext("discard_rectangles")]),
+        .extensions_old(&[ex_ext("discard_rectangles")]),
     ),
     Element::Command(
         Command::inst(
@@ -2090,23 +2091,23 @@ pub const ELEMENTS: &[Element] = &[
                 ("pDiscardRectangles", "*const VkRect2D"),
             ],
         )
-        .extension("EXT", "discard_rectangles"),
+        .extension_old("EXT", "discard_rectangles"),
     ),
     // VK_EXT_image_drm_format_modifier
     Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER)),
     Element::Enum(Enum::extending(
         "ImageTiling",
         "IMAGE_TILING",
-        &[Enum::member("DRM_FORMAT_MODIFIER", vk_ext_enum(159, 0) as _).extension2(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER)],
+        &[Enum::member("DRM_FORMAT_MODIFIER", vk_ext_enum(159, 0) as _).extension(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER)],
     )),
     Element::Bitmask(Bitmask::extending(
         "ImageAspectFlagBits",
         "IMAGE_ASPECT",
         &[
-            Bitmask::entry("MEMORY_PLANE_0", 7).extension2(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
-            Bitmask::entry("MEMORY_PLANE_1", 8).extension2(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
-            Bitmask::entry("MEMORY_PLANE_2", 9).extension2(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
-            Bitmask::entry("MEMORY_PLANE_3", 10).extension2(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
+            Bitmask::entry("MEMORY_PLANE_0", 7).extension(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
+            Bitmask::entry("MEMORY_PLANE_1", 8).extension(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
+            Bitmask::entry("MEMORY_PLANE_2", 9).extension(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
+            Bitmask::entry("MEMORY_PLANE_3", 10).extension(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
         ],
     )),
     Element::Struct(
@@ -2118,7 +2119,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("drmFormatModifierTilingFeatures", "VkFormatFeatureFlags"),
             ],
         )
-        .extensions2(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
+        .extensions(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2131,7 +2132,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pDrmFormatModifierProperties", "*mut VkDrmFormatModifierPropertiesEXT"),
             ],
         )
-        .extensions2(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
+        .extensions(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2146,7 +2147,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pQueueFamilyIndices", "*const u32"),
             ],
         )
-        .extensions2(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
+        .extensions(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2159,7 +2160,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pDrmFormatModifiers", "*const u64"),
             ],
         )
-        .extensions2(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
+        .extensions(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2173,7 +2174,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pPlaneLayouts", "*const VkSubresourceLayout"),
             ],
         )
-        .extensions2(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
+        .extensions(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2183,7 +2184,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Sink,
             &[Struct::member("drmFormatModifier", "u64")],
         )
-        .extensions2(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
+        .extensions(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER]),
     ),
     Element::Struct(
         Struct::new(
@@ -2194,7 +2195,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("drmFormatModifierTilingFeatures", "VkFormatFeatureFlags2KHR"),
             ],
         )
-        .extensions2(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER])
+        .extensions(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER])
         .available_condition("feature = \"VK_KHR_format_feature_flags2\""),
     ),
     Element::Struct(
@@ -2208,7 +2209,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pDrmFormatModifierProperties", "*mut VkDrmFormatModifierProperties2EXT"),
             ],
         )
-        .extensions2(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER])
+        .extensions(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER])
         .available_condition("feature = \"VK_KHR_format_feature_flags2\""),
     ),
     Element::Command(
@@ -2221,7 +2222,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension2(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
+        .extension(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER),
     ),
     // VK_EXT_metal_objects
     Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_EXT_METAL_OBJECTS)),
@@ -2239,7 +2240,7 @@ pub const ELEMENTS: &[Element] = &[
                 Bitmask::entry("METAL_SHARED_EVENT", 5),
             ],
         )
-        .extension2(VK_EXT_METAL_OBJECTS),
+        .extension(VK_EXT_METAL_OBJECTS),
     ),
     Element::Struct(
         Struct::typed(
@@ -2249,7 +2250,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Source,
             &[Struct::member("exportObjectType", "VkExportMetalObjectTypeFlagBitsEXT")],
         )
-        .extensions2(&[VK_EXT_METAL_OBJECTS]),
+        .extensions(&[VK_EXT_METAL_OBJECTS]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2259,7 +2260,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Source,
             &[],
         )
-        .extensions2(&[VK_EXT_METAL_OBJECTS]),
+        .extensions(&[VK_EXT_METAL_OBJECTS]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2272,7 +2273,7 @@ pub const ELEMENTS: &[Element] = &[
                 "*mut core::ffi::c_void", /* id<MTLDevice> */
             )],
         )
-        .extensions2(&[VK_EXT_METAL_OBJECTS]),
+        .extensions(&[VK_EXT_METAL_OBJECTS]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2288,7 +2289,7 @@ pub const ELEMENTS: &[Element] = &[
                 ),
             ],
         )
-        .extensions2(&[VK_EXT_METAL_OBJECTS]),
+        .extensions(&[VK_EXT_METAL_OBJECTS]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2301,7 +2302,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("mtlBuffer", "*mut core::ffi::c_void" /* id<MTLBuffer> */),
             ],
         )
-        .extensions2(&[VK_EXT_METAL_OBJECTS]),
+        .extensions(&[VK_EXT_METAL_OBJECTS]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2314,7 +2315,7 @@ pub const ELEMENTS: &[Element] = &[
                 "*mut core::ffi::c_void", /* id<MTLBuffer> */
             )],
         )
-        .extensions2(&[VK_EXT_METAL_OBJECTS]),
+        .extensions(&[VK_EXT_METAL_OBJECTS]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2330,7 +2331,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("mtlTexture", "*mut core::ffi::c_void" /* id<MTLTexture> */),
             ],
         )
-        .extensions2(&[VK_EXT_METAL_OBJECTS]),
+        .extensions(&[VK_EXT_METAL_OBJECTS]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2343,7 +2344,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("mtlTexture", "*mut core::ffi::c_void" /* id<MTLTexture> */),
             ],
         )
-        .extensions2(&[VK_EXT_METAL_OBJECTS]),
+        .extensions(&[VK_EXT_METAL_OBJECTS]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2356,7 +2357,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("ioSurface", "*mut core::ffi::c_void" /* IOSurfaceRef */),
             ],
         )
-        .extensions2(&[VK_EXT_METAL_OBJECTS]),
+        .extensions(&[VK_EXT_METAL_OBJECTS]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2369,7 +2370,7 @@ pub const ELEMENTS: &[Element] = &[
                 "*mut core::ffi::c_void", /* IOSurfaceRef */
             )],
         )
-        .extensions2(&[VK_EXT_METAL_OBJECTS]),
+        .extensions(&[VK_EXT_METAL_OBJECTS]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2383,7 +2384,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("mtlSharedEvent", "*mut core::ffi::c_void" /* id<MTLSharedEvent> */),
             ],
         )
-        .extensions2(&[VK_EXT_METAL_OBJECTS]),
+        .extensions(&[VK_EXT_METAL_OBJECTS]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2396,7 +2397,7 @@ pub const ELEMENTS: &[Element] = &[
                 "*mut core::ffi::c_void", /* id<MTLSharedEvent> */
             )],
         )
-        .extensions2(&[VK_EXT_METAL_OBJECTS]),
+        .extensions(&[VK_EXT_METAL_OBJECTS]),
     ),
     Element::Command(
         Command::new(
@@ -2406,7 +2407,7 @@ pub const ELEMENTS: &[Element] = &[
                 ("pMetalObjectsInfo", "*mut VkExportMetalObjectsInfoEXT"),
             ],
         )
-        .extension2(VK_EXT_METAL_OBJECTS),
+        .extension(VK_EXT_METAL_OBJECTS),
     ),
     // VK_MVK_macos_surface
     Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_MVK_MACOS_SURFACE)),
@@ -2417,7 +2418,7 @@ pub const ELEMENTS: &[Element] = &[
             "MACOS_SURFACE_CREATE",
             &[],
         )
-        .extension2(VK_MVK_MACOS_SURFACE),
+        .extension(VK_MVK_MACOS_SURFACE),
     ),
     Element::Struct(
         Struct::typed(
@@ -2430,7 +2431,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pView", "*const core::ffi::c_void"),
             ],
         )
-        .extensions2(&[VK_MVK_MACOS_SURFACE]),
+        .extensions(&[VK_MVK_MACOS_SURFACE]),
     ),
     Element::Command(
         Command::new(
@@ -2444,7 +2445,7 @@ pub const ELEMENTS: &[Element] = &[
         )
         .failable()
         .static_callable()
-        .extension2(VK_MVK_MACOS_SURFACE),
+        .extension(VK_MVK_MACOS_SURFACE),
     ),
     // VK_MVK_ios_surface
     Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_MVK_IOS_SURFACE)),
@@ -2455,7 +2456,7 @@ pub const ELEMENTS: &[Element] = &[
             "IOS_SURFACE_CREATE",
             &[],
         )
-        .extension2(VK_MVK_IOS_SURFACE),
+        .extension(VK_MVK_IOS_SURFACE),
     ),
     Element::Struct(
         Struct::typed(
@@ -2468,7 +2469,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pView", "*const core::ffi::c_void"),
             ],
         )
-        .extensions2(&[VK_MVK_IOS_SURFACE]),
+        .extensions(&[VK_MVK_IOS_SURFACE]),
     ),
     Element::Command(
         Command::new(
@@ -2482,7 +2483,7 @@ pub const ELEMENTS: &[Element] = &[
         )
         .failable()
         .static_callable()
-        .extension2(VK_MVK_IOS_SURFACE),
+        .extension(VK_MVK_IOS_SURFACE),
     ),
     // VK_EXT_depth_range_unrestricted
     Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_EXT_DEPTH_RANGE_UNRESTRICTED)),
@@ -2494,7 +2495,7 @@ pub const ELEMENTS: &[Element] = &[
             &[("physicalDevice", "VkPhysicalDevice"), ("display", "VkDisplayKHR")],
         )
         .failable()
-        .extension2(VK_EXT_DIRECT_MODE_DISPLAY),
+        .extension(VK_EXT_DIRECT_MODE_DISPLAY),
     ),
     // VK_KHR_display_swapchain
     Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_KHR_DISPLAY_SWAPCHAIN)),
@@ -2510,7 +2511,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("persistent", TY_VK_BOOL),
             ],
         )
-        .extensions2(&[VK_KHR_DISPLAY_SWAPCHAIN]),
+        .extensions(&[VK_KHR_DISPLAY_SWAPCHAIN]),
     ),
     Element::Command(
         Command::new(
@@ -2524,7 +2525,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .failable()
-        .extension2(VK_KHR_DISPLAY_SWAPCHAIN),
+        .extension(VK_KHR_DISPLAY_SWAPCHAIN),
     ),
     // VK_AMD_draw_indirect_count
     Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_AMD_DRAW_INDIRECT_COUNT)),
@@ -2534,21 +2535,21 @@ pub const ELEMENTS: &[Element] = &[
         Bitmask::extending(
             "ExternalMemoryHandleTypeFlagBits",
             "EXTERNAL_MEMORY_HANDLE_TYPE",
-            &[Bitmask::entry("DMA_BUF", 9).extension2(VK_EXT_EXTERNAL_MEMORY_DMA_BUF)],
+            &[Bitmask::entry("DMA_BUF", 9).extension(VK_EXT_EXTERNAL_MEMORY_DMA_BUF)],
         )
-        .extension("KHR", "external_memory_capabilities"),
+        .extension_old("KHR", "external_memory_capabilities"),
     ),
     // VK_IMG_filter_cubic
     Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_IMG_FILTER_CUBIC)),
     Element::Enum(Enum::extending(
         "Filter",
         "FILTER",
-        &[Enum::member("CUBIC", vk_ext_enum(16, 0) as _).extension2(VK_IMG_FILTER_CUBIC)],
+        &[Enum::member("CUBIC", vk_ext_enum(16, 0) as _).extension(VK_IMG_FILTER_CUBIC)],
     )),
     Element::Bitmask(Bitmask::extending(
         "FormatFeatureFlagBits",
         "FORMAT_FEATURE",
-        &[Bitmask::entry("SAMPLED_IMAGE_FILTER_CUBIC", 13).extension2(VK_IMG_FILTER_CUBIC)],
+        &[Bitmask::entry("SAMPLED_IMAGE_FILTER_CUBIC", 13).extension(VK_IMG_FILTER_CUBIC)],
     )),
     // VK_IMG_format_pvrtc
     Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_IMG_FORMAT_PVRTC)),
@@ -2556,14 +2557,14 @@ pub const ELEMENTS: &[Element] = &[
         "Format",
         "FORMAT",
         &[
-            Enum::member("PVRTC1_2BPP_UNORM_BLOCK", vk_ext_enum(55, 0) as _).extension2(VK_IMG_FORMAT_PVRTC),
-            Enum::member("PVRTC1_4BPP_UNORM_BLOCK", vk_ext_enum(55, 1) as _).extension2(VK_IMG_FORMAT_PVRTC),
-            Enum::member("PVRTC2_2BPP_UNORM_BLOCK", vk_ext_enum(55, 2) as _).extension2(VK_IMG_FORMAT_PVRTC),
-            Enum::member("PVRTC2_4BPP_UNORM_BLOCK", vk_ext_enum(55, 3) as _).extension2(VK_IMG_FORMAT_PVRTC),
-            Enum::member("PVRTC1_2BPP_SRGB_BLOCK", vk_ext_enum(55, 4) as _).extension2(VK_IMG_FORMAT_PVRTC),
-            Enum::member("PVRTC1_4BPP_SRGB_BLOCK", vk_ext_enum(55, 5) as _).extension2(VK_IMG_FORMAT_PVRTC),
-            Enum::member("PVRTC2_2BPP_SRGB_BLOCK", vk_ext_enum(55, 6) as _).extension2(VK_IMG_FORMAT_PVRTC),
-            Enum::member("PVRTC2_4BPP_SRGB_BLOCK", vk_ext_enum(55, 7) as _).extension2(VK_IMG_FORMAT_PVRTC),
+            Enum::member("PVRTC1_2BPP_UNORM_BLOCK", vk_ext_enum(55, 0) as _).extension(VK_IMG_FORMAT_PVRTC),
+            Enum::member("PVRTC1_4BPP_UNORM_BLOCK", vk_ext_enum(55, 1) as _).extension(VK_IMG_FORMAT_PVRTC),
+            Enum::member("PVRTC2_2BPP_UNORM_BLOCK", vk_ext_enum(55, 2) as _).extension(VK_IMG_FORMAT_PVRTC),
+            Enum::member("PVRTC2_4BPP_UNORM_BLOCK", vk_ext_enum(55, 3) as _).extension(VK_IMG_FORMAT_PVRTC),
+            Enum::member("PVRTC1_2BPP_SRGB_BLOCK", vk_ext_enum(55, 4) as _).extension(VK_IMG_FORMAT_PVRTC),
+            Enum::member("PVRTC1_4BPP_SRGB_BLOCK", vk_ext_enum(55, 5) as _).extension(VK_IMG_FORMAT_PVRTC),
+            Enum::member("PVRTC2_2BPP_SRGB_BLOCK", vk_ext_enum(55, 6) as _).extension(VK_IMG_FORMAT_PVRTC),
+            Enum::member("PVRTC2_4BPP_SRGB_BLOCK", vk_ext_enum(55, 7) as _).extension(VK_IMG_FORMAT_PVRTC),
         ],
     )),
     // VK_AMD_gcn_shader
@@ -2584,8 +2585,8 @@ pub const ELEMENTS: &[Element] = &[
         "SubpassDescriptionFlagBits",
         "SUBPASS_DESCRIPTION",
         &[
-            Bitmask::entry("PER_VIEW_ATTRIBUTES", 0).extension2(VK_NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES),
-            Bitmask::entry("PER_VIEW_POSITION_X_ONLY", 1).extension2(VK_NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES),
+            Bitmask::entry("PER_VIEW_ATTRIBUTES", 0).extension(VK_NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES),
+            Bitmask::entry("PER_VIEW_POSITION_X_ONLY", 1).extension(VK_NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES),
         ],
     )),
     Element::Struct(
@@ -2596,7 +2597,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Sink,
             &[Struct::member("perViewPositionAllComponents", TY_VK_BOOL)],
         )
-        .extensions2(&[VK_NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES]),
+        .extensions(&[VK_NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES]),
     ),
     // VK_AMD_negative_viewport_height
     Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_AMD_NEGATIVE_VIEWPORT_HEIGHT)),
