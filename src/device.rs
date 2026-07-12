@@ -953,6 +953,15 @@ pub trait Device: VkHandle<Handle = brvk::VkDevice> + InstanceChild {
         unsafe { crate::vkfn_wrapper::bind_image_memory2(self.as_transparent_ref(), bounds) }
     }
 
+    /// Wait for a object to become idle
+    /// # Safety
+    /// All brvk::VkQueue objects created from this device must be externally synchronized.
+    #[implements]
+    #[inline(always)]
+    unsafe fn wait(&self) -> crate::Result<()> {
+        unsafe { crate::vkfn_wrapper::device_wait_idle(self.as_transparent_ref()) }
+    }
+
     /// Wait for one or more fences to become signaled
     /// # Failures
     /// On failure, this command returns
@@ -1106,14 +1115,6 @@ pub trait Device: VkHandle<Handle = brvk::VkDevice> + InstanceChild {
 DerefContainerWithGuardsBracketImpl!(for Device {});
 
 pub trait DeviceMut: Device + VkHandleMut {
-    /// Wait for a object to become idle
-    /// # Safety
-    /// All brvk::VkQueue objects created from this device must be externally synchronized.
-    #[implements]
-    #[inline(always)]
-    unsafe fn wait(&mut self) -> crate::Result<()> {
-        unsafe { crate::vkfn_wrapper::device_wait_idle(self.as_transparent_ref_mut()) }
-    }
 }
 DerefContainerWithGuardsBracketImpl!(for mut DeviceMut {});
 

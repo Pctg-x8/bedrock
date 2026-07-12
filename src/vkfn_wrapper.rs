@@ -837,7 +837,7 @@ pub fn queue_wait_idle(queue: VkHandleRefMut<brvk::VkQueue>) -> crate::Result<()
 ///
 /// Host access to all `brvk::VkQueue` objects created from `device` must be externally synchronized.
 #[inline]
-pub unsafe fn device_wait_idle(device: VkHandleRefMut<brvk::VkDevice>) -> crate::Result<()> {
+pub unsafe fn device_wait_idle(device: VkHandleRef<brvk::VkDevice>) -> crate::Result<()> {
     translate_vk_result(unsafe { brvk::fns::device_wait_idle(device.0) })?;
 
     Ok(())
