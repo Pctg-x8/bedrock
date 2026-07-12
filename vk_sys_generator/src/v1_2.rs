@@ -5,6 +5,8 @@ use crate::{parts::*, vk_ext_enum};
 const VERSION: &str = "1_2";
 const VK_KHR_BUFFER_DEVICE_ADDRESS: &Extension = &Extension::khr("buffer_device_address", 1);
 const VK_KHR_TIMELINE_SEMAPHORE: &Extension = &Extension::khr("timeline_semaphore", 2);
+const VK_KHR_IMAGE_FORMAT_LIST: &Extension = &Extension::khr("image_format_list", 1);
+const VK_EXT_SAMPLER_FILTER_MINMAX: &Extension = &Extension::ext("sampler_filter_minmax", 1);
 const VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE: &Extension = &Extension::khr("sampler_mirror_clamp_to_edge", 3);
 const VK_KHR_SHADER_FLOAT_CONTROLS: &Extension = &Extension::khr("shader_float_controls", 4);
 const VK_EXT_SHADER_VIEWPORT_INDEX_LAYER: &Extension = &Extension::ext("shader_viewport_index_layer", 1);
@@ -207,8 +209,8 @@ pub const ELEMENTS: &[Element] = &[
             "SemaphoreWaitFlagBits",
             "SEMAPHORE_WAIT",
             &[Bitmask::entry("ANY", 0)
-                .extension_old("KHR", "timeline_semaphore")
-                .promoted("1_2")],
+                .extension(VK_KHR_TIMELINE_SEMAPHORE)
+                .promoted(VERSION)],
         )
         .extension(VK_KHR_TIMELINE_SEMAPHORE)
         .promoted(VERSION),
@@ -334,7 +336,7 @@ pub const ELEMENTS: &[Element] = &[
         .promoted(VERSION),
     ),
     // VK_KHR_image_format_list
-    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_KHR_image_format_list", 1)),
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_KHR_IMAGE_FORMAT_LIST)),
     Element::Struct(
         Struct::typed(
             "ImageFormatListCreateInfo",
@@ -346,35 +348,35 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("pViewFormats", "*const VkFormat"),
             ],
         )
-        .extensions_old(&[ex_khr("image_format_list")])
+        .extensions(&[VK_KHR_IMAGE_FORMAT_LIST])
         .promoted(VERSION),
     ),
     // VK_EXT_sampler_filter_minmax
-    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_sampler_filter_minmax", 1)),
+    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_EXT_SAMPLER_FILTER_MINMAX)),
     Element::Enum(
         Enum::new(
             "SamplerReductionMode",
             "SAMPLER_REDUCTION_MODE",
             &[
                 Enum::member("WEIGHTED_AVERAGE", 0)
-                    .extension_old("EXT", "sampler_filter_minmax")
+                    .extension(VK_EXT_SAMPLER_FILTER_MINMAX)
                     .promoted(VERSION),
                 Enum::member("MIN", 1)
-                    .extension_old("EXT", "sampler_filter_minmax")
+                    .extension(VK_EXT_SAMPLER_FILTER_MINMAX)
                     .promoted(VERSION),
                 Enum::member("MAX", 2)
-                    .extension_old("EXT", "sampler_filter_minmax")
+                    .extension(VK_EXT_SAMPLER_FILTER_MINMAX)
                     .promoted(VERSION),
             ],
         )
-        .extension_old("EXT", "sampler_filter_minmax")
+        .extension(VK_EXT_SAMPLER_FILTER_MINMAX)
         .promoted(VERSION),
     ),
     Element::Bitmask(Bitmask::extending(
         "FormatFeatureFlagBits",
         "FORMAT_FEATURE",
         &[Bitmask::entry("SAMPLED_IMAGE_FILTER_MINMAX", 16)
-            .extension_old("EXT", "sampler_filter_minmax")
+            .extension(VK_EXT_SAMPLER_FILTER_MINMAX)
             .promoted(VERSION)],
     )),
     Element::Struct(
@@ -385,7 +387,7 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Source,
             &[Struct::member("reductionMode", "VkSamplerReductionModeEXT")],
         )
-        .extensions_old(&[ex_ext("sampler_filter_minmax")])
+        .extensions(&[VK_EXT_SAMPLER_FILTER_MINMAX])
         .promoted(VERSION),
     ),
     Element::Struct(
@@ -399,7 +401,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("filterMinmaxImageComponentMapping", TY_VK_BOOL),
             ],
         )
-        .extensions_old(&[ex_ext("sampler_filter_minmax")])
+        .extensions(&[VK_EXT_SAMPLER_FILTER_MINMAX])
         .promoted(VERSION),
     ),
     // VK_KHR_sampler_mirror_clamp_to_edge

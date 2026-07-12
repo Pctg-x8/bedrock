@@ -1,12 +1,12 @@
 use crate::{parts::*, vk_ext_enum};
 
-const VK_EXT_IMAGE_DRM_FORMAT_MODIFIER: &Extension = &Extension::new("EXT", "image_drm_format_modifier", 1);
-const VK_EXT_METAL_OBJECTS: &Extension = &Extension::new("EXT", "metal_objects", 2);
+const VK_EXT_IMAGE_DRM_FORMAT_MODIFIER: &Extension = &Extension::ext("image_drm_format_modifier", 1);
+const VK_EXT_METAL_OBJECTS: &Extension = &Extension::ext("metal_objects", 2);
 const VK_MVK_MACOS_SURFACE: &Extension = &Extension::new("MVK", "macos_surface", 2);
 const VK_MVK_IOS_SURFACE: &Extension = &Extension::new("MVK", "ios_surface", 2);
-const VK_EXT_DEPTH_RANGE_UNRESTRICTED: &Extension = &Extension::new("EXT", "depth_range_unrestricted", 1);
-const VK_EXT_DIRECT_MODE_DISPLAY: &Extension = &Extension::new("EXT", "direct_mode_display", 1);
-const VK_KHR_DISPLAY_SWAPCHAIN: &Extension = &Extension::new("KHR", "display_swapchain", 10);
+const VK_EXT_DEPTH_RANGE_UNRESTRICTED: &Extension = &Extension::ext("depth_range_unrestricted", 1);
+const VK_EXT_DIRECT_MODE_DISPLAY: &Extension = &Extension::ext("direct_mode_display", 1);
+const VK_KHR_DISPLAY_SWAPCHAIN: &Extension = &Extension::khr("display_swapchain", 10);
 const VK_AMD_DRAW_INDIRECT_COUNT: &Extension = &Extension::new("AMD", "draw_indirect_count", 1);
 const VK_EXT_EXTERNAL_MEMORY_DMA_BUF: &Extension = &Extension::new("EXT", "external_memory_dma_buf", 1);
 const VK_IMG_FILTER_CUBIC: &Extension = &Extension::new("IMG", "filter_cubic", 1);

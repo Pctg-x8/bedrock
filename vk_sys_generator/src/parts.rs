@@ -858,7 +858,10 @@ impl Struct {
         sty_usage: StructUsage,
         members: &'static [StructMember],
     ) -> Self {
-        Self::new(name, members).stype(sty_suffix, sty_value, sty_usage)
+        Self {
+            stype: Some((sty_suffix, sty_value, sty_usage)),
+            ..Self::new(name, members)
+        }
     }
 
     #[deprecated = "use Struct::typed constructor"]
