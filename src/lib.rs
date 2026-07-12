@@ -30,7 +30,6 @@ pub use bedrock_vk::{
 #[cfg(feature = "Implements")]
 pub use bedrock_vk::{ResolvedFnCell, ResolverInterface, load_function_unconstrainted, load_symbol_unconstrainted};
 
-use cfg_if::cfg_if;
 use derives::*;
 
 #[cfg(feature = "CustomResolver")]
@@ -287,8 +286,6 @@ mod shading;
 pub use shading::*;
 mod command;
 pub use command::*;
-mod surface;
-pub use surface::*;
 mod debug;
 #[allow(unused_imports)]
 pub use debug::*;
@@ -304,6 +301,11 @@ mod dependency;
 pub use self::dependency::*;
 mod query;
 pub use self::query::*;
+
+#[cfg(feature = "VK_KHR_surface")]
+mod surface;
+#[cfg(feature = "VK_KHR_surface")]
+pub use self::surface::*;
 
 mod fmt;
 pub use self::fmt::*;
