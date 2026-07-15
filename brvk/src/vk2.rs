@@ -17342,11 +17342,11 @@ pub const VK_SAMPLER_YCBCR_RANGE_ITU_NARROW_KHR: VkSamplerYcbcrRangeKHR = 1;
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_RANGE_ITU_NARROW: VkSamplerYcbcrRangeKHR = 1;
 
-#[cfg(feature = "VK_EXT_debub_report")]
+#[cfg(feature = "VK_EXT_debug_report")]
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 pub const VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_KHR: VkDebugReportObjectTypeEXT = 1000156000;
-#[cfg(feature = "VK_EXT_debub_report")]
+#[cfg(feature = "VK_EXT_debug_report")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION: VkDebugReportObjectTypeEXT = 1000156000;
@@ -20167,7 +20167,7 @@ pub const VK_STRUCTURE_TYPE_BIND_MEMORY_STATUS: VkStructureType = VK_STRUCTURE_T
 #[derive(Debug, Clone)]
 #[repr(C)]
 #[rustfmt::skip]
-pub struct VkBindDescriptionSetsInfoKHR {
+pub struct VkBindDescriptorSetsInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const core::ffi::c_void,
     pub stageFlags: VkShaderStageFlags,
@@ -20183,7 +20183,7 @@ pub struct VkBindDescriptionSetsInfoKHR {
 pub const VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_SETS_INFO_KHR: VkStructureType = 1000545003;
 #[cfg(feature = "VK_KHR_maintenance6")]
 #[rustfmt::skip]
-unsafe impl crate::VulkanStructure for VkBindDescriptionSetsInfoKHR {
+unsafe impl crate::VulkanStructure for VkBindDescriptorSetsInfoKHR {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
@@ -20196,10 +20196,10 @@ unsafe impl crate::VulkanStructure for VkBindDescriptionSetsInfoKHR {
 }
 #[cfg(feature = "VK_KHR_maintenance6")]
 #[rustfmt::skip]
-impl crate::TypedVulkanStructure for VkBindDescriptionSetsInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_SETS_INFO_KHR; }
+impl crate::TypedVulkanStructure for VkBindDescriptorSetsInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_SETS_INFO_KHR; }
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
-pub type VkBindDescriptionSetsInfo = VkBindDescriptionSetsInfoKHR;
+pub type VkBindDescriptorSetsInfo = VkBindDescriptorSetsInfoKHR;
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
 pub const VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_SETS_INFO: VkStructureType = VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_SETS_INFO_KHR;

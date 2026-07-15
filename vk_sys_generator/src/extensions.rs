@@ -1,8 +1,6 @@
-use std::io::IntoInnerError;
-
 use crate::{parts::*, vk_ext_enum};
 
-pub const VK_EXT_DEBUG_REPORT: &Extension = &Extension::ext("debub_report", 10, 12);
+pub const VK_EXT_DEBUG_REPORT: &Extension = &Extension::ext("debug_report", 10, 12);
 const VK_EXT_IMAGE_DRM_FORMAT_MODIFIER: &Extension = &Extension::ext("image_drm_format_modifier", 1, 159);
 const VK_EXT_METAL_OBJECTS: &Extension = &Extension::ext("metal_objects", 2, 312);
 const VK_MVK_MACOS_SURFACE: &Extension = &Extension::new("MVK", "macos_surface", 2, 124);

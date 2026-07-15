@@ -258,7 +258,7 @@ pub const ELEMENTS: &[Element] = &[
     .promoted(VERSION)
     .into_element(),
     Struct::typed(
-        "BindDescriptionSetsInfo",
+        "BindDescriptorSetsInfo",
         "BIND_DESCRIPTOR_SETS_INFO",
         VK_KHR_MAINTENANCE_6.ext_enum(3) as _,
         StructUsage::Source,
