@@ -134,6 +134,7 @@ VK_EXT_descriptor_buffer = [
 ]
 VK_KHR_maintenance7 = ["bedrock-vk/VK_KHR_maintenance7", "Allow1_1APIs"]
 VK_KHR_maintenance8 = ["bedrock-vk/VK_KHR_maintenance8", "Allow1_1APIs"]
+VK_KHR_maintenance9 = ["bedrock-vk/VK_KHR_maintenance9", "VK_KHR_get_physical_device_properties2"]
 VK_EXT_acquire_drm_display = ["bedrock-vk/VK_EXT_acquire_drm_display", "VK_EXT_direct_mode_display"]
 VK_NV_acquire_winrt_display = [
   "bedrock-vk/VK_NV_acquire_winrt_display",
