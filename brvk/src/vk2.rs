@@ -26574,7 +26574,7 @@ pub struct VkPhysicalDeviceLayeredApiPropertiesKHR {
     pub vendorID: u32,
     pub deviceID: u32,
     pub layeredAPI: VkPhysicalDeviceLayeredApiKHR,
-    pub deviceName: FixedCStrBuffer<VK_MAX_PHYSICAL_DEVICE_NAME_SIZE>,
+    pub deviceName: crate::FixedCStrBuffer<VK_MAX_PHYSICAL_DEVICE_NAME_SIZE>,
 }
 #[cfg(feature = "VK_KHR_maintenance7")]
 #[rustfmt::skip]

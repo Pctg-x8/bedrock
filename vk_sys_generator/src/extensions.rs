@@ -2691,7 +2691,7 @@ pub const ELEMENTS: &[Element] = &[
             Struct::member("vendorID", "u32"),
             Struct::member("deviceID", "u32"),
             Struct::member("layeredAPI", "VkPhysicalDeviceLayeredApiKHR"),
-            Struct::member("deviceName", "FixedCStrBuffer<VK_MAX_PHYSICAL_DEVICE_NAME_SIZE>"),
+            Struct::member("deviceName", "crate::FixedCStrBuffer<VK_MAX_PHYSICAL_DEVICE_NAME_SIZE>"),
         ],
     )
     .extensions(&[VK_KHR_MAINTENANCE_7])
