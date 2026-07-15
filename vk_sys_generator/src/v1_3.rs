@@ -11,7 +11,7 @@ pub const ELEMENTS: &[Element] = &[
     Bitmask::extending(
         "PipelineCacheCreateFlagBits",
         "PIPELINE_CACHE_CREATE",
-        &[Bitmask::entry("EXTERNALLY_SYNCHRONIZED", 0).promoted(VERSION)],
+        &[Bitmask::entry("EXTERNALLY_SYNCHRONIZED", 0).extra_requirements(&["Allow1_3APIs"])],
     )
     .into_element(),
     // VK_KHR_maintenace4

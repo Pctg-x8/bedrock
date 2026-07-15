@@ -18916,8 +18916,6 @@ pub const VK_EXT_SHADER_VIEWPORT_INDEX_LAYER_EXTENSION_NAME: &str = "VK_EXT_shad
 #[rustfmt::skip]
 pub const VK_EXT_SHADER_VIEWPORT_INDEX_LAYER_SPEC_VERSION: usize = 1;
 
-#[rustfmt::skip]
-pub const VK_PIPELINE_CACHE_CREATE_EXTERNALLY_SYNCHRONIZED_BIT: VkPipelineCacheCreateFlagBits = 0x00000001;
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
 pub const VK_PIPELINE_CACHE_CREATE_EXTERNALLY_SYNCHRONIZED_BIT: VkPipelineCacheCreateFlagBits = 0x00000001;
@@ -20444,14 +20442,14 @@ impl crate::StaticCallable for PFN_vkCmdPushConstants2 {
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_maintenance6")]
-#[cfg(feature = "feature = "VK_KHR_push_descriptor"")]
+#[cfg(feature = "VK_KHR_push_descriptor")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdPushDescriptorSet2KHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pPushDescriptorSetInfo: *const VkPushDescriptorSetInfoKHR));
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_maintenance6")]
-#[cfg(feature = "feature = "VK_KHR_push_descriptor"")]
+#[cfg(feature = "VK_KHR_push_descriptor")]
 #[rustfmt::skip]
 unsafe impl crate::PFN for PFN_vkCmdPushDescriptorSet2KHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdPushDescriptorSet2KHR";
@@ -20463,7 +20461,7 @@ unsafe impl crate::PFN for PFN_vkCmdPushDescriptorSet2KHR {
 }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_maintenance6")]
-#[cfg(feature = "feature = "VK_KHR_push_descriptor"")]
+#[cfg(feature = "VK_KHR_push_descriptor")]
 #[rustfmt::skip]
 unsafe impl crate::FromPtr for PFN_vkCmdPushDescriptorSet2KHR {
     #[inline(always)]
@@ -20507,14 +20505,14 @@ impl crate::StaticCallable for PFN_vkCmdPushDescriptorSet2 {
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_maintenance6")]
-#[cfg(feature = "feature = "VK_KHR_push_descriptor"")]
+#[cfg(feature = "VK_KHR_push_descriptor")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdPushDescriptorSetWithTemplate2KHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pPushDescriptorSetWithTemplateInfo: *const VkPushDescriptorSetWithTemplateInfoKHR));
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_maintenance6")]
-#[cfg(feature = "feature = "VK_KHR_push_descriptor"")]
+#[cfg(feature = "VK_KHR_push_descriptor")]
 #[rustfmt::skip]
 unsafe impl crate::PFN for PFN_vkCmdPushDescriptorSetWithTemplate2KHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdPushDescriptorSetWithTemplate2KHR";
@@ -20526,7 +20524,7 @@ unsafe impl crate::PFN for PFN_vkCmdPushDescriptorSetWithTemplate2KHR {
 }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_maintenance6")]
-#[cfg(feature = "feature = "VK_KHR_push_descriptor"")]
+#[cfg(feature = "VK_KHR_push_descriptor")]
 #[rustfmt::skip]
 unsafe impl crate::FromPtr for PFN_vkCmdPushDescriptorSetWithTemplate2KHR {
     #[inline(always)]
@@ -21113,14 +21111,14 @@ pub const VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS: VkDescriptorUpdat
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_push_descriptor")]
-#[cfg(feature = "feature = "VK_KHR_descriptor_update_template"")]
+#[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdPushDescriptorSetWithTemplateKHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR, layout: VkPipelineLayout, set: u32, pData: *const core::ffi::c_void));
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_push_descriptor")]
-#[cfg(feature = "feature = "VK_KHR_descriptor_update_template"")]
+#[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[rustfmt::skip]
 unsafe impl crate::PFN for PFN_vkCmdPushDescriptorSetWithTemplateKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdPushDescriptorSetWithTemplateKHR";
@@ -21132,7 +21130,7 @@ unsafe impl crate::PFN for PFN_vkCmdPushDescriptorSetWithTemplateKHR {
 }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_push_descriptor")]
-#[cfg(feature = "feature = "VK_KHR_descriptor_update_template"")]
+#[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[rustfmt::skip]
 unsafe impl crate::FromPtr for PFN_vkCmdPushDescriptorSetWithTemplateKHR {
     #[inline(always)]

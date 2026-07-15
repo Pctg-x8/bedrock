@@ -341,7 +341,7 @@ pub const ELEMENTS: &[Element] = &[
         &[("pPushDescriptorSetInfo", "*const VkPushDescriptorSetInfoKHR")],
     )
     .extension(VK_KHR_MAINTENANCE_6)
-    .extra_requirements(&["feature = \"VK_KHR_push_descriptor\""])
+    .extra_requirements(&["VK_KHR_push_descriptor"])
     .promoted(VERSION)
     .into_element(),
     Command::inst(
@@ -352,7 +352,7 @@ pub const ELEMENTS: &[Element] = &[
         )],
     )
     .extension(VK_KHR_MAINTENANCE_6)
-    .extra_requirements(&["feature = \"VK_KHR_push_descriptor\""])
+    .extra_requirements(&["VK_KHR_push_descriptor"])
     .promoted(VERSION)
     .into_element(),
     // VK_KHR_vertex_attribute_divisor
@@ -574,7 +574,7 @@ pub const ELEMENTS: &[Element] = &[
         ],
     )
     .extension(VK_KHR_PUSH_DESCRIPTOR)
-    .extra_requirements(&["feature = \"VK_KHR_descriptor_update_template\""])
+    .extra_requirements(&["VK_KHR_descriptor_update_template"])
     .promoted(VERSION)
     .into_element(),
 ];
