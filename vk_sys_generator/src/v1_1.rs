@@ -3,8 +3,9 @@
 use crate::{parts::*, vk_ext_enum};
 
 const VERSION: &str = "1_1";
-const VK_KHR_SAMPLER_YCBCR_CONVERSION: &Extension = &Extension::khr("sampler_ycbcr_conversion", 14);
-const VK_EXT_SHADER_SUBGROUP_VOTE: &Extension = &Extension::ext("shader_subgroup_vote", 1);
+const VK_KHR_SAMPLER_YCBCR_CONVERSION: &Extension = &Extension::khr("sampler_ycbcr_conversion", 14, 157);
+const VK_EXT_SHADER_SUBGROUP_VOTE: &Extension = &Extension::ext("shader_subgroup_vote", 1, 66);
+pub const VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE: &Extension = &Extension::khr("descriptor_update_template", 1, 86);
 
 pub const ELEMENTS: &[Element] = &[
     Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_EXT_SHADER_SUBGROUP_VOTE)),

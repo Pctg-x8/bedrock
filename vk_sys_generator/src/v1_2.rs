@@ -3,13 +3,13 @@
 use crate::{parts::*, vk_ext_enum};
 
 const VERSION: &str = "1_2";
-const VK_KHR_BUFFER_DEVICE_ADDRESS: &Extension = &Extension::khr("buffer_device_address", 1);
-const VK_KHR_TIMELINE_SEMAPHORE: &Extension = &Extension::khr("timeline_semaphore", 2);
-const VK_KHR_IMAGE_FORMAT_LIST: &Extension = &Extension::khr("image_format_list", 1);
-const VK_EXT_SAMPLER_FILTER_MINMAX: &Extension = &Extension::ext("sampler_filter_minmax", 1);
-const VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE: &Extension = &Extension::khr("sampler_mirror_clamp_to_edge", 3);
-const VK_KHR_SHADER_FLOAT_CONTROLS: &Extension = &Extension::khr("shader_float_controls", 4);
-const VK_EXT_SHADER_VIEWPORT_INDEX_LAYER: &Extension = &Extension::ext("shader_viewport_index_layer", 1);
+const VK_KHR_BUFFER_DEVICE_ADDRESS: &Extension = &Extension::khr("buffer_device_address", 1, 258);
+const VK_KHR_TIMELINE_SEMAPHORE: &Extension = &Extension::khr("timeline_semaphore", 2, 208);
+const VK_KHR_IMAGE_FORMAT_LIST: &Extension = &Extension::khr("image_format_list", 1, 148);
+const VK_EXT_SAMPLER_FILTER_MINMAX: &Extension = &Extension::ext("sampler_filter_minmax", 1, 131);
+const VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE: &Extension = &Extension::khr("sampler_mirror_clamp_to_edge", 3, 15);
+const VK_KHR_SHADER_FLOAT_CONTROLS: &Extension = &Extension::khr("shader_float_controls", 4, 198);
+const VK_EXT_SHADER_VIEWPORT_INDEX_LAYER: &Extension = &Extension::ext("shader_viewport_index_layer", 1, 163);
 
 pub const ELEMENTS: &[Element] = &[
     Element::Struct(

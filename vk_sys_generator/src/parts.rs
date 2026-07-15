@@ -1788,9 +1788,19 @@ impl Command {
 }
 
 pub struct ExtensionHeaderConstants2<'e, 's>(pub &'e Extension<'s>);
+impl ExtensionHeaderConstants2<'static, 'static> {
+    pub const fn into_element(self) -> Element {
+        Element::ExtensionHeaderConstants2(self)
+    }
+}
 impl<'e, 's> ExtensionHeaderConstants2<'e, 's> {
     pub fn emit(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
-        let Extension { tag, name, version } = self.0;
+        let Extension {
+            tag,
+            name,
+            revision: version,
+            ..
+        } = self.0;
         let name_up = name.to_uppercase();
 
         writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
@@ -1866,18 +1876,33 @@ impl Element {
 pub struct Extension<'s> {
     pub tag: &'s str,
     pub name: &'s str,
-    pub version: usize,
+    pub revision: usize,
+    /// Registered Extension Number
+    pub number: i32,
 }
 impl<'s> Extension<'s> {
-    pub const fn new(tag: &'s str, name: &'s str, version: usize) -> Self {
-        Self { tag, name, version }
+    pub const fn new(tag: &'s str, name: &'s str, revision: usize, number: i32) -> Self {
+        Self {
+            tag,
+            name,
+            revision,
+            number,
+        }
     }
 
-    pub const fn khr(name: &'s str, version: usize) -> Self {
-        Self::new("KHR", name, version)
+    pub const fn khr(name: &'s str, revision: usize, number: i32) -> Self {
+        Self::new("KHR", name, revision, number)
     }
 
-    pub const fn ext(name: &'s str, version: usize) -> Self {
-        Self::new("EXT", name, version)
+    pub const fn ext(name: &'s str, revision: usize, number: i32) -> Self {
+        Self::new("EXT", name, revision, number)
+    }
+
+    pub const fn ext_enum(&self, index: i32) -> i32 {
+        crate::vk_ext_enum(self.number, index)
+    }
+
+    pub const fn header_constants<'e>(&'e self) -> ExtensionHeaderConstants2<'e, 's> {
+        ExtensionHeaderConstants2(self)
     }
 }

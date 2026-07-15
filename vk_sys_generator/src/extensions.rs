@@ -1,36 +1,41 @@
+use std::io::IntoInnerError;
+
 use crate::{parts::*, vk_ext_enum};
 
-pub const VK_EXT_DEBUG_REPORT: &Extension = &Extension::ext("debub_report", 10);
-const VK_EXT_IMAGE_DRM_FORMAT_MODIFIER: &Extension = &Extension::ext("image_drm_format_modifier", 1);
-const VK_EXT_METAL_OBJECTS: &Extension = &Extension::ext("metal_objects", 2);
-const VK_MVK_MACOS_SURFACE: &Extension = &Extension::new("MVK", "macos_surface", 2);
-const VK_MVK_IOS_SURFACE: &Extension = &Extension::new("MVK", "ios_surface", 2);
-const VK_EXT_DEPTH_RANGE_UNRESTRICTED: &Extension = &Extension::ext("depth_range_unrestricted", 1);
-const VK_EXT_DIRECT_MODE_DISPLAY: &Extension = &Extension::ext("direct_mode_display", 1);
-const VK_KHR_DISPLAY_SWAPCHAIN: &Extension = &Extension::khr("display_swapchain", 10);
-const VK_AMD_DRAW_INDIRECT_COUNT: &Extension = &Extension::new("AMD", "draw_indirect_count", 1);
-const VK_EXT_EXTERNAL_MEMORY_DMA_BUF: &Extension = &Extension::new("EXT", "external_memory_dma_buf", 1);
-const VK_IMG_FILTER_CUBIC: &Extension = &Extension::new("IMG", "filter_cubic", 1);
-const VK_IMG_FORMAT_PVRTC: &Extension = &Extension::new("IMG", "format_pvrtc", 1);
-const VK_AMD_GCN_SHADER: &Extension = &Extension::new("AMD", "gcn_shader", 1);
-const VK_NV_GEOMETRY_SHADER_PASSTHROUGH: &Extension = &Extension::new("NV", "geometry_shader_passthrough", 1);
-const VK_NV_GLSL_SHADER: &Extension = &Extension::new("NV", "glsl_shader", 1);
-const VK_AMD_GPU_SHADER_HALF_FLOAT: &Extension = &Extension::new("AMD", "gpu_shader_half_float", 1);
-const VK_AMD_GPU_SHADER_INT16: &Extension = &Extension::new("AMD", "gpu_shader_int16", 1);
-const VK_AMD_MIXED_ATTACHMENT_SAMPLES: &Extension = &Extension::new("AMD", "mixed_attachment_samples", 1);
-const VK_NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES: &Extension = &Extension::new("NVX", "multiview_per_view_attributes", 1);
-const VK_AMD_NEGATIVE_VIEWPORT_HEIGHT: &Extension = &Extension::new("AMD", "negative_viewport_height", 1);
-const VK_EXT_POST_DEPTH_COVERAGE: &Extension = &Extension::ext("post_depth_coverage", 1);
-const VK_EXT_QUEUE_FAMILY_FOREIGN: &Extension = &Extension::ext("queue_family_foreign", 1);
-const VK_NV_SAMPLE_MASK_OVERRIDE_COVERAGE: &Extension = &Extension::new("NV", "sample_mask_override_coverage", 1);
-const VK_AMD_SHADER_BALLOT: &Extension = &Extension::new("AMD", "shader_ballot", 1);
+pub const VK_EXT_DEBUG_REPORT: &Extension = &Extension::ext("debub_report", 10, 12);
+const VK_EXT_IMAGE_DRM_FORMAT_MODIFIER: &Extension = &Extension::ext("image_drm_format_modifier", 1, 159);
+const VK_EXT_METAL_OBJECTS: &Extension = &Extension::ext("metal_objects", 2, 312);
+const VK_MVK_MACOS_SURFACE: &Extension = &Extension::new("MVK", "macos_surface", 2, 124);
+const VK_MVK_IOS_SURFACE: &Extension = &Extension::new("MVK", "ios_surface", 2, 123);
+const VK_EXT_DEPTH_RANGE_UNRESTRICTED: &Extension = &Extension::ext("depth_range_unrestricted", 1, 14);
+const VK_EXT_DIRECT_MODE_DISPLAY: &Extension = &Extension::ext("direct_mode_display", 1, 89);
+const VK_KHR_DISPLAY_SWAPCHAIN: &Extension = &Extension::khr("display_swapchain", 10, 4);
+const VK_AMD_DRAW_INDIRECT_COUNT: &Extension = &Extension::new("AMD", "draw_indirect_count", 1, 34);
+const VK_EXT_EXTERNAL_MEMORY_DMA_BUF: &Extension = &Extension::ext("external_memory_dma_buf", 1, 126);
+const VK_IMG_FILTER_CUBIC: &Extension = &Extension::new("IMG", "filter_cubic", 1, 16);
+const VK_IMG_FORMAT_PVRTC: &Extension = &Extension::new("IMG", "format_pvrtc", 1, 55);
+const VK_AMD_GCN_SHADER: &Extension = &Extension::new("AMD", "gcn_shader", 1, 26);
+const VK_NV_GEOMETRY_SHADER_PASSTHROUGH: &Extension = &Extension::new("NV", "geometry_shader_passthrough", 1, 96);
+const VK_NV_GLSL_SHADER: &Extension = &Extension::new("NV", "glsl_shader", 1, 13);
+const VK_AMD_GPU_SHADER_HALF_FLOAT: &Extension = &Extension::new("AMD", "gpu_shader_half_float", 1, 37);
+const VK_AMD_GPU_SHADER_INT16: &Extension = &Extension::new("AMD", "gpu_shader_int16", 1, 133);
+const VK_AMD_MIXED_ATTACHMENT_SAMPLES: &Extension = &Extension::new("AMD", "mixed_attachment_samples", 1, 137);
+const VK_NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES: &Extension = &Extension::new("NVX", "multiview_per_view_attributes", 1, 98);
+const VK_AMD_NEGATIVE_VIEWPORT_HEIGHT: &Extension = &Extension::new("AMD", "negative_viewport_height", 1, 36);
+const VK_EXT_POST_DEPTH_COVERAGE: &Extension = &Extension::ext("post_depth_coverage", 1, 156);
+const VK_EXT_QUEUE_FAMILY_FOREIGN: &Extension = &Extension::ext("queue_family_foreign", 1, 127);
+const VK_NV_SAMPLE_MASK_OVERRIDE_COVERAGE: &Extension = &Extension::new("NV", "sample_mask_override_coverage", 1, 95);
+const VK_AMD_SHADER_BALLOT: &Extension = &Extension::new("AMD", "shader_ballot", 1, 38);
 const VK_AMD_SHADER_EXPLICIT_VERTEX_PARAMETER: &Extension =
-    &Extension::new("AMD", "shader_explicit_vertex_parameter", 1);
-const VK_AMD_SHADER_FRAGMENT_MASK: &Extension = &Extension::new("AMD", "shader_fragment_mask", 1);
-const VK_AMD_SHADER_IMAGE_LOAD_STORE_LOD: &Extension = &Extension::new("AMD", "shader_image_load_store_lod", 1);
-const VK_AMD_SHADER_TRINARY_MINMAX: &Extension = &Extension::new("AMD", "shader_trinary_minmax", 1);
-const VK_EXT_SWAPCHAIN_COLORSPACE: &Extension = &Extension::ext("swapchain_colorspace", 3);
-const VK_NV_VIEWPORT_ARRAY2: &Extension = &Extension::new("NV", "viewport_array2", 1);
+    &Extension::new("AMD", "shader_explicit_vertex_parameter", 1, 22);
+const VK_AMD_SHADER_FRAGMENT_MASK: &Extension = &Extension::new("AMD", "shader_fragment_mask", 1, 138);
+const VK_AMD_SHADER_IMAGE_LOAD_STORE_LOD: &Extension = &Extension::new("AMD", "shader_image_load_store_lod", 1, 47);
+const VK_AMD_SHADER_TRINARY_MINMAX: &Extension = &Extension::new("AMD", "shader_trinary_minmax", 1, 21);
+const VK_EXT_SWAPCHAIN_COLORSPACE: &Extension = &Extension::ext("swapchain_colorspace", 3, 105);
+const VK_NV_VIEWPORT_ARRAY2: &Extension = &Extension::new("NV", "viewport_array2", 1, 97);
+pub const VK_KHR_MAINTENANCE_7: &Extension = &Extension::khr("maintenance7", 1, 563);
+pub const VK_KHR_MAINTENANCE_8: &Extension = &Extension::khr("maintenance8", 1, 575);
+pub const VK_KHR_MAINTENANCE_9: &Extension = &Extension::khr("maintenance9", 1, 585);
 
 pub const ELEMENTS: &[Element] = &[
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_acquire_drm_display", 1)),
@@ -2623,4 +2628,172 @@ pub const ELEMENTS: &[Element] = &[
     Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_EXT_SWAPCHAIN_COLORSPACE)),
     // VK_NV_viewport_array2
     Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_NV_VIEWPORT_ARRAY2)),
+    // VK_KHR_maintenance7
+    VK_KHR_MAINTENANCE_7.header_constants().into_element(),
+    Enum::new(
+        "PhysicalDeviceLayeredApi",
+        "PHYSICAL_DEVICE_LAYERED_API",
+        &[
+            Enum::member("VULKAN", 0).extension(VK_KHR_MAINTENANCE_7),
+            Enum::member("D3D12", 1).extension(VK_KHR_MAINTENANCE_7),
+            Enum::member("METAL", 2).extension(VK_KHR_MAINTENANCE_7),
+            Enum::member("OPENGL", 3).extension(VK_KHR_MAINTENANCE_7),
+            Enum::member("OPENGLES", 4).extension(VK_KHR_MAINTENANCE_7),
+        ],
+    )
+    .extension(VK_KHR_MAINTENANCE_7)
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceMaintenance7Features",
+        "PHYSICAL_DEVICE_MAINTENANCE_7_FEATURES",
+        VK_KHR_MAINTENANCE_7.ext_enum(0) as _,
+        StructUsage::Both,
+        &[Struct::member("maintenance7", TY_VK_BOOL)],
+    )
+    .extensions(&[VK_KHR_MAINTENANCE_7])
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceMaintenance7Properties",
+        "PHYSICAL_DEVICE_MAINTENANCE_7_PROPERTIES",
+        VK_KHR_MAINTENANCE_7.ext_enum(1) as _,
+        StructUsage::Sink,
+        &[
+            Struct::member("robustFragmentShadingRateAttachmentAccess", TY_VK_BOOL),
+            Struct::member("separateDepthStencilAttachmentAccess", TY_VK_BOOL),
+            Struct::member("maxDescriptorSetTotalUniformBuffersDynamic", "u32"),
+            Struct::member("maxDescriptorSetTotalStorageBuffersDynamic", "u32"),
+            Struct::member("maxDescriptorSetTotalBuffersDynamic", "u32"),
+            Struct::member("maxDescriptorSetUpdateAfterBindTotalUniformBuffersDynamic", "u32"),
+            Struct::member("maxDescriptorSetUpdateAfterBindTotalStorageBuffersDynamic", "u32"),
+            Struct::member("maxDescriptorSetUpdateAfterBindTotalBuffersDynamic", "u32"),
+        ],
+    )
+    .extensions(&[VK_KHR_MAINTENANCE_7])
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceLayeredApiPropertiesList",
+        "PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_LIST",
+        VK_KHR_MAINTENANCE_7.ext_enum(2) as _,
+        StructUsage::Sink,
+        &[
+            Struct::member("layeredApiCount", "u32"),
+            Struct::member("pLayeredApis", "*mut VkPhysicalDeviceLayeredApiPropertiesKHR"),
+        ],
+    )
+    .extensions(&[VK_KHR_MAINTENANCE_7])
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceLayeredApiProperties",
+        "PHYSICAL_DEVICE_LAYERED_API_PROPERTIES",
+        VK_KHR_MAINTENANCE_7.ext_enum(3) as _,
+        StructUsage::Sink,
+        &[
+            Struct::member("vendorID", "u32"),
+            Struct::member("deviceID", "u32"),
+            Struct::member("layeredAPI", "VkPhysicalDeviceLayeredApiKHR"),
+            Struct::member("deviceName", "FixedCStrBuffer<VK_MAX_PHYSICAL_DEVICE_NAME_SIZE>"),
+        ],
+    )
+    .extensions(&[VK_KHR_MAINTENANCE_7])
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceLayeredApiVulkanProperties",
+        "PHYSICAL_DEVICE_LAYERED_API_VULKAN_PROPERTIES",
+        VK_KHR_MAINTENANCE_7.ext_enum(4) as _,
+        StructUsage::Sink,
+        &[Struct::member("properties", "VkPhysicalDeviceProperties2")],
+    )
+    .extensions(&[VK_KHR_MAINTENANCE_7])
+    .into_element(),
+    // VK_KHR_maintenance8
+    VK_KHR_MAINTENANCE_8.header_constants().into_element(),
+    Bitmask::new(
+        "AccessFlags3",
+        "AccessFlagBits3",
+        "ACCESS_3",
+        &[Bitmask::entry("NONE", 0).extension(VK_KHR_MAINTENANCE_8)],
+    )
+    .extension(VK_KHR_MAINTENANCE_8)
+    .into_element(),
+    Bitmask::extending(
+        "PipelineCacheCreateFlagBits",
+        "PIPELINE_CACHE_CREATE",
+        &[Bitmask::entry("INTERNALLY_SYNCHRONIZED_MERGE", 3).extension(VK_KHR_MAINTENANCE_8)],
+    )
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceMaintenance8Features",
+        "PHYSICAL_DEVICE_MAINTENANCE_8_FEATURES",
+        VK_KHR_MAINTENANCE_8.ext_enum(0) as _,
+        StructUsage::Both,
+        &[Struct::member("maintenance8", TY_VK_BOOL)],
+    )
+    .extensions(&[VK_KHR_MAINTENANCE_8])
+    .into_element(),
+    Struct::typed(
+        "MemoryBarrierAccessFlags3",
+        "MEMORY_BARRIER_ACCESS_FLAGS_3",
+        VK_KHR_MAINTENANCE_8.ext_enum(2) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("srcAccessMask3", "VkAccessFlags3KHR"),
+            Struct::member("dstAccessMask3", "VkAccessFlags3KHR"),
+        ],
+    )
+    .extensions(&[VK_KHR_MAINTENANCE_8])
+    .into_element(),
+    // VK_KHR_maintenance9
+    VK_KHR_MAINTENANCE_9.header_constants().into_element(),
+    Enum::new(
+        "DefaultVertexAttributeValue",
+        "DEFAULT_VERTEX_ATTRIBUTE_VALUE",
+        &[
+            Enum::member("ZERO_ZERO_ZERO_ZERO", 0).extension(VK_KHR_MAINTENANCE_9),
+            Enum::member("ZERO_ZERO_ZERO_ONE", 1).extension(VK_KHR_MAINTENANCE_9),
+        ],
+    )
+    .extension(VK_KHR_MAINTENANCE_9)
+    .into_element(),
+    Bitmask::extending(
+        "DependencyFlagBits",
+        "DEPENDENCY",
+        &[Bitmask::entry("ASYMMETRIC_EVENT", 6).extension(VK_KHR_MAINTENANCE_9)],
+    )
+    .into_element(),
+    Bitmask::extending(
+        "QueryPoolCreateFlagBits",
+        "QUERY_POOL_CREATE",
+        &[Bitmask::entry("RESET", 0).extension(VK_KHR_MAINTENANCE_9)],
+    )
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceMaintenance9Features",
+        "PHYSICAL_DEVICE_MAINTENANCE_9_FEATURES",
+        VK_KHR_MAINTENANCE_9.ext_enum(0) as _,
+        StructUsage::Both,
+        &[Struct::member("maintenance9", TY_VK_BOOL)],
+    )
+    .extensions(&[VK_KHR_MAINTENANCE_9])
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceMaintenance9Properties",
+        "PHYSICAL_DEVICE_MAINTENANCE_9_PROPERTIES",
+        VK_KHR_MAINTENANCE_9.ext_enum(1) as _,
+        StructUsage::Sink,
+        &[
+            Struct::member("image2DViewOf3DSparse", TY_VK_BOOL),
+            Struct::member("defaultVertexAttributeValue", "VkDefaultVertexAttributeValueKHR"),
+        ],
+    )
+    .extensions(&[VK_KHR_MAINTENANCE_9])
+    .into_element(),
+    Struct::typed(
+        "QueueFamilyOwnershipTransferProperties",
+        "QUEUE_FAMILY_OWNERSHIP_TRANSFER_PROPERTIES",
+        VK_KHR_MAINTENANCE_9.ext_enum(2) as _,
+        StructUsage::Sink,
+        &[Struct::member("optimalImageTransferToQueueFamilies", "u32")],
+    )
+    .extensions(&[VK_KHR_MAINTENANCE_9])
+    .into_element(),
 ];

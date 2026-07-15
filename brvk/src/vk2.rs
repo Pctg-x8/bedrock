@@ -3074,6 +3074,14 @@ pub const VK_FORMAT_S8_UINT: VkFormat = 127;
 pub const VK_FORMAT_D16_UNORM_S8_UINT: VkFormat = 128;
 pub const VK_FORMAT_D24_UNORM_S8_UINT: VkFormat = 129;
 pub const VK_FORMAT_D32_SFLOAT_S8_UINT: VkFormat = 130;
+#[cfg(feature = "VK_KHR_maintenace5")]
+pub const VK_FORMAT_A1B5G5R4_UNORM_PACK16_KHR: VkFormat = 1000470000;
+#[cfg(feature = "Allow1_4APIs")]
+pub const VK_FORMAT_A1B5G5R4_UNORM_PACK16: VkFormat = 1000470000;
+#[cfg(feature = "VK_KHR_maintenance5")]
+pub const VK_FORMAT_A8_UNORM_KHR: VkFormat = 1000470001;
+#[cfg(feature = "Allow1_4APIs")]
+pub const VK_FORMAT_A8_UNORM: VkFormat = 1000470001;
 pub const VK_FORMAT_BC1_RGB_UNORM_BLOCK: VkFormat = 131;
 pub const VK_FORMAT_BC1_RGB_SRGB_BLOCK: VkFormat = 132;
 pub const VK_FORMAT_BC1_RGBA_UNORM_BLOCK: VkFormat = 133;
@@ -18908,6 +18916,348 @@ pub const VK_EXT_SHADER_VIEWPORT_INDEX_LAYER_EXTENSION_NAME: &str = "VK_EXT_shad
 #[rustfmt::skip]
 pub const VK_EXT_SHADER_VIEWPORT_INDEX_LAYER_SPEC_VERSION: usize = 1;
 
+#[rustfmt::skip]
+pub const VK_PIPELINE_CACHE_CREATE_EXTERNALLY_SYNCHRONIZED_BIT: VkPipelineCacheCreateFlagBits = 0x00000001;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_CACHE_CREATE_EXTERNALLY_SYNCHRONIZED_BIT: VkPipelineCacheCreateFlagBits = 0x00000001;
+
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip]
+pub const VK_KHR_MAINTENANCE4_EXTENSION_NAME: &str = "VK_KHR_maintenance4";
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip]
+pub const VK_KHR_MAINTENANCE4_SPEC_VERSION: usize = 2;
+
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceMaintenance4FeaturesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub maintenance4: VkBool32,
+}
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES_KHR: VkStructureType = 1000413000;
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPhysicalDeviceMaintenance4FeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPhysicalDeviceMaintenance4FeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES_KHR; }
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMaintenance4FeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceMaintenance4FeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES_KHR; }
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub type VkPhysicalDeviceMaintenance4Features = VkPhysicalDeviceMaintenance4FeaturesKHR;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES_KHR;
+
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceMaintenance4PropertiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub maxBufferSize: VkDeviceSize,
+}
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_PROPERTIES_KHR: VkStructureType = 1000413001;
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMaintenance4PropertiesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceMaintenance4PropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_PROPERTIES_KHR; }
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub type VkPhysicalDeviceMaintenance4Properties = VkPhysicalDeviceMaintenance4PropertiesKHR;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_PROPERTIES_KHR;
+
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkDeviceBufferMemoryRequirementsKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub pCreateInfo: *const VkBufferCreateInfo,
+}
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DEVICE_BUFFER_MEMORY_REQUIREMENTS_KHR: VkStructureType = 1000413002;
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkDeviceBufferMemoryRequirementsKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkDeviceBufferMemoryRequirementsKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_BUFFER_MEMORY_REQUIREMENTS_KHR; }
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub type VkDeviceBufferMemoryRequirements = VkDeviceBufferMemoryRequirementsKHR;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DEVICE_BUFFER_MEMORY_REQUIREMENTS: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_BUFFER_MEMORY_REQUIREMENTS_KHR;
+
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkDeviceImageMemoryRequirementsKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub pCreateInfo: *const VkImageCreateInfo,
+    pub planeAspect: VkImageAspectFlagBits,
+}
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DEVICE_IMAGE_MEMORY_REQUIREMENTS_KHR: VkStructureType = 1000413003;
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkDeviceImageMemoryRequirementsKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkDeviceImageMemoryRequirementsKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_IMAGE_MEMORY_REQUIREMENTS_KHR; }
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub type VkDeviceImageMemoryRequirements = VkDeviceImageMemoryRequirementsKHR;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DEVICE_IMAGE_MEMORY_REQUIREMENTS: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_IMAGE_MEMORY_REQUIREMENTS_KHR;
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetDeviceBufferMemoryRequirementsKHR(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkDeviceBufferMemoryRequirementsKHR, pMemoryRequirements: *mut VkMemoryRequirements2KHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetDeviceBufferMemoryRequirementsKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDeviceBufferMemoryRequirementsKHR";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDeviceBufferMemoryRequirementsKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetDeviceBufferMemoryRequirements(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkDeviceBufferMemoryRequirementsKHR, pMemoryRequirements: *mut VkMemoryRequirements2KHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetDeviceBufferMemoryRequirements {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDeviceBufferMemoryRequirements";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDeviceBufferMemoryRequirements {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+impl crate::StaticCallable for PFN_vkGetDeviceBufferMemoryRequirements {
+    const STATIC: Self = Self(vkGetDeviceBufferMemoryRequirements);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetDeviceImageMemoryREquirementsKHR(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkDeviceImageMemoryRequirementsKHR, pMemoryRequirements: *mut VkMemoryRequirements2KHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetDeviceImageMemoryREquirementsKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDeviceImageMemoryREquirementsKHR";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDeviceImageMemoryREquirementsKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetDeviceImageMemoryREquirements(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkDeviceImageMemoryRequirementsKHR, pMemoryRequirements: *mut VkMemoryRequirements2KHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetDeviceImageMemoryREquirements {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDeviceImageMemoryREquirements";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDeviceImageMemoryREquirements {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+impl crate::StaticCallable for PFN_vkGetDeviceImageMemoryREquirements {
+    const STATIC: Self = Self(vkGetDeviceImageMemoryREquirements);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetDeviceImageSparseMemoryRequirementsKHR(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkDeviceImageMemoryRequirementsKHR, pSparseMemoryRequirementsCount: *mut u32, pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements2KHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetDeviceImageSparseMemoryRequirementsKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDeviceImageSparseMemoryRequirementsKHR";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDeviceImageSparseMemoryRequirementsKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetDeviceImageSparseMemoryRequirements(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkDeviceImageMemoryRequirementsKHR, pSparseMemoryRequirementsCount: *mut u32, pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements2KHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetDeviceImageSparseMemoryRequirements {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDeviceImageSparseMemoryRequirements";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDeviceImageSparseMemoryRequirements {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+impl crate::StaticCallable for PFN_vkGetDeviceImageSparseMemoryRequirements {
+    const STATIC: Self = Self(vkGetDeviceImageSparseMemoryRequirements);
+}
+
 #[cfg(feature = "VK_KHR_format_feature_flags2")]
 #[rustfmt::skip]
 pub const VK_KHR_FORMAT_FEATURE_FLAGS2_EXTENSION_NAME: &str = "VK_KHR_format_feature_flags2";
@@ -19041,6 +19391,1182 @@ pub type VkFormatProperties3 = VkFormatProperties3KHR;
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
 pub const VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_3: VkStructureType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_3_KHR;
+
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub const VK_KHR_MAINTENANCE5_EXTENSION_NAME: &str = "VK_KHR_maintenance5";
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub const VK_KHR_MAINTENANCE5_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub type VkBufferUsageFlags2KHR = VkFlags64;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkBufferUsageFlags2 = VkBufferUsageFlags2KHR;
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub type VkBufferUsageFlagBits2KHR = VkFlags64;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkBufferUsageFlagBits2 = VkBufferUsageFlagBits2KHR;
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub const VK_BUFFER_USAGE_2_TRANSFER_SRC_BIT_KHR: VkBufferUsageFlagBits2KHR = 0x0000000000000001;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_BUFFER_USAGE_2_TRANSFER_SRC_BIT: VkBufferUsageFlagBits2KHR = 0x0000000000000001;
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub const VK_BUFFER_USAGE_2_TRANSFER_DST_BIT_KHR: VkBufferUsageFlagBits2KHR = 0x0000000000000002;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_BUFFER_USAGE_2_TRANSFER_DST_BIT: VkBufferUsageFlagBits2KHR = 0x0000000000000002;
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub const VK_BUFFER_USAGE_2_UNIFORM_TEXEL_BUFFER_BIT_KHR: VkBufferUsageFlagBits2KHR = 0x0000000000000004;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_BUFFER_USAGE_2_UNIFORM_TEXEL_BUFFER_BIT: VkBufferUsageFlagBits2KHR = 0x0000000000000004;
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub const VK_BUFFER_USAGE_2_STORAGE_TEXEL_BUFFER_BIT_KHR: VkBufferUsageFlagBits2KHR = 0x0000000000000008;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_BUFFER_USAGE_2_STORAGE_TEXEL_BUFFER_BIT: VkBufferUsageFlagBits2KHR = 0x0000000000000008;
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub const VK_BUFFER_USAGE_2_UNIFORM_BUFFER_BIT_KHR: VkBufferUsageFlagBits2KHR = 0x0000000000000010;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_BUFFER_USAGE_2_UNIFORM_BUFFER_BIT: VkBufferUsageFlagBits2KHR = 0x0000000000000010;
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub const VK_BUFFER_USAGE_2_STORAGE_BUFFER_BIT_KHR: VkBufferUsageFlagBits2KHR = 0x0000000000000020;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_BUFFER_USAGE_2_STORAGE_BUFFER_BIT: VkBufferUsageFlagBits2KHR = 0x0000000000000020;
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub const VK_BUFFER_USAGE_2_INDEX_BUFFER_BIT_KHR: VkBufferUsageFlagBits2KHR = 0x0000000000000040;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_BUFFER_USAGE_2_INDEX_BUFFER_BIT: VkBufferUsageFlagBits2KHR = 0x0000000000000040;
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub const VK_BUFFER_USAGE_2_VERTEX_BUFFER_BIT_KHR: VkBufferUsageFlagBits2KHR = 0x0000000000000080;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_BUFFER_USAGE_2_VERTEX_BUFFER_BIT: VkBufferUsageFlagBits2KHR = 0x0000000000000080;
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub const VK_BUFFER_USAGE_2_INDIRECT_BUFFER_BIT_KHR: VkBufferUsageFlagBits2KHR = 0x0000000000000100;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_BUFFER_USAGE_2_INDIRECT_BUFFER_BIT: VkBufferUsageFlagBits2KHR = 0x0000000000000100;
+
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub type VkPipelineCreateFlags2KHR = VkFlags64;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkPipelineCreateFlags2 = VkPipelineCreateFlags2KHR;
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub type VkPipelineCreateFlagBits2KHR = VkFlags64;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkPipelineCreateFlagBits2 = VkPipelineCreateFlagBits2KHR;
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_CREATE_2_DISABLE_OPTIMIZATION_BIT_KHR: VkPipelineCreateFlagBits2KHR = 0x0000000000000001;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_CREATE_2_DISABLE_OPTIMIZATION_BIT: VkPipelineCreateFlagBits2KHR = 0x0000000000000001;
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_CREATE_2_ALLOW_DERIVATIVES_BIT_KHR: VkPipelineCreateFlagBits2KHR = 0x0000000000000002;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_CREATE_2_ALLOW_DERIVATIVES_BIT: VkPipelineCreateFlagBits2KHR = 0x0000000000000002;
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_CREATE_2_DERIVATIVE_BIT_KHR: VkPipelineCreateFlagBits2KHR = 0x0000000000000004;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_CREATE_2_DERIVATIVE_BIT: VkPipelineCreateFlagBits2KHR = 0x0000000000000004;
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_CREATE_2_VIEW_INDEX_FROM_DEVICE_INDEX_BIT_KHR: VkPipelineCreateFlagBits2KHR = 0x0000000000000008;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_CREATE_2_VIEW_INDEX_FROM_DEVICE_INDEX_BIT: VkPipelineCreateFlagBits2KHR = 0x0000000000000008;
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_CREATE_2_DISPATCH_BASE_BIT_KHR: VkPipelineCreateFlagBits2KHR = 0x0000000000000010;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_CREATE_2_DISPATCH_BASE_BIT: VkPipelineCreateFlagBits2KHR = 0x0000000000000010;
+
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceMaintenance5FeaturesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub maintenance5: VkBool32,
+}
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_FEATURES_KHR: VkStructureType = 1000470000;
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPhysicalDeviceMaintenance5FeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPhysicalDeviceMaintenance5FeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_FEATURES_KHR; }
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMaintenance5FeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceMaintenance5FeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_FEATURES_KHR; }
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkPhysicalDeviceMaintenance5Features = VkPhysicalDeviceMaintenance5FeaturesKHR;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_FEATURES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_FEATURES_KHR;
+
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceMaintenance5PropertiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub earlyFragmentMultisampleCoverageAfterSampleCounting: VkBool32,
+    pub earlyFragmentSampleMaskTestBeforeSampleCounting: VkBool32,
+    pub depthStencilSwizzleOneSupport: VkBool32,
+    pub polygonModePointSize: VkBool32,
+    pub nonStrictSinglePixelWideLinesUseParallelogram: VkBool32,
+    pub nonStrictWideLinesUseParallelogram: VkBool32,
+}
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_PROPERTIES_KHR: VkStructureType = 1000470001;
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMaintenance5PropertiesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceMaintenance5PropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_PROPERTIES_KHR; }
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkPhysicalDeviceMaintenance5Properties = VkPhysicalDeviceMaintenance5PropertiesKHR;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_PROPERTIES_KHR;
+
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkRenderingAreaInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub viewMask: u32,
+    pub colorAttachmentCount: u32,
+    pub pColorAttachmentFormats: *const VkFormat,
+    pub depthAttachmentFormat: VkFormat,
+    pub stencilAttachmentFormat: VkFormat,
+}
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_RENDERING_AREA_INFO_KHR: VkStructureType = 1000470003;
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkRenderingAreaInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkRenderingAreaInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_RENDERING_AREA_INFO_KHR; }
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkRenderingAreaInfo = VkRenderingAreaInfoKHR;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_RENDERING_AREA_INFO: VkStructureType = VK_STRUCTURE_TYPE_RENDERING_AREA_INFO_KHR;
+
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkImageSubresource2KHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub imageSubresource: VkImageSubresource,
+}
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_KHR: VkStructureType = 1000338003;
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkImageSubresource2KHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkImageSubresource2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_KHR; }
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkImageSubresource2 = VkImageSubresource2KHR;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_KHR;
+
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkDeviceImageSubresourceInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub pCreateInfo: *const VkImageCreateInfo,
+    pub pSubresource: *const VkImageSubresource2KHR,
+}
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DEVICE_IMAGE_SUBRESOURCE_INFO_KHR: VkStructureType = 1000470004;
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkDeviceImageSubresourceInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkDeviceImageSubresourceInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_IMAGE_SUBRESOURCE_INFO_KHR; }
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkDeviceImageSubresourceInfo = VkDeviceImageSubresourceInfoKHR;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DEVICE_IMAGE_SUBRESOURCE_INFO: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_IMAGE_SUBRESOURCE_INFO_KHR;
+
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkSubresourceLayout2KHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub subresourceLayout: VkSubresourceLayout,
+}
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2_KHR: VkStructureType = 1000338002;
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkSubresourceLayout2KHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkSubresourceLayout2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2_KHR; }
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkSubresourceLayout2 = VkSubresourceLayout2KHR;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2: VkStructureType = VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2_KHR;
+
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPipelineCreateFlags2CreateInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkPipelineCreateFlags2KHR,
+}
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PIPELINE_CREATE_FLAGS_2_CREATE_INFO_KHR: VkStructureType = 1000470005;
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPipelineCreateFlags2CreateInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPipelineCreateFlags2CreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_CREATE_FLAGS_2_CREATE_INFO_KHR; }
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkPipelineCreateFlags2CreateInfo = VkPipelineCreateFlags2CreateInfoKHR;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PIPELINE_CREATE_FLAGS_2_CREATE_INFO: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_CREATE_FLAGS_2_CREATE_INFO_KHR;
+
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkBufferUsageFlags2CreateInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub usage: VkBufferUsageFlags2KHR,
+}
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_BUFFER_USAGE_FLAGS_2_CREATE_INFO_KHR: VkStructureType = 1000470006;
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkBufferUsageFlags2CreateInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkBufferUsageFlags2CreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BUFFER_USAGE_FLAGS_2_CREATE_INFO_KHR; }
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkBufferUsageFlags2CreateInfo = VkBufferUsageFlags2CreateInfoKHR;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_BUFFER_USAGE_FLAGS_2_CREATE_INFO: VkStructureType = VK_STRUCTURE_TYPE_BUFFER_USAGE_FLAGS_2_CREATE_INFO_KHR;
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdBindIndexBuffer2KHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, size: VkDeviceSize, indexType: VkIndexType));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdBindIndexBuffer2KHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdBindIndexBuffer2KHR";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdBindIndexBuffer2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdBindIndexBuffer2(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, size: VkDeviceSize, indexType: VkIndexType));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdBindIndexBuffer2 {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdBindIndexBuffer2";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdBindIndexBuffer2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+impl crate::StaticCallable for PFN_vkCmdBindIndexBuffer2 {
+    const STATIC: Self = Self(vkCmdBindIndexBuffer2);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetRenderingAreaGranularityKHR(pub unsafe extern "system" fn(device: VkDevice, pRenderingAreaInfo: *const VkRenderingAreaInfoKHR, pGranularity: *mut VkExtent2D));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetRenderingAreaGranularityKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetRenderingAreaGranularityKHR";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetRenderingAreaGranularityKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetRenderingAreaGranularity(pub unsafe extern "system" fn(device: VkDevice, pRenderingAreaInfo: *const VkRenderingAreaInfoKHR, pGranularity: *mut VkExtent2D));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetRenderingAreaGranularity {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetRenderingAreaGranularity";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetRenderingAreaGranularity {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+impl crate::StaticCallable for PFN_vkGetRenderingAreaGranularity {
+    const STATIC: Self = Self(vkGetRenderingAreaGranularity);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetDeviceImageSubresourceLayoutKHR(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkDeviceImageSubresourceInfoKHR, pLayout: *mut VkSubresourceLayout2KHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetDeviceImageSubresourceLayoutKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDeviceImageSubresourceLayoutKHR";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDeviceImageSubresourceLayoutKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetDeviceImageSubresourceLayout(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkDeviceImageSubresourceInfoKHR, pLayout: *mut VkSubresourceLayout2KHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetDeviceImageSubresourceLayout {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDeviceImageSubresourceLayout";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetDeviceImageSubresourceLayout {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+impl crate::StaticCallable for PFN_vkGetDeviceImageSubresourceLayout {
+    const STATIC: Self = Self(vkGetDeviceImageSubresourceLayout);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetImageSubresourceLayout2KHR(pub unsafe extern "system" fn(device: VkDevice, image: VkImage, pSubresource: *const VkImageSubresource2KHR, pLayout: *mut VkSubresourceLayout2KHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetImageSubresourceLayout2KHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetImageSubresourceLayout2KHR";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetImageSubresourceLayout2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetImageSubresourceLayout2(pub unsafe extern "system" fn(device: VkDevice, image: VkImage, pSubresource: *const VkImageSubresource2KHR, pLayout: *mut VkSubresourceLayout2KHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetImageSubresourceLayout2 {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetImageSubresourceLayout2";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetImageSubresourceLayout2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+impl crate::StaticCallable for PFN_vkGetImageSubresourceLayout2 {
+    const STATIC: Self = Self(vkGetImageSubresourceLayout2);
+}
+
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip]
+pub const VK_KHR_MAINTENANCE6_EXTENSION_NAME: &str = "VK_KHR_maintenance6";
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip]
+pub const VK_KHR_MAINTENANCE6_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceMaintenance6FeaturesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub maintenance6: VkBool32,
+}
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_FEATURES_KHR: VkStructureType = 1000545000;
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPhysicalDeviceMaintenance6FeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPhysicalDeviceMaintenance6FeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_FEATURES_KHR; }
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMaintenance6FeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceMaintenance6FeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_FEATURES_KHR; }
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkPhysicalDeviceMaintenance6Features = VkPhysicalDeviceMaintenance6FeaturesKHR;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_FEATURES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_FEATURES_KHR;
+
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceMaintenance6PropertiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub blockTexelViewCompatibleMultipleLayers: VkBool32,
+    pub maxCombinedImageSamplerDescriptorCount: u32,
+    pub fragmentShadingRateClampCombinerInputs: VkBool32,
+}
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_PROPERTIES_KHR: VkStructureType = 1000545001;
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMaintenance6PropertiesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceMaintenance6PropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_PROPERTIES_KHR; }
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkPhysicalDeviceMaintenance6Properties = VkPhysicalDeviceMaintenance6PropertiesKHR;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_PROPERTIES_KHR;
+
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkBindMemoryStatusKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub pResult: *mut VkResult,
+}
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_BIND_MEMORY_STATUS_KHR: VkStructureType = 1000545002;
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkBindMemoryStatusKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkBindMemoryStatusKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BIND_MEMORY_STATUS_KHR; }
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkBindMemoryStatus = VkBindMemoryStatusKHR;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_BIND_MEMORY_STATUS: VkStructureType = VK_STRUCTURE_TYPE_BIND_MEMORY_STATUS_KHR;
+
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkBindDescriptionSetsInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub stageFlags: VkShaderStageFlags,
+    pub layout: VkPipelineLayout,
+    pub firstSet: u32,
+    pub descriptorSetCount: u32,
+    pub pDescriptorSets: *const VkDescriptorSet,
+    pub dynamicOffsetCount: u32,
+    pub pDynamicOffsets: *const u32,
+}
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_SETS_INFO_KHR: VkStructureType = 1000545003;
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkBindDescriptionSetsInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkBindDescriptionSetsInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_SETS_INFO_KHR; }
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkBindDescriptionSetsInfo = VkBindDescriptionSetsInfoKHR;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_SETS_INFO: VkStructureType = VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_SETS_INFO_KHR;
+
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPushConstantsInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub layout: VkPipelineLayout,
+    pub stageFlags: VkShaderStageFlags,
+    pub offset: u32,
+    pub size: u32,
+    pub pValues: *const core::ffi::c_void,
+}
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PUSH_CONSTANTS_INFO_KHR: VkStructureType = 1000545004;
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPushConstantsInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPushConstantsInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PUSH_CONSTANTS_INFO_KHR; }
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkPushConstantsInfo = VkPushConstantsInfoKHR;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PUSH_CONSTANTS_INFO: VkStructureType = VK_STRUCTURE_TYPE_PUSH_CONSTANTS_INFO_KHR;
+
+#[cfg(all(feature = "VK_KHR_maintenance6", feature = "VK_KHR_push_descriptor"))]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPushDescriptorSetInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub stageFlags: VkShaderStageFlags,
+    pub layout: VkPipelineLayout,
+    pub set: u32,
+    pub descriptorWriteCount: u32,
+    pub pDescriptorWrites: *const VkWriteDescriptorSet,
+}
+#[cfg(all(feature = "VK_KHR_maintenance6", feature = "VK_KHR_push_descriptor"))]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_INFO_KHR: VkStructureType = 1000545005;
+#[cfg(all(feature = "VK_KHR_maintenance6", feature = "VK_KHR_push_descriptor"))]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPushDescriptorSetInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_maintenance6", feature = "VK_KHR_push_descriptor"))]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPushDescriptorSetInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_INFO_KHR; }
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkPushDescriptorSetInfo = VkPushDescriptorSetInfoKHR;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_INFO: VkStructureType = VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_INFO_KHR;
+
+#[cfg(all(feature = "VK_KHR_maintenance6", feature = "VK_KHR_push_descriptor"))]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPushDescriptorSetWithTemplateInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR,
+    pub layout: VkPipelineLayout,
+    pub set: u32,
+    pub pData: *const core::ffi::c_void,
+}
+#[cfg(all(feature = "VK_KHR_maintenance6", feature = "VK_KHR_push_descriptor"))]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_WITH_TEMPLATE_INFO_KHR: VkStructureType = 1000545006;
+#[cfg(all(feature = "VK_KHR_maintenance6", feature = "VK_KHR_push_descriptor"))]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPushDescriptorSetWithTemplateInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_maintenance6", feature = "VK_KHR_push_descriptor"))]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPushDescriptorSetWithTemplateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_WITH_TEMPLATE_INFO_KHR; }
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkPushDescriptorSetWithTemplateInfo = VkPushDescriptorSetWithTemplateInfoKHR;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_WITH_TEMPLATE_INFO: VkStructureType = VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_WITH_TEMPLATE_INFO_KHR;
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdBindDescriptorSets2KHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pBindDescriptorSetsInfo: *const VkBindDescriptorSetsInfoKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdBindDescriptorSets2KHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdBindDescriptorSets2KHR";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdBindDescriptorSets2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdBindDescriptorSets2(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pBindDescriptorSetsInfo: *const VkBindDescriptorSetsInfoKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdBindDescriptorSets2 {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdBindDescriptorSets2";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdBindDescriptorSets2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+impl crate::StaticCallable for PFN_vkCmdBindDescriptorSets2 {
+    const STATIC: Self = Self(vkCmdBindDescriptorSets2);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdPushConstants2KHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pPushConstantsInfo: *const VkPushConstantsInfoKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdPushConstants2KHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdPushConstants2KHR";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdPushConstants2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdPushConstants2(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pPushConstantsInfo: *const VkPushConstantsInfoKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdPushConstants2 {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdPushConstants2";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdPushConstants2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+impl crate::StaticCallable for PFN_vkCmdPushConstants2 {
+    const STATIC: Self = Self(vkCmdPushConstants2);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[cfg(feature = "feature = "VK_KHR_push_descriptor"")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdPushDescriptorSet2KHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pPushDescriptorSetInfo: *const VkPushDescriptorSetInfoKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[cfg(feature = "feature = "VK_KHR_push_descriptor"")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdPushDescriptorSet2KHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdPushDescriptorSet2KHR";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[cfg(feature = "feature = "VK_KHR_push_descriptor"")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdPushDescriptorSet2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdPushDescriptorSet2(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pPushDescriptorSetInfo: *const VkPushDescriptorSetInfoKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdPushDescriptorSet2 {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdPushDescriptorSet2";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdPushDescriptorSet2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+impl crate::StaticCallable for PFN_vkCmdPushDescriptorSet2 {
+    const STATIC: Self = Self(vkCmdPushDescriptorSet2);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[cfg(feature = "feature = "VK_KHR_push_descriptor"")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdPushDescriptorSetWithTemplate2KHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pPushDescriptorSetWithTemplateInfo: *const VkPushDescriptorSetWithTemplateInfoKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[cfg(feature = "feature = "VK_KHR_push_descriptor"")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdPushDescriptorSetWithTemplate2KHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdPushDescriptorSetWithTemplate2KHR";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_maintenance6")]
+#[cfg(feature = "feature = "VK_KHR_push_descriptor"")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdPushDescriptorSetWithTemplate2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdPushDescriptorSetWithTemplate2(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pPushDescriptorSetWithTemplateInfo: *const VkPushDescriptorSetWithTemplateInfoKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdPushDescriptorSetWithTemplate2 {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdPushDescriptorSetWithTemplate2";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdPushDescriptorSetWithTemplate2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+impl crate::StaticCallable for PFN_vkCmdPushDescriptorSetWithTemplate2 {
+    const STATIC: Self = Self(vkCmdPushDescriptorSetWithTemplate2);
+}
 
 #[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
 #[rustfmt::skip]
@@ -19470,6 +20996,183 @@ pub type VkPhysicalDeviceShaderFloatControls2Features = VkPhysicalDeviceShaderFl
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT_CONTROLS_2_FEATURES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT_CONTROLS_2_FEATURES_KHR;
+
+#[cfg(feature = "VK_KHR_push_descriptor")]
+#[rustfmt::skip]
+pub const VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME: &str = "VK_KHR_push_descriptor";
+#[cfg(feature = "VK_KHR_push_descriptor")]
+#[rustfmt::skip]
+pub const VK_KHR_PUSH_DESCRIPTOR_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_push_descriptor")]
+#[rustfmt::skip]
+pub const VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR: VkDescriptorSetLayoutCreateFlagBits = 0x00000001;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT: VkDescriptorSetLayoutCreateFlagBits = 0x00000001;
+
+#[cfg(feature = "VK_KHR_push_descriptor")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDevicePushDescriptorPropertiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub maxPushDescriptors: u32,
+}
+#[cfg(feature = "VK_KHR_push_descriptor")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES_KHR: VkStructureType = 1000080000;
+#[cfg(feature = "VK_KHR_push_descriptor")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDevicePushDescriptorPropertiesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_push_descriptor")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDevicePushDescriptorPropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES_KHR; }
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub type VkPhysicalDevicePushDescriptorProperties = VkPhysicalDevicePushDescriptorPropertiesKHR;
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES_KHR;
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_push_descriptor")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdPushDescriptorSetKHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, layout: VkPipelineLayout, set: u32, descriptorWriteCount: u32, pDescriptorWrites: *const VkWriteDescriptorSet));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_push_descriptor")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdPushDescriptorSetKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdPushDescriptorSetKHR";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_push_descriptor")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdPushDescriptorSetKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdPushDescriptorSet(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, layout: VkPipelineLayout, set: u32, descriptorWriteCount: u32, pDescriptorWrites: *const VkWriteDescriptorSet));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdPushDescriptorSet {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdPushDescriptorSet";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdPushDescriptorSet {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+impl crate::StaticCallable for PFN_vkCmdPushDescriptorSet {
+    const STATIC: Self = Self(vkCmdPushDescriptorSet);
+}
+
+#[cfg(feature = "VK_KHR_descriptor_update_template")]
+#[cfg(feature = "VK_KHR_push_descriptor")]
+#[rustfmt::skip]
+pub const VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS_KHR: VkDescriptorUpdateTemplateTypeKHR = 1;
+#[cfg(feature = "VK_KHR_descriptor_update_template")]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+pub const VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS: VkDescriptorUpdateTemplateTypeKHR = 1;
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_push_descriptor")]
+#[cfg(feature = "feature = "VK_KHR_descriptor_update_template"")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdPushDescriptorSetWithTemplateKHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR, layout: VkPipelineLayout, set: u32, pData: *const core::ffi::c_void));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_push_descriptor")]
+#[cfg(feature = "feature = "VK_KHR_descriptor_update_template"")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdPushDescriptorSetWithTemplateKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdPushDescriptorSetWithTemplateKHR";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_push_descriptor")]
+#[cfg(feature = "feature = "VK_KHR_descriptor_update_template"")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdPushDescriptorSetWithTemplateKHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdPushDescriptorSetWithTemplate(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR, layout: VkPipelineLayout, set: u32, pData: *const core::ffi::c_void));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdPushDescriptorSetWithTemplate {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdPushDescriptorSetWithTemplate";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdPushDescriptorSetWithTemplate {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip]
+impl crate::StaticCallable for PFN_vkCmdPushDescriptorSetWithTemplate {
+    const STATIC: Self = Self(vkCmdPushDescriptorSetWithTemplate);
+}
 
 #[cfg(feature = "VK_EXT_acquire_drm_display")]
 #[rustfmt::skip]
@@ -24736,6 +26439,393 @@ pub const VK_NV_VIEWPORT_ARRAY2_EXTENSION_NAME: &str = "VK_NV_viewport_array2";
 #[rustfmt::skip]
 pub const VK_NV_VIEWPORT_ARRAY2_SPEC_VERSION: usize = 1;
 
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip]
+pub const VK_KHR_MAINTENANCE7_EXTENSION_NAME: &str = "VK_KHR_maintenance7";
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip]
+pub const VK_KHR_MAINTENANCE7_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip]
+pub type VkPhysicalDeviceLayeredApiKHR = i32;
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip]
+pub const VK_PHYSICAL_DEVICE_LAYERED_API_VULKAN_KHR: VkPhysicalDeviceLayeredApiKHR = 0;
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip]
+pub const VK_PHYSICAL_DEVICE_LAYERED_API_D3D12_KHR: VkPhysicalDeviceLayeredApiKHR = 1;
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip]
+pub const VK_PHYSICAL_DEVICE_LAYERED_API_METAL_KHR: VkPhysicalDeviceLayeredApiKHR = 2;
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip]
+pub const VK_PHYSICAL_DEVICE_LAYERED_API_OPENGL_KHR: VkPhysicalDeviceLayeredApiKHR = 3;
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip]
+pub const VK_PHYSICAL_DEVICE_LAYERED_API_OPENGLES_KHR: VkPhysicalDeviceLayeredApiKHR = 4;
+
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceMaintenance7FeaturesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub maintenance7: VkBool32,
+}
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_FEATURES_KHR: VkStructureType = 1000562000;
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPhysicalDeviceMaintenance7FeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPhysicalDeviceMaintenance7FeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_FEATURES_KHR; }
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMaintenance7FeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceMaintenance7FeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_FEATURES_KHR; }
+
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceMaintenance7PropertiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub robustFragmentShadingRateAttachmentAccess: VkBool32,
+    pub separateDepthStencilAttachmentAccess: VkBool32,
+    pub maxDescriptorSetTotalUniformBuffersDynamic: u32,
+    pub maxDescriptorSetTotalStorageBuffersDynamic: u32,
+    pub maxDescriptorSetTotalBuffersDynamic: u32,
+    pub maxDescriptorSetUpdateAfterBindTotalUniformBuffersDynamic: u32,
+    pub maxDescriptorSetUpdateAfterBindTotalStorageBuffersDynamic: u32,
+    pub maxDescriptorSetUpdateAfterBindTotalBuffersDynamic: u32,
+}
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_PROPERTIES_KHR: VkStructureType = 1000562001;
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMaintenance7PropertiesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceMaintenance7PropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_PROPERTIES_KHR; }
+
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceLayeredApiPropertiesListKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub layeredApiCount: u32,
+    pub pLayeredApis: *mut VkPhysicalDeviceLayeredApiPropertiesKHR,
+}
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_LIST_KHR: VkStructureType = 1000562002;
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceLayeredApiPropertiesListKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceLayeredApiPropertiesListKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_LIST_KHR; }
+
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceLayeredApiPropertiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub vendorID: u32,
+    pub deviceID: u32,
+    pub layeredAPI: VkPhysicalDeviceLayeredApiKHR,
+    pub deviceName: FixedCStrBuffer<VK_MAX_PHYSICAL_DEVICE_NAME_SIZE>,
+}
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_KHR: VkStructureType = 1000562003;
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceLayeredApiPropertiesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceLayeredApiPropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_KHR; }
+
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceLayeredApiVulkanPropertiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub properties: VkPhysicalDeviceProperties2,
+}
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_VULKAN_PROPERTIES_KHR: VkStructureType = 1000562004;
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceLayeredApiVulkanPropertiesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceLayeredApiVulkanPropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_VULKAN_PROPERTIES_KHR; }
+
+#[cfg(feature = "VK_KHR_maintenance8")]
+#[rustfmt::skip]
+pub const VK_KHR_MAINTENANCE8_EXTENSION_NAME: &str = "VK_KHR_maintenance8";
+#[cfg(feature = "VK_KHR_maintenance8")]
+#[rustfmt::skip]
+pub const VK_KHR_MAINTENANCE8_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_maintenance8")]
+#[rustfmt::skip]
+pub type VkAccessFlags3KHR = VkFlags;
+#[cfg(feature = "VK_KHR_maintenance8")]
+#[rustfmt::skip]
+pub type VkAccessFlagBits3KHR = VkFlags;
+#[cfg(feature = "VK_KHR_maintenance8")]
+#[rustfmt::skip]
+pub const VK_ACCESS_3_NONE_BIT_KHR: VkAccessFlagBits3KHR = 0x00000001;
+
+#[cfg(feature = "VK_KHR_maintenance8")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_CACHE_CREATE_INTERNALLY_SYNCHRONIZED_MERGE_BIT_KHR: VkPipelineCacheCreateFlagBits = 0x00000008;
+
+#[cfg(feature = "VK_KHR_maintenance8")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceMaintenance8FeaturesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub maintenance8: VkBool32,
+}
+#[cfg(feature = "VK_KHR_maintenance8")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_8_FEATURES_KHR: VkStructureType = 1000574000;
+#[cfg(feature = "VK_KHR_maintenance8")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPhysicalDeviceMaintenance8FeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_maintenance8")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPhysicalDeviceMaintenance8FeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_8_FEATURES_KHR; }
+#[cfg(feature = "VK_KHR_maintenance8")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMaintenance8FeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_maintenance8")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceMaintenance8FeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_8_FEATURES_KHR; }
+
+#[cfg(feature = "VK_KHR_maintenance8")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkMemoryBarrierAccessFlags3KHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub srcAccessMask3: VkAccessFlags3KHR,
+    pub dstAccessMask3: VkAccessFlags3KHR,
+}
+#[cfg(feature = "VK_KHR_maintenance8")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_MEMORY_BARRIER_ACCESS_FLAGS_3_KHR: VkStructureType = 1000574002;
+#[cfg(feature = "VK_KHR_maintenance8")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkMemoryBarrierAccessFlags3KHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_maintenance8")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkMemoryBarrierAccessFlags3KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_BARRIER_ACCESS_FLAGS_3_KHR; }
+
+#[cfg(feature = "VK_KHR_maintenance9")]
+#[rustfmt::skip]
+pub const VK_KHR_MAINTENANCE9_EXTENSION_NAME: &str = "VK_KHR_maintenance9";
+#[cfg(feature = "VK_KHR_maintenance9")]
+#[rustfmt::skip]
+pub const VK_KHR_MAINTENANCE9_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_maintenance9")]
+#[rustfmt::skip]
+pub type VkDefaultVertexAttributeValueKHR = i32;
+#[cfg(feature = "VK_KHR_maintenance9")]
+#[rustfmt::skip]
+pub const VK_DEFAULT_VERTEX_ATTRIBUTE_VALUE_ZERO_ZERO_ZERO_ZERO_KHR: VkDefaultVertexAttributeValueKHR = 0;
+#[cfg(feature = "VK_KHR_maintenance9")]
+#[rustfmt::skip]
+pub const VK_DEFAULT_VERTEX_ATTRIBUTE_VALUE_ZERO_ZERO_ZERO_ONE_KHR: VkDefaultVertexAttributeValueKHR = 1;
+
+#[cfg(feature = "VK_KHR_maintenance9")]
+#[rustfmt::skip]
+pub const VK_DEPENDENCY_ASYMMETRIC_EVENT_BIT_KHR: VkDependencyFlagBits = 0x00000040;
+
+#[cfg(feature = "VK_KHR_maintenance9")]
+#[rustfmt::skip]
+pub const VK_QUERY_POOL_CREATE_RESET_BIT_KHR: VkQueryPoolCreateFlagBits = 0x00000001;
+
+#[cfg(feature = "VK_KHR_maintenance9")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceMaintenance9FeaturesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub maintenance9: VkBool32,
+}
+#[cfg(feature = "VK_KHR_maintenance9")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_9_FEATURES_KHR: VkStructureType = 1000584000;
+#[cfg(feature = "VK_KHR_maintenance9")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPhysicalDeviceMaintenance9FeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_maintenance9")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPhysicalDeviceMaintenance9FeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_9_FEATURES_KHR; }
+#[cfg(feature = "VK_KHR_maintenance9")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMaintenance9FeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_maintenance9")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceMaintenance9FeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_9_FEATURES_KHR; }
+
+#[cfg(feature = "VK_KHR_maintenance9")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceMaintenance9PropertiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub image2DViewOf3DSparse: VkBool32,
+    pub defaultVertexAttributeValue: VkDefaultVertexAttributeValueKHR,
+}
+#[cfg(feature = "VK_KHR_maintenance9")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_9_PROPERTIES_KHR: VkStructureType = 1000584001;
+#[cfg(feature = "VK_KHR_maintenance9")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMaintenance9PropertiesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_maintenance9")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceMaintenance9PropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_9_PROPERTIES_KHR; }
+
+#[cfg(feature = "VK_KHR_maintenance9")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkQueueFamilyOwnershipTransferPropertiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub optimalImageTransferToQueueFamilies: u32,
+}
+#[cfg(feature = "VK_KHR_maintenance9")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_QUEUE_FAMILY_OWNERSHIP_TRANSFER_PROPERTIES_KHR: VkStructureType = 1000584002;
+#[cfg(feature = "VK_KHR_maintenance9")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkQueueFamilyOwnershipTransferPropertiesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_maintenance9")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkQueueFamilyOwnershipTransferPropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_OWNERSHIP_TRANSFER_PROPERTIES_KHR; }
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]
@@ -25010,6 +27100,32 @@ unsafe extern "system" {
     pub fn vkSignalSemaphore(device: VkDevice, pSignalInfo: *const VkSemaphoreSignalInfoKHR) -> VkResult;
     #[cfg(feature = "Allow1_2APIs")]
     pub fn vkWaitSemaphores(device: VkDevice, pWaitInfo: *const VkSemaphoreWaitInfoKHR, timeout: u64) -> VkResult;
+    #[cfg(feature = "Allow1_3APIs")]
+    pub fn vkGetDeviceBufferMemoryRequirements(device: VkDevice, pInfo: *const VkDeviceBufferMemoryRequirementsKHR, pMemoryRequirements: *mut VkMemoryRequirements2KHR);
+    #[cfg(feature = "Allow1_3APIs")]
+    pub fn vkGetDeviceImageMemoryREquirements(device: VkDevice, pInfo: *const VkDeviceImageMemoryRequirementsKHR, pMemoryRequirements: *mut VkMemoryRequirements2KHR);
+    #[cfg(feature = "Allow1_3APIs")]
+    pub fn vkGetDeviceImageSparseMemoryRequirements(device: VkDevice, pInfo: *const VkDeviceImageMemoryRequirementsKHR, pSparseMemoryRequirementsCount: *mut u32, pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements2KHR);
+    #[cfg(feature = "Allow1_4APIs")]
+    pub fn vkCmdBindIndexBuffer2(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, size: VkDeviceSize, indexType: VkIndexType);
+    #[cfg(feature = "Allow1_4APIs")]
+    pub fn vkGetRenderingAreaGranularity(device: VkDevice, pRenderingAreaInfo: *const VkRenderingAreaInfoKHR, pGranularity: *mut VkExtent2D);
+    #[cfg(feature = "Allow1_4APIs")]
+    pub fn vkGetDeviceImageSubresourceLayout(device: VkDevice, pInfo: *const VkDeviceImageSubresourceInfoKHR, pLayout: *mut VkSubresourceLayout2KHR);
+    #[cfg(feature = "Allow1_4APIs")]
+    pub fn vkGetImageSubresourceLayout2(device: VkDevice, image: VkImage, pSubresource: *const VkImageSubresource2KHR, pLayout: *mut VkSubresourceLayout2KHR);
+    #[cfg(feature = "Allow1_4APIs")]
+    pub fn vkCmdBindDescriptorSets2(commandBuffer: VkCommandBuffer, pBindDescriptorSetsInfo: *const VkBindDescriptorSetsInfoKHR);
+    #[cfg(feature = "Allow1_4APIs")]
+    pub fn vkCmdPushConstants2(commandBuffer: VkCommandBuffer, pPushConstantsInfo: *const VkPushConstantsInfoKHR);
+    #[cfg(feature = "Allow1_4APIs")]
+    pub fn vkCmdPushDescriptorSet2(commandBuffer: VkCommandBuffer, pPushDescriptorSetInfo: *const VkPushDescriptorSetInfoKHR);
+    #[cfg(feature = "Allow1_4APIs")]
+    pub fn vkCmdPushDescriptorSetWithTemplate2(commandBuffer: VkCommandBuffer, pPushDescriptorSetWithTemplateInfo: *const VkPushDescriptorSetWithTemplateInfoKHR);
+    #[cfg(feature = "Allow1_4APIs")]
+    pub fn vkCmdPushDescriptorSet(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, layout: VkPipelineLayout, set: u32, descriptorWriteCount: u32, pDescriptorWrites: *const VkWriteDescriptorSet);
+    #[cfg(feature = "Allow1_4APIs")]
+    pub fn vkCmdPushDescriptorSetWithTemplate(commandBuffer: VkCommandBuffer, descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR, layout: VkPipelineLayout, set: u32, pData: *const core::ffi::c_void);
     #[cfg(feature = "VK_NN_vi_surface")]
     pub fn vkCreateViSurfaceNN(instance: VkInstance, pCreateInfo: *const VkViSurfaceCreateInfoNN, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
     #[cfg(feature = "VK_MVK_macos_surface")]

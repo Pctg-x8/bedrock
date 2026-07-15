@@ -5,6 +5,8 @@ use parts::{
     Union, emit_c_enum_type, emit_const, emit_result_const, emit_result_err_const,
 };
 
+use crate::v1_4::VK_KHR_MAINTENANCE_5;
+
 mod extensions;
 mod parts;
 mod v1_1;
@@ -6925,6 +6927,22 @@ fn emit_format_enum(w: &mut impl Write) -> std::io::Result<()> {
     f2(w, "D16", "UNORM", "S8", "UINT", 128)?;
     f2(w, "D24", "UNORM", "S8", "UINT", 129)?;
     f2(w, "D32", "SFLOAT", "S8", "UINT", 130)?;
+    writeln!(w, "#[cfg(feature = \"VK_KHR_maintenace5\")]")?;
+    writeln!(
+        w,
+        "pub const VK_FORMAT_A1B5G5R4_UNORM_PACK16_KHR: VkFormat = {};",
+        VK_KHR_MAINTENANCE_5.ext_enum(0)
+    )?;
+    writeln!(w, "#[cfg(feature = \"Allow1_4APIs\")]")?;
+    packed(w, "A1B5G5R4", "UNORM", 16, VK_KHR_MAINTENANCE_5.ext_enum(0) as _)?;
+    writeln!(w, "#[cfg(feature = \"VK_KHR_maintenance5\")]")?;
+    writeln!(
+        w,
+        "pub const VK_FORMAT_A8_UNORM_KHR: VkFormat = {};",
+        VK_KHR_MAINTENANCE_5.ext_enum(1)
+    )?;
+    writeln!(w, "#[cfg(feature = \"Allow1_4APIs\")]")?;
+    f(w, "A8", "UNORM", VK_KHR_MAINTENANCE_5.ext_enum(1) as _)?;
 
     // compressed formats
     fn bc(w: &mut impl std::io::Write, variant: u8, order_repr: &str, value: usize) -> std::io::Result<()> {

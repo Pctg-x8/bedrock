@@ -78,9 +78,6 @@ platformIndependent =
     "VK_KHR_synchronization2",
     "VK_KHR_create_renderpass2",
     "VK_KHR_line_rasterization",
-    "VK_KHR_maintenance4",
-    "VK_KHR_maintenance5",
-    "VK_KHR_maintenance6",
     "VK_EXT_descriptor_buffer",
     "VK_EXT_descriptor_indexing",
     "VK_KHR_depth_stencil_resolve",
@@ -88,7 +85,10 @@ platformIndependent =
     "VK_KHR_dynamic_rendering",
     "VK_KHR_get_memory_requirements2",
     "Allow1_4APIs",
-    "VK_EXT_layer_settings"
+    "VK_EXT_layer_settings",
+    "VK_KHR_maintenance7",
+    "VK_KHR_maintenance8",
+    "VK_KHR_maintenance9"
   ]
 
 win32Specific :: [String]

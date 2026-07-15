@@ -4,11 +4,97 @@ use crate::{parts::*, vk_ext_enum};
 
 const VERSION: &str = "1_3";
 
-const VK_KHR_FORMAT_FEATURE_FLAGS2: Extension = Extension::new("KHR", "format_feature_flags2", 2);
+const VK_KHR_MAINTENANCE_4: &Extension = &Extension::khr("maintenance4", 2, 414);
+const VK_KHR_FORMAT_FEATURE_FLAGS2: &Extension = &Extension::khr("format_feature_flags2", 2, 361);
 
 pub const ELEMENTS: &[Element] = &[
+    Bitmask::extending(
+        "PipelineCacheCreateFlagBits",
+        "PIPELINE_CACHE_CREATE",
+        &[Bitmask::entry("EXTERNALLY_SYNCHRONIZED", 0).promoted(VERSION)],
+    )
+    .into_element(),
+    // VK_KHR_maintenace4
+    VK_KHR_MAINTENANCE_4.header_constants().into_element(),
+    Struct::typed(
+        "PhysicalDeviceMaintenance4Features",
+        "PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES",
+        VK_KHR_MAINTENANCE_4.ext_enum(0) as _,
+        StructUsage::Both,
+        &[Struct::member("maintenance4", TY_VK_BOOL)],
+    )
+    .extensions(&[VK_KHR_MAINTENANCE_4])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceMaintenance4Properties",
+        "PHYSICAL_DEVICE_MAINTENANCE_4_PROPERTIES",
+        VK_KHR_MAINTENANCE_4.ext_enum(1) as _,
+        StructUsage::Sink,
+        &[Struct::member("maxBufferSize", "VkDeviceSize")],
+    )
+    .extensions(&[VK_KHR_MAINTENANCE_4])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "DeviceBufferMemoryRequirements",
+        "DEVICE_BUFFER_MEMORY_REQUIREMENTS",
+        VK_KHR_MAINTENANCE_4.ext_enum(2) as _,
+        StructUsage::Source,
+        &[Struct::member("pCreateInfo", "*const VkBufferCreateInfo")],
+    )
+    .extensions(&[VK_KHR_MAINTENANCE_4])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "DeviceImageMemoryRequirements",
+        "DEVICE_IMAGE_MEMORY_REQUIREMENTS",
+        VK_KHR_MAINTENANCE_4.ext_enum(3) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("pCreateInfo", "*const VkImageCreateInfo"),
+            Struct::member("planeAspect", "VkImageAspectFlagBits"),
+        ],
+    )
+    .extensions(&[VK_KHR_MAINTENANCE_4])
+    .promoted(VERSION)
+    .into_element(),
+    Command::new(
+        "GetDeviceBufferMemoryRequirements",
+        &[
+            ("device", "VkDevice"),
+            ("pInfo", "*const VkDeviceBufferMemoryRequirementsKHR"),
+            ("pMemoryRequirements", "*mut VkMemoryRequirements2KHR"),
+        ],
+    )
+    .extension(VK_KHR_MAINTENANCE_4)
+    .promoted(VERSION)
+    .into_element(),
+    Command::new(
+        "GetDeviceImageMemoryREquirements",
+        &[
+            ("device", "VkDevice"),
+            ("pInfo", "*const VkDeviceImageMemoryRequirementsKHR"),
+            ("pMemoryRequirements", "*mut VkMemoryRequirements2KHR"),
+        ],
+    )
+    .extension(VK_KHR_MAINTENANCE_4)
+    .promoted(VERSION)
+    .into_element(),
+    Command::new(
+        "GetDeviceImageSparseMemoryRequirements",
+        &[
+            ("device", "VkDevice"),
+            ("pInfo", "*const VkDeviceImageMemoryRequirementsKHR"),
+            ("pSparseMemoryRequirementsCount", "*mut u32"),
+            ("pSparseMemoryRequirements", "*mut VkSparseImageMemoryRequirements2KHR"),
+        ],
+    )
+    .extension(VK_KHR_MAINTENANCE_4)
+    .promoted(VERSION)
+    .into_element(),
     // VK_KHR_format_feature_flags2
-    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(&VK_KHR_FORMAT_FEATURE_FLAGS2)),
+    VK_KHR_FORMAT_FEATURE_FLAGS2.header_constants().into_element(),
     Element::Bitmask(
         Bitmask::new(
             "FormatFeatureFlags2",
@@ -48,14 +134,14 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .long()
-        .extension(&VK_KHR_FORMAT_FEATURE_FLAGS2)
+        .extension(VK_KHR_FORMAT_FEATURE_FLAGS2)
         .promoted(VERSION),
     ),
     Element::Struct(
         Struct::typed(
             "FormatProperties3",
             "FORMAT_PROPERTIES_3",
-            vk_ext_enum(361, 0) as _,
+            VK_KHR_FORMAT_FEATURE_FLAGS2.ext_enum(0) as _,
             StructUsage::Sink,
             &[
                 Struct::member("linearTilingFeatures", "VkFormatFeatureFlags2KHR"),
@@ -63,7 +149,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("bufferFeatures", "VkFormatFeatureFlags2KHR"),
             ],
         )
-        .extensions(&[&VK_KHR_FORMAT_FEATURE_FLAGS2])
+        .extensions(&[VK_KHR_FORMAT_FEATURE_FLAGS2])
         .promoted(VERSION),
     ),
 ];
