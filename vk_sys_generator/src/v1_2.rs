@@ -10,6 +10,9 @@ const VK_EXT_SAMPLER_FILTER_MINMAX: &Extension = &Extension::ext("sampler_filter
 const VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE: &Extension = &Extension::khr("sampler_mirror_clamp_to_edge", 3, 15);
 const VK_KHR_SHADER_FLOAT_CONTROLS: &Extension = &Extension::khr("shader_float_controls", 4, 198);
 const VK_EXT_SHADER_VIEWPORT_INDEX_LAYER: &Extension = &Extension::ext("shader_viewport_index_layer", 1, 163);
+pub const VK_KHR_CREATE_RENDERPASS_2: &Extension = &Extension::khr("create_renderpass2", 1, 110);
+pub const VK_KHR_DEPTH_STENCIL_RESOLVE: &Extension = &Extension::khr("depth_stencil_resolve", 1, 200);
+pub const VK_EXT_DESCRIPTOR_INDEXING: &Extension = &Extension::ext("descriptor_indexing", 2, 162);
 
 pub const ELEMENTS: &[Element] = &[
     Element::Struct(
@@ -464,4 +467,359 @@ pub const ELEMENTS: &[Element] = &[
     ),
     // VK_EXT_shader_viewport_index_layer
     Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_EXT_SHADER_VIEWPORT_INDEX_LAYER)),
+    // VK_KHR_create_renderpass2
+    VK_KHR_CREATE_RENDERPASS_2.header_constants().into_element(),
+    Struct::typed(
+        "RenderPassCreateInfo2",
+        "RENDER_PASS_CREATE_INFO_2",
+        VK_KHR_CREATE_RENDERPASS_2.ext_enum(4) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("flags", "VkRenderPassCreateFlags"),
+            Struct::member("attachmentCount", "u32"),
+            Struct::member("pAttachments", "*const VkAttachmentDescription2KHR"),
+            Struct::member("subpassCount", "u32"),
+            Struct::member("pSubpasses", "*const VkSubpassDescription2KHR"),
+            Struct::member("ependencyCount", "u32"),
+            Struct::member("pDependencies", "*const VkSubpassDependency2KHR"),
+            Struct::member("correlatedViewMaskCount", "u32"),
+            Struct::member("pCorrellatedViewMasks", "*const u32"),
+        ],
+    )
+    .extensions(&[VK_KHR_CREATE_RENDERPASS_2])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "AttachmentDescription2",
+        "ATTACHMENT_DESCRIPTION_2",
+        VK_KHR_CREATE_RENDERPASS_2.ext_enum(0) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("flags", "VkAttachmentDescriptionFlags"),
+            Struct::member("format", "VkFormat"),
+            Struct::member("samples", "VkSampleCountFlagBits"),
+            Struct::member("loadOp", "VkAttachmentLoadOp"),
+            Struct::member("storeOp", "VkAttachmentStoreOp"),
+            Struct::member("stencilLoadOp", "VkAttachmentLoadOp"),
+            Struct::member("stencilStoreOp", "VkAttachmentStoreOp"),
+            Struct::member("initialLayout", "VkImageLayout"),
+            Struct::member("finalLayout", "VkImageLayout"),
+        ],
+    )
+    .extensions(&[VK_KHR_CREATE_RENDERPASS_2])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "AttachmentReference2",
+        "ATTACHMENT_REFERENCE_2",
+        VK_KHR_CREATE_RENDERPASS_2.ext_enum(1) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("attachment", "u32"),
+            Struct::member("layout", "VkImageLayout"),
+            Struct::member("aspectMask", "VkImageAspectFlags"),
+        ],
+    )
+    .extensions(&[VK_KHR_CREATE_RENDERPASS_2])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "SubpassDescription2",
+        "SUBPASS_DESCRIPTION_2",
+        VK_KHR_CREATE_RENDERPASS_2.ext_enum(2) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("flags", "VkSubpassDescriptionFlags"),
+            Struct::member("pipelineBindPoint", "VkPipelineBindPoint"),
+            Struct::member("viewMask", "u32"),
+            Struct::member("inputAttachmentCount", "u32"),
+            Struct::member("pInputAttachments", "*const VkAttachmentReference2KHR"),
+            Struct::member("colorAttachmentCount", "u32"),
+            Struct::member("pColorAttachments", "*const VkAttachmentReference2KHR"),
+            Struct::member("pResolveAttachments", "*const VkAttachmentReference2KHR"),
+            Struct::member("pDepthStencilAtachment", "*const VkAttachmentReference2KHR"),
+            Struct::member("preserveAttachmentCount", "u32"),
+            Struct::member("pPreserveAttachments", "*const u32"),
+        ],
+    )
+    .extensions(&[VK_KHR_CREATE_RENDERPASS_2])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "SubpasDependency2",
+        "SUBPASS_DEPENDENCY_2",
+        VK_KHR_CREATE_RENDERPASS_2.ext_enum(3) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("srcSubpass", "u32"),
+            Struct::member("dstSubpass", "u32"),
+            Struct::member("srcStageMask", "VkPipelineStageFlags"),
+            Struct::member("dstStageMask", "VkPipelineStageFlags"),
+            Struct::member("srcAccessMask", "VkAccessFlags"),
+            Struct::member("dstAccessMask", "VkAccessFlags"),
+            Struct::member("dependencyFlags", "VkDependencyFlags"),
+            Struct::member("viewOffset", "i32"),
+        ],
+    )
+    .extensions(&[VK_KHR_CREATE_RENDERPASS_2])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "SubpassBeginInfo",
+        "SUBPASS_BEGIN_INFO",
+        VK_KHR_CREATE_RENDERPASS_2.ext_enum(5) as _,
+        StructUsage::Source,
+        &[Struct::member("contents", "VkSubpassContents")],
+    )
+    .extensions(&[VK_KHR_CREATE_RENDERPASS_2])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "SubpassEndInfo",
+        "SUBPASS_END_INFO",
+        VK_KHR_CREATE_RENDERPASS_2.ext_enum(6) as _,
+        StructUsage::Source,
+        &[],
+    )
+    .extensions(&[VK_KHR_CREATE_RENDERPASS_2])
+    .promoted(VERSION)
+    .into_element(),
+    Command::new(
+        "CreateRenderPass2",
+        &[
+            ("device", "VkDevice"),
+            ("pCreateInfo", "*const VkRenderPassCreateInfo2KHR"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+            ("pRenderPass", "*mut VkRenderPass"),
+        ],
+    )
+    .failable()
+    .extension(VK_KHR_CREATE_RENDERPASS_2)
+    .promoted(VERSION)
+    .into_element(),
+    Command::inst(
+        "BeginRenderPass2",
+        &[
+            ("pRenderPassBegin", "*const VkRenderPassBeginInfo"),
+            ("pSubpassBeginInfo", "*const VkSubpassBeginInfoKHR"),
+        ],
+    )
+    .extension(VK_KHR_CREATE_RENDERPASS_2)
+    .promoted(VERSION)
+    .into_element(),
+    Command::inst(
+        "NextSubpass2",
+        &[
+            ("pSubpassBeginInfo", "*const VkSubpassBeginInfoKHR"),
+            ("pSubpassEndInfo", "*const VkSubpassEndInfoKHR"),
+        ],
+    )
+    .extension(VK_KHR_CREATE_RENDERPASS_2)
+    .promoted(VERSION)
+    .into_element(),
+    Command::inst("EndRenderPass2", &[("pSubpassEndInfo", "*const VkSubpassEndInfoKHR")])
+        .extension(VK_KHR_CREATE_RENDERPASS_2)
+        .promoted(VERSION)
+        .into_element(),
+    // VK_KHR_depth_stencil_resolve
+    VK_KHR_DEPTH_STENCIL_RESOLVE.header_constants().into_element(),
+    Bitmask::new(
+        "ResolveModeFlags",
+        "ResolveModeFlagBits",
+        "RESOLVE_MODE",
+        &[
+            Bitmask::entry("SAMPLE_ZERO", 0)
+                .extension(VK_KHR_DEPTH_STENCIL_RESOLVE)
+                .promoted(VERSION),
+            Bitmask::entry("AVERAGE", 1)
+                .extension(VK_KHR_DEPTH_STENCIL_RESOLVE)
+                .promoted(VERSION),
+            Bitmask::entry("MIN", 2)
+                .extension(VK_KHR_DEPTH_STENCIL_RESOLVE)
+                .promoted(VERSION),
+            Bitmask::entry("MAX", 3)
+                .extension(VK_KHR_DEPTH_STENCIL_RESOLVE)
+                .promoted(VERSION),
+        ],
+    )
+    .extension(VK_KHR_DEPTH_STENCIL_RESOLVE)
+    .promoted(VERSION)
+    .into_element(),
+    // VK_RESOLVE_MODE_NONE_KHR defined in main
+    Struct::typed(
+        "PhysicalDeviceDepthStencilResolveProperties",
+        "PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES",
+        VK_KHR_DEPTH_STENCIL_RESOLVE.ext_enum(0) as _,
+        StructUsage::Sink,
+        &[
+            Struct::member("supportedDepthREsolveModes", "VkResolveModeFlagsKHR"),
+            Struct::member("supportedStencilResolveModes", "VkResolveModeFlagsKHR"),
+            Struct::member("independentResolveNone", TY_VK_BOOL),
+            Struct::member("independentREsolve", TY_VK_BOOL),
+        ],
+    )
+    .extensions(&[VK_KHR_DEPTH_STENCIL_RESOLVE])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "SubpassDescriptionDepthStencilResolve",
+        "SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE",
+        VK_KHR_DEPTH_STENCIL_RESOLVE.ext_enum(1) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("depthResolveMode", "VkResolveModeFlagBitsKHR"),
+            Struct::member("stencilResolveMode", "VkResolveModeFlagBitsKHR"),
+            Struct::member("pDepthStencilResolveAttachment", "*const VkAttachmentReference2KHR"),
+        ],
+    )
+    .extensions(&[VK_KHR_DEPTH_STENCIL_RESOLVE])
+    .promoted(VERSION)
+    .into_element(),
+    // VK_EXT_descriptor_indexing
+    VK_EXT_DESCRIPTOR_INDEXING.header_constants().into_element(),
+    Enum::extending_error(&[
+        Enum::member("FRAGMENTATION", -VK_EXT_DESCRIPTOR_INDEXING.ext_enum(0) as _)
+            .extension(VK_EXT_DESCRIPTOR_INDEXING)
+            .promoted(VERSION),
+    ])
+    .into_element(),
+    Bitmask::new(
+        "DescriptiorBindingFlags",
+        "DescriptorBindingFlagBits",
+        "DESCRIPTOR_BINDING",
+        &[
+            Bitmask::entry("UPDATE_AFTER_BIND", 0)
+                .extension(VK_EXT_DESCRIPTOR_INDEXING)
+                .promoted(VERSION),
+            Bitmask::entry("UPDATE_UNUSED_WHILE_PENDING", 1)
+                .extension(VK_EXT_DESCRIPTOR_INDEXING)
+                .promoted(VERSION),
+            Bitmask::entry("PARTIALLY_BOUND", 2)
+                .extension(VK_EXT_DESCRIPTOR_INDEXING)
+                .promoted(VERSION),
+            Bitmask::entry("VARIABLE_DESCRIPTOR_COUNT", 3)
+                .extension(VK_EXT_DESCRIPTOR_INDEXING)
+                .promoted(VERSION),
+        ],
+    )
+    .extension(VK_EXT_DESCRIPTOR_INDEXING)
+    .promoted(VERSION)
+    .into_element(),
+    Bitmask::extending(
+        "DescriptorPoolCreateFlagBits",
+        "DESCRIPTOR_POOL_CREATE",
+        &[Bitmask::entry("UPDATE_AFTER_BIND", 2)
+            .extension(VK_EXT_DESCRIPTOR_INDEXING)
+            .promoted(VERSION)],
+    )
+    .into_element(),
+    Bitmask::extending(
+        "DescriptorSetLayoutCreateFlagBits",
+        "DESCRIPTOR_SET_LAYOUT_CREATE",
+        &[Bitmask::entry("UPDATE_AFTER_BIND_POOL", 1)
+            .extension(VK_EXT_DESCRIPTOR_INDEXING)
+            .promoted(VERSION)],
+    )
+    .into_element(),
+    Struct::typed(
+        "DescriptorSetLayoutBindingFlagsCreateInfo",
+        "DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO",
+        VK_EXT_DESCRIPTOR_INDEXING.ext_enum(0) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("bindingCount", "u32"),
+            Struct::member("pBindingFlags", "*const VkDescriptorBindingFlagsEXT"),
+        ],
+    )
+    .extensions(&[VK_EXT_DESCRIPTOR_INDEXING])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceDescriptorIndexingFeatures",
+        "PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES",
+        VK_EXT_DESCRIPTOR_INDEXING.ext_enum(1) as _,
+        StructUsage::Both,
+        &[
+            Struct::member("shaderInputAttachmentArrayDynamicIndexing", TY_VK_BOOL),
+            Struct::member("shaderUniformTexelBufferArrayDynamicIndexing", TY_VK_BOOL),
+            Struct::member("shaderStorageTexelBufferArrayDynamicIndexing", TY_VK_BOOL),
+            Struct::member("shaderUniformBufferArrayNonUniformIndexing", TY_VK_BOOL),
+            Struct::member("shaderSampledImageArrayNonUniformIndexing", TY_VK_BOOL),
+            Struct::member("shaderStorageBufferArrayNonUniformIndexing", TY_VK_BOOL),
+            Struct::member("shaderStorageImageArrayNonUniformIndexing", TY_VK_BOOL),
+            Struct::member("shaderInputAttachmentArrayNonUniformIndexing", TY_VK_BOOL),
+            Struct::member("shaderUniformTexelBufferArrayNonUniformIndexing", TY_VK_BOOL),
+            Struct::member("shaderStorageTexelBufferArrayNonUniformIndexing", TY_VK_BOOL),
+            Struct::member("descriptorBindingUniformBufferUpdateAfterBind", TY_VK_BOOL),
+            Struct::member("descriptorBindingSampledImageUpdateAfterBind", TY_VK_BOOL),
+            Struct::member("descriptorBindingStorageImageUpdateAfterBind", TY_VK_BOOL),
+            Struct::member("descriptorBindingStorageBufferUpdateAfterBind", TY_VK_BOOL),
+            Struct::member("descriptorBindingUniformTexelBufferUpdateAfterBind", TY_VK_BOOL),
+            Struct::member("descriptorBindingStorageTexelBufferUpdateAfterBind", TY_VK_BOOL),
+            Struct::member("descriptorBindingUpdateUnusedWhilePending", TY_VK_BOOL),
+            Struct::member("descriptorBindingPartiallyBound", TY_VK_BOOL),
+            Struct::member("descriptorBindingVariableDescriptorCount", TY_VK_BOOL),
+            Struct::member("runtimeDescriptorArray", TY_VK_BOOL),
+        ],
+    )
+    .extensions(&[VK_EXT_DESCRIPTOR_INDEXING])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceDescriptorIndexingProperties",
+        "PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES",
+        VK_EXT_DESCRIPTOR_INDEXING.ext_enum(2) as _,
+        StructUsage::Sink,
+        &[
+            Struct::member("maxUpdateAfterBindDescriptorsInAllPools", "u32"),
+            Struct::member("shaderUniformBufferArrayNonUniformIndexingNative", TY_VK_BOOL),
+            Struct::member("shaderSampledImageArrayNonUniformIndexingNative", TY_VK_BOOL),
+            Struct::member("shaderStorageBufferArrayNonUniformIndexingNative", TY_VK_BOOL),
+            Struct::member("shaderStorageImageArrayNonUniformIndexingNative", TY_VK_BOOL),
+            Struct::member("shaderInputAttachmentArrayNonUniformIndexingNative", TY_VK_BOOL),
+            Struct::member("robustBufferAccessUpdateAfterBind", TY_VK_BOOL),
+            Struct::member("quadDivergentImplicitLod", TY_VK_BOOL),
+            Struct::member("maxPerStageDescriptorUpdateAfterBindSamplers", "u32"),
+            Struct::member("maxPerStageDescriptorUpdateAfterBindUniformBuffers", "u32"),
+            Struct::member("maxPerStageDescriptorUpdateAfterBindStorageBuffers", "u32"),
+            Struct::member("maxPerStageDescriptorUpdateAfterBindSampledImages", "u32"),
+            Struct::member("maxPerStageDescriptorUpdateAfterBindStorageImages", "u32"),
+            Struct::member("maxPerStageDescriptorUpdateAfterBindInputAttachments", "u32"),
+            Struct::member("maxPerStageUpdateAfterBindResources", "u32"),
+            Struct::member("maxDescriptorSetUpdateAfterBindSamplers", "u32"),
+            Struct::member("maxDescriptorSetUpdateAfterBindUniformBuffers", "u32"),
+            Struct::member("maxDescriptorSetUpdateAfterBindUniformBuffersDynamic", "u32"),
+            Struct::member("maxDescriptorSetUpdateAfterBindStorageBuffers", "u32"),
+            Struct::member("maxDescriptorSetUpdateAfterBindStorageBuffersDynamic", "u32"),
+            Struct::member("maxDescriptorSetUpdateAfterBindSampledImages", "u32"),
+            Struct::member("maxDescriptorSetUpdateAfterBindStorageImages", "u32"),
+            Struct::member("maxDescriptorSetUpdateAfterBindInputAttachments", "u32"),
+        ],
+    )
+    .extensions(&[VK_EXT_DESCRIPTOR_INDEXING])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "DescriptorSetVariableDescriptorCountAllocateInfo",
+        "DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO",
+        VK_EXT_DESCRIPTOR_INDEXING.ext_enum(3) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("descriptorSetCount", "u32"),
+            Struct::member("pDescriptorCounts", "*const u32"),
+        ],
+    )
+    .extensions(&[VK_EXT_DESCRIPTOR_INDEXING])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "DescriptorSetVariableDescriptorCountLayoutSupport",
+        "DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_LAYOUT_SUPPORT",
+        VK_EXT_DESCRIPTOR_INDEXING.ext_enum(4) as _,
+        StructUsage::Sink,
+        &[Struct::member("maxVariableDescriptorCount", "u32")],
+    )
+    .extensions(&[VK_EXT_DESCRIPTOR_INDEXING])
+    .promoted(VERSION)
+    .into_element(),
 ];

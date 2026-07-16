@@ -112,6 +112,9 @@ fn main() -> std::io::Result<()> {
     o.write_all(b"#[cfg(feature = \"Allow1_4APIs\")]")?;
     emit_const(&mut o, "VK_MAX_GLOBAL_PRIORITY_SIZE", "usize", "16")?;
 
+    o.write_all(b"#[cfg(feature = \"VK_KHR_depth_stencil_resolve\")] #[rustfmt::skip] pub const VK_RESOLVE_MODE_NONE_KHR: VkResolveModeFlagBitsKHR = 0;\n")?;
+    o.write_all(b"#[cfg(feature = \"Allow1_2APIs\")] #[rustfmt::skip] pub const VK_RESOLVE_MODE_NONE: VkResolveModeFlagBitsKHR = 0;\n")?;
+
     o.write_all(b"\n")?;
 
     emit_result_type(&mut o)?;

@@ -2234,6 +2234,8 @@ pub const VK_MAX_DEVICE_GROUP_SIZE: usize = 32;
 pub const VK_MAX_GLOBAL_PRIORITY_SIZE_KHR: usize = 16;
 #[cfg(feature = "Allow1_4APIs")]#[rustfmt::skip]
 pub const VK_MAX_GLOBAL_PRIORITY_SIZE: usize = 16;
+#[cfg(feature = "VK_KHR_depth_stencil_resolve")] #[rustfmt::skip] pub const VK_RESOLVE_MODE_NONE_KHR: VkResolveModeFlagBitsKHR = 0;
+#[cfg(feature = "Allow1_2APIs")] #[rustfmt::skip] pub const VK_RESOLVE_MODE_NONE: VkResolveModeFlagBitsKHR = 0;
 
 #[repr(transparent)]
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -18916,6 +18918,934 @@ pub const VK_EXT_SHADER_VIEWPORT_INDEX_LAYER_EXTENSION_NAME: &str = "VK_EXT_shad
 #[rustfmt::skip]
 pub const VK_EXT_SHADER_VIEWPORT_INDEX_LAYER_SPEC_VERSION: usize = 1;
 
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+pub const VK_KHR_CREATE_RENDERPASS2_EXTENSION_NAME: &str = "VK_KHR_create_renderpass2";
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+pub const VK_KHR_CREATE_RENDERPASS2_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkRenderPassCreateInfo2KHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkRenderPassCreateFlags,
+    pub attachmentCount: u32,
+    pub pAttachments: *const VkAttachmentDescription2KHR,
+    pub subpassCount: u32,
+    pub pSubpasses: *const VkSubpassDescription2KHR,
+    pub ependencyCount: u32,
+    pub pDependencies: *const VkSubpassDependency2KHR,
+    pub correlatedViewMaskCount: u32,
+    pub pCorrellatedViewMasks: *const u32,
+}
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2_KHR: VkStructureType = 1000109004;
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkRenderPassCreateInfo2KHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkRenderPassCreateInfo2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2_KHR; }
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkRenderPassCreateInfo2 = VkRenderPassCreateInfo2KHR;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2: VkStructureType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2_KHR;
+
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkAttachmentDescription2KHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkAttachmentDescriptionFlags,
+    pub format: VkFormat,
+    pub samples: VkSampleCountFlagBits,
+    pub loadOp: VkAttachmentLoadOp,
+    pub storeOp: VkAttachmentStoreOp,
+    pub stencilLoadOp: VkAttachmentLoadOp,
+    pub stencilStoreOp: VkAttachmentStoreOp,
+    pub initialLayout: VkImageLayout,
+    pub finalLayout: VkImageLayout,
+}
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2_KHR: VkStructureType = 1000109000;
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkAttachmentDescription2KHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkAttachmentDescription2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2_KHR; }
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkAttachmentDescription2 = VkAttachmentDescription2KHR;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2: VkStructureType = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2_KHR;
+
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkAttachmentReference2KHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub attachment: u32,
+    pub layout: VkImageLayout,
+    pub aspectMask: VkImageAspectFlags,
+}
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2_KHR: VkStructureType = 1000109001;
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkAttachmentReference2KHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkAttachmentReference2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2_KHR; }
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkAttachmentReference2 = VkAttachmentReference2KHR;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2: VkStructureType = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2_KHR;
+
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkSubpassDescription2KHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkSubpassDescriptionFlags,
+    pub pipelineBindPoint: VkPipelineBindPoint,
+    pub viewMask: u32,
+    pub inputAttachmentCount: u32,
+    pub pInputAttachments: *const VkAttachmentReference2KHR,
+    pub colorAttachmentCount: u32,
+    pub pColorAttachments: *const VkAttachmentReference2KHR,
+    pub pResolveAttachments: *const VkAttachmentReference2KHR,
+    pub pDepthStencilAtachment: *const VkAttachmentReference2KHR,
+    pub preserveAttachmentCount: u32,
+    pub pPreserveAttachments: *const u32,
+}
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_2_KHR: VkStructureType = 1000109002;
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkSubpassDescription2KHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkSubpassDescription2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_2_KHR; }
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkSubpassDescription2 = VkSubpassDescription2KHR;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_2: VkStructureType = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_2_KHR;
+
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkSubpasDependency2KHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub srcSubpass: u32,
+    pub dstSubpass: u32,
+    pub srcStageMask: VkPipelineStageFlags,
+    pub dstStageMask: VkPipelineStageFlags,
+    pub srcAccessMask: VkAccessFlags,
+    pub dstAccessMask: VkAccessFlags,
+    pub dependencyFlags: VkDependencyFlags,
+    pub viewOffset: i32,
+}
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2_KHR: VkStructureType = 1000109003;
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkSubpasDependency2KHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkSubpasDependency2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2_KHR; }
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkSubpasDependency2 = VkSubpasDependency2KHR;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2: VkStructureType = VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2_KHR;
+
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkSubpassBeginInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub contents: VkSubpassContents,
+}
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO_KHR: VkStructureType = 1000109005;
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkSubpassBeginInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkSubpassBeginInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO_KHR; }
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkSubpassBeginInfo = VkSubpassBeginInfoKHR;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO: VkStructureType = VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO_KHR;
+
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkSubpassEndInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+}
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SUBPASS_END_INFO_KHR: VkStructureType = 1000109006;
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkSubpassEndInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkSubpassEndInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SUBPASS_END_INFO_KHR; }
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkSubpassEndInfo = VkSubpassEndInfoKHR;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SUBPASS_END_INFO: VkStructureType = VK_STRUCTURE_TYPE_SUBPASS_END_INFO_KHR;
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCreateRenderPass2KHR(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkRenderPassCreateInfo2KHR, pAllocator: *const VkAllocationCallbacks, pRenderPass: *mut VkRenderPass) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCreateRenderPass2KHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateRenderPass2KHR";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateRenderPass2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_2APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCreateRenderPass2(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkRenderPassCreateInfo2KHR, pAllocator: *const VkAllocationCallbacks, pRenderPass: *mut VkRenderPass) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCreateRenderPass2 {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateRenderPass2";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCreateRenderPass2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+impl crate::StaticCallable for PFN_vkCreateRenderPass2 {
+    const STATIC: Self = Self(vkCreateRenderPass2);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdBeginRenderPass2KHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pRenderPassBegin: *const VkRenderPassBeginInfo, pSubpassBeginInfo: *const VkSubpassBeginInfoKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdBeginRenderPass2KHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdBeginRenderPass2KHR";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdBeginRenderPass2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_2APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdBeginRenderPass2(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pRenderPassBegin: *const VkRenderPassBeginInfo, pSubpassBeginInfo: *const VkSubpassBeginInfoKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdBeginRenderPass2 {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdBeginRenderPass2";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdBeginRenderPass2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+impl crate::StaticCallable for PFN_vkCmdBeginRenderPass2 {
+    const STATIC: Self = Self(vkCmdBeginRenderPass2);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdNextSubpass2KHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pSubpassBeginInfo: *const VkSubpassBeginInfoKHR, pSubpassEndInfo: *const VkSubpassEndInfoKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdNextSubpass2KHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdNextSubpass2KHR";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdNextSubpass2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_2APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdNextSubpass2(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pSubpassBeginInfo: *const VkSubpassBeginInfoKHR, pSubpassEndInfo: *const VkSubpassEndInfoKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdNextSubpass2 {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdNextSubpass2";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdNextSubpass2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+impl crate::StaticCallable for PFN_vkCmdNextSubpass2 {
+    const STATIC: Self = Self(vkCmdNextSubpass2);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdEndRenderPass2KHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pSubpassEndInfo: *const VkSubpassEndInfoKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdEndRenderPass2KHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdEndRenderPass2KHR";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdEndRenderPass2KHR {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_2APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdEndRenderPass2(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pSubpassEndInfo: *const VkSubpassEndInfoKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdEndRenderPass2 {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdEndRenderPass2";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkCmdEndRenderPass2 {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+impl crate::StaticCallable for PFN_vkCmdEndRenderPass2 {
+    const STATIC: Self = Self(vkCmdEndRenderPass2);
+}
+
+#[cfg(feature = "VK_KHR_depth_stencil_resolve")]
+#[rustfmt::skip]
+pub const VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME: &str = "VK_KHR_depth_stencil_resolve";
+#[cfg(feature = "VK_KHR_depth_stencil_resolve")]
+#[rustfmt::skip]
+pub const VK_KHR_DEPTH_STENCIL_RESOLVE_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_depth_stencil_resolve")]
+#[rustfmt::skip]
+pub type VkResolveModeFlagsKHR = VkFlags;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkResolveModeFlags = VkResolveModeFlagsKHR;
+#[cfg(feature = "VK_KHR_depth_stencil_resolve")]
+#[rustfmt::skip]
+pub type VkResolveModeFlagBitsKHR = VkFlags;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkResolveModeFlagBits = VkResolveModeFlagBitsKHR;
+#[cfg(feature = "VK_KHR_depth_stencil_resolve")]
+#[rustfmt::skip]
+pub const VK_RESOLVE_MODE_SAMPLE_ZERO_BIT_KHR: VkResolveModeFlagBitsKHR = 0x00000001;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_RESOLVE_MODE_SAMPLE_ZERO_BIT: VkResolveModeFlagBitsKHR = 0x00000001;
+#[cfg(feature = "VK_KHR_depth_stencil_resolve")]
+#[rustfmt::skip]
+pub const VK_RESOLVE_MODE_AVERAGE_BIT_KHR: VkResolveModeFlagBitsKHR = 0x00000002;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_RESOLVE_MODE_AVERAGE_BIT: VkResolveModeFlagBitsKHR = 0x00000002;
+#[cfg(feature = "VK_KHR_depth_stencil_resolve")]
+#[rustfmt::skip]
+pub const VK_RESOLVE_MODE_MIN_BIT_KHR: VkResolveModeFlagBitsKHR = 0x00000004;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_RESOLVE_MODE_MIN_BIT: VkResolveModeFlagBitsKHR = 0x00000004;
+#[cfg(feature = "VK_KHR_depth_stencil_resolve")]
+#[rustfmt::skip]
+pub const VK_RESOLVE_MODE_MAX_BIT_KHR: VkResolveModeFlagBitsKHR = 0x00000008;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_RESOLVE_MODE_MAX_BIT: VkResolveModeFlagBitsKHR = 0x00000008;
+
+#[cfg(feature = "VK_KHR_depth_stencil_resolve")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceDepthStencilResolvePropertiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub supportedDepthREsolveModes: VkResolveModeFlagsKHR,
+    pub supportedStencilResolveModes: VkResolveModeFlagsKHR,
+    pub independentResolveNone: VkBool32,
+    pub independentREsolve: VkBool32,
+}
+#[cfg(feature = "VK_KHR_depth_stencil_resolve")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES_KHR: VkStructureType = 1000199000;
+#[cfg(feature = "VK_KHR_depth_stencil_resolve")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceDepthStencilResolvePropertiesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_depth_stencil_resolve")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceDepthStencilResolvePropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES_KHR; }
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkPhysicalDeviceDepthStencilResolveProperties = VkPhysicalDeviceDepthStencilResolvePropertiesKHR;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES_KHR;
+
+#[cfg(feature = "VK_KHR_depth_stencil_resolve")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkSubpassDescriptionDepthStencilResolveKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub depthResolveMode: VkResolveModeFlagBitsKHR,
+    pub stencilResolveMode: VkResolveModeFlagBitsKHR,
+    pub pDepthStencilResolveAttachment: *const VkAttachmentReference2KHR,
+}
+#[cfg(feature = "VK_KHR_depth_stencil_resolve")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE_KHR: VkStructureType = 1000199001;
+#[cfg(feature = "VK_KHR_depth_stencil_resolve")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkSubpassDescriptionDepthStencilResolveKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_depth_stencil_resolve")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkSubpassDescriptionDepthStencilResolveKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE_KHR; }
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkSubpassDescriptionDepthStencilResolve = VkSubpassDescriptionDepthStencilResolveKHR;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE: VkStructureType = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE_KHR;
+
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+pub const VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME: &str = "VK_EXT_descriptor_indexing";
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+pub const VK_EXT_DESCRIPTOR_INDEXING_SPEC_VERSION: usize = 2;
+
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+pub const VK_ERROR_FRAGMENTATION_EXT: VkResult = VkResult(-1000161000);
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_ERROR_FRAGMENTATION: VkResult = VkResult(-1000161000);
+
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+pub type VkDescriptiorBindingFlagsEXT = VkFlags;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkDescriptiorBindingFlags = VkDescriptiorBindingFlagsEXT;
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+pub type VkDescriptorBindingFlagBitsEXT = VkFlags;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkDescriptorBindingFlagBits = VkDescriptorBindingFlagBitsEXT;
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+pub const VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT: VkDescriptorBindingFlagBitsEXT = 0x00000001;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT: VkDescriptorBindingFlagBitsEXT = 0x00000001;
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+pub const VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT_EXT: VkDescriptorBindingFlagBitsEXT = 0x00000002;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT: VkDescriptorBindingFlagBitsEXT = 0x00000002;
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+pub const VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT_EXT: VkDescriptorBindingFlagBitsEXT = 0x00000004;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT: VkDescriptorBindingFlagBitsEXT = 0x00000004;
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+pub const VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT_EXT: VkDescriptorBindingFlagBitsEXT = 0x00000008;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT: VkDescriptorBindingFlagBitsEXT = 0x00000008;
+
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+pub const VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT_EXT: VkDescriptorPoolCreateFlagBits = 0x00000004;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT: VkDescriptorPoolCreateFlagBits = 0x00000004;
+
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+pub const VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT_EXT: VkDescriptorSetLayoutCreateFlagBits = 0x00000002;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT: VkDescriptorSetLayoutCreateFlagBits = 0x00000002;
+
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkDescriptorSetLayoutBindingFlagsCreateInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub bindingCount: u32,
+    pub pBindingFlags: *const VkDescriptorBindingFlagsEXT,
+}
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT: VkStructureType = 1000161000;
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkDescriptorSetLayoutBindingFlagsCreateInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkDescriptorSetLayoutBindingFlagsCreateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT; }
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkDescriptorSetLayoutBindingFlagsCreateInfo = VkDescriptorSetLayoutBindingFlagsCreateInfoEXT;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT;
+
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceDescriptorIndexingFeaturesEXT {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub shaderInputAttachmentArrayDynamicIndexing: VkBool32,
+    pub shaderUniformTexelBufferArrayDynamicIndexing: VkBool32,
+    pub shaderStorageTexelBufferArrayDynamicIndexing: VkBool32,
+    pub shaderUniformBufferArrayNonUniformIndexing: VkBool32,
+    pub shaderSampledImageArrayNonUniformIndexing: VkBool32,
+    pub shaderStorageBufferArrayNonUniformIndexing: VkBool32,
+    pub shaderStorageImageArrayNonUniformIndexing: VkBool32,
+    pub shaderInputAttachmentArrayNonUniformIndexing: VkBool32,
+    pub shaderUniformTexelBufferArrayNonUniformIndexing: VkBool32,
+    pub shaderStorageTexelBufferArrayNonUniformIndexing: VkBool32,
+    pub descriptorBindingUniformBufferUpdateAfterBind: VkBool32,
+    pub descriptorBindingSampledImageUpdateAfterBind: VkBool32,
+    pub descriptorBindingStorageImageUpdateAfterBind: VkBool32,
+    pub descriptorBindingStorageBufferUpdateAfterBind: VkBool32,
+    pub descriptorBindingUniformTexelBufferUpdateAfterBind: VkBool32,
+    pub descriptorBindingStorageTexelBufferUpdateAfterBind: VkBool32,
+    pub descriptorBindingUpdateUnusedWhilePending: VkBool32,
+    pub descriptorBindingPartiallyBound: VkBool32,
+    pub descriptorBindingVariableDescriptorCount: VkBool32,
+    pub runtimeDescriptorArray: VkBool32,
+}
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT: VkStructureType = 1000161001;
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPhysicalDeviceDescriptorIndexingFeaturesEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPhysicalDeviceDescriptorIndexingFeaturesEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT; }
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceDescriptorIndexingFeaturesEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceDescriptorIndexingFeaturesEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT; }
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkPhysicalDeviceDescriptorIndexingFeatures = VkPhysicalDeviceDescriptorIndexingFeaturesEXT;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT;
+
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceDescriptorIndexingPropertiesEXT {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub maxUpdateAfterBindDescriptorsInAllPools: u32,
+    pub shaderUniformBufferArrayNonUniformIndexingNative: VkBool32,
+    pub shaderSampledImageArrayNonUniformIndexingNative: VkBool32,
+    pub shaderStorageBufferArrayNonUniformIndexingNative: VkBool32,
+    pub shaderStorageImageArrayNonUniformIndexingNative: VkBool32,
+    pub shaderInputAttachmentArrayNonUniformIndexingNative: VkBool32,
+    pub robustBufferAccessUpdateAfterBind: VkBool32,
+    pub quadDivergentImplicitLod: VkBool32,
+    pub maxPerStageDescriptorUpdateAfterBindSamplers: u32,
+    pub maxPerStageDescriptorUpdateAfterBindUniformBuffers: u32,
+    pub maxPerStageDescriptorUpdateAfterBindStorageBuffers: u32,
+    pub maxPerStageDescriptorUpdateAfterBindSampledImages: u32,
+    pub maxPerStageDescriptorUpdateAfterBindStorageImages: u32,
+    pub maxPerStageDescriptorUpdateAfterBindInputAttachments: u32,
+    pub maxPerStageUpdateAfterBindResources: u32,
+    pub maxDescriptorSetUpdateAfterBindSamplers: u32,
+    pub maxDescriptorSetUpdateAfterBindUniformBuffers: u32,
+    pub maxDescriptorSetUpdateAfterBindUniformBuffersDynamic: u32,
+    pub maxDescriptorSetUpdateAfterBindStorageBuffers: u32,
+    pub maxDescriptorSetUpdateAfterBindStorageBuffersDynamic: u32,
+    pub maxDescriptorSetUpdateAfterBindSampledImages: u32,
+    pub maxDescriptorSetUpdateAfterBindStorageImages: u32,
+    pub maxDescriptorSetUpdateAfterBindInputAttachments: u32,
+}
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES_EXT: VkStructureType = 1000161002;
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceDescriptorIndexingPropertiesEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceDescriptorIndexingPropertiesEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES_EXT; }
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkPhysicalDeviceDescriptorIndexingProperties = VkPhysicalDeviceDescriptorIndexingPropertiesEXT;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES_EXT;
+
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkDescriptorSetVariableDescriptorCountAllocateInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub descriptorSetCount: u32,
+    pub pDescriptorCounts: *const u32,
+}
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO_EXT: VkStructureType = 1000161003;
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkDescriptorSetVariableDescriptorCountAllocateInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkDescriptorSetVariableDescriptorCountAllocateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO_EXT; }
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkDescriptorSetVariableDescriptorCountAllocateInfo = VkDescriptorSetVariableDescriptorCountAllocateInfoEXT;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO_EXT;
+
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkDescriptorSetVariableDescriptorCountLayoutSupportEXT {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub maxVariableDescriptorCount: u32,
+}
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_LAYOUT_SUPPORT_EXT: VkStructureType = 1000161004;
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkDescriptorSetVariableDescriptorCountLayoutSupportEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkDescriptorSetVariableDescriptorCountLayoutSupportEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_LAYOUT_SUPPORT_EXT; }
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkDescriptorSetVariableDescriptorCountLayoutSupport = VkDescriptorSetVariableDescriptorCountLayoutSupportEXT;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_LAYOUT_SUPPORT: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_LAYOUT_SUPPORT_EXT;
+
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
 pub const VK_PIPELINE_CACHE_CREATE_EXTERNALLY_SYNCHRONIZED_BIT: VkPipelineCacheCreateFlagBits = 0x00000001;
@@ -27098,6 +28028,14 @@ unsafe extern "system" {
     pub fn vkSignalSemaphore(device: VkDevice, pSignalInfo: *const VkSemaphoreSignalInfoKHR) -> VkResult;
     #[cfg(feature = "Allow1_2APIs")]
     pub fn vkWaitSemaphores(device: VkDevice, pWaitInfo: *const VkSemaphoreWaitInfoKHR, timeout: u64) -> VkResult;
+    #[cfg(feature = "Allow1_2APIs")]
+    pub fn vkCreateRenderPass2(device: VkDevice, pCreateInfo: *const VkRenderPassCreateInfo2KHR, pAllocator: *const VkAllocationCallbacks, pRenderPass: *mut VkRenderPass) -> VkResult;
+    #[cfg(feature = "Allow1_2APIs")]
+    pub fn vkCmdBeginRenderPass2(commandBuffer: VkCommandBuffer, pRenderPassBegin: *const VkRenderPassBeginInfo, pSubpassBeginInfo: *const VkSubpassBeginInfoKHR);
+    #[cfg(feature = "Allow1_2APIs")]
+    pub fn vkCmdNextSubpass2(commandBuffer: VkCommandBuffer, pSubpassBeginInfo: *const VkSubpassBeginInfoKHR, pSubpassEndInfo: *const VkSubpassEndInfoKHR);
+    #[cfg(feature = "Allow1_2APIs")]
+    pub fn vkCmdEndRenderPass2(commandBuffer: VkCommandBuffer, pSubpassEndInfo: *const VkSubpassEndInfoKHR);
     #[cfg(feature = "Allow1_3APIs")]
     pub fn vkGetDeviceBufferMemoryRequirements(device: VkDevice, pInfo: *const VkDeviceBufferMemoryRequirementsKHR, pMemoryRequirements: *mut VkMemoryRequirements2KHR);
     #[cfg(feature = "Allow1_3APIs")]
