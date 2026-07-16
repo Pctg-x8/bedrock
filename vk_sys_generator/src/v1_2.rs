@@ -684,7 +684,7 @@ pub const ELEMENTS: &[Element] = &[
     ])
     .into_element(),
     Bitmask::new(
-        "DescriptiorBindingFlags",
+        "DescriptorBindingFlags",
         "DescriptorBindingFlagBits",
         "DESCRIPTOR_BINDING",
         &[

@@ -19575,10 +19575,10 @@ pub const VK_ERROR_FRAGMENTATION: VkResult = VkResult(-1000161000);
 
 #[cfg(feature = "VK_EXT_descriptor_indexing")]
 #[rustfmt::skip]
-pub type VkDescriptiorBindingFlagsEXT = VkFlags;
+pub type VkDescriptorBindingFlagsEXT = VkFlags;
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
-pub type VkDescriptiorBindingFlags = VkDescriptiorBindingFlagsEXT;
+pub type VkDescriptorBindingFlags = VkDescriptorBindingFlagsEXT;
 #[cfg(feature = "VK_EXT_descriptor_indexing")]
 #[rustfmt::skip]
 pub type VkDescriptorBindingFlagBitsEXT = VkFlags;
