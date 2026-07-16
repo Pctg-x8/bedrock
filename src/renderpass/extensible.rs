@@ -24,7 +24,7 @@ impl SubpassIndex {
 }
 
 #[repr(transparent)]
-#[derive(Clone, PartialEq, Eq, Hash)]
+#[derive(Clone)]
 pub struct AttachmentDescription2(brvk::VkAttachmentDescription2KHR);
 impl AttachmentDescription2 {
     pub const fn new(format: brvk::VkFormat) -> Self {
@@ -85,7 +85,7 @@ impl AttachmentDescription2 {
 }
 
 #[repr(transparent)]
-#[derive(Clone, PartialEq, Eq, Hash)]
+#[derive(Clone)]
 pub struct AttachmentReference2(brvk::VkAttachmentReference2KHR);
 impl AttachmentReference2 {
     pub const fn new(index: u32, aspect_mask: AspectMask, layout: ImageLayout) -> Self {
@@ -133,7 +133,7 @@ impl AttachmentReference2 {
 }
 
 #[repr(transparent)]
-#[derive(Clone, PartialEq, Eq, Hash)]
+#[derive(Clone)]
 pub struct SubpassDescription2<'d>(
     brvk::VkSubpassDescription2KHR,
     core::marker::PhantomData<&'d [AttachmentReference2]>,
@@ -203,7 +203,7 @@ impl<'d> SubpassDescription2<'d> {
 }
 
 #[repr(transparent)]
-#[derive(Clone, PartialEq, Eq, Hash)]
+#[derive(Clone)]
 pub struct SubpassDependency2(brvk::VkSubpassDependency2KHR);
 impl SubpassDependency2 {
     pub const fn new(src: SubpassIndex, dst: SubpassIndex) -> Self {
@@ -245,6 +245,7 @@ impl SubpassDependency2 {
 }
 
 #[repr(transparent)]
+#[derive(Clone)]
 pub struct RenderPassCreateInfo2<'d>(
     brvk::VkRenderPassCreateInfo2KHR,
     core::marker::PhantomData<(
