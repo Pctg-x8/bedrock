@@ -480,10 +480,10 @@ pub const ELEMENTS: &[Element] = &[
             Struct::member("pAttachments", "*const VkAttachmentDescription2KHR"),
             Struct::member("subpassCount", "u32"),
             Struct::member("pSubpasses", "*const VkSubpassDescription2KHR"),
-            Struct::member("ependencyCount", "u32"),
+            Struct::member("dependencyCount", "u32"),
             Struct::member("pDependencies", "*const VkSubpassDependency2KHR"),
             Struct::member("correlatedViewMaskCount", "u32"),
-            Struct::member("pCorrellatedViewMasks", "*const u32"),
+            Struct::member("pCorrelatedViewMasks", "*const u32"),
         ],
     )
     .extensions(&[VK_KHR_CREATE_RENDERPASS_2])
@@ -537,7 +537,7 @@ pub const ELEMENTS: &[Element] = &[
             Struct::member("colorAttachmentCount", "u32"),
             Struct::member("pColorAttachments", "*const VkAttachmentReference2KHR"),
             Struct::member("pResolveAttachments", "*const VkAttachmentReference2KHR"),
-            Struct::member("pDepthStencilAtachment", "*const VkAttachmentReference2KHR"),
+            Struct::member("pDepthStencilAttachment", "*const VkAttachmentReference2KHR"),
             Struct::member("preserveAttachmentCount", "u32"),
             Struct::member("pPreserveAttachments", "*const u32"),
         ],

@@ -18937,10 +18937,10 @@ pub struct VkRenderPassCreateInfo2KHR {
     pub pAttachments: *const VkAttachmentDescription2KHR,
     pub subpassCount: u32,
     pub pSubpasses: *const VkSubpassDescription2KHR,
-    pub ependencyCount: u32,
+    pub dependencyCount: u32,
     pub pDependencies: *const VkSubpassDependency2KHR,
     pub correlatedViewMaskCount: u32,
-    pub pCorrellatedViewMasks: *const u32,
+    pub pCorrelatedViewMasks: *const u32,
 }
 #[cfg(feature = "VK_KHR_create_renderpass2")]
 #[rustfmt::skip]
@@ -19063,7 +19063,7 @@ pub struct VkSubpassDescription2KHR {
     pub colorAttachmentCount: u32,
     pub pColorAttachments: *const VkAttachmentReference2KHR,
     pub pResolveAttachments: *const VkAttachmentReference2KHR,
-    pub pDepthStencilAtachment: *const VkAttachmentReference2KHR,
+    pub pDepthStencilAttachment: *const VkAttachmentReference2KHR,
     pub preserveAttachmentCount: u32,
     pub pPreserveAttachments: *const u32,
 }
