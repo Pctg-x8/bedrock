@@ -546,7 +546,7 @@ pub const ELEMENTS: &[Element] = &[
     .promoted(VERSION)
     .into_element(),
     Struct::typed(
-        "SubpasDependency2",
+        "SubpassDependency2",
         "SUBPASS_DEPENDENCY_2",
         VK_KHR_CREATE_RENDERPASS_2.ext_enum(3) as _,
         StructUsage::Source,

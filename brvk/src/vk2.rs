@@ -19097,7 +19097,7 @@ pub const VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_2: VkStructureType = VK_STRUCTUR
 #[derive(Debug, Clone)]
 #[repr(C)]
 #[rustfmt::skip]
-pub struct VkSubpasDependency2KHR {
+pub struct VkSubpassDependency2KHR {
     pub sType: VkStructureType,
     pub pNext: *const core::ffi::c_void,
     pub srcSubpass: u32,
@@ -19114,7 +19114,7 @@ pub struct VkSubpasDependency2KHR {
 pub const VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2_KHR: VkStructureType = 1000109003;
 #[cfg(feature = "VK_KHR_create_renderpass2")]
 #[rustfmt::skip]
-unsafe impl crate::VulkanStructure for VkSubpasDependency2KHR {
+unsafe impl crate::VulkanStructure for VkSubpassDependency2KHR {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
@@ -19127,10 +19127,10 @@ unsafe impl crate::VulkanStructure for VkSubpasDependency2KHR {
 }
 #[cfg(feature = "VK_KHR_create_renderpass2")]
 #[rustfmt::skip]
-impl crate::TypedVulkanStructure for VkSubpasDependency2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2_KHR; }
+impl crate::TypedVulkanStructure for VkSubpassDependency2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2_KHR; }
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
-pub type VkSubpasDependency2 = VkSubpasDependency2KHR;
+pub type VkSubpassDependency2 = VkSubpassDependency2KHR;
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub const VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2: VkStructureType = VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2_KHR;
