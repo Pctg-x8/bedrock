@@ -129,10 +129,6 @@ macro_rules! ExportExtensions {
 ExportExtensions!("VK_AMD_shader_info": shader_info_amd);
 ExportExtensions!("VK_EXT_full_screen_exclusive": full_screen_exclusive_ext);
 
-// Promoted Extensions (1.3)
-ExportExtensions!("VK_KHR_dynamic_rendering": dynamic_rendering_khr);
-ExportExtensions!("VK_KHR_copy_commands2": copy_commands2_khr);
-
 // Promoted Extensions (1.4)
 ExportExtensions!("VK_KHR_dynamic_rendering_local_read": dynamic_rendering_local_read_khr);
 ExportExtensions!("VK_KHR_index_type_uint8": index_type_uint8_khr);
