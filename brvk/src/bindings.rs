@@ -31052,14 +31052,14 @@ impl crate::TypedVulkanStructure for VkSurfaceFullScreenExclusiveWin32InfoEXT { 
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_full_screen_exclusive")]
-#[cfg(feature = "feature = "VK_KHR_device_group"")]
+#[cfg(feature = "VK_KHR_device_group")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
-pub struct PFN_vkGetDeviceGroupSurfacePresentModes2EXT(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pSurfaceInfo: *const VkPhysicalDeviceSurfaceInfo2KHR, pModes: *mut VkDeviceGRoupPresentModeFlagsKHR) -> VkResult);
+pub struct PFN_vkGetDeviceGroupSurfacePresentModes2EXT(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pSurfaceInfo: *const VkPhysicalDeviceSurfaceInfo2KHR, pModes: *mut VkDeviceGroupPresentModeFlagsKHR) -> VkResult);
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_full_screen_exclusive")]
-#[cfg(feature = "feature = "VK_KHR_device_group"")]
+#[cfg(feature = "VK_KHR_device_group")]
 #[rustfmt::skip]
 unsafe impl crate::PFN for PFN_vkGetDeviceGroupSurfacePresentModes2EXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDeviceGroupSurfacePresentModes2EXT";
@@ -31071,7 +31071,7 @@ unsafe impl crate::PFN for PFN_vkGetDeviceGroupSurfacePresentModes2EXT {
 }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_full_screen_exclusive")]
-#[cfg(feature = "feature = "VK_KHR_device_group"")]
+#[cfg(feature = "VK_KHR_device_group")]
 #[rustfmt::skip]
 unsafe impl crate::FromPtr for PFN_vkGetDeviceGroupSurfacePresentModes2EXT {
     #[inline(always)]

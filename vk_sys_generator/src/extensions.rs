@@ -2876,12 +2876,12 @@ pub const ELEMENTS: &[Element] = &[
         &[
             ("physicalDevice", "VkPhysicalDevice"),
             ("pSurfaceInfo", "*const VkPhysicalDeviceSurfaceInfo2KHR"),
-            ("pModes", "*mut VkDeviceGRoupPresentModeFlagsKHR"),
+            ("pModes", "*mut VkDeviceGroupPresentModeFlagsKHR"),
         ],
     )
     .failable()
     .extension(VK_EXT_FULL_SCREEN_EXCLUSIVE)
-    .extra_requirements(&["feature = \"VK_KHR_device_group\""])
+    .extra_requirements(&["VK_KHR_device_group"])
     .into_element(),
     // VK_AMD_shader_info
     VK_AMD_SHADER_INFO.header_constants().into_element(),
