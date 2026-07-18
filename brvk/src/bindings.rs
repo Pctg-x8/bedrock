@@ -25207,80 +25207,12 @@ pub type VkPipelineRobustnessCreateInfo = VkPipelineRobustnessCreateInfoEXT;
 #[rustfmt::skip]
 pub const VK_STRUCTURE_TYPE_PIPELINE_ROBUSTNESS_CREATE_INFO: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_ROBUSTNESS_CREATE_INFO_EXT;
 
-#[cfg(feature = "VK_EXT_acquire_drm_display")]
-#[rustfmt::skip]
-pub const VK_EXT_ACQUIRE_DRM_DISPLAY_EXTENSION_NAME: &str = "VK_EXT_acquire_drm_display";
-#[cfg(feature = "VK_EXT_acquire_drm_display")]
-#[rustfmt::skip]
-pub const VK_EXT_ACQUIRE_DRM_DISPLAY_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_EXT_acquire_xlib_display")]
-#[rustfmt::skip]
-pub const VK_EXT_ACQUIRE_XLIB_DISPLAY_EXTENSION_NAME: &str = "VK_EXT_acquire_xlib_display";
-#[cfg(feature = "VK_EXT_acquire_xlib_display")]
-#[rustfmt::skip]
-pub const VK_EXT_ACQUIRE_XLIB_DISPLAY_SPEC_VERSION: usize = 1;
-
 #[cfg(feature = "VK_EXT_blend_operation_advanced")]
 #[rustfmt::skip]
 pub const VK_EXT_BLEND_OPERATION_ADVANCED_EXTENSION_NAME: &str = "VK_EXT_blend_operation_advanced";
 #[cfg(feature = "VK_EXT_blend_operation_advanced")]
 #[rustfmt::skip]
 pub const VK_EXT_BLEND_OPERATION_ADVANCED_SPEC_VERSION: usize = 2;
-
-#[cfg(feature = "VK_EXT_validation_cache")]
-#[rustfmt::skip]
-pub const VK_EXT_VALIDATION_CACHE_EXTENSION_NAME: &str = "VK_EXT_validation_cache";
-#[cfg(feature = "VK_EXT_validation_cache")]
-#[rustfmt::skip]
-pub const VK_EXT_VALIDATION_CACHE_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_EXT_validation_flags")]
-#[rustfmt::skip]
-pub const VK_EXT_VALIDATION_FLAGS_EXTENSION_NAME: &str = "VK_EXT_validation_flags";
-#[cfg(feature = "VK_EXT_validation_flags")]
-#[rustfmt::skip]
-pub const VK_EXT_VALIDATION_FLAGS_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_AMD_buffer_marker")]
-#[rustfmt::skip]
-pub const VK_AMD_BUFFER_MARKER_EXTENSION_NAME: &str = "VK_AMD_buffer_marker";
-#[cfg(feature = "VK_AMD_buffer_marker")]
-#[rustfmt::skip]
-pub const VK_AMD_BUFFER_MARKER_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_NV_acquire_winrt_display")]
-#[rustfmt::skip]
-pub const VK_NV_ACQUIRE_WINRT_DISPLAY_EXTENSION_NAME: &str = "VK_NV_acquire_winrt_display";
-#[cfg(feature = "VK_NV_acquire_winrt_display")]
-#[rustfmt::skip]
-pub const VK_NV_ACQUIRE_WINRT_DISPLAY_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_EXT_validation_cache")]
-#[rustfmt::skip]
-pub type VkValidationCacheCreateFlagsEXT = VkFlags;
-#[cfg(feature = "VK_EXT_validation_cache")]
-#[rustfmt::skip]
-pub type VkValidationCacheCreateFlagBitsEXT = VkFlags;
-
-#[cfg(feature = "VK_EXT_validation_cache")]
-#[rustfmt::skip]
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct VkValidationCacheEXT(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
-#[cfg(feature = "VK_EXT_validation_cache")]
-#[rustfmt::skip]
-impl crate::VkRawHandle for VkValidationCacheEXT {
-    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_VALIDATION_CACHE_EXT;
-
-    #[inline(always)]
-    fn raw_handle_value(&self) -> u64 {
-        self.0.get()
-    }
-}
-#[cfg(feature = "VK_EXT_validation_cache")]
-#[rustfmt::skip]
-pub const VK_OBJECT_TYPE_VALIDATION_CACHE_EXT: VkObjectType = 1000160000;
 
 #[cfg(feature = "VK_EXT_blend_operation_advanced")]
 #[rustfmt::skip]
@@ -25434,23 +25366,6 @@ pub const VK_BLEND_OVERLAP_DISJOINT_EXT: VkBlendOverlapEXT = 1;
 #[rustfmt::skip]
 pub const VK_BLEND_OVERLAP_CONJOINT_EXT: VkBlendOverlapEXT = 2;
 
-#[cfg(feature = "VK_EXT_validation_cache")]
-#[rustfmt::skip]
-pub type VkValidationCacheHeaderVersionEXT = i32;
-#[cfg(feature = "VK_EXT_validation_cache")]
-#[rustfmt::skip]
-pub const VK_VALIDATION_CACHE_HEADER_VERSION_ONE_EXT: VkValidationCacheHeaderVersionEXT = 1;
-
-#[cfg(feature = "VK_EXT_validation_flags")]
-#[rustfmt::skip]
-pub type VkValidationCheckEXT = i32;
-#[cfg(feature = "VK_EXT_validation_flags")]
-#[rustfmt::skip]
-pub const VK_VALIDATION_CHECK_ALL_EXT: VkValidationCheckEXT = 0;
-#[cfg(feature = "VK_EXT_validation_flags")]
-#[rustfmt::skip]
-pub const VK_VALIDATION_CHECK_SHADERS_EXT: VkValidationCheckEXT = 1;
-
 #[cfg(feature = "VK_EXT_blend_operation_advanced")]
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -25554,33 +25469,44 @@ unsafe impl crate::VulkanStructure for VkPipelineColorBlendAdvancedStateCreateIn
 impl crate::TypedVulkanStructure for VkPipelineColorBlendAdvancedStateCreateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_ADVANCED_STATE_CREATE_INFO_EXT; }
 
 #[cfg(feature = "VK_EXT_validation_cache")]
-#[derive(Debug, Clone)]
-#[repr(C)]
 #[rustfmt::skip]
-pub struct VkShaderModuleValidationcacheCreateInfoEXT {
-    pub sType: VkStructureType,
-    pub pNext: *const core::ffi::c_void,
-    pub validationCache: VkValidationCacheEXT,
-}
+pub const VK_EXT_VALIDATION_CACHE_EXTENSION_NAME: &str = "VK_EXT_validation_cache";
 #[cfg(feature = "VK_EXT_validation_cache")]
 #[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SHADER_MODULE_VALIDATION_CACHE_CREATE_INFO_EXT: VkStructureType = 1000160001;
+pub const VK_EXT_VALIDATION_CACHE_SPEC_VERSION: usize = 1;
+
 #[cfg(feature = "VK_EXT_validation_cache")]
 #[rustfmt::skip]
-unsafe impl crate::VulkanStructure for VkShaderModuleValidationcacheCreateInfoEXT {
-    #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+pub type VkValidationCacheCreateFlagsEXT = VkFlags;
+#[cfg(feature = "VK_EXT_validation_cache")]
+#[rustfmt::skip]
+pub type VkValidationCacheCreateFlagBitsEXT = VkFlags;
+
+#[cfg(feature = "VK_EXT_validation_cache")]
+#[rustfmt::skip]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkValidationCacheEXT(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
+#[cfg(feature = "VK_EXT_validation_cache")]
+#[rustfmt::skip]
+impl crate::VkRawHandle for VkValidationCacheEXT {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_VALIDATION_CACHE_EXT;
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
+    fn raw_handle_value(&self) -> u64 {
+        self.0.get()
     }
 }
 #[cfg(feature = "VK_EXT_validation_cache")]
 #[rustfmt::skip]
-impl crate::TypedVulkanStructure for VkShaderModuleValidationcacheCreateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SHADER_MODULE_VALIDATION_CACHE_CREATE_INFO_EXT; }
+pub const VK_OBJECT_TYPE_VALIDATION_CACHE_EXT: VkObjectType = 1000160000;
+
+#[cfg(feature = "VK_EXT_validation_cache")]
+#[rustfmt::skip]
+pub type VkValidationCacheHeaderVersionEXT = i32;
+#[cfg(feature = "VK_EXT_validation_cache")]
+#[rustfmt::skip]
+pub const VK_VALIDATION_CACHE_HEADER_VERSION_ONE_EXT: VkValidationCacheHeaderVersionEXT = 1;
 
 #[cfg(feature = "VK_EXT_validation_cache")]
 #[derive(Debug, Clone)]
@@ -25613,22 +25539,21 @@ unsafe impl crate::VulkanStructure for VkValidationCacheCreateInfoEXT {
 #[rustfmt::skip]
 impl crate::TypedVulkanStructure for VkValidationCacheCreateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_VALIDATION_CACHE_CREATE_INFO_EXT; }
 
-#[cfg(feature = "VK_EXT_validation_flags")]
+#[cfg(feature = "VK_EXT_validation_cache")]
 #[derive(Debug, Clone)]
 #[repr(C)]
 #[rustfmt::skip]
-pub struct VkValidationFlagsEXT {
+pub struct VkShaderModuleValidationcacheCreateInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const core::ffi::c_void,
-    pub disabledValidationCheckCount: u32,
-    pub pDisabledValidationChecks: *mut VkValidationCheckEXT,
+    pub validationCache: VkValidationCacheEXT,
 }
-#[cfg(feature = "VK_EXT_validation_flags")]
+#[cfg(feature = "VK_EXT_validation_cache")]
 #[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_VALIDATION_FLAGS_EXT: VkStructureType = 1000061000;
-#[cfg(feature = "VK_EXT_validation_flags")]
+pub const VK_STRUCTURE_TYPE_SHADER_MODULE_VALIDATION_CACHE_CREATE_INFO_EXT: VkStructureType = 1000160001;
+#[cfg(feature = "VK_EXT_validation_cache")]
 #[rustfmt::skip]
-unsafe impl crate::VulkanStructure for VkValidationFlagsEXT {
+unsafe impl crate::VulkanStructure for VkShaderModuleValidationcacheCreateInfoEXT {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
@@ -25639,90 +25564,9 @@ unsafe impl crate::VulkanStructure for VkValidationFlagsEXT {
         unsafe { core::mem::transmute(self) }
     }
 }
-#[cfg(feature = "VK_EXT_validation_flags")]
+#[cfg(feature = "VK_EXT_validation_cache")]
 #[rustfmt::skip]
-impl crate::TypedVulkanStructure for VkValidationFlagsEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_VALIDATION_FLAGS_EXT; }
-
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_EXT_acquire_drm_display")]
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy)]
-#[rustfmt::skip]
-pub struct PFN_vkAcquireDrmDisplayEXT(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, drmFd: i32, display: VkDisplayKHR) -> VkResult);
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_EXT_acquire_drm_display")]
-#[rustfmt::skip]
-unsafe impl crate::PFN for PFN_vkAcquireDrmDisplayEXT {
-    const NAME_CSTR: &'static core::ffi::CStr = c"vkAcquireDrmDisplayEXT";
-
-    #[inline(always)]
-    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
-        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
-    }
-}
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_EXT_acquire_drm_display")]
-#[rustfmt::skip]
-unsafe impl crate::FromPtr for PFN_vkAcquireDrmDisplayEXT {
-    #[inline(always)]
-    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
-        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
-    }
-}
-
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_NV_acquire_winrt_display")]
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy)]
-#[rustfmt::skip]
-pub struct PFN_vkAcquireWinrtDisplayNV(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, display: VkDisplayKHR) -> VkResult);
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_NV_acquire_winrt_display")]
-#[rustfmt::skip]
-unsafe impl crate::PFN for PFN_vkAcquireWinrtDisplayNV {
-    const NAME_CSTR: &'static core::ffi::CStr = c"vkAcquireWinrtDisplayNV";
-
-    #[inline(always)]
-    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
-        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
-    }
-}
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_NV_acquire_winrt_display")]
-#[rustfmt::skip]
-unsafe impl crate::FromPtr for PFN_vkAcquireWinrtDisplayNV {
-    #[inline(always)]
-    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
-        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
-    }
-}
-
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_EXT_acquire_xlib_display")]
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy)]
-#[rustfmt::skip]
-pub struct PFN_vkAcquireXlibDisplayEXT(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, dpy: *mut x11::xlib::Display, display: VkDisplayKHR) -> VkResult);
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_EXT_acquire_xlib_display")]
-#[rustfmt::skip]
-unsafe impl crate::PFN for PFN_vkAcquireXlibDisplayEXT {
-    const NAME_CSTR: &'static core::ffi::CStr = c"vkAcquireXlibDisplayEXT";
-
-    #[inline(always)]
-    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
-        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
-    }
-}
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_EXT_acquire_xlib_display")]
-#[rustfmt::skip]
-unsafe impl crate::FromPtr for PFN_vkAcquireXlibDisplayEXT {
-    #[inline(always)]
-    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
-        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
-    }
-}
+impl crate::TypedVulkanStructure for VkShaderModuleValidationcacheCreateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SHADER_MODULE_VALIDATION_CACHE_CREATE_INFO_EXT; }
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_validation_cache")]
@@ -25779,6 +25623,141 @@ unsafe impl crate::FromPtr for PFN_vkDestroyValidationCacheEXT {
 }
 
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_validation_cache")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetValidationCacheDataEXT(pub unsafe extern "system" fn(device: VkDevice, validationCache: VkValidationCacheEXT, pDataSize: *mut usize, pData: *mut core::ffi::c_void) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_validation_cache")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetValidationCacheDataEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetValidationCacheDataEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_validation_cache")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkGetValidationCacheDataEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_validation_cache")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkMergeValidationCachesEXT(pub unsafe extern "system" fn(device: VkDevice, dstCache: VkValidationCacheEXT, srcCacheCount: u32, pSrcCaches: *const VkValidationCacheEXT) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_validation_cache")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkMergeValidationCachesEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkMergeValidationCachesEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_validation_cache")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkMergeValidationCachesEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+
+#[cfg(feature = "VK_EXT_validation_flags")]
+#[rustfmt::skip]
+pub const VK_EXT_VALIDATION_FLAGS_EXTENSION_NAME: &str = "VK_EXT_validation_flags";
+#[cfg(feature = "VK_EXT_validation_flags")]
+#[rustfmt::skip]
+pub const VK_EXT_VALIDATION_FLAGS_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_EXT_validation_flags")]
+#[rustfmt::skip]
+pub type VkValidationCheckEXT = i32;
+#[cfg(feature = "VK_EXT_validation_flags")]
+#[rustfmt::skip]
+pub const VK_VALIDATION_CHECK_ALL_EXT: VkValidationCheckEXT = 0;
+#[cfg(feature = "VK_EXT_validation_flags")]
+#[rustfmt::skip]
+pub const VK_VALIDATION_CHECK_SHADERS_EXT: VkValidationCheckEXT = 1;
+
+#[cfg(feature = "VK_EXT_validation_flags")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkValidationFlagsEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub disabledValidationCheckCount: u32,
+    pub pDisabledValidationChecks: *mut VkValidationCheckEXT,
+}
+#[cfg(feature = "VK_EXT_validation_flags")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_VALIDATION_FLAGS_EXT: VkStructureType = 1000061000;
+#[cfg(feature = "VK_EXT_validation_flags")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkValidationFlagsEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_EXT_validation_flags")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkValidationFlagsEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_VALIDATION_FLAGS_EXT; }
+
+#[cfg(feature = "VK_EXT_acquire_drm_display")]
+#[rustfmt::skip]
+pub const VK_EXT_ACQUIRE_DRM_DISPLAY_EXTENSION_NAME: &str = "VK_EXT_acquire_drm_display";
+#[cfg(feature = "VK_EXT_acquire_drm_display")]
+#[rustfmt::skip]
+pub const VK_EXT_ACQUIRE_DRM_DISPLAY_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_acquire_drm_display")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkAcquireDrmDisplayEXT(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, drmFd: i32, display: VkDisplayKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_acquire_drm_display")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkAcquireDrmDisplayEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkAcquireDrmDisplayEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_acquire_drm_display")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkAcquireDrmDisplayEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_acquire_drm_display")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -25799,6 +25778,40 @@ unsafe impl crate::PFN for PFN_vkGetDrmDisplayEXT {
 #[cfg(feature = "VK_EXT_acquire_drm_display")]
 #[rustfmt::skip]
 unsafe impl crate::FromPtr for PFN_vkGetDrmDisplayEXT {
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
+    }
+}
+
+#[cfg(feature = "VK_EXT_acquire_xlib_display")]
+#[rustfmt::skip]
+pub const VK_EXT_ACQUIRE_XLIB_DISPLAY_EXTENSION_NAME: &str = "VK_EXT_acquire_xlib_display";
+#[cfg(feature = "VK_EXT_acquire_xlib_display")]
+#[rustfmt::skip]
+pub const VK_EXT_ACQUIRE_XLIB_DISPLAY_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_acquire_xlib_display")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkAcquireXlibDisplayEXT(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, dpy: *mut x11::xlib::Display, display: VkDisplayKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_acquire_xlib_display")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkAcquireXlibDisplayEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkAcquireXlibDisplayEXT";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_acquire_xlib_display")]
+#[rustfmt::skip]
+unsafe impl crate::FromPtr for PFN_vkAcquireXlibDisplayEXT {
     #[inline(always)]
     unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
@@ -25832,17 +25845,24 @@ unsafe impl crate::FromPtr for PFN_vkGetRandROutputDisplayEXT {
     }
 }
 
+#[cfg(feature = "VK_NV_acquire_winrt_display")]
+#[rustfmt::skip]
+pub const VK_NV_ACQUIRE_WINRT_DISPLAY_EXTENSION_NAME: &str = "VK_NV_acquire_winrt_display";
+#[cfg(feature = "VK_NV_acquire_winrt_display")]
+#[rustfmt::skip]
+pub const VK_NV_ACQUIRE_WINRT_DISPLAY_SPEC_VERSION: usize = 1;
+
 #[cfg(feature = "Implements")]
-#[cfg(feature = "VK_EXT_validation_cache")]
+#[cfg(feature = "VK_NV_acquire_winrt_display")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
-pub struct PFN_vkGetValidationCacheDataEXT(pub unsafe extern "system" fn(device: VkDevice, validationCache: VkValidationCacheEXT, pDataSize: *mut usize, pData: *mut core::ffi::c_void) -> VkResult);
+pub struct PFN_vkAcquireWinrtDisplayNV(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, display: VkDisplayKHR) -> VkResult);
 #[cfg(feature = "Implements")]
-#[cfg(feature = "VK_EXT_validation_cache")]
+#[cfg(feature = "VK_NV_acquire_winrt_display")]
 #[rustfmt::skip]
-unsafe impl crate::PFN for PFN_vkGetValidationCacheDataEXT {
-    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetValidationCacheDataEXT";
+unsafe impl crate::PFN for PFN_vkAcquireWinrtDisplayNV {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkAcquireWinrtDisplayNV";
 
     #[inline(always)]
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
@@ -25850,9 +25870,9 @@ unsafe impl crate::PFN for PFN_vkGetValidationCacheDataEXT {
     }
 }
 #[cfg(feature = "Implements")]
-#[cfg(feature = "VK_EXT_validation_cache")]
+#[cfg(feature = "VK_NV_acquire_winrt_display")]
 #[rustfmt::skip]
-unsafe impl crate::FromPtr for PFN_vkGetValidationCacheDataEXT {
+unsafe impl crate::FromPtr for PFN_vkAcquireWinrtDisplayNV {
     #[inline(always)]
     unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
@@ -25886,32 +25906,12 @@ unsafe impl crate::FromPtr for PFN_vkGetWinrtDisplayNV {
     }
 }
 
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_EXT_validation_cache")]
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy)]
+#[cfg(feature = "VK_AMD_buffer_marker")]
 #[rustfmt::skip]
-pub struct PFN_vkMergeValidationCachesEXT(pub unsafe extern "system" fn(device: VkDevice, dstCache: VkValidationCacheEXT, srcCacheCount: u32, pSrcCaches: *const VkValidationCacheEXT) -> VkResult);
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_EXT_validation_cache")]
+pub const VK_AMD_BUFFER_MARKER_EXTENSION_NAME: &str = "VK_AMD_buffer_marker";
+#[cfg(feature = "VK_AMD_buffer_marker")]
 #[rustfmt::skip]
-unsafe impl crate::PFN for PFN_vkMergeValidationCachesEXT {
-    const NAME_CSTR: &'static core::ffi::CStr = c"vkMergeValidationCachesEXT";
-
-    #[inline(always)]
-    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
-        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
-    }
-}
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_EXT_validation_cache")]
-#[rustfmt::skip]
-unsafe impl crate::FromPtr for PFN_vkMergeValidationCachesEXT {
-    #[inline(always)]
-    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
-        unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
-    }
-}
+pub const VK_AMD_BUFFER_MARKER_SPEC_VERSION: usize = 1;
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_AMD_buffer_marker")]

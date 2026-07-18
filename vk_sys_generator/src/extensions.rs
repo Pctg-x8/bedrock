@@ -1,6 +1,15 @@
 use crate::{parts::*, vk_ext_enum};
 
+pub const VK_EXT_VALIDATION_CACHE: &Extension = &Extension::ext("validation_cache", 1, 161);
+pub const VK_EXT_VALIDATION_FLAGS: &Extension = &Extension::ext("validation_flags", 1, 62);
 pub const VK_EXT_DEBUG_REPORT: &Extension = &Extension::ext("debug_report", 10, 12);
+pub const VK_EXT_BLEND_OPERATION_ADVANCED: &Extension = &Extension::ext("blend_operation_advanced", 2, 149);
+const VK_EXT_ACQUIRE_DRM_DISPLAY: &Extension = &Extension::ext("acquire_drm_display", 1, 286);
+const VK_EXT_ACQUIRE_XLIB_DISPLAY: &Extension = &Extension::ext("acquire_xlib_display", 1, 90);
+const VK_NV_ACQUIRE_WINRT_DISPLAY: &Extension = &Extension::new("NV", "acquire_winrt_display", 1, 346);
+const VK_AMD_BUFFER_MARKER: &Extension = &Extension::new("AMD", "buffer_marker", 1, 180);
+const VK_EXT_LAYER_SETTINGS: &Extension = &Extension::ext("layer_settings", 2, 497);
+const VK_EXT_DESCRIPTOR_BUFFER: &Extension = &Extension::ext("descriptor_buffer", 1, 317);
 const VK_EXT_IMAGE_DRM_FORMAT_MODIFIER: &Extension = &Extension::ext("image_drm_format_modifier", 1, 159);
 const VK_EXT_METAL_OBJECTS: &Extension = &Extension::ext("metal_objects", 2, 312);
 const VK_MVK_MACOS_SURFACE: &Extension = &Extension::new("MVK", "macos_surface", 2, 124);
@@ -38,479 +47,499 @@ const VK_EXT_FULL_SCREEN_EXCLUSIVE: &Extension = &Extension::ext("full_screen_ex
 const VK_AMD_SHADER_INFO: &Extension = &Extension::new("AMD", "shader_info", 1, 43);
 
 pub const ELEMENTS: &[Element] = &[
-    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_acquire_drm_display", 1)),
-    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_acquire_xlib_display", 1)),
-    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_blend_operation_advanced", 2)),
-    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_validation_cache", 1)),
-    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_validation_flags", 1)),
-    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_AMD_buffer_marker", 1)),
-    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_NV_acquire_winrt_display", 1)),
-    Element::Bitmask(
-        Bitmask::new(
-            "ValidationCacheCreateFlags",
-            "ValidationCacheCreateFlagBits",
-            "VALIDATION_CACHE_CREATE_FLAGS",
-            &[],
-        )
-        .extension_old("EXT", "validation_cache"),
-    ),
-    Element::Object(
-        Object::new("VkValidationCacheEXT", "VALIDATION_CACHE_EXT", vk_ext_enum(161, 0) as _)
-            .extension_old("VK_EXT_validation_cache"),
-    ),
-    Element::Enum(Enum::extending(
+    // VK_EXT_blend_operation_advanced
+    VK_EXT_BLEND_OPERATION_ADVANCED.header_constants().into_element(),
+    Enum::extending(
         "BlendOp",
         "BLEND_OP",
         &[
-            Enum::member("ZERO", vk_ext_enum(149, 0) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("SRC", vk_ext_enum(149, 1) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("DST", vk_ext_enum(149, 2) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("SRC_OVER", vk_ext_enum(149, 3) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("DST_OVER", vk_ext_enum(149, 4) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("SRC_IN", vk_ext_enum(149, 5) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("DST_IN", vk_ext_enum(149, 6) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("SRC_OUT", vk_ext_enum(149, 7) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("DST_OUT", vk_ext_enum(149, 8) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("SRC_ATOP", vk_ext_enum(149, 9) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("DST_ATOP", vk_ext_enum(149, 10) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("XOR", vk_ext_enum(149, 11) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("MULTIPLY", vk_ext_enum(149, 12) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("SCREEN", vk_ext_enum(149, 13) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("OVERLAY", vk_ext_enum(149, 14) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("DARKEN", vk_ext_enum(149, 15) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("LIGHTEN", vk_ext_enum(149, 16) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("COLORDODGE", vk_ext_enum(149, 17) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("COLORBURN", vk_ext_enum(149, 18) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("HARDLIGHT", vk_ext_enum(149, 19) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("SOFTLIGHT", vk_ext_enum(149, 20) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("DIFFERENCE", vk_ext_enum(149, 21) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("EXCLUSION", vk_ext_enum(149, 22) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("INVERT", vk_ext_enum(149, 23) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("INVERT_RGB", vk_ext_enum(149, 24) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("LINEARDODGE", vk_ext_enum(149, 25) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("LINEARBURN", vk_ext_enum(149, 26) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("VIVIDLIGHT", vk_ext_enum(149, 27) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("LINEARLIGHT", vk_ext_enum(149, 28) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("PINLIGHT", vk_ext_enum(149, 29) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("HARDMIX", vk_ext_enum(149, 30) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("HSL_HUE", vk_ext_enum(149, 31) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("HSL_SATURATION", vk_ext_enum(149, 32) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("HSL_COLOR", vk_ext_enum(149, 33) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("HSL_LUMINOSITY", vk_ext_enum(149, 34) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("PLUS", vk_ext_enum(149, 35) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("PLUS_CLAMPED", vk_ext_enum(149, 36) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("PLUS_CLAMPED_ALHPA", vk_ext_enum(149, 37) as _)
-                .extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("PLUS_DARKER", vk_ext_enum(149, 38) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("MINUS", vk_ext_enum(149, 39) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("MINUS_CLAMPED", vk_ext_enum(149, 40) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("CONTRAST", vk_ext_enum(149, 41) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("INVERT_OVG", vk_ext_enum(149, 42) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("RED", vk_ext_enum(149, 43) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("GREEN", vk_ext_enum(149, 44) as _).extension_old("EXT", "blend_operation_advanced"),
-            Enum::member("BLUE", vk_ext_enum(149, 45) as _).extension_old("EXT", "blend_operation_advanced"),
+            Enum::member("ZERO", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(0) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("SRC", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(1) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("DST", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(2) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("SRC_OVER", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(3) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("DST_OVER", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(4) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("SRC_IN", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(5) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("DST_IN", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(6) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("SRC_OUT", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(7) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("DST_OUT", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(8) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("SRC_ATOP", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(9) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("DST_ATOP", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(10) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("XOR", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(11) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("MULTIPLY", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(12) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("SCREEN", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(13) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("OVERLAY", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(14) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("DARKEN", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(15) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("LIGHTEN", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(16) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("COLORDODGE", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(17) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("COLORBURN", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(18) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("HARDLIGHT", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(19) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("SOFTLIGHT", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(20) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("DIFFERENCE", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(21) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("EXCLUSION", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(22) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("INVERT", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(23) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("INVERT_RGB", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(24) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("LINEARDODGE", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(25) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("LINEARBURN", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(26) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("VIVIDLIGHT", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(27) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("LINEARLIGHT", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(28) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("PINLIGHT", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(29) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("HARDMIX", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(30) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("HSL_HUE", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(31) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("HSL_SATURATION", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(32) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("HSL_COLOR", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(33) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("HSL_LUMINOSITY", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(34) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("PLUS", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(35) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("PLUS_CLAMPED", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(36) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("PLUS_CLAMPED_ALHPA", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(37) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("PLUS_DARKER", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(38) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("MINUS", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(39) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("MINUS_CLAMPED", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(40) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("CONTRAST", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(41) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("INVERT_OVG", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(42) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("RED", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(43) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("GREEN", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(44) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("BLUE", VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(45) as _)
+                .extension(VK_EXT_BLEND_OPERATION_ADVANCED),
         ],
-    )),
-    Element::Enum(
-        Enum::new(
-            "BlendOverlap",
-            "BLEND_OVERLAP",
-            &[
-                Enum::member("UNCORRELATED", 0).extension_old("EXT", "blend_operation_advanced"),
-                Enum::member("DISJOINT", 1).extension_old("EXT", "blend_operation_advanced"),
-                Enum::member("CONJOINT", 2).extension_old("EXT", "blend_operation_advanced"),
-            ],
-        )
-        .extension_old("EXT", "blend_operation_advanced"),
-    ),
-    Element::Enum(
-        Enum::new(
-            "ValidationCacheHeaderVersion",
-            "VALIDATION_CACHE_HEADER_VERSION",
-            &[Enum::member("ONE", 1).extension_old("EXT", "validation_cache")],
-        )
-        .extension_old("EXT", "validation_cache"),
-    ),
-    Element::Enum(
-        Enum::new(
-            "ValidationCheck",
-            "VALIDATION_CHECK",
-            &[
-                Enum::member("ALL", 0).extension_old("EXT", "validation_flags"),
-                Enum::member("SHADERS", 1).extension_old("EXT", "validation_flags"),
-            ],
-        )
-        .extension_old("EXT", "validation_flags"),
-    ),
-    Element::Struct(
-        Struct::new(
-            "PhysicalDeviceBlendOperationAdvanccedFeatures",
-            &[Struct::member("advancedBlendCoherentOperations", "VkBool32")],
-        )
-        .stype(
-            "PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES",
-            vk_ext_enum(149, 0) as _,
-            StructUsage::Both,
-        )
-        .extensions_old(&[("EXT", "blend_operation_advanced")]),
-    ),
-    Element::Struct(
-        Struct::new(
-            "PhysicalDeviceBlendOperationAdvancedProperties",
-            &[
-                Struct::member("advancedBlendMaxColorAttachments", "u32"),
-                Struct::member("advancedBlendIndependentBlend", "VkBool32"),
-                Struct::member("advancedBlendNonPremultipliedSrcColor", "VkBool32"),
-                Struct::member("advancedBlendNonPremultipliedDstColor", "VkBool32"),
-                Struct::member("advancedBlendCorrelatedOverlap", "VkBool32"),
-                Struct::member("advancedBlendAllOperations", "VkBool32"),
-            ],
-        )
-        .stype(
-            "PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES",
-            vk_ext_enum(149, 1) as _,
-            StructUsage::Sink,
-        )
-        .extensions_old(&[("EXT", "blend_operation_advanced")]),
-    ),
-    Element::Struct(
-        Struct::new(
-            "PipelineColorBlendAdvancedStateCreateInfo",
-            &[
-                Struct::member("srcPremultiplied", "VkBool32"),
-                Struct::member("dstPremultiplied", "VkBool32"),
-                Struct::member("blendOverlap", "VkBlendOverlapEXT"),
-            ],
-        )
-        .stype(
-            "PIPELINE_COLOR_BLEND_ADVANCED_STATE_CREATE_INFO",
-            vk_ext_enum(149, 2) as _,
-            StructUsage::Source,
-        )
-        .extensions_old(&[("EXT", "blend_operation_advanced")]),
-    ),
-    Element::Struct(
-        Struct::typed(
-            "ShaderModuleValidationcacheCreateInfo",
-            "SHADER_MODULE_VALIDATION_CACHE_CREATE_INFO",
-            vk_ext_enum(161, 1) as _,
-            StructUsage::Source,
-            &[Struct::member("validationCache", "VkValidationCacheEXT")],
-        )
-        .extensions_old(&[("EXT", "validation_cache")]),
-    ),
-    Element::Struct(
-        Struct::typed(
-            "ValidationCacheCreateInfo",
-            "VALIDATION_CACHE_CREATE_INFO",
-            vk_ext_enum(161, 0) as _,
-            StructUsage::Source,
-            &[
-                Struct::member("flags", "VkValidationCacheCreateFlagsEXT"),
-                Struct::member("initialDataSize", "usize"),
-                Struct::member("pInitialData", "*const core::ffi::c_void"),
-            ],
-        )
-        .extensions_old(&[("EXT", "validation_cache")]),
-    ),
-    Element::Struct(
-        Struct::typed(
-            "ValidationFlags",
-            "VALIDATION_FLAGS",
-            vk_ext_enum(62, 0) as _,
-            StructUsage::Source,
-            &[
-                Struct::member("disabledValidationCheckCount", "u32"),
-                Struct::member("pDisabledValidationChecks", "*mut VkValidationCheckEXT"),
-            ],
-        )
-        .extensions_old(&[("EXT", "validation_flags")]),
-    ),
-    Element::Command(
-        Command::new(
-            "AcquireDrmDisplay",
-            &[
-                ("physicalDevice", "VkPhysicalDevice"),
-                ("drmFd", "i32"),
-                ("display", "VkDisplayKHR"),
-            ],
-        )
-        .failable()
-        .extension_old("EXT", "acquire_drm_display"),
-    ),
-    Element::Command(
-        Command::new(
-            "AcquireWinrtDisplay",
-            &[("physicalDevice", "VkPhysicalDevice"), ("display", "VkDisplayKHR")],
-        )
-        .failable()
-        .extension_old("NV", "acquire_winrt_display"),
-    ),
-    Element::Command(
-        Command::new(
-            "AcquireXlibDisplay",
-            &[
-                ("physicalDevice", "VkPhysicalDevice"),
-                ("dpy", "*mut x11::xlib::Display"),
-                ("display", "VkDisplayKHR"),
-            ],
-        )
-        .failable()
-        .extension_old("EXT", "acquire_xlib_display"),
-    ),
-    Element::Command(
-        Command::new(
-            "CreateValidationCache",
-            &[
-                ("device", "VkDevice"),
-                ("pCreateInfo", "*const VkValidationCacheCreateInfoEXT"),
-                ("pAllocator", "*const VkAllocationCallbacks"),
-                ("pValidationCache", "*mut VkValidationCacheEXT"),
-            ],
-        )
-        .failable()
-        .extension_old("EXT", "validation_cache"),
-    ),
-    Element::Command(
-        Command::new(
-            "DestroyValidationCache",
-            &[
-                ("device", "VkDevice"),
-                ("validationCache", "VkValidationCacheEXT"),
-                ("pAllocator", "*const VkAllocationCallbacks"),
-            ],
-        )
-        .extension_old("EXT", "validation_cache"),
-    ),
-    Element::Command(
-        Command::new(
-            "GetDrmDisplay",
-            &[
-                ("physicalDevice", "VkPhysicalDevice"),
-                ("drmFd", "i32"),
-                ("connectorId", "u32"),
-                ("pDisplay", "*mut VkDisplayKHR"),
-            ],
-        )
-        .failable()
-        .extension_old("EXT", "acquire_drm_display"),
-    ),
-    Element::Command(
-        Command::new(
-            "GetRandROutputDisplay",
-            &[
-                ("physicalDevice", "VkPhysicalDevice"),
-                ("dpy", "*mut x11::xlib::Display"),
-                ("rrOutput", "x11::xrandr::RROutput"),
-                ("pDisplay", "*mut VkDisplayKHR"),
-            ],
-        )
-        .failable()
-        .extension_old("EXT", "acquire_xlib_display"),
-    ),
-    Element::Command(
-        Command::new(
-            "GetValidationCacheData",
-            &[
-                ("device", "VkDevice"),
-                ("validationCache", "VkValidationCacheEXT"),
-                ("pDataSize", "*mut usize"),
-                ("pData", "*mut core::ffi::c_void"),
-            ],
-        )
-        .failable()
-        .extension_old("EXT", "validation_cache"),
-    ),
-    Element::Command(
-        Command::new(
-            "GetWinrtDisplay",
-            &[
-                ("physicalDevice", "VkPhysicalDevice"),
-                ("deviceRelativeId", "u32"),
-                ("pDisplay", "*mut VkDisplayKHR"),
-            ],
-        )
-        .failable()
-        .extension_old("NV", "acquire_winrt_display"),
-    ),
-    Element::Command(
-        Command::new(
-            "MergeValidationCaches",
-            &[
-                ("device", "VkDevice"),
-                ("dstCache", "VkValidationCacheEXT"),
-                ("srcCacheCount", "u32"),
-                ("pSrcCaches", "*const VkValidationCacheEXT"),
-            ],
-        )
-        .failable()
-        .extension_old("EXT", "validation_cache"),
-    ),
-    Element::Command(
-        Command::inst(
-            "WriteBufferMarker",
-            &[
-                ("pipelineStage", "VkPipelineStageFlags"),
-                ("dstBuffer", "VkBuffer"),
-                ("dstOffset", "VkDeviceSize"),
-                ("marker", "u32"),
-            ],
-        )
-        .extension_old("AMD", "buffer_marker"),
-    ),
-    // VK_EXT_layer_settings: 497
-    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_layer_settings", 2)),
-    Element::Enum(
-        Enum::new(
-            "LayerSettingType",
-            "LAYER_SETTING_TYPE",
-            &[
-                Enum::member("BOOL32", 0).extension_old("EXT", "layer_settings"),
-                Enum::member("INT32", 1).extension_old("EXT", "layer_settings"),
-                Enum::member("INT64", 2).extension_old("EXT", "layer_settings"),
-                Enum::member("UINT32", 3).extension_old("EXT", "layer_settings"),
-                Enum::member("UINT64", 4).extension_old("EXT", "layer_settings"),
-                Enum::member("FLOAT32", 5).extension_old("EXT", "layer_settings"),
-                Enum::member("FLOAT64", 6).extension_old("EXT", "layer_settings"),
-                Enum::member("STRING", 7).extension_old("EXT", "layer_settings"),
-            ],
-        )
-        .extension_old("EXT", "layer_settings"),
-    ),
-    Element::Struct(
-        Struct::new(
-            "LayerSetting",
-            &[
-                Struct::member("pLayerName", "*const core::ffi::c_char"),
-                Struct::member("pSettingName", "*const core::ffi::c_char"),
-                Struct::member("r#type", "VkLayerSettingTypeEXT"),
-                Struct::member("valueCount", "u32"),
-                Struct::member("pValues", "*const core::ffi::c_void"),
-            ],
-        )
-        .extensions_old(&[("EXT", "layer_settings")]),
-    ),
-    Element::Struct(
-        Struct::typed(
-            "LayerSettingsCreateInfo",
-            "LAYER_SETTINGS_CREATE_INFO",
-            vk_ext_enum(497, 0) as _,
-            StructUsage::Source,
-            &[
-                Struct::member("settingCount", "u32"),
-                Struct::member("pSettings", "*const VkLayerSettingEXT"),
-            ],
-        )
-        .extensions_old(&[("EXT", "layer_settings")]),
-    ),
+    )
+    .into_element(),
+    Enum::new(
+        "BlendOverlap",
+        "BLEND_OVERLAP",
+        &[
+            Enum::member("UNCORRELATED", 0).extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("DISJOINT", 1).extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+            Enum::member("CONJOINT", 2).extension(VK_EXT_BLEND_OPERATION_ADVANCED),
+        ],
+    )
+    .extension(VK_EXT_BLEND_OPERATION_ADVANCED)
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceBlendOperationAdvanccedFeatures",
+        "PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES",
+        VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(0) as _,
+        StructUsage::Both,
+        &[Struct::member("advancedBlendCoherentOperations", "VkBool32")],
+    )
+    .extensions(&[VK_EXT_BLEND_OPERATION_ADVANCED])
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceBlendOperationAdvancedProperties",
+        "PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES",
+        VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(1) as _,
+        StructUsage::Sink,
+        &[
+            Struct::member("advancedBlendMaxColorAttachments", "u32"),
+            Struct::member("advancedBlendIndependentBlend", "VkBool32"),
+            Struct::member("advancedBlendNonPremultipliedSrcColor", "VkBool32"),
+            Struct::member("advancedBlendNonPremultipliedDstColor", "VkBool32"),
+            Struct::member("advancedBlendCorrelatedOverlap", "VkBool32"),
+            Struct::member("advancedBlendAllOperations", "VkBool32"),
+        ],
+    )
+    .extensions(&[VK_EXT_BLEND_OPERATION_ADVANCED])
+    .into_element(),
+    Struct::typed(
+        "PipelineColorBlendAdvancedStateCreateInfo",
+        "PIPELINE_COLOR_BLEND_ADVANCED_STATE_CREATE_INFO",
+        VK_EXT_BLEND_OPERATION_ADVANCED.ext_enum(2) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("srcPremultiplied", "VkBool32"),
+            Struct::member("dstPremultiplied", "VkBool32"),
+            Struct::member("blendOverlap", "VkBlendOverlapEXT"),
+        ],
+    )
+    .extensions(&[VK_EXT_BLEND_OPERATION_ADVANCED])
+    .into_element(),
+    // VK_EXT_validation_cache
+    VK_EXT_VALIDATION_CACHE.header_constants().into_element(),
+    Bitmask::new(
+        "ValidationCacheCreateFlags",
+        "ValidationCacheCreateFlagBits",
+        "VALIDATION_CACHE_CREATE_FLAGS",
+        &[],
+    )
+    .extension(VK_EXT_VALIDATION_CACHE)
+    .into_element(),
+    Object::new(
+        "VkValidationCacheEXT",
+        "VALIDATION_CACHE_EXT",
+        VK_EXT_VALIDATION_CACHE.ext_enum(0) as _,
+    )
+    .extension(VK_EXT_VALIDATION_CACHE)
+    .into_element(),
+    Enum::new(
+        "ValidationCacheHeaderVersion",
+        "VALIDATION_CACHE_HEADER_VERSION",
+        &[Enum::member("ONE", 1).extension(VK_EXT_VALIDATION_CACHE)],
+    )
+    .extension(VK_EXT_VALIDATION_CACHE)
+    .into_element(),
+    Struct::typed(
+        "ValidationCacheCreateInfo",
+        "VALIDATION_CACHE_CREATE_INFO",
+        VK_EXT_VALIDATION_CACHE.ext_enum(0) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("flags", "VkValidationCacheCreateFlagsEXT"),
+            Struct::member("initialDataSize", "usize"),
+            Struct::member("pInitialData", "*const core::ffi::c_void"),
+        ],
+    )
+    .extensions(&[VK_EXT_VALIDATION_CACHE])
+    .into_element(),
+    Struct::typed(
+        "ShaderModuleValidationcacheCreateInfo",
+        "SHADER_MODULE_VALIDATION_CACHE_CREATE_INFO",
+        VK_EXT_VALIDATION_CACHE.ext_enum(1) as _,
+        StructUsage::Source,
+        &[Struct::member("validationCache", "VkValidationCacheEXT")],
+    )
+    .extensions(&[VK_EXT_VALIDATION_CACHE])
+    .into_element(),
+    Command::new(
+        "CreateValidationCache",
+        &[
+            ("device", "VkDevice"),
+            ("pCreateInfo", "*const VkValidationCacheCreateInfoEXT"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+            ("pValidationCache", "*mut VkValidationCacheEXT"),
+        ],
+    )
+    .failable()
+    .extension(VK_EXT_VALIDATION_CACHE)
+    .into_element(),
+    Command::new(
+        "DestroyValidationCache",
+        &[
+            ("device", "VkDevice"),
+            ("validationCache", "VkValidationCacheEXT"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+        ],
+    )
+    .extension(VK_EXT_VALIDATION_CACHE)
+    .into_element(),
+    Command::new(
+        "GetValidationCacheData",
+        &[
+            ("device", "VkDevice"),
+            ("validationCache", "VkValidationCacheEXT"),
+            ("pDataSize", "*mut usize"),
+            ("pData", "*mut core::ffi::c_void"),
+        ],
+    )
+    .failable()
+    .extension(VK_EXT_VALIDATION_CACHE)
+    .into_element(),
+    Command::new(
+        "MergeValidationCaches",
+        &[
+            ("device", "VkDevice"),
+            ("dstCache", "VkValidationCacheEXT"),
+            ("srcCacheCount", "u32"),
+            ("pSrcCaches", "*const VkValidationCacheEXT"),
+        ],
+    )
+    .failable()
+    .extension(VK_EXT_VALIDATION_CACHE)
+    .into_element(),
+    // VK_EXT_validation_flags
+    VK_EXT_VALIDATION_FLAGS.header_constants().into_element(),
+    Enum::new(
+        "ValidationCheck",
+        "VALIDATION_CHECK",
+        &[
+            Enum::member("ALL", 0).extension(VK_EXT_VALIDATION_FLAGS),
+            Enum::member("SHADERS", 1).extension(VK_EXT_VALIDATION_FLAGS),
+        ],
+    )
+    .extension(VK_EXT_VALIDATION_FLAGS)
+    .into_element(),
+    Struct::typed(
+        "ValidationFlags",
+        "VALIDATION_FLAGS",
+        VK_EXT_VALIDATION_FLAGS.ext_enum(0) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("disabledValidationCheckCount", "u32"),
+            Struct::member("pDisabledValidationChecks", "*mut VkValidationCheckEXT"),
+        ],
+    )
+    .extensions(&[VK_EXT_VALIDATION_FLAGS])
+    .into_element(),
+    // VK_EXT_acquire_drm_display
+    VK_EXT_ACQUIRE_DRM_DISPLAY.header_constants().into_element(),
+    Command::new(
+        "AcquireDrmDisplay",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("drmFd", "i32"),
+            ("display", "VkDisplayKHR"),
+        ],
+    )
+    .failable()
+    .extension(VK_EXT_ACQUIRE_DRM_DISPLAY)
+    .into_element(),
+    Command::new(
+        "GetDrmDisplay",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("drmFd", "i32"),
+            ("connectorId", "u32"),
+            ("pDisplay", "*mut VkDisplayKHR"),
+        ],
+    )
+    .failable()
+    .extension(VK_EXT_ACQUIRE_DRM_DISPLAY)
+    .into_element(),
+    // VK_EXT_acquire_xlib_display
+    VK_EXT_ACQUIRE_XLIB_DISPLAY.header_constants().into_element(),
+    Command::new(
+        "AcquireXlibDisplay",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("dpy", "*mut x11::xlib::Display"),
+            ("display", "VkDisplayKHR"),
+        ],
+    )
+    .failable()
+    .extension(VK_EXT_ACQUIRE_XLIB_DISPLAY)
+    .into_element(),
+    Command::new(
+        "GetRandROutputDisplay",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("dpy", "*mut x11::xlib::Display"),
+            ("rrOutput", "x11::xrandr::RROutput"),
+            ("pDisplay", "*mut VkDisplayKHR"),
+        ],
+    )
+    .failable()
+    .extension(VK_EXT_ACQUIRE_XLIB_DISPLAY)
+    .into_element(),
+    // VK_NV_acquire_winrt_display
+    VK_NV_ACQUIRE_WINRT_DISPLAY.header_constants().into_element(),
+    Command::new(
+        "AcquireWinrtDisplay",
+        &[("physicalDevice", "VkPhysicalDevice"), ("display", "VkDisplayKHR")],
+    )
+    .failable()
+    .extension(VK_NV_ACQUIRE_WINRT_DISPLAY)
+    .into_element(),
+    Command::new(
+        "GetWinrtDisplay",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("deviceRelativeId", "u32"),
+            ("pDisplay", "*mut VkDisplayKHR"),
+        ],
+    )
+    .failable()
+    .extension(VK_NV_ACQUIRE_WINRT_DISPLAY)
+    .into_element(),
+    // VK_AMD_buffer_marker
+    VK_AMD_BUFFER_MARKER.header_constants().into_element(),
+    Command::inst(
+        "WriteBufferMarker",
+        &[
+            ("pipelineStage", "VkPipelineStageFlags"),
+            ("dstBuffer", "VkBuffer"),
+            ("dstOffset", "VkDeviceSize"),
+            ("marker", "u32"),
+        ],
+    )
+    .extension(VK_AMD_BUFFER_MARKER)
+    .into_element(),
+    // VK_EXT_layer_settings
+    VK_EXT_LAYER_SETTINGS.header_constants().into_element(),
+    Enum::new(
+        "LayerSettingType",
+        "LAYER_SETTING_TYPE",
+        &[
+            Enum::member("BOOL32", 0).extension(VK_EXT_LAYER_SETTINGS),
+            Enum::member("INT32", 1).extension(VK_EXT_LAYER_SETTINGS),
+            Enum::member("INT64", 2).extension(VK_EXT_LAYER_SETTINGS),
+            Enum::member("UINT32", 3).extension(VK_EXT_LAYER_SETTINGS),
+            Enum::member("UINT64", 4).extension(VK_EXT_LAYER_SETTINGS),
+            Enum::member("FLOAT32", 5).extension(VK_EXT_LAYER_SETTINGS),
+            Enum::member("FLOAT64", 6).extension(VK_EXT_LAYER_SETTINGS),
+            Enum::member("STRING", 7).extension(VK_EXT_LAYER_SETTINGS),
+        ],
+    )
+    .extension(VK_EXT_LAYER_SETTINGS)
+    .into_element(),
+    Struct::new(
+        "LayerSetting",
+        &[
+            Struct::member("pLayerName", "*const core::ffi::c_char"),
+            Struct::member("pSettingName", "*const core::ffi::c_char"),
+            Struct::member("r#type", "VkLayerSettingTypeEXT"),
+            Struct::member("valueCount", "u32"),
+            Struct::member("pValues", "*const core::ffi::c_void"),
+        ],
+    )
+    .extensions(&[VK_EXT_LAYER_SETTINGS])
+    .into_element(),
+    Struct::typed(
+        "LayerSettingsCreateInfo",
+        "LAYER_SETTINGS_CREATE_INFO",
+        VK_EXT_LAYER_SETTINGS.ext_enum(0) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("settingCount", "u32"),
+            Struct::member("pSettings", "*const VkLayerSettingEXT"),
+        ],
+    )
+    .extensions(&[VK_EXT_LAYER_SETTINGS])
+    .into_element(),
     // VK_EXT_descriptor_buffer
-    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_descriptor_buffer", 1)),
-    Element::Struct(
-        Struct::typed(
-            "PhysicalDeviceDescriptorBufferProperties",
-            "PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_PROPERTIES",
-            vk_ext_enum(317, 0) as _,
-            StructUsage::Sink,
-            &[
-                Struct::member("combinedImageSamplerDescriptorSingleArray", "VkBool32"),
-                Struct::member("bufferlessPushDescriptors", "VkBool32"),
-                Struct::member("allowSamplerImageViewPostSubmitCreation", "VkBool32"),
-                Struct::member("descriptorBufferOffsetAlignment", "VkDeviceSize"),
-                Struct::member("maxDescriptorBufferBindings", "u32"),
-                Struct::member("maxResourceDescriptorBufferBindings", "u32"),
-                Struct::member("maxSamplerDescriptorBufferBindings", "u32"),
-                Struct::member("maxEmbeddedImmutableSamplerBindings", "u32"),
-                Struct::member("maxEmbeddedImmutableSamplers", "u32"),
-                Struct::member("bufferCaptureReplayDescriptorDataSize", "usize"),
-                Struct::member("imageCaptureReplayDescriptorDataSize", "usize"),
-                Struct::member("imageViewCaptureReplayDescriptorDataSize", "usize"),
-                Struct::member("samplerCaptureReplayDescriptorDataSize", "usize"),
-                Struct::member("accelerationStructureCaptureReplayDescriptorDataSize", "usize"),
-                Struct::member("samplerDescriptorSize", "usize"),
-                Struct::member("combinedImageSamplerDescriptorSize", "usize"),
-                Struct::member("sampledImageDescriptorSize", "usize"),
-                Struct::member("storageImageDescriptorSize", "usize"),
-                Struct::member("uniformTexelBufferDescriptorSize", "usize"),
-                Struct::member("robustUniformTexelBufferDescriptorSize", "usize"),
-                Struct::member("storageTexelBufferDescriptorSize", "usize"),
-                Struct::member("robustStorageTexelBufferDescriptorSize", "usize"),
-                Struct::member("uniformBufferDescriptorSize", "usize"),
-                Struct::member("robustUniformBufferDescriptorSize", "usize"),
-                Struct::member("storageBufferDescriptorSize", "usize"),
-                Struct::member("robustStorageBufferDescriptorSize", "usize"),
-                Struct::member("inputAttachmentDescriptorSize", "usize"),
-                Struct::member("accelerationStructureDescriptorSize", "usize"),
-                Struct::member("maxSamplerDescriptorBufferRange", "VkDeviceSize"),
-                Struct::member("maxResourceDescriptorBufferRange", "VkDeviceSize"),
-                Struct::member("samplerDescriptorBufferAddressSpaceSize", "VkDeviceSize"),
-                Struct::member("resourceDescriptorBufferAddressSpaceSize", "VkDeviceSize"),
-                Struct::member("descriptorBufferAddressSpaceSize", "VkDeviceSize"),
-            ],
-        )
-        .extensions_old(&[("EXT", "descriptor_buffer")]),
-    ),
-    Element::Struct(
-        Struct::typed(
-            "PhysicalDeviceDescriptorBuferDensityMapProperties",
-            "PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_DENSITY_MAP_PROPERTIES",
-            vk_ext_enum(317, 1) as _,
-            StructUsage::Sink,
-            &[Struct::member("combinedImageSamplerDensityMapDescriptorSize", "usize")],
-        )
-        .extensions_old(&[("EXT", "descriptor_buffer")]),
-    ),
-    Element::Struct(
-        Struct::typed(
-            "PhysicalDeviceDescriptorBufferFeatures",
-            "PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_FEATURES",
-            vk_ext_enum(317, 2) as _,
-            StructUsage::Both,
-            &[
-                Struct::member("descriptorBuffer", "VkBool32"),
-                Struct::member("descriptorBufferCaptureReplay", "VkBool32"),
-                Struct::member("descriptorBufferImageLayoutIgnored", "VkBool32"),
-                Struct::member("descriptorBufferPushDescriptors", "VkBool32"),
-            ],
-        )
-        .extensions_old(&[("EXT", "descriptor_buffer")]),
-    ),
-    Element::Struct(
-        Struct::typed(
-            "DescriptorAddressInfo",
-            "DESCRIPTOR_ADDRESS_INFO",
-            vk_ext_enum(317, 3) as _,
-            StructUsage::Sink,
-            &[
-                Struct::member("address", "VkDeviceAddress"),
-                Struct::member("range", "VkDeviceSize"),
-                Struct::member("format", "VkFormat"),
-            ],
-        )
-        .extensions_old(&[("EXT", "descriptor_buffer")]),
-    ),
-    Element::Struct(
-        Struct::typed(
-            "DescriptorBufferBindingInfo",
-            "DESCRIPTOR_BUFFER_BINDING_INFO",
-            vk_ext_enum(317, 11) as _,
-            StructUsage::Sink,
-            &[
-                Struct::member("address", "VkDeviceAddress"),
-                Struct::member("usage", "VkBufferUsageFlags"),
-            ],
-        )
-        .extensions_old(&[("EXT", "descriptor_buffer")]),
-    ),
-    Element::Struct(
-        Struct::typed(
-            "DescriptorBufferBindingPushDescriptorBufferHandle",
-            "DESCRIPTOR_BUFFER_BINDING_PUSH_DESCRIPTOR_BUFFER_HANDLE",
-            vk_ext_enum(317, 12) as _,
-            StructUsage::Sink,
-            &[Struct::member("buffer", "VkBuffer")],
-        )
-        .extensions_old(&[("EXT", "descriptor_buffer")]),
-    ),
+    VK_EXT_DESCRIPTOR_BUFFER.header_constants().into_element(),
+    Struct::typed(
+        "PhysicalDeviceDescriptorBufferProperties",
+        "PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_PROPERTIES",
+        VK_EXT_DESCRIPTOR_BUFFER.ext_enum(0) as _,
+        StructUsage::Sink,
+        &[
+            Struct::member("combinedImageSamplerDescriptorSingleArray", "VkBool32"),
+            Struct::member("bufferlessPushDescriptors", "VkBool32"),
+            Struct::member("allowSamplerImageViewPostSubmitCreation", "VkBool32"),
+            Struct::member("descriptorBufferOffsetAlignment", "VkDeviceSize"),
+            Struct::member("maxDescriptorBufferBindings", "u32"),
+            Struct::member("maxResourceDescriptorBufferBindings", "u32"),
+            Struct::member("maxSamplerDescriptorBufferBindings", "u32"),
+            Struct::member("maxEmbeddedImmutableSamplerBindings", "u32"),
+            Struct::member("maxEmbeddedImmutableSamplers", "u32"),
+            Struct::member("bufferCaptureReplayDescriptorDataSize", "usize"),
+            Struct::member("imageCaptureReplayDescriptorDataSize", "usize"),
+            Struct::member("imageViewCaptureReplayDescriptorDataSize", "usize"),
+            Struct::member("samplerCaptureReplayDescriptorDataSize", "usize"),
+            Struct::member("accelerationStructureCaptureReplayDescriptorDataSize", "usize"),
+            Struct::member("samplerDescriptorSize", "usize"),
+            Struct::member("combinedImageSamplerDescriptorSize", "usize"),
+            Struct::member("sampledImageDescriptorSize", "usize"),
+            Struct::member("storageImageDescriptorSize", "usize"),
+            Struct::member("uniformTexelBufferDescriptorSize", "usize"),
+            Struct::member("robustUniformTexelBufferDescriptorSize", "usize"),
+            Struct::member("storageTexelBufferDescriptorSize", "usize"),
+            Struct::member("robustStorageTexelBufferDescriptorSize", "usize"),
+            Struct::member("uniformBufferDescriptorSize", "usize"),
+            Struct::member("robustUniformBufferDescriptorSize", "usize"),
+            Struct::member("storageBufferDescriptorSize", "usize"),
+            Struct::member("robustStorageBufferDescriptorSize", "usize"),
+            Struct::member("inputAttachmentDescriptorSize", "usize"),
+            Struct::member("accelerationStructureDescriptorSize", "usize"),
+            Struct::member("maxSamplerDescriptorBufferRange", "VkDeviceSize"),
+            Struct::member("maxResourceDescriptorBufferRange", "VkDeviceSize"),
+            Struct::member("samplerDescriptorBufferAddressSpaceSize", "VkDeviceSize"),
+            Struct::member("resourceDescriptorBufferAddressSpaceSize", "VkDeviceSize"),
+            Struct::member("descriptorBufferAddressSpaceSize", "VkDeviceSize"),
+        ],
+    )
+    .extensions(&[VK_EXT_DESCRIPTOR_BUFFER])
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceDescriptorBuferDensityMapProperties",
+        "PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_DENSITY_MAP_PROPERTIES",
+        VK_EXT_DESCRIPTOR_BUFFER.ext_enum(1) as _,
+        StructUsage::Sink,
+        &[Struct::member("combinedImageSamplerDensityMapDescriptorSize", "usize")],
+    )
+    .extensions(&[VK_EXT_DESCRIPTOR_BUFFER])
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceDescriptorBufferFeatures",
+        "PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_FEATURES",
+        VK_EXT_DESCRIPTOR_BUFFER.ext_enum(2) as _,
+        StructUsage::Both,
+        &[
+            Struct::member("descriptorBuffer", "VkBool32"),
+            Struct::member("descriptorBufferCaptureReplay", "VkBool32"),
+            Struct::member("descriptorBufferImageLayoutIgnored", "VkBool32"),
+            Struct::member("descriptorBufferPushDescriptors", "VkBool32"),
+        ],
+    )
+    .extensions(&[VK_EXT_DESCRIPTOR_BUFFER])
+    .into_element(),
+    Struct::typed(
+        "DescriptorAddressInfo",
+        "DESCRIPTOR_ADDRESS_INFO",
+        VK_EXT_DESCRIPTOR_BUFFER.ext_enum(3) as _,
+        StructUsage::Sink,
+        &[
+            Struct::member("address", "VkDeviceAddress"),
+            Struct::member("range", "VkDeviceSize"),
+            Struct::member("format", "VkFormat"),
+        ],
+    )
+    .extensions(&[VK_EXT_DESCRIPTOR_BUFFER])
+    .into_element(),
+    Struct::typed(
+        "DescriptorBufferBindingInfo",
+        "DESCRIPTOR_BUFFER_BINDING_INFO",
+        VK_EXT_DESCRIPTOR_BUFFER.ext_enum(11) as _,
+        StructUsage::Sink,
+        &[
+            Struct::member("address", "VkDeviceAddress"),
+            Struct::member("usage", "VkBufferUsageFlags"),
+        ],
+    )
+    .extensions(&[VK_EXT_DESCRIPTOR_BUFFER])
+    .into_element(),
+    Struct::typed(
+        "DescriptorBufferBindingPushDescriptorBufferHandle",
+        "DESCRIPTOR_BUFFER_BINDING_PUSH_DESCRIPTOR_BUFFER_HANDLE",
+        VK_EXT_DESCRIPTOR_BUFFER.ext_enum(12) as _,
+        StructUsage::Sink,
+        &[Struct::member("buffer", "VkBuffer")],
+    )
+    .extensions(&[VK_EXT_DESCRIPTOR_BUFFER])
+    .into_element(),
     Element::Union(
         Union::new(
             "DescriptorData",
@@ -529,191 +558,175 @@ pub const ELEMENTS: &[Element] = &[
         )
         .extension("EXT", "descriptor_buffer"),
     ),
-    Element::Struct(
-        Struct::typed(
-            "DescriptorGetInfo",
-            "DESCRIPTOR_GET_INFO",
-            vk_ext_enum(317, 4) as _,
-            StructUsage::Source,
-            &[
-                Struct::member("r#type", "VkDescriptorType"),
-                Struct::member("data", "VkDescriptorDataEXT"),
-            ],
-        )
-        .extensions_old(&[("EXT", "descriptor_buffer")])
-        .non_debuggable(),
-    ),
-    Element::Struct(
-        Struct::typed(
-            "BufferCaptureDescriptorDataInfo",
-            "BUFFER_CAPTURE_DESCRIPTOR_DATA_INFO",
-            vk_ext_enum(317, 5) as _,
-            StructUsage::Source,
-            &[Struct::member("buffer", "VkBuffer")],
-        )
-        .extensions_old(&[("EXT", "descriptor_buffer")]),
-    ),
-    Element::Struct(
-        Struct::typed(
-            "ImageCaptureDescriptorDataInfo",
-            "IMAGE_CAPTURE_DESCRIPTOR_DATA_INFO",
-            vk_ext_enum(317, 6) as _,
-            StructUsage::Source,
-            &[Struct::member("image", "VkImage")],
-        )
-        .extensions_old(&[("EXT", "descriptor_buffer")]),
-    ),
-    Element::Struct(
-        Struct::typed(
-            "ImageViewCaptureDescriptorDataInfo",
-            "IMAGE_VIEW_CAPTURE_DESCRIPTOR_DATA_INFO",
-            vk_ext_enum(317, 7) as _,
-            StructUsage::Source,
-            &[Struct::member("imageView", "VkImageView")],
-        )
-        .extensions_old(&[("EXT", "descriptor_buffer")]),
-    ),
-    Element::Struct(
-        Struct::typed(
-            "SamplerCaptureDescriptorDataInfo",
-            "SAMPLER_CAPTURE_DESCRIPTOR_DATA_INFO",
-            vk_ext_enum(317, 8) as _,
-            StructUsage::Source,
-            &[Struct::member("sampler", "VkSampler")],
-        )
-        .extensions_old(&[("EXT", "descriptor_buffer")]),
-    ),
-    Element::Struct(
-        Struct::typed(
-            "OpaqueCaptureDescriptorDataCreateInfo",
-            "OPAQUE_CAPTURE_DESCRIPTOR_DATA_CREATE_INFO",
-            vk_ext_enum(317, 10) as _,
-            StructUsage::Source,
-            &[Struct::member(
-                "opaqueCaptureDescriptorData",
-                "*const core::ffi::c_void",
-            )],
-        )
-        .extensions_old(&[("EXT", "descriptor_buffer")]),
-    ),
-    Element::Command(
-        Command::new(
-            "GetDescriptorSetLayoutSize",
-            &[
-                ("device", "VkDevice"),
-                ("layout", "VkDescriptorSetLayout"),
-                ("pLayoutSizeInBytes", "*mut VkDeviceSize"),
-            ],
-        )
-        .extension_old("EXT", "descriptor_buffer"),
-    ),
-    Element::Command(
-        Command::new(
-            "GetDescriptorSetLayoutBindingOffset",
-            &[
-                ("device", "VkDevice"),
-                ("layout", "VkDescriptorSetLayout"),
-                ("binding", "u32"),
-                ("pOffset", "*mut VkDeviceSize"),
-            ],
-        )
-        .extension_old("EXT", "descriptor_buffer"),
-    ),
-    Element::Command(
-        Command::new(
-            "GetDescriptor",
-            &[
-                ("device", "VkDevice"),
-                ("pDescriptorInfo", "*const VkDescriptorGetInfoEXT"),
-                ("dataSize", "usize"),
-                ("pDescriptor", "*mut core::ffi::c_void"),
-            ],
-        )
-        .extension_old("EXT", "descriptor_buffer"),
-    ),
-    Element::Command(
-        Command::inst(
-            "BindDescriptorBuffers",
-            &[
-                ("bufferCount", "u32"),
-                ("pBindingInfos", "*const VkDescriptorBufferBindingInfoEXT"),
-            ],
-        )
-        .extension_old("EXT", "descriptor_buffer"),
-    ),
-    Element::Command(
-        Command::inst(
-            "SetDescriptorBufferOffsets",
-            &[
-                ("pipelineBindPoint", "VkPipelineBindPoint"),
-                ("layout", "VkPipelineLayout"),
-                ("firstSet", "u32"),
-                ("setCount", "u32"),
-                ("pBufferIndices", "*const u32"),
-                ("pOffsets", "*const VkDeviceSize"),
-            ],
-        )
-        .extension_old("EXT", "descriptor_buffer"),
-    ),
-    Element::Command(
-        Command::inst(
-            "BindDescriptorBufferEmbeddedSamplers",
-            &[
-                ("pipelineBindPoint", "VkPipelineBindPoint"),
-                ("layout", "VkPipelineLayout"),
-                ("set", "u32"),
-            ],
-        )
-        .extension_old("EXT", "descriptor_buffer"),
-    ),
-    Element::Command(
-        Command::new(
-            "GetBufferOpaqueCaptureDescriptorData",
-            &[
-                ("device", "VkDevice"),
-                ("pInfo", "*const VkBufferCaptureDescriptorDataInfoEXT"),
-                ("pData", "*mut core::ffi::c_void"),
-            ],
-        )
-        .failable()
-        .extension_old("EXT", "descriptor_buffer"),
-    ),
-    Element::Command(
-        Command::new(
-            "GetImageOpaqueCaptureDescriptorData",
-            &[
-                ("device", "VkDevice"),
-                ("pInfo", "*const VkImageCaptureDescriptorDataInfoEXT"),
-                ("pData", "*mut core::ffi::c_void"),
-            ],
-        )
-        .failable()
-        .extension_old("EXT", "descriptor_buffer"),
-    ),
-    Element::Command(
-        Command::new(
-            "GetImageViewOpaqueCaptureDescriptorData",
-            &[
-                ("device", "VkDevice"),
-                ("pInfo", "*const VkImageViewCaptureDescriptorDataInfoEXT"),
-                ("pData", "*mut core::ffi::c_void"),
-            ],
-        )
-        .failable()
-        .extension_old("EXT", "descriptor_buffer"),
-    ),
-    Element::Command(
-        Command::new(
-            "GetSamplerOpaqueCaptureDescriptorData",
-            &[
-                ("device", "VkDevice"),
-                ("pInfo", "*const VkSamplerCaptureDescriptorDataInfoEXT"),
-                ("pData", "*mut core::ffi::c_void"),
-            ],
-        )
-        .failable()
-        .extension_old("EXT", "descriptor_buffer"),
-    ),
+    Struct::typed(
+        "DescriptorGetInfo",
+        "DESCRIPTOR_GET_INFO",
+        VK_EXT_DESCRIPTOR_BUFFER.ext_enum(4) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("r#type", "VkDescriptorType"),
+            Struct::member("data", "VkDescriptorDataEXT"),
+        ],
+    )
+    .non_debuggable()
+    .extensions(&[VK_EXT_DESCRIPTOR_BUFFER])
+    .into_element(),
+    Struct::typed(
+        "BufferCaptureDescriptorDataInfo",
+        "BUFFER_CAPTURE_DESCRIPTOR_DATA_INFO",
+        VK_EXT_DESCRIPTOR_BUFFER.ext_enum(5) as _,
+        StructUsage::Source,
+        &[Struct::member("buffer", "VkBuffer")],
+    )
+    .extensions(&[VK_EXT_DESCRIPTOR_BUFFER])
+    .into_element(),
+    Struct::typed(
+        "ImageCaptureDescriptorDataInfo",
+        "IMAGE_CAPTURE_DESCRIPTOR_DATA_INFO",
+        VK_EXT_DESCRIPTOR_BUFFER.ext_enum(6) as _,
+        StructUsage::Source,
+        &[Struct::member("image", "VkImage")],
+    )
+    .extensions(&[VK_EXT_DESCRIPTOR_BUFFER])
+    .into_element(),
+    Struct::typed(
+        "ImageViewCaptureDescriptorDataInfo",
+        "IMAGE_VIEW_CAPTURE_DESCRIPTOR_DATA_INFO",
+        VK_EXT_DESCRIPTOR_BUFFER.ext_enum(7) as _,
+        StructUsage::Source,
+        &[Struct::member("imageView", "VkImageView")],
+    )
+    .extensions(&[VK_EXT_DESCRIPTOR_BUFFER])
+    .into_element(),
+    Struct::typed(
+        "SamplerCaptureDescriptorDataInfo",
+        "SAMPLER_CAPTURE_DESCRIPTOR_DATA_INFO",
+        VK_EXT_DESCRIPTOR_BUFFER.ext_enum(8) as _,
+        StructUsage::Source,
+        &[Struct::member("sampler", "VkSampler")],
+    )
+    .extensions(&[VK_EXT_DESCRIPTOR_BUFFER])
+    .into_element(),
+    Struct::typed(
+        "OpaqueCaptureDescriptorDataCreateInfo",
+        "OPAQUE_CAPTURE_DESCRIPTOR_DATA_CREATE_INFO",
+        VK_EXT_DESCRIPTOR_BUFFER.ext_enum(10) as _,
+        StructUsage::Source,
+        &[Struct::member(
+            "opaqueCaptureDescriptorData",
+            "*const core::ffi::c_void",
+        )],
+    )
+    .extensions(&[VK_EXT_DESCRIPTOR_BUFFER])
+    .into_element(),
+    Command::new(
+        "GetDescriptorSetLayoutSize",
+        &[
+            ("device", "VkDevice"),
+            ("layout", "VkDescriptorSetLayout"),
+            ("pLayoutSizeInBytes", "*mut VkDeviceSize"),
+        ],
+    )
+    .extension(VK_EXT_DESCRIPTOR_BUFFER)
+    .into_element(),
+    Command::new(
+        "GetDescriptorSetLayoutBindingOffset",
+        &[
+            ("device", "VkDevice"),
+            ("layout", "VkDescriptorSetLayout"),
+            ("binding", "u32"),
+            ("pOffset", "*mut VkDeviceSize"),
+        ],
+    )
+    .extension(VK_EXT_DESCRIPTOR_BUFFER)
+    .into_element(),
+    Command::new(
+        "GetDescriptor",
+        &[
+            ("device", "VkDevice"),
+            ("pDescriptorInfo", "*const VkDescriptorGetInfoEXT"),
+            ("dataSize", "usize"),
+            ("pDescriptor", "*mut core::ffi::c_void"),
+        ],
+    )
+    .extension(VK_EXT_DESCRIPTOR_BUFFER)
+    .into_element(),
+    Command::inst(
+        "BindDescriptorBuffers",
+        &[
+            ("bufferCount", "u32"),
+            ("pBindingInfos", "*const VkDescriptorBufferBindingInfoEXT"),
+        ],
+    )
+    .extension(VK_EXT_DESCRIPTOR_BUFFER)
+    .into_element(),
+    Command::inst(
+        "SetDescriptorBufferOffsets",
+        &[
+            ("pipelineBindPoint", "VkPipelineBindPoint"),
+            ("layout", "VkPipelineLayout"),
+            ("firstSet", "u32"),
+            ("setCount", "u32"),
+            ("pBufferIndices", "*const u32"),
+            ("pOffsets", "*const VkDeviceSize"),
+        ],
+    )
+    .extension(VK_EXT_DESCRIPTOR_BUFFER)
+    .into_element(),
+    Command::inst(
+        "BindDescriptorBufferEmbeddedSamplers",
+        &[
+            ("pipelineBindPoint", "VkPipelineBindPoint"),
+            ("layout", "VkPipelineLayout"),
+            ("set", "u32"),
+        ],
+    )
+    .extension(VK_EXT_DESCRIPTOR_BUFFER)
+    .into_element(),
+    Command::new(
+        "GetBufferOpaqueCaptureDescriptorData",
+        &[
+            ("device", "VkDevice"),
+            ("pInfo", "*const VkBufferCaptureDescriptorDataInfoEXT"),
+            ("pData", "*mut core::ffi::c_void"),
+        ],
+    )
+    .failable()
+    .extension(VK_EXT_DESCRIPTOR_BUFFER)
+    .into_element(),
+    Command::new(
+        "GetImageOpaqueCaptureDescriptorData",
+        &[
+            ("device", "VkDevice"),
+            ("pInfo", "*const VkImageCaptureDescriptorDataInfoEXT"),
+            ("pData", "*mut core::ffi::c_void"),
+        ],
+    )
+    .failable()
+    .extension(VK_EXT_DESCRIPTOR_BUFFER)
+    .into_element(),
+    Command::new(
+        "GetImageViewOpaqueCaptureDescriptorData",
+        &[
+            ("device", "VkDevice"),
+            ("pInfo", "*const VkImageViewCaptureDescriptorDataInfoEXT"),
+            ("pData", "*mut core::ffi::c_void"),
+        ],
+    )
+    .failable()
+    .extension(VK_EXT_DESCRIPTOR_BUFFER)
+    .into_element(),
+    Command::new(
+        "GetSamplerOpaqueCaptureDescriptorData",
+        &[
+            ("device", "VkDevice"),
+            ("pInfo", "*const VkSamplerCaptureDescriptorDataInfoEXT"),
+            ("pData", "*mut core::ffi::c_void"),
+        ],
+    )
+    .failable()
+    .extension(VK_EXT_DESCRIPTOR_BUFFER)
+    .into_element(),
     // VK_EXT_external_memory_host
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_external_memory_host", 1)),
     Element::Bitmask(
