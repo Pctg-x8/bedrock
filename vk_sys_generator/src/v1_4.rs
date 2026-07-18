@@ -844,6 +844,7 @@ pub const ELEMENTS: &[Element] = &[
             .extension(VK_EXT_HOST_IMAGE_COPY)
             .promoted(VERSION)],
     )
+    .long()
     .into_element(),
     Bitmask::extending(
         "ImageUsageFlagBits",

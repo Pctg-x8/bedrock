@@ -1,8 +1,5 @@
-mod vk1;
-mod vk2;
-
-pub use vk1::*;
-pub use vk2::*;
+mod bindings;
+pub use bindings::*;
 
 #[cfg(feature = "Implements")]
 pub mod fns;
@@ -16,14 +13,6 @@ pub use resolver::{ResolvedFnCell, ResolverInterface, load_function_unconstraint
 mod result_str;
 pub use result_str::*;
 pub mod extensions;
-
-// define macros
-
-#[allow(clippy::inconsistent_digit_grouping)]
-#[inline]
-pub(crate) const fn ext_enum_value(ext_number: u16, index: u16) -> u64 {
-    1000_000_000 + ((ext_number - 1) as u64 * 1_000) + index as u64
-}
 
 // ffi helper
 

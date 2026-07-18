@@ -34,6 +34,8 @@ const VK_NV_VIEWPORT_ARRAY2: &Extension = &Extension::new("NV", "viewport_array2
 pub const VK_KHR_MAINTENANCE_7: &Extension = &Extension::khr("maintenance7", 1, 563);
 pub const VK_KHR_MAINTENANCE_8: &Extension = &Extension::khr("maintenance8", 1, 575);
 pub const VK_KHR_MAINTENANCE_9: &Extension = &Extension::khr("maintenance9", 1, 585);
+const VK_EXT_FULL_SCREEN_EXCLUSIVE: &Extension = &Extension::ext("full_screen_exclusive", 4, 256);
+const VK_AMD_SHADER_INFO: &Extension = &Extension::new("AMD", "shader_info", 1, 43);
 
 pub const ELEMENTS: &[Element] = &[
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_acquire_drm_display", 1)),
@@ -2793,5 +2795,145 @@ pub const ELEMENTS: &[Element] = &[
         &[Struct::member("optimalImageTransferToQueueFamilies", "u32")],
     )
     .extensions(&[VK_KHR_MAINTENANCE_9])
+    .into_element(),
+    // VK_EXT_full_screen_exclusive
+    VK_EXT_FULL_SCREEN_EXCLUSIVE.header_constants().into_element(),
+    Enum::extending_error(&[Enum::member(
+        "FULL_SCREEN_EXCLUSIVE_MODE_LOST",
+        -VK_EXT_FULL_SCREEN_EXCLUSIVE.ext_enum(0) as _,
+    )
+    .extension(VK_EXT_FULL_SCREEN_EXCLUSIVE)])
+    .into_element(),
+    Enum::new(
+        "FullScreenExclusive",
+        "FULL_SCREEN_EXCLUSIVE",
+        &[
+            Enum::member("DEFAULT", 0).extension(VK_EXT_FULL_SCREEN_EXCLUSIVE),
+            Enum::member("ALLOWED", 1).extension(VK_EXT_FULL_SCREEN_EXCLUSIVE),
+            Enum::member("DISALLOWED", 2).extension(VK_EXT_FULL_SCREEN_EXCLUSIVE),
+            Enum::member("APPLICATION_CONTROLLED", 3).extension(VK_EXT_FULL_SCREEN_EXCLUSIVE),
+        ],
+    )
+    .extension(VK_EXT_FULL_SCREEN_EXCLUSIVE)
+    .into_element(),
+    Struct::typed(
+        "SurfaceFullScreenExclusiveInfo",
+        "SURFACE_FULL_SCREEN_EXCLUSIVE_INFO",
+        VK_EXT_FULL_SCREEN_EXCLUSIVE.ext_enum(0) as _,
+        StructUsage::Both,
+        &[Struct::member("fullScreenExclusive", "VkFullScreenExclusiveEXT")],
+    )
+    .extensions(&[VK_EXT_FULL_SCREEN_EXCLUSIVE])
+    .into_element(),
+    Struct::typed(
+        "SurfaceCapabilitiesFullScreenExclusive",
+        "SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE",
+        VK_EXT_FULL_SCREEN_EXCLUSIVE.ext_enum(2) as _,
+        StructUsage::Sink,
+        &[Struct::member("fullScreenExclusiveSupported", TY_VK_BOOL)],
+    )
+    .extensions(&[VK_EXT_FULL_SCREEN_EXCLUSIVE])
+    .into_element(),
+    Command::new(
+        "GetPhysicalDeviceSurfacePresentModes2",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("pSurfaceInfo", "*const VkPhysicalDeviceSurfaceInfo2KHR"),
+            ("pPresentModeCount", "*mut u32"),
+            ("pPresentModes", "*mut VkPresentModeKHR"),
+        ],
+    )
+    .failable()
+    .extension(VK_EXT_FULL_SCREEN_EXCLUSIVE)
+    .into_element(),
+    Command::new(
+        "AcquireFullScreenExclusiveMode",
+        &[("device", "VkDevice"), ("swapchain", "VkSwapchainKHR")],
+    )
+    .failable()
+    .extension(VK_EXT_FULL_SCREEN_EXCLUSIVE)
+    .into_element(),
+    Command::new(
+        "ReleaseFullScreenExclusiveMode",
+        &[("device", "VkDevice"), ("swapchain", "VkSwapchainKHR")],
+    )
+    .failable()
+    .extension(VK_EXT_FULL_SCREEN_EXCLUSIVE)
+    .into_element(),
+    // VK_EXT_full_screen_exclusive - platform extender
+    Struct::typed(
+        "SurfaceFullScreenExclusiveWin32Info",
+        "SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO",
+        VK_EXT_FULL_SCREEN_EXCLUSIVE.ext_enum(1) as _,
+        StructUsage::Source,
+        &[Struct::member("hmonitor", "windows::Win32::Graphics::Gdi::HMONITOR")],
+    )
+    .extensions(&[VK_EXT_FULL_SCREEN_EXCLUSIVE])
+    .available_condition("feature = \"VK_KHR_win32_surface\"")
+    .into_element(),
+    Command::new(
+        "GetDeviceGroupSurfacePresentModes2",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("pSurfaceInfo", "*const VkPhysicalDeviceSurfaceInfo2KHR"),
+            ("pModes", "*mut VkDeviceGRoupPresentModeFlagsKHR"),
+        ],
+    )
+    .failable()
+    .extension(VK_EXT_FULL_SCREEN_EXCLUSIVE)
+    .extra_requirements(&["feature = \"VK_KHR_device_group\""])
+    .into_element(),
+    // VK_AMD_shader_info
+    VK_AMD_SHADER_INFO.header_constants().into_element(),
+    Enum::new(
+        "ShaderInfoType",
+        "SHADER_INFO_TYPE",
+        &[
+            Enum::member("STATISTICS", 0).extension(VK_AMD_SHADER_INFO),
+            Enum::member("BINARY", 1).extension(VK_AMD_SHADER_INFO),
+            Enum::member("DISASSEMBLY", 2).extension(VK_AMD_SHADER_INFO),
+        ],
+    )
+    .extension(VK_AMD_SHADER_INFO)
+    .into_element(),
+    Struct::new(
+        "ShaderResourceUsage",
+        &[
+            Struct::member("numUsageVgprs", "u32"),
+            Struct::member("numUsedSgprs", "u32"),
+            Struct::member("ldsSizePerLocalWorkGroup", "u32"),
+            Struct::member("ldsUsageSizeInBytes", "usize"),
+            Struct::member("scratchMemUsageInBytes", "usize"),
+        ],
+    )
+    .extensions(&[VK_AMD_SHADER_INFO])
+    .into_element(),
+    Struct::new(
+        "ShaderStatisticsInfo",
+        &[
+            Struct::member("shaderStageMask", "VkShaderStageFlags"),
+            Struct::member("resourceUsage", "VkShaderResourceUsageAMD"),
+            Struct::member("numPhysicalVgprs", "u32"),
+            Struct::member("numPhysicalSgprs", "u32"),
+            Struct::member("numAvailableVgprs", "u32"),
+            Struct::member("numAvailableSgprs", "u32"),
+            Struct::member("computeWorkGroupSize", "[u32; 3]"),
+        ],
+    )
+    .extensions(&[VK_AMD_SHADER_INFO])
+    .into_element(),
+    Command::new(
+        "GetShaderInfo",
+        &[
+            ("device", "VkDevice"),
+            ("pipeline", "VkPipeline"),
+            ("shaderStage", "VkShaderStageFlags"),
+            ("infoType", "VkShaderInfoTypeAMD"),
+            ("pInfoSize", "*mut usize"),
+            ("pInfo", "*mut core::ffi::c_void"),
+        ],
+    )
+    .failable()
+    .extension(VK_AMD_SHADER_INFO)
     .into_element(),
 ];
