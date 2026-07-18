@@ -1898,6 +1898,7 @@ pub struct Extension<'s> {
     pub revision: usize,
     /// Registered Extension Number
     pub number: i32,
+    pub promoted_since: &'s str,
 }
 impl<'s> Extension<'s> {
     pub const fn new(tag: &'s str, name: &'s str, revision: usize, number: i32) -> Self {
@@ -1906,6 +1907,7 @@ impl<'s> Extension<'s> {
             name,
             revision,
             number,
+            promoted_since: "",
         }
     }
 
@@ -1915,6 +1917,11 @@ impl<'s> Extension<'s> {
 
     pub const fn ext(name: &'s str, revision: usize, number: i32) -> Self {
         Self::new("EXT", name, revision, number)
+    }
+
+    pub const fn promoted(mut self, since: &'s str) -> Self {
+        self.promoted_since = since;
+        self
     }
 
     pub const fn ext_enum(&self, index: i32) -> i32 {

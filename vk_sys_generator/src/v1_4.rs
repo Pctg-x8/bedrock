@@ -16,7 +16,7 @@ const VK_KHR_MAP_MEMORY_2: &Extension = &Extension::khr("map_memory2", 1, 272);
 const VK_KHR_SHADER_SUBGROUP_ROTATE: &Extension = &Extension::khr("shader_subgroup_rotate", 2, 417);
 const VK_EXT_HOST_IMAGE_COPY: &Extension = &Extension::ext("host_image_copy", 1, 271);
 const VK_EXT_PIPELINE_PROTECTED_ACCESS: &Extension = &Extension::ext("pipeline_protected_access", 1, 467);
-const VK_EXT_PIPELINE_ROBUSTNESS: &Extension = &Extension::ext("pipeline_robustness", 1, 69);
+const VK_EXT_PIPELINE_ROBUSTNESS: &Extension = &Extension::ext("pipeline_robustness", 1, 69).promoted(VERSION);
 
 pub const ELEMENTS: &[Element] = &[
     // VK_KHR_maintenace5
