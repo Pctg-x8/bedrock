@@ -128,13 +128,3 @@ macro_rules! ExportExtensions {
 
 ExportExtensions!("VK_AMD_shader_info": shader_info_amd);
 ExportExtensions!("VK_EXT_full_screen_exclusive": full_screen_exclusive_ext);
-
-// Promoted Extensions (1.4)
-ExportExtensions!("VK_KHR_dynamic_rendering_local_read": dynamic_rendering_local_read_khr);
-ExportExtensions!("VK_KHR_index_type_uint8": index_type_uint8_khr);
-ExportExtensions!("VK_KHR_line_rasterization": line_rasterization_khr);
-ExportExtensions!("VK_KHR_map_memory2": map_memory2_khr);
-ExportExtensions!("VK_KHR_shader_subgroup_rotate": shader_subgroup_rotate_khr);
-ExportExtensions!("VK_EXT_host_image_copy": host_image_copy_ext);
-ExportExtensions!("VK_EXT_pipeline_protected_access": pipeline_protected_access_ext);
-ExportExtensions!("VK_EXT_pipeline_robustness": pipeline_robustness_ext);

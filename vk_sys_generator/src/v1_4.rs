@@ -9,6 +9,14 @@ const VK_KHR_LOAD_STORE_OP_NONE: &Extension = &Extension::khr("load_store_op_non
 const VK_KHR_SHADER_EXPECT_ASSUME: &Extension = &Extension::khr("shader_expect_assume", 1, 545);
 const VK_KHR_SHADER_FLOAT_CONTROLS2: &Extension = &Extension::khr("shader_float_controls2", 1, 529);
 const VK_KHR_PUSH_DESCRIPTOR: &Extension = &Extension::khr("push_descriptor", 1, 81);
+const VK_KHR_DYNAMIC_RENDERING_LOCAL_READ: &Extension = &Extension::khr("dynamic_rendering_local_read", 1, 233);
+const VK_KHR_INDEX_TYPE_UINT8: &Extension = &Extension::khr("index_type_uint8", 1, 534);
+const VK_KHR_LINE_RASTERIZATION: &Extension = &Extension::khr("line_rasterization", 1, 535);
+const VK_KHR_MAP_MEMORY_2: &Extension = &Extension::khr("map_memory2", 1, 272);
+const VK_KHR_SHADER_SUBGROUP_ROTATE: &Extension = &Extension::khr("shader_subgroup_rotate", 2, 417);
+const VK_EXT_HOST_IMAGE_COPY: &Extension = &Extension::ext("host_image_copy", 1, 271);
+const VK_EXT_PIPELINE_PROTECTED_ACCESS: &Extension = &Extension::ext("pipeline_protected_access", 1, 467);
+const VK_EXT_PIPELINE_ROBUSTNESS: &Extension = &Extension::ext("pipeline_robustness", 1, 69);
 
 pub const ELEMENTS: &[Element] = &[
     // VK_KHR_maintenace5
@@ -575,6 +583,629 @@ pub const ELEMENTS: &[Element] = &[
     )
     .extension(VK_KHR_PUSH_DESCRIPTOR)
     .extra_requirements(&["VK_KHR_descriptor_update_template"])
+    .promoted(VERSION)
+    .into_element(),
+    // VK_KHR_dynamic_rendering_local_read
+    VK_KHR_DYNAMIC_RENDERING_LOCAL_READ.header_constants().into_element(),
+    Enum::extending(
+        "ImageLayout",
+        "IMAGE_LAYOUT",
+        &[Enum::member(
+            "RENDERING_LOCAL_READ",
+            VK_KHR_DYNAMIC_RENDERING_LOCAL_READ.ext_enum(0) as _,
+        )
+        .extension(VK_KHR_DYNAMIC_RENDERING_LOCAL_READ)
+        .promoted(VERSION)],
+    )
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceDynamicRenderingLocalReadFeatures",
+        "PHYSICAL_DEVICE_DYNAMIC_RENDERING_LOCAL_READ_FEATURES",
+        VK_KHR_DYNAMIC_RENDERING_LOCAL_READ.ext_enum(0) as _,
+        StructUsage::Source,
+        &[Struct::member("dynamicRenderingLocalRead", TY_VK_BOOL)],
+    )
+    .extensions(&[VK_KHR_DYNAMIC_RENDERING_LOCAL_READ])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "RenderingAttachmentLocationInfo",
+        "RENDERING_ATTACHMENT_LOCATION_INFO",
+        VK_KHR_DYNAMIC_RENDERING_LOCAL_READ.ext_enum(1) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("colorAttachmentCount", "u32"),
+            Struct::member("pColorAttachmentLocations", "*const u32"),
+        ],
+    )
+    .extensions(&[VK_KHR_DYNAMIC_RENDERING_LOCAL_READ])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "RenderingInputAttachmentIndexInfo",
+        "RENDERING_INPUT_ATTACHMENT_INDEX_INFO",
+        VK_KHR_DYNAMIC_RENDERING_LOCAL_READ.ext_enum(2) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("colorAttachmentCount", "u32"),
+            Struct::member("pColorAttachmentInputIndices", "*const u32"),
+            Struct::member("pDepthInputAttachmentIndex", "*const u32"),
+            Struct::member("pStencilInputAttachmentIndex", "*const u32"),
+        ],
+    )
+    .extensions(&[VK_KHR_DYNAMIC_RENDERING_LOCAL_READ])
+    .promoted(VERSION)
+    .into_element(),
+    Command::inst(
+        "SetRenderingAttachmentLocations",
+        &[("pLocationInfo", "*const VkRenderingAttachmentLocationInfoKHR")],
+    )
+    .extension(VK_KHR_DYNAMIC_RENDERING_LOCAL_READ)
+    .promoted(VERSION)
+    .into_element(),
+    Command::inst(
+        "SetRenderingInputAttachmentIndices",
+        &[(
+            "pInputAttachmentIndexInfo",
+            "*const VkRenderingInputAttachmentIndexInfoKHR",
+        )],
+    )
+    .extension(VK_KHR_DYNAMIC_RENDERING_LOCAL_READ)
+    .promoted(VERSION)
+    .into_element(),
+    // VK_KHR_index_type_uint8
+    VK_KHR_INDEX_TYPE_UINT8.header_constants().into_element(),
+    Enum::extending(
+        "IndexType",
+        "INDEX_TYPE",
+        &[Enum::member("UINT8", vk_ext_enum(266, 0) as _)
+            .extension(VK_KHR_INDEX_TYPE_UINT8)
+            .promoted(VERSION)],
+    )
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceIndexTypeUint8Features",
+        "PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES",
+        vk_ext_enum(266, 0) as _,
+        StructUsage::Both,
+        &[Struct::member("indexTypeUint8", TY_VK_BOOL)],
+    )
+    .extensions(&[VK_KHR_INDEX_TYPE_UINT8])
+    .promoted(VERSION)
+    .into_element(),
+    // VK_KHR_line_rasterization
+    VK_KHR_LINE_RASTERIZATION.header_constants().into_element(),
+    Enum::new(
+        "LineRasterizationMode",
+        "LINE_RASTERIZATION_MODE",
+        &[
+            Enum::member("DEFAULT", 0)
+                .extension(VK_KHR_LINE_RASTERIZATION)
+                .promoted(VERSION),
+            Enum::member("RECTANGULAR", 1)
+                .extension(VK_KHR_LINE_RASTERIZATION)
+                .promoted(VERSION),
+            Enum::member("BRESENHAM", 2)
+                .extension(VK_KHR_LINE_RASTERIZATION)
+                .promoted(VERSION),
+            Enum::member("RECTANGULAR_SMOOTH", 3)
+                .extension(VK_KHR_LINE_RASTERIZATION)
+                .promoted(VERSION),
+        ],
+    )
+    .extension(VK_KHR_LINE_RASTERIZATION)
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceLineRasterizationFeatures",
+        "PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES",
+        VK_KHR_LINE_RASTERIZATION.ext_enum(0) as _,
+        StructUsage::Both,
+        &[
+            Struct::member("rectangularLines", TY_VK_BOOL),
+            Struct::member("bresenhamLines", TY_VK_BOOL),
+            Struct::member("smoothLines", TY_VK_BOOL),
+            Struct::member("stippledRectangularLines", TY_VK_BOOL),
+            Struct::member("stippledBresenhamLines", TY_VK_BOOL),
+            Struct::member("stippledSmoothLines", TY_VK_BOOL),
+        ],
+    )
+    .extensions(&[VK_KHR_LINE_RASTERIZATION])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceLineRasterizationProperties",
+        "PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES",
+        VK_KHR_LINE_RASTERIZATION.ext_enum(2) as _,
+        StructUsage::Sink,
+        &[Struct::member("lineSubPixelPrecisionBits", "u32")],
+    )
+    .extensions(&[VK_KHR_LINE_RASTERIZATION])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "PipelineRasterizationLineStateCreateInfo",
+        "PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO",
+        VK_KHR_LINE_RASTERIZATION.ext_enum(1) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("lineRasterizationMode", "VkLineRAsterizationModeKHR"),
+            Struct::member("stippledLineEnable", TY_VK_BOOL),
+            Struct::member("lineStippleFactor", "u32"),
+            Struct::member("lineStippledPattern", "u16"),
+        ],
+    )
+    .extensions(&[VK_KHR_LINE_RASTERIZATION])
+    .promoted(VERSION)
+    .into_element(),
+    Command::inst(
+        "SetLineStipple",
+        &[("lineStippleFactor", "u32"), ("lineStipplePattern", "u16")],
+    )
+    .extension(VK_KHR_LINE_RASTERIZATION)
+    .promoted(VERSION)
+    .into_element(),
+    // VK_KHR_map_memory2
+    VK_KHR_MAP_MEMORY_2.header_constants().into_element(),
+    Bitmask::new(
+        "MemoryUnmapFlags",
+        "MemoryUnmapFlagBits",
+        "MEMORY_UNMAP",
+        &[Bitmask::entry("RESERVE", 0)
+            .extension(VK_KHR_MAP_MEMORY_2)
+            .promoted(VERSION)],
+    )
+    .extension(VK_KHR_MAP_MEMORY_2)
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "MemoryMapInfo",
+        "MEMORY_MAP_INFO",
+        VK_KHR_MAP_MEMORY_2.ext_enum(0) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("flags", "VkMemoryUnmapFlagsKHR"),
+            Struct::member("memory", "VkDeviceMemory"),
+        ],
+    )
+    .extensions(&[VK_KHR_MAP_MEMORY_2])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "MemoryUnmapInfo",
+        "MEMORY_UNMAP_INFO",
+        VK_KHR_MAP_MEMORY_2.ext_enum(1) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("flags", "VkMemoryUnmapFlagsKHR"),
+            Struct::member("memory", "VkDeviceMemory"),
+        ],
+    )
+    .extensions(&[VK_KHR_MAP_MEMORY_2])
+    .promoted(VERSION)
+    .into_element(),
+    Command::new(
+        "MapMemory2",
+        &[
+            ("device", "VkDevice"),
+            ("pMemoryMapInfo", "*const VkMemoryMapInfoKHR"),
+            ("ppData", "*mut *mut core::ffi::c_void"),
+        ],
+    )
+    .failable()
+    .extension(VK_KHR_MAP_MEMORY_2)
+    .promoted(VERSION)
+    .into_element(),
+    Command::new(
+        "UnmapMemory2",
+        &[
+            ("device", "VkDevice"),
+            ("pMemoryUnmapInfo", "*const VkMemoryUnmapInfoKHR"),
+        ],
+    )
+    .failable()
+    .extension(VK_KHR_MAP_MEMORY_2)
+    .promoted(VERSION)
+    .into_element(),
+    // VK_KHR_shader_subgroup_rotate
+    VK_KHR_SHADER_SUBGROUP_ROTATE.header_constants().into_element(),
+    Bitmask::extending(
+        "SubgroupFeatureFlagBits",
+        "SUBGROUP_FEATURE",
+        &[
+            Bitmask::entry("ROTATE", 9)
+                .extension(VK_KHR_SHADER_SUBGROUP_ROTATE)
+                .promoted(VERSION),
+            Bitmask::entry("ROTATE_CLUSTERED", 10)
+                .extension(VK_KHR_SHADER_SUBGROUP_ROTATE)
+                .promoted(VERSION),
+        ],
+    )
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceShaderSubgroupRotateFeatures",
+        "PHYSICAL_DEVICE_SHADER_SUBGROUP_ROTATE_FEATURES",
+        VK_KHR_SHADER_SUBGROUP_ROTATE.ext_enum(0) as _,
+        StructUsage::Both,
+        &[
+            Struct::member("shaderSubgroupRotate", TY_VK_BOOL),
+            Struct::member("shaderSubgroupRotateClustered", TY_VK_BOOL),
+        ],
+    )
+    .extensions(&[VK_KHR_SHADER_SUBGROUP_ROTATE])
+    .promoted(VERSION)
+    .into_element(),
+    // VK_EXT_host_image_copy
+    VK_EXT_HOST_IMAGE_COPY.header_constants().into_element(),
+    Bitmask::extending(
+        "FormatFeatureFlagBits2",
+        "FORMAT_FEATURE_2",
+        &[Bitmask::entry("HOST_IMAGE_TRANSFER", 34)
+            .extension(VK_EXT_HOST_IMAGE_COPY)
+            .promoted(VERSION)],
+    )
+    .into_element(),
+    Bitmask::extending(
+        "ImageUsageFlagBits",
+        "IMAGE_USAGE",
+        &[Bitmask::entry("HOST_TRANSFER", 22)
+            .extension(VK_EXT_HOST_IMAGE_COPY)
+            .promoted(VERSION)],
+    )
+    .into_element(),
+    Bitmask::new(
+        "HostImageCopyFlags",
+        "HostImageCopyFlagBits",
+        "HOST_IMAGE_COPY",
+        &[Bitmask::entry("MEMCPY", 0)
+            .extension(VK_EXT_HOST_IMAGE_COPY)
+            .promoted(VERSION)],
+    )
+    .extension(VK_EXT_HOST_IMAGE_COPY)
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceHostImageCopyFeatures",
+        "PHYSICAL_DEVICE_HOST_IMAGE_COPY_FEATURES",
+        VK_EXT_HOST_IMAGE_COPY.ext_enum(0) as _,
+        StructUsage::Both,
+        &[Struct::member("hostImageCopy", TY_VK_BOOL)],
+    )
+    .extensions(&[VK_EXT_HOST_IMAGE_COPY])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceHostImageCopyProperites",
+        "PHYSICAL_DEVICE_HOST_IMAGE_COPY_PROPERTIES",
+        VK_EXT_HOST_IMAGE_COPY.ext_enum(1) as _,
+        StructUsage::Sink,
+        &[
+            Struct::member("copySrcLayoutCount", "u32"),
+            Struct::member("pCopySrcLayouts", "*mut VkImageLayout"),
+            Struct::member("copyDstLayoutCount", "u32"),
+            Struct::member("pCopyDstLayouts", "*mut VkImageLayout"),
+            Struct::member("optimalTilingLayoutUUID", "[u8; VK_UUID_SIZE]"),
+            Struct::member("identicalMemoryTypeRequirements", TY_VK_BOOL),
+        ],
+    )
+    .extensions(&[VK_EXT_HOST_IMAGE_COPY])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "MemoryToImageCopy",
+        "MEMORY_TO_IMAGE_COPY",
+        VK_EXT_HOST_IMAGE_COPY.ext_enum(2) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("pHostPointer", "*const core::ffi::c_void"),
+            Struct::member("memoryRowLength", "u32"),
+            Struct::member("memoryImageHeight", "u32"),
+            Struct::member("imageSubresource", "VkImageSubresourceLayers"),
+            Struct::member("imageOffset", "VkOffset3D"),
+            Struct::member("imageExtent", "VkExtent3D"),
+        ],
+    )
+    .extensions(&[VK_EXT_HOST_IMAGE_COPY])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "ImageToMemoryCopy",
+        "IMAGE_TO_MEMORY_COPY",
+        VK_EXT_HOST_IMAGE_COPY.ext_enum(3) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("pHostPointer", "*mut core::ffi::c_void"),
+            Struct::member("memoryRowLength", "u32"),
+            Struct::member("memoryImageHeight", "u32"),
+            Struct::member("imageSubresource", "VkImageSubresourceLayers"),
+            Struct::member("imageOffset", "VkOffset3D"),
+            Struct::member("imageExtent", "VkExtent3D"),
+        ],
+    )
+    .extensions(&[VK_EXT_HOST_IMAGE_COPY])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "CopyMemoryToImageInfo",
+        "COPY_MEMORY_TO_IMAGE_INFO",
+        VK_EXT_HOST_IMAGE_COPY.ext_enum(5) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("flags", "VkHostImageCopyFlagsEXT"),
+            Struct::member("dstImage", "VkImage"),
+            Struct::member("dstImageLayout", "VkImageLayout"),
+            Struct::member("regionCount", "u32"),
+            Struct::member("pRegions", "*const VkMemoryToImageCopyEXT"),
+        ],
+    )
+    .extensions(&[VK_EXT_HOST_IMAGE_COPY])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "CopyImageToMemoryInfo",
+        "COPY_IMAGE_TO_MEMORY_INFO",
+        VK_EXT_HOST_IMAGE_COPY.ext_enum(4) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("flags", "VkHostImageCopyFlagsEXT"),
+            Struct::member("srcImage", "VkImage"),
+            Struct::member("srcImageLayout", "VkImageLayout"),
+            Struct::member("regionCount", "u32"),
+            Struct::member("pRegions", "*const VkImageToMemoryCopyEXT"),
+        ],
+    )
+    .extensions(&[VK_EXT_HOST_IMAGE_COPY])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "CopyImageToImageInfo",
+        "COPY_IMAGE_TO_IMAGE_INFO",
+        VK_EXT_HOST_IMAGE_COPY.ext_enum(7) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("flags", "VkHostImageCopyFlagsEXT"),
+            Struct::member("srcImage", "VkImage"),
+            Struct::member("srcImageLayout", "VkImageLayout"),
+            Struct::member("dstImage", "VkImage"),
+            Struct::member("dstImageLayout", "VkImageLayout"),
+            Struct::member("regionCount", "u32"),
+            Struct::member("pRegions", "*const VkImageCopy2KHR"),
+        ],
+    )
+    .extensions(&[VK_EXT_HOST_IMAGE_COPY])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "HostImageLayoutTransitionInfo",
+        "HOST_IMAGE_LAYOUT_TRANSITION",
+        VK_EXT_HOST_IMAGE_COPY.ext_enum(6) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("image", "VkImage"),
+            Struct::member("oldLayout", "VkImageLayout"),
+            Struct::member("newLayout", "VkImageLayout"),
+            Struct::member("subresourceRange", "VkImageSubresourceRange"),
+        ],
+    )
+    .extensions(&[VK_EXT_HOST_IMAGE_COPY])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "SubresourceHostMemcpySize",
+        "SUBRESOURCE_HOST_MEMCPY_SIZE",
+        VK_EXT_HOST_IMAGE_COPY.ext_enum(8) as _,
+        StructUsage::Sink,
+        &[Struct::member("size", "VkDeviceSize")],
+    )
+    .extensions(&[VK_EXT_HOST_IMAGE_COPY])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "HostImageCopyDevicePerformanceQuery",
+        "HOST_IMAGE_COPY_DEVICE_PERFORMANCE_QUERY",
+        VK_EXT_HOST_IMAGE_COPY.ext_enum(9) as _,
+        StructUsage::Sink,
+        &[
+            Struct::member("optimalDeviceAccess", TY_VK_BOOL),
+            Struct::member("identicalMemoryLayout", TY_VK_BOOL),
+        ],
+    )
+    .extensions(&[VK_EXT_HOST_IMAGE_COPY])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "SubresourceLayout2",
+        "SURESOURCE_LAYOUT_2",
+        vk_ext_enum(339, 2) as _,
+        StructUsage::Both,
+        &[Struct::member("subresourceLayout", "VkSubresourceLayout")],
+    )
+    .extensions(&[VK_EXT_HOST_IMAGE_COPY])
+    .promoted(VERSION)
+    .available_condition("not(feature = \"VK_KHR_maintenance5\")")
+    .into_element(),
+    Struct::typed(
+        "ImageSubresource2",
+        "IMAGE_SUBRESOURCE_2",
+        vk_ext_enum(339, 3) as _,
+        StructUsage::Both,
+        &[Struct::member("imageSubresource", "VkImageSubresource")],
+    )
+    .extensions(&[VK_EXT_HOST_IMAGE_COPY])
+    .promoted(VERSION)
+    .available_condition("not(feature = \"VK_KHR_maintenance5\")")
+    .into_element(),
+    Command::new(
+        "CopyMemoryToImage",
+        &[
+            ("device", "VkDevice"),
+            ("pCopyMemoryToImageInfo", "*const VkCopyMemoryToImageInfoEXT"),
+        ],
+    )
+    .failable()
+    .extension(VK_EXT_HOST_IMAGE_COPY)
+    .promoted(VERSION)
+    .into_element(),
+    Command::new(
+        "CopyImageToMemory",
+        &[
+            ("device", "VkDevice"),
+            ("pCopyImageToMemoryInfo", "*const VkCopyImageToMemoryInfoEXT"),
+        ],
+    )
+    .failable()
+    .extension(VK_EXT_HOST_IMAGE_COPY)
+    .promoted(VERSION)
+    .into_element(),
+    Command::new(
+        "CopyImageToImage",
+        &[
+            ("device", "VkDevice"),
+            ("pCopyImageToImageInfo", "*const VkCopyImageToImageInfoEXT"),
+        ],
+    )
+    .failable()
+    .extension(VK_EXT_HOST_IMAGE_COPY)
+    .promoted(VERSION)
+    .into_element(),
+    Command::new(
+        "TransitionImageLayout",
+        &[
+            ("device", "VkDevice"),
+            ("transitionCount", "u32"),
+            ("pTransitions", "*const VkHostImageLayoutTransitionInfoEXT"),
+        ],
+    )
+    .failable()
+    .extension(VK_EXT_HOST_IMAGE_COPY)
+    .promoted(VERSION)
+    .into_element(),
+    Command::new(
+        "GetImageSubresourceLayout2",
+        &[
+            ("device", "VkDevice"),
+            ("image", "VkImage"),
+            ("pSubresource", "*const VkImageSubresource2EXT"),
+            ("pLayout", "*mut VkSubresourceLayout2EXT"),
+        ],
+    )
+    .extension(VK_EXT_HOST_IMAGE_COPY)
+    .promoted(VERSION)
+    .extra_requirements(&["not(feature = \"VK_KHR_maintenance5\")"])
+    .into_element(),
+    // VK_EXT_pipeline_protected_access
+    VK_EXT_PIPELINE_PROTECTED_ACCESS.header_constants().into_element(),
+    Bitmask::extending(
+        "PipelineCreateFlagBits",
+        "PIPELINE_CREATE",
+        &[
+            Bitmask::entry("NO_PROTECTED_ACCESS", 27)
+                .extension(VK_EXT_PIPELINE_PROTECTED_ACCESS)
+                .promoted(VERSION),
+            Bitmask::entry("PROTECTED_ACCESS_ONLY", 30)
+                .extension(VK_EXT_PIPELINE_PROTECTED_ACCESS)
+                .promoted(VERSION),
+        ],
+    )
+    .into_element(),
+    Struct::typed(
+        "PhysicalDevicePipelineProtectedAccessFeatures",
+        "PHYSICAL_DEVICE_PIPELINE_PROTECTED_ACCESS_FEATURES",
+        VK_EXT_PIPELINE_PROTECTED_ACCESS.ext_enum(0) as _,
+        StructUsage::Both,
+        &[Struct::member("pipelineProtectedAccess", TY_VK_BOOL)],
+    )
+    .extensions(&[VK_EXT_PIPELINE_PROTECTED_ACCESS])
+    .promoted(VERSION)
+    .into_element(),
+    // VK_EXT_pipeline_robustness
+    VK_EXT_PIPELINE_ROBUSTNESS.header_constants().into_element(),
+    Enum::new(
+        "PipelineRobustnessBufferBehavior",
+        "PIPELINE_ROBUSTNESS_BUFFER_BEHAVIOR",
+        &[
+            Enum::member("DEVICE_DEFAULT", 0)
+                .extension(VK_EXT_PIPELINE_ROBUSTNESS)
+                .promoted(VERSION),
+            Enum::member("DISABLED", 1)
+                .extension(VK_EXT_PIPELINE_ROBUSTNESS)
+                .promoted(VERSION),
+            Enum::member("ROBUST_BUFFER_ACCESS", 2)
+                .extension(VK_EXT_PIPELINE_ROBUSTNESS)
+                .promoted(VERSION),
+            Enum::member("ROBUST_BUFFER_ACCESS_2", 3)
+                .extension(VK_EXT_PIPELINE_ROBUSTNESS)
+                .promoted(VERSION),
+        ],
+    )
+    .extension(VK_EXT_PIPELINE_PROTECTED_ACCESS)
+    .promoted(VERSION)
+    .into_element(),
+    Enum::new(
+        "PipelineRobustnessImageBehavior",
+        "PIPELINE_ROBUSTNESS_IMAGE_BEHAVIOR",
+        &[
+            Enum::member("DEVICE_DEFAULT", 0)
+                .extension(VK_EXT_PIPELINE_ROBUSTNESS)
+                .promoted(VERSION),
+            Enum::member("DISABLED", 1)
+                .extension(VK_EXT_PIPELINE_ROBUSTNESS)
+                .promoted(VERSION),
+            Enum::member("ROBUST_IMAGE_ACCESS", 2)
+                .extension(VK_EXT_PIPELINE_ROBUSTNESS)
+                .promoted(VERSION),
+            Enum::member("ROBUST_IMAGE_ACCESS_2", 3)
+                .extension(VK_EXT_PIPELINE_ROBUSTNESS)
+                .promoted(VERSION),
+        ],
+    )
+    .extension(VK_EXT_PIPELINE_PROTECTED_ACCESS)
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "PhysicalDevicePipelineRobustnessFeatures",
+        "PHYSICAL_DEVICE_PIPELINE_ROBUSTNESS_FEATURES",
+        VK_EXT_PIPELINE_ROBUSTNESS.ext_enum(1) as _,
+        StructUsage::Both,
+        &[Struct::member("pipelineRobustness", TY_VK_BOOL)],
+    )
+    .extensions(&[VK_EXT_PIPELINE_ROBUSTNESS])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "PhysicalDevicePipelineRobustnessProperties",
+        "PHYSICAL_DEVICE_PIPELINE_ROBUSTNESS_PROPERTIES",
+        VK_EXT_PIPELINE_ROBUSTNESS.ext_enum(2) as _,
+        StructUsage::Sink,
+        &[
+            Struct::member(
+                "defaultRobustnessStorageBuffers",
+                "VkPipelineRobustnessBufferBehaviorEXT",
+            ),
+            Struct::member(
+                "defaultRobustnessUniformBuffers",
+                "VkPipelineRobustnessBufferBehaviorEXT",
+            ),
+            Struct::member("defaultRobustnessVertexInputs", "VkPipelineRobustnessBufferBehaviorEXT"),
+            Struct::member("defaultRobustnessImage", "VkPipelineRobustnessImageBehaviorEXT"),
+        ],
+    )
+    .extensions(&[VK_EXT_PIPELINE_ROBUSTNESS])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "PipelineRobustnessCreateInfo",
+        "PIPELINE_ROBUSTNESS_CREATE_INFO",
+        VK_EXT_PIPELINE_ROBUSTNESS.ext_enum(0) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("storageBuffers", "VkPipelineRobustnessBufferBehaviorEXT"),
+            Struct::member("uniformBuffers", "VkPipelineRobustnessBufferBehaviorEXT"),
+            Struct::member("vertexInputs", "VkPipelineRobustnessBufferBehaviorEXT"),
+            Struct::member("images", "VkPipelineRobustnessImageBehaviorEXT"),
+        ],
+    )
+    .extensions(&[VK_EXT_PIPELINE_ROBUSTNESS])
     .promoted(VERSION)
     .into_element(),
 ];
