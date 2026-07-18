@@ -1452,7 +1452,7 @@ pub struct Command {
     version_since: Option<&'static str>,
     extension_old: Option<(&'static str, &'static str)>,
     extension: Option<&'static Extension<'static>>,
-    extra_requirements: &'static [&'static str],
+    available_condition: &'static str,
     promoted: Option<&'static str>,
 }
 impl Command {
@@ -1466,7 +1466,7 @@ impl Command {
             version_since: None,
             extension_old: None,
             extension: None,
-            extra_requirements: &[],
+            available_condition: "",
             promoted: None,
         }
     }
@@ -1481,7 +1481,7 @@ impl Command {
             version_since: None,
             extension_old: None,
             extension: None,
-            extra_requirements: &[],
+            available_condition: "",
             promoted: None,
         }
     }
@@ -1516,8 +1516,8 @@ impl Command {
         self
     }
 
-    pub const fn extra_requirements(mut self, extra_requirements: &'static [&'static str]) -> Self {
-        self.extra_requirements = extra_requirements;
+    pub const fn available_condition(mut self, cond: &'static str) -> Self {
+        self.available_condition = cond;
         self
     }
 
@@ -1574,8 +1574,8 @@ impl Command {
             writeln!(w, "#[cfg(feature = \"Allow{v}APIs\")]")?;
         }
 
-        for x in self.extra_requirements {
-            writeln!(w, "#[cfg(feature = \"{x}\")]")?;
+        if !self.available_condition.is_empty() {
+            writeln!(w, "#[cfg({})]", self.available_condition)?;
         }
 
         Ok(())

@@ -6036,7 +6036,7 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .extension_old("KHR", "device_group")
-    .extra_requirements(&["VK_KHR_surface"]),
+    .available_condition("feature = \"VK_KHR_surface\""),
     Command::new(
         "GetDeviceGroupSurfacePresentModes",
         &[
@@ -6047,7 +6047,7 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .extension_old("KHR", "device_group")
-    .extra_requirements(&["VK_KHR_surface"]),
+    .available_condition("feature = \"VK_KHR_surface\""),
     Command::new(
         "GetPhysicalDevicePresentRectangles",
         &[
@@ -6059,7 +6059,7 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .extension_old("KHR", "device_group")
-    .extra_requirements(&["VK_KHR_surface"]),
+    .available_condition("feature = \"VK_KHR_surface\""),
     Command::new(
         "AcquireNextImage2",
         &[
@@ -6070,7 +6070,7 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .extension_old("KHR", "device_group")
-    .extra_requirements(&["VK_KHR_swapchain"]),
+    .available_condition("feature = \"VK_KHR_swapchain\""),
     Command::new(
         "GetPhysicalDeviceFeatures2",
         &[

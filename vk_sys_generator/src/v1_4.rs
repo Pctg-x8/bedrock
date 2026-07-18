@@ -349,7 +349,7 @@ pub const ELEMENTS: &[Element] = &[
         &[("pPushDescriptorSetInfo", "*const VkPushDescriptorSetInfoKHR")],
     )
     .extension(VK_KHR_MAINTENANCE_6)
-    .extra_requirements(&["VK_KHR_push_descriptor"])
+    .available_condition("feature = \"VK_KHR_push_descriptor\"")
     .promoted(VERSION)
     .into_element(),
     Command::inst(
@@ -360,7 +360,7 @@ pub const ELEMENTS: &[Element] = &[
         )],
     )
     .extension(VK_KHR_MAINTENANCE_6)
-    .extra_requirements(&["VK_KHR_push_descriptor"])
+    .available_condition("feature = \"VK_KHR_push_descriptor\"")
     .promoted(VERSION)
     .into_element(),
     // VK_KHR_vertex_attribute_divisor
@@ -582,7 +582,7 @@ pub const ELEMENTS: &[Element] = &[
         ],
     )
     .extension(VK_KHR_PUSH_DESCRIPTOR)
-    .extra_requirements(&["VK_KHR_descriptor_update_template"])
+    .available_condition("feature = \"VK_KHR_descriptor_update_template\"")
     .promoted(VERSION)
     .into_element(),
     // VK_KHR_dynamic_rendering_local_read
@@ -1092,7 +1092,7 @@ pub const ELEMENTS: &[Element] = &[
     )
     .extension(VK_EXT_HOST_IMAGE_COPY)
     .promoted(VERSION)
-    .extra_requirements(&["not(feature = \"VK_KHR_maintenance5\")"])
+    .available_condition("not(feature = \"VK_KHR_maintenance5\")")
     .into_element(),
     // VK_EXT_pipeline_protected_access
     VK_EXT_PIPELINE_PROTECTED_ACCESS.header_constants().into_element(),

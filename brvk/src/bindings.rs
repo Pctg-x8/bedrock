@@ -24859,14 +24859,14 @@ impl crate::StaticCallable for PFN_vkTransitionImageLayout {
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_host_image_copy")]
-#[cfg(feature = "not(feature = "VK_KHR_maintenance5")")]
+#[cfg(not(feature = "VK_KHR_maintenance5"))]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetImageSubresourceLayout2EXT(pub unsafe extern "system" fn(device: VkDevice, image: VkImage, pSubresource: *const VkImageSubresource2EXT, pLayout: *mut VkSubresourceLayout2EXT));
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_host_image_copy")]
-#[cfg(feature = "not(feature = "VK_KHR_maintenance5")")]
+#[cfg(not(feature = "VK_KHR_maintenance5"))]
 #[rustfmt::skip]
 unsafe impl crate::PFN for PFN_vkGetImageSubresourceLayout2EXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetImageSubresourceLayout2EXT";
@@ -24878,7 +24878,7 @@ unsafe impl crate::PFN for PFN_vkGetImageSubresourceLayout2EXT {
 }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_host_image_copy")]
-#[cfg(feature = "not(feature = "VK_KHR_maintenance5")")]
+#[cfg(not(feature = "VK_KHR_maintenance5"))]
 #[rustfmt::skip]
 unsafe impl crate::FromPtr for PFN_vkGetImageSubresourceLayout2EXT {
     #[inline(always)]
