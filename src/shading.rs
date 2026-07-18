@@ -1230,7 +1230,7 @@ pub enum LineRasterizationMode {
 /// Structure specifying parameters of a newly created pipeline line rasterization state
 #[cfg(feature = "VK_KHR_line_rasterization")]
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone)]
 pub struct PipelineRasterizationLineStateCreateInfo<'d>(
     brvk::VkPipelineRasterizationLineStateCreateInfoKHR,
     core::marker::PhantomData<Option<&'d dyn brvk::VulkanStructure>>,

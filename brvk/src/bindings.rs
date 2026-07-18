@@ -23710,7 +23710,7 @@ pub struct VkPipelineRasterizationLineStateCreateInfoKHR {
     pub lineRasterizationMode: VkLineRasterizationModeKHR,
     pub stippledLineEnable: VkBool32,
     pub lineStippleFactor: u32,
-    pub lineStippledPattern: u16,
+    pub lineStipplePattern: u16,
 }
 #[cfg(feature = "VK_KHR_line_rasterization")]
 #[rustfmt::skip]

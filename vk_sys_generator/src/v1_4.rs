@@ -732,7 +732,7 @@ pub const ELEMENTS: &[Element] = &[
             Struct::member("lineRasterizationMode", "VkLineRasterizationModeKHR"),
             Struct::member("stippledLineEnable", TY_VK_BOOL),
             Struct::member("lineStippleFactor", "u32"),
-            Struct::member("lineStippledPattern", "u16"),
+            Struct::member("lineStipplePattern", "u16"),
         ],
     )
     .extensions(&[VK_KHR_LINE_RASTERIZATION])
