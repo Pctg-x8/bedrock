@@ -1734,6 +1734,10 @@ impl Command {
                 writeln!(w, "    #[cfg(feature = \"Allow{v}APIs\")]")?;
             }
 
+            if !self.available_condition.is_empty() {
+                writeln!(w, "#[cfg({})]", self.available_condition)?;
+            }
+
             if let Some(Extension { tag, .. }) = self.extension {
                 if self.is_command_buffer_inst {
                     write!(w, "    pub fn vkCmd{}{tag}(", self.name)?;
@@ -1770,6 +1774,9 @@ impl Command {
 
         if let Some(p) = self.promoted {
             writeln!(w, "    #[cfg(feature = \"Allow{p}APIs\")]")?;
+            if !self.available_condition.is_empty() {
+                writeln!(w, "#[cfg({})]", self.available_condition)?;
+            }
 
             match self.is_command_buffer_inst {
                 false => write!(w, "    pub fn vk{}(", self.name)?,

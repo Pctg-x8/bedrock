@@ -31486,12 +31486,15 @@ unsafe extern "system" {
     #[cfg(feature = "Allow1_4APIs")]
     pub fn vkCmdPushConstants2(commandBuffer: VkCommandBuffer, pPushConstantsInfo: *const VkPushConstantsInfoKHR);
     #[cfg(feature = "Allow1_4APIs")]
+#[cfg(feature = "VK_KHR_push_descriptor")]
     pub fn vkCmdPushDescriptorSet2(commandBuffer: VkCommandBuffer, pPushDescriptorSetInfo: *const VkPushDescriptorSetInfoKHR);
     #[cfg(feature = "Allow1_4APIs")]
+#[cfg(feature = "VK_KHR_push_descriptor")]
     pub fn vkCmdPushDescriptorSetWithTemplate2(commandBuffer: VkCommandBuffer, pPushDescriptorSetWithTemplateInfo: *const VkPushDescriptorSetWithTemplateInfoKHR);
     #[cfg(feature = "Allow1_4APIs")]
     pub fn vkCmdPushDescriptorSet(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, layout: VkPipelineLayout, set: u32, descriptorWriteCount: u32, pDescriptorWrites: *const VkWriteDescriptorSet);
     #[cfg(feature = "Allow1_4APIs")]
+#[cfg(feature = "VK_KHR_descriptor_update_template")]
     pub fn vkCmdPushDescriptorSetWithTemplate(commandBuffer: VkCommandBuffer, descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR, layout: VkPipelineLayout, set: u32, pData: *const core::ffi::c_void);
     #[cfg(feature = "Allow1_4APIs")]
     pub fn vkCmdSetRenderingAttachmentLocations(commandBuffer: VkCommandBuffer, pLocationInfo: *const VkRenderingAttachmentLocationInfoKHR);
@@ -31512,6 +31515,7 @@ unsafe extern "system" {
     #[cfg(feature = "Allow1_4APIs")]
     pub fn vkTransitionImageLayout(device: VkDevice, transitionCount: u32, pTransitions: *const VkHostImageLayoutTransitionInfoEXT) -> VkResult;
     #[cfg(feature = "Allow1_4APIs")]
+#[cfg(not(feature = "VK_KHR_maintenance5"))]
     pub fn vkGetImageSubresourceLayout2(device: VkDevice, image: VkImage, pSubresource: *const VkImageSubresource2EXT, pLayout: *mut VkSubresourceLayout2EXT);
     #[cfg(feature = "VK_NN_vi_surface")]
     pub fn vkCreateViSurfaceNN(instance: VkInstance, pCreateInfo: *const VkViSurfaceCreateInfoNN, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
