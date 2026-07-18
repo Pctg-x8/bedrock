@@ -22570,12 +22570,14 @@ unsafe impl crate::FromPtr for PFN_vkCmdPushDescriptorSet2KHR {
 }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_4APIs")]
+#[cfg(feature = "VK_KHR_push_descriptor")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdPushDescriptorSet2(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pPushDescriptorSetInfo: *const VkPushDescriptorSetInfoKHR));
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_4APIs")]
+#[cfg(feature = "VK_KHR_push_descriptor")]
 #[rustfmt::skip]
 unsafe impl crate::PFN for PFN_vkCmdPushDescriptorSet2 {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdPushDescriptorSet2";
@@ -22587,6 +22589,7 @@ unsafe impl crate::PFN for PFN_vkCmdPushDescriptorSet2 {
 }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_4APIs")]
+#[cfg(feature = "VK_KHR_push_descriptor")]
 #[rustfmt::skip]
 unsafe impl crate::FromPtr for PFN_vkCmdPushDescriptorSet2 {
     #[inline(always)]
@@ -22597,6 +22600,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdPushDescriptorSet2 {
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_4APIs")]
+#[cfg(feature = "VK_KHR_push_descriptor")]
 #[rustfmt::skip]
 impl crate::StaticCallable for PFN_vkCmdPushDescriptorSet2 {
     const STATIC: Self = Self(vkCmdPushDescriptorSet2);
@@ -22633,12 +22637,14 @@ unsafe impl crate::FromPtr for PFN_vkCmdPushDescriptorSetWithTemplate2KHR {
 }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_4APIs")]
+#[cfg(feature = "VK_KHR_push_descriptor")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdPushDescriptorSetWithTemplate2(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pPushDescriptorSetWithTemplateInfo: *const VkPushDescriptorSetWithTemplateInfoKHR));
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_4APIs")]
+#[cfg(feature = "VK_KHR_push_descriptor")]
 #[rustfmt::skip]
 unsafe impl crate::PFN for PFN_vkCmdPushDescriptorSetWithTemplate2 {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdPushDescriptorSetWithTemplate2";
@@ -22650,6 +22656,7 @@ unsafe impl crate::PFN for PFN_vkCmdPushDescriptorSetWithTemplate2 {
 }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_4APIs")]
+#[cfg(feature = "VK_KHR_push_descriptor")]
 #[rustfmt::skip]
 unsafe impl crate::FromPtr for PFN_vkCmdPushDescriptorSetWithTemplate2 {
     #[inline(always)]
@@ -22660,6 +22667,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdPushDescriptorSetWithTemplate2 {
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_4APIs")]
+#[cfg(feature = "VK_KHR_push_descriptor")]
 #[rustfmt::skip]
 impl crate::StaticCallable for PFN_vkCmdPushDescriptorSetWithTemplate2 {
     const STATIC: Self = Self(vkCmdPushDescriptorSetWithTemplate2);
@@ -23239,12 +23247,14 @@ unsafe impl crate::FromPtr for PFN_vkCmdPushDescriptorSetWithTemplateKHR {
 }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_4APIs")]
+#[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdPushDescriptorSetWithTemplate(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR, layout: VkPipelineLayout, set: u32, pData: *const core::ffi::c_void));
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_4APIs")]
+#[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[rustfmt::skip]
 unsafe impl crate::PFN for PFN_vkCmdPushDescriptorSetWithTemplate {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdPushDescriptorSetWithTemplate";
@@ -23256,6 +23266,7 @@ unsafe impl crate::PFN for PFN_vkCmdPushDescriptorSetWithTemplate {
 }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_4APIs")]
+#[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[rustfmt::skip]
 unsafe impl crate::FromPtr for PFN_vkCmdPushDescriptorSetWithTemplate {
     #[inline(always)]
@@ -23266,6 +23277,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdPushDescriptorSetWithTemplate {
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_4APIs")]
+#[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[rustfmt::skip]
 impl crate::StaticCallable for PFN_vkCmdPushDescriptorSetWithTemplate {
     const STATIC: Self = Self(vkCmdPushDescriptorSetWithTemplate);
@@ -24888,12 +24900,14 @@ unsafe impl crate::FromPtr for PFN_vkGetImageSubresourceLayout2EXT {
 }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_4APIs")]
+#[cfg(not(feature = "VK_KHR_maintenance5"))]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetImageSubresourceLayout2(pub unsafe extern "system" fn(device: VkDevice, image: VkImage, pSubresource: *const VkImageSubresource2EXT, pLayout: *mut VkSubresourceLayout2EXT));
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_4APIs")]
+#[cfg(not(feature = "VK_KHR_maintenance5"))]
 #[rustfmt::skip]
 unsafe impl crate::PFN for PFN_vkGetImageSubresourceLayout2 {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetImageSubresourceLayout2";
@@ -24905,6 +24919,7 @@ unsafe impl crate::PFN for PFN_vkGetImageSubresourceLayout2 {
 }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_4APIs")]
+#[cfg(not(feature = "VK_KHR_maintenance5"))]
 #[rustfmt::skip]
 unsafe impl crate::FromPtr for PFN_vkGetImageSubresourceLayout2 {
     #[inline(always)]
@@ -24915,6 +24930,7 @@ unsafe impl crate::FromPtr for PFN_vkGetImageSubresourceLayout2 {
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_4APIs")]
+#[cfg(not(feature = "VK_KHR_maintenance5"))]
 #[rustfmt::skip]
 impl crate::StaticCallable for PFN_vkGetImageSubresourceLayout2 {
     const STATIC: Self = Self(vkGetImageSubresourceLayout2);

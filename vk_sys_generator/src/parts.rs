@@ -1665,6 +1665,9 @@ impl Command {
 
             writeln!(w, "#[cfg(feature = \"Implements\")]")?;
             writeln!(w, "#[cfg(feature = \"Allow{p}APIs\")]")?;
+            if !self.available_condition.is_empty() {
+                writeln!(w, "#[cfg({})]", self.available_condition)?;
+            }
             writeln!(w, "#[repr(transparent)]")?;
             writeln!(w, "#[derive(Debug, Clone, Copy)]")?;
             writeln!(w, "#[rustfmt::skip]")?;
@@ -1690,15 +1693,24 @@ impl Command {
 
             writeln!(w, "#[cfg(feature = \"Implements\")]")?;
             writeln!(w, "#[cfg(feature = \"Allow{p}APIs\")]")?;
+            if !self.available_condition.is_empty() {
+                writeln!(w, "#[cfg({})]", self.available_condition)?;
+            }
             Self::emit_pfn(w, &type_name, &org_fn_name)?;
             writeln!(w, "#[cfg(feature = \"Implements\")]")?;
             writeln!(w, "#[cfg(feature = \"Allow{p}APIs\")]")?;
+            if !self.available_condition.is_empty() {
+                writeln!(w, "#[cfg({})]", self.available_condition)?;
+            }
             Self::emit_from_ptr(w, &type_name)?;
 
             // promoted symbols always static callable
             writeln!(w, "#[cfg(feature = \"Implements\")]")?;
             w.write_all(b"#[cfg(not(feature = \"DynamicLoaded\"))]\n")?;
             writeln!(w, "#[cfg(feature = \"Allow{p}APIs\")]")?;
+            if !self.available_condition.is_empty() {
+                writeln!(w, "#[cfg({})]", self.available_condition)?;
+            }
             writeln!(w, "#[rustfmt::skip]")?;
             writeln!(w, "impl crate::StaticCallable for {type_name} {{")?;
             writeln!(w, "    const STATIC: Self = Self({org_fn_name});")?;
