@@ -1,5 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
+use crate::rs_item::{CompilationCondition, FeatureName, FnSymbol, FunctionStub, StaticCallableImpl, Type};
+
 pub const TY_VK_BOOL: &str = "VkBool32";
 
 pub const fn ex_khr(name: &'static str) -> (&'static str, &'static str) {
@@ -1642,12 +1644,52 @@ impl Command {
         Self::emit_from_ptr(w, &type_name)?;
 
         if self.static_callable {
-            w.write_all(b"#[cfg(not(feature = \"DynamicLoaded\"))]\n")?;
-            self.emit_feature_gate(w)?;
-            writeln!(w, "#[rustfmt::skip]")?;
-            writeln!(w, "impl crate::StaticCallable for {type_name} {{")?;
-            writeln!(w, "    const STATIC: Self = Self({org_fn_name});")?;
-            writeln!(w, "}}")?;
+            let mut cond = CompilationCondition::Empty;
+            if let Some((tag, name)) = self.extension_old {
+                cond = cond.and(CompilationCondition::Feature(FeatureName::VulkanExt { tag, name }));
+            }
+            if let Some(Extension { tag, name, .. }) = self.extension {
+                cond = cond.and(CompilationCondition::Feature(FeatureName::VulkanExt { tag, name }));
+            }
+            if let Some(v) = self.version_since {
+                cond = cond.and(CompilationCondition::Feature(FeatureName::AllowApiVersion(v)));
+            }
+            // if !self.available_condition.is_empty() {
+            //     cond = cond.and(CompilationCondition::Feature(FeatureName::Raw(
+            //         self.available_condition,
+            //     )));
+            // }
+
+            StaticCallableImpl {
+                compilation_condition: cond,
+                fn_name: if let Some(Extension { tag, .. }) = self.extension {
+                    if self.is_command_buffer_inst {
+                        FnSymbol::CmdSuffixed {
+                            stem: self.name,
+                            suffix: tag,
+                        }
+                    } else {
+                        FnSymbol::Suffixed {
+                            stem: self.name,
+                            suffix: tag,
+                        }
+                    }
+                } else {
+                    match (self.is_command_buffer_inst, self.extension_old) {
+                        (false, None) => FnSymbol::Raw(self.name),
+                        (true, None) => FnSymbol::Cmd(self.name),
+                        (false, Some((tag, _))) => FnSymbol::Suffixed {
+                            stem: self.name,
+                            suffix: tag,
+                        },
+                        (true, Some((tag, _))) => FnSymbol::CmdSuffixed {
+                            stem: self.name,
+                            suffix: tag,
+                        },
+                    }
+                },
+            }
+            .emit(w)?;
         }
 
         if let Some(p) = self.promoted {
@@ -1705,104 +1747,111 @@ impl Command {
             Self::emit_from_ptr(w, &type_name)?;
 
             // promoted symbols always static callable
-            writeln!(w, "#[cfg(feature = \"Implements\")]")?;
-            w.write_all(b"#[cfg(not(feature = \"DynamicLoaded\"))]\n")?;
-            writeln!(w, "#[cfg(feature = \"Allow{p}APIs\")]")?;
-            if !self.available_condition.is_empty() {
-                writeln!(w, "#[cfg({})]", self.available_condition)?;
+            StaticCallableImpl {
+                compilation_condition: CompilationCondition::Feature(FeatureName::AllowApiVersion(p)),
+                fn_name: match self.is_command_buffer_inst {
+                    false => FnSymbol::Raw(self.name),
+                    true => FnSymbol::Cmd(self.name),
+                },
             }
-            writeln!(w, "#[rustfmt::skip]")?;
-            writeln!(w, "impl crate::StaticCallable for {type_name} {{")?;
-            writeln!(w, "    const STATIC: Self = Self({org_fn_name});")?;
-            writeln!(w, "}}")?;
+            .emit(w)?;
         }
 
         Ok(())
     }
 
-    pub fn emit_static_symbol(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
+    pub fn static_function_stubs(&self, mut cb: impl FnMut(FunctionStub<'static, FunctionStubArgsIterator<'static>>)) {
         if self.static_callable {
+            let mut cond = CompilationCondition::Empty;
             if let Some((tag, name)) = self.extension_old {
-                writeln!(w, "    #[cfg(feature = \"VK_{tag}_{name}\")]")?;
+                cond = cond.and(CompilationCondition::Feature(FeatureName::VulkanExt { tag, name }));
             }
 
             if let Some(Extension { tag, name, .. }) = self.extension {
-                writeln!(w, "    #[cfg(feature = \"VK_{tag}_{name}\")]")?;
+                cond = cond.and(CompilationCondition::Feature(FeatureName::VulkanExt { tag, name }));
             }
 
             if let Some(v) = self.version_since {
-                writeln!(w, "    #[cfg(feature = \"Allow{v}APIs\")]")?;
+                cond = cond.and(CompilationCondition::Feature(FeatureName::AllowApiVersion(v)));
             }
 
             if !self.available_condition.is_empty() {
-                writeln!(w, "#[cfg({})]", self.available_condition)?;
+                cond = cond.and(CompilationCondition::Raw(self.available_condition));
             }
 
-            if let Some(Extension { tag, .. }) = self.extension {
+            let name = if let Some(Extension { tag, .. }) = self.extension {
                 if self.is_command_buffer_inst {
-                    write!(w, "    pub fn vkCmd{}{tag}(", self.name)?;
+                    FnSymbol::CmdSuffixed {
+                        stem: self.name,
+                        suffix: tag,
+                    }
                 } else {
-                    write!(w, "    pub fn vk{}{tag}(", self.name)?;
+                    FnSymbol::Suffixed {
+                        stem: self.name,
+                        suffix: tag,
+                    }
                 }
             } else {
                 match (self.is_command_buffer_inst, self.extension_old) {
-                    (false, None) => write!(w, "    pub fn vk{}(", self.name)?,
-                    (true, None) => write!(w, "    pub fn vkCmd{}(", self.name)?,
-                    (false, Some((tag, _))) => write!(w, "    pub fn vk{}{tag}(", self.name)?,
-                    (true, Some((tag, _))) => write!(w, "    pub fn vkCmd{}{tag}(", self.name)?,
+                    (false, None) => FnSymbol::Raw(self.name),
+                    (true, None) => FnSymbol::Cmd(self.name),
+                    (false, Some((tag, _))) => FnSymbol::Suffixed {
+                        stem: self.name,
+                        suffix: tag,
+                    },
+                    (true, Some((tag, _))) => FnSymbol::CmdSuffixed {
+                        stem: self.name,
+                        suffix: tag,
+                    },
                 }
-            }
-            let mut cont = false;
-            if self.is_command_buffer_inst {
-                // command buffer instruction always takes a VkCommandBuffer as the first argument
-                write!(w, "commandBuffer: VkCommandBuffer")?;
-                cont = true;
-            }
-            for (n, t) in self.args {
-                if cont {
-                    w.write_all(b", ")?;
-                }
-                write!(w, "{n}: {t}")?;
-                cont = true;
-            }
-            w.write_all(b")")?;
-            if let Some(return_type) = self.return_type {
-                write!(w, " -> {return_type}")?;
-            }
-            w.write_all(b";\n")?;
+            };
+
+            cb(FunctionStub {
+                compilation_condition: cond,
+                name,
+                args: FunctionStubArgsIterator {
+                    require_target_command_buffer: self.is_command_buffer_inst,
+                    args: self.args,
+                    args_iter_ptr: 0,
+                },
+                return_type: self.return_type.map(Type::Raw),
+            });
         }
 
         if let Some(p) = self.promoted {
-            writeln!(w, "    #[cfg(feature = \"Allow{p}APIs\")]")?;
-            if !self.available_condition.is_empty() {
-                writeln!(w, "#[cfg({})]", self.available_condition)?;
-            }
+            cb(FunctionStub {
+                compilation_condition: CompilationCondition::Feature(FeatureName::AllowApiVersion(p)),
+                name: match self.is_command_buffer_inst {
+                    false => FnSymbol::Raw(self.name),
+                    true => FnSymbol::Cmd(self.name),
+                },
+                args: FunctionStubArgsIterator {
+                    require_target_command_buffer: self.is_command_buffer_inst,
+                    args: self.args,
+                    args_iter_ptr: 0,
+                },
+                return_type: self.return_type.map(Type::Raw),
+            });
+        }
+    }
+}
 
-            match self.is_command_buffer_inst {
-                false => write!(w, "    pub fn vk{}(", self.name)?,
-                true => write!(w, "    pub fn vkCmd{}(", self.name)?,
-            }
-            let mut cont = false;
-            if self.is_command_buffer_inst {
-                // command buffer instruction always takes a VkCommandBuffer as the first argument
-                write!(w, "commandBuffer: VkCommandBuffer")?;
-                cont = true;
-            }
-            for (n, t) in self.args {
-                if cont {
-                    w.write_all(b", ")?;
-                }
-                write!(w, "{n}: {t}")?;
-                cont = true;
-            }
-            w.write_all(b")")?;
-            if let Some(return_type) = self.return_type {
-                write!(w, " -> {return_type}")?;
-            }
-            w.write_all(b";\n")?;
+pub struct FunctionStubArgsIterator<'s> {
+    require_target_command_buffer: bool,
+    args: &'s [(&'s str, &'s str)],
+    args_iter_ptr: usize,
+}
+impl<'s> Iterator for FunctionStubArgsIterator<'s> {
+    type Item = (&'s str, Type<'s>);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if core::mem::replace(&mut self.require_target_command_buffer, false) {
+            return Some(("commandBuffer", Type::Raw("VkCommandBuffer")));
         }
 
-        Ok(())
+        let (n, t) = self.args.get(self.args_iter_ptr)?;
+        self.args_iter_ptr += 1;
+        Some((n, Type::Raw(t)))
     }
 }
 

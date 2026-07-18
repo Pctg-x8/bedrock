@@ -9164,13 +9164,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateInstance {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateInstance {
-    const STATIC: Self = Self(vkCreateInstance);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateInstance { const STATIC: Self = Self(vkCreateInstance); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9194,13 +9188,7 @@ unsafe impl crate::FromPtr for PFN_vkDestroyInstance {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDestroyInstance {
-    const STATIC: Self = Self(vkDestroyInstance);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkDestroyInstance { const STATIC: Self = Self(vkDestroyInstance); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9224,13 +9212,7 @@ unsafe impl crate::FromPtr for PFN_vkEnumeratePhysicalDevices {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkEnumeratePhysicalDevices {
-    const STATIC: Self = Self(vkEnumeratePhysicalDevices);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkEnumeratePhysicalDevices { const STATIC: Self = Self(vkEnumeratePhysicalDevices); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9254,13 +9236,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceFeatures {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceFeatures {
-    const STATIC: Self = Self(vkGetPhysicalDeviceFeatures);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceFeatures { const STATIC: Self = Self(vkGetPhysicalDeviceFeatures); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9284,13 +9260,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceFormatProperties {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceFormatProperties {
-    const STATIC: Self = Self(vkGetPhysicalDeviceFormatProperties);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceFormatProperties { const STATIC: Self = Self(vkGetPhysicalDeviceFormatProperties); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9314,13 +9284,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceImageFormatProperties {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceImageFormatProperties {
-    const STATIC: Self = Self(vkGetPhysicalDeviceImageFormatProperties);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceImageFormatProperties { const STATIC: Self = Self(vkGetPhysicalDeviceImageFormatProperties); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9344,13 +9308,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceProperties {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceProperties {
-    const STATIC: Self = Self(vkGetPhysicalDeviceProperties);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceProperties { const STATIC: Self = Self(vkGetPhysicalDeviceProperties); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9374,13 +9332,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceQueueFamilyProperties {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceQueueFamilyProperties {
-    const STATIC: Self = Self(vkGetPhysicalDeviceQueueFamilyProperties);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceQueueFamilyProperties { const STATIC: Self = Self(vkGetPhysicalDeviceQueueFamilyProperties); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9404,13 +9356,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceMemoryProperties {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceMemoryProperties {
-    const STATIC: Self = Self(vkGetPhysicalDeviceMemoryProperties);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceMemoryProperties { const STATIC: Self = Self(vkGetPhysicalDeviceMemoryProperties); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9434,13 +9380,7 @@ unsafe impl crate::FromPtr for PFN_vkGetInstanceProcAddr {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetInstanceProcAddr {
-    const STATIC: Self = Self(vkGetInstanceProcAddr);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetInstanceProcAddr { const STATIC: Self = Self(vkGetInstanceProcAddr); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9464,13 +9404,7 @@ unsafe impl crate::FromPtr for PFN_vkGetDeviceProcAddr {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetDeviceProcAddr {
-    const STATIC: Self = Self(vkGetDeviceProcAddr);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetDeviceProcAddr { const STATIC: Self = Self(vkGetDeviceProcAddr); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9494,13 +9428,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateDevice {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateDevice {
-    const STATIC: Self = Self(vkCreateDevice);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateDevice { const STATIC: Self = Self(vkCreateDevice); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9524,13 +9452,7 @@ unsafe impl crate::FromPtr for PFN_vkDestroyDevice {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDestroyDevice {
-    const STATIC: Self = Self(vkDestroyDevice);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkDestroyDevice { const STATIC: Self = Self(vkDestroyDevice); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9554,13 +9476,7 @@ unsafe impl crate::FromPtr for PFN_vkEnumerateInstanceExtensionProperties {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkEnumerateInstanceExtensionProperties {
-    const STATIC: Self = Self(vkEnumerateInstanceExtensionProperties);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkEnumerateInstanceExtensionProperties { const STATIC: Self = Self(vkEnumerateInstanceExtensionProperties); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9584,13 +9500,7 @@ unsafe impl crate::FromPtr for PFN_vkEnumerateDeviceExtensionProperties {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkEnumerateDeviceExtensionProperties {
-    const STATIC: Self = Self(vkEnumerateDeviceExtensionProperties);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkEnumerateDeviceExtensionProperties { const STATIC: Self = Self(vkEnumerateDeviceExtensionProperties); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9614,13 +9524,7 @@ unsafe impl crate::FromPtr for PFN_vkEnumerateInstanceLayerProperties {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkEnumerateInstanceLayerProperties {
-    const STATIC: Self = Self(vkEnumerateInstanceLayerProperties);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkEnumerateInstanceLayerProperties { const STATIC: Self = Self(vkEnumerateInstanceLayerProperties); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9644,13 +9548,7 @@ unsafe impl crate::FromPtr for PFN_vkEnumerateDeviceLayerProperties {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkEnumerateDeviceLayerProperties {
-    const STATIC: Self = Self(vkEnumerateDeviceLayerProperties);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkEnumerateDeviceLayerProperties { const STATIC: Self = Self(vkEnumerateDeviceLayerProperties); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9674,13 +9572,7 @@ unsafe impl crate::FromPtr for PFN_vkGetDeviceQueue {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetDeviceQueue {
-    const STATIC: Self = Self(vkGetDeviceQueue);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetDeviceQueue { const STATIC: Self = Self(vkGetDeviceQueue); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9704,13 +9596,7 @@ unsafe impl crate::FromPtr for PFN_vkQueueSubmit {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkQueueSubmit {
-    const STATIC: Self = Self(vkQueueSubmit);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkQueueSubmit { const STATIC: Self = Self(vkQueueSubmit); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9734,13 +9620,7 @@ unsafe impl crate::FromPtr for PFN_vkQueueWaitIdle {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkQueueWaitIdle {
-    const STATIC: Self = Self(vkQueueWaitIdle);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkQueueWaitIdle { const STATIC: Self = Self(vkQueueWaitIdle); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9764,13 +9644,7 @@ unsafe impl crate::FromPtr for PFN_vkDeviceWaitIdle {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDeviceWaitIdle {
-    const STATIC: Self = Self(vkDeviceWaitIdle);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkDeviceWaitIdle { const STATIC: Self = Self(vkDeviceWaitIdle); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9794,13 +9668,7 @@ unsafe impl crate::FromPtr for PFN_vkAllocateMemory {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkAllocateMemory {
-    const STATIC: Self = Self(vkAllocateMemory);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkAllocateMemory { const STATIC: Self = Self(vkAllocateMemory); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9824,13 +9692,7 @@ unsafe impl crate::FromPtr for PFN_vkFreeMemory {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkFreeMemory {
-    const STATIC: Self = Self(vkFreeMemory);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkFreeMemory { const STATIC: Self = Self(vkFreeMemory); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9854,13 +9716,7 @@ unsafe impl crate::FromPtr for PFN_vkMapMemory {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkMapMemory {
-    const STATIC: Self = Self(vkMapMemory);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkMapMemory { const STATIC: Self = Self(vkMapMemory); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9884,13 +9740,7 @@ unsafe impl crate::FromPtr for PFN_vkUnmapMemory {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkUnmapMemory {
-    const STATIC: Self = Self(vkUnmapMemory);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkUnmapMemory { const STATIC: Self = Self(vkUnmapMemory); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9914,13 +9764,7 @@ unsafe impl crate::FromPtr for PFN_vkFlushMappedMemoryRanges {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkFlushMappedMemoryRanges {
-    const STATIC: Self = Self(vkFlushMappedMemoryRanges);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkFlushMappedMemoryRanges { const STATIC: Self = Self(vkFlushMappedMemoryRanges); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9944,13 +9788,7 @@ unsafe impl crate::FromPtr for PFN_vkInvalidateMappedMemoryRanges {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkInvalidateMappedMemoryRanges {
-    const STATIC: Self = Self(vkInvalidateMappedMemoryRanges);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkInvalidateMappedMemoryRanges { const STATIC: Self = Self(vkInvalidateMappedMemoryRanges); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -9974,13 +9812,7 @@ unsafe impl crate::FromPtr for PFN_vkGetDeviceMemoryCommitment {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetDeviceMemoryCommitment {
-    const STATIC: Self = Self(vkGetDeviceMemoryCommitment);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetDeviceMemoryCommitment { const STATIC: Self = Self(vkGetDeviceMemoryCommitment); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10004,13 +9836,7 @@ unsafe impl crate::FromPtr for PFN_vkBindBufferMemory {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkBindBufferMemory {
-    const STATIC: Self = Self(vkBindBufferMemory);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkBindBufferMemory { const STATIC: Self = Self(vkBindBufferMemory); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10034,13 +9860,7 @@ unsafe impl crate::FromPtr for PFN_vkBindImageMemory {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkBindImageMemory {
-    const STATIC: Self = Self(vkBindImageMemory);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkBindImageMemory { const STATIC: Self = Self(vkBindImageMemory); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10064,13 +9884,7 @@ unsafe impl crate::FromPtr for PFN_vkGetBufferMemoryRequirements {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetBufferMemoryRequirements {
-    const STATIC: Self = Self(vkGetBufferMemoryRequirements);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetBufferMemoryRequirements { const STATIC: Self = Self(vkGetBufferMemoryRequirements); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10094,13 +9908,7 @@ unsafe impl crate::FromPtr for PFN_vkGetImageMemoryRequirements {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetImageMemoryRequirements {
-    const STATIC: Self = Self(vkGetImageMemoryRequirements);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetImageMemoryRequirements { const STATIC: Self = Self(vkGetImageMemoryRequirements); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10124,13 +9932,7 @@ unsafe impl crate::FromPtr for PFN_vkGetImageSparseMemoryRequirements {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetImageSparseMemoryRequirements {
-    const STATIC: Self = Self(vkGetImageSparseMemoryRequirements);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetImageSparseMemoryRequirements { const STATIC: Self = Self(vkGetImageSparseMemoryRequirements); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10154,13 +9956,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceSparseImageFormatPropertie
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceSparseImageFormatProperties {
-    const STATIC: Self = Self(vkGetPhysicalDeviceSparseImageFormatProperties);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceSparseImageFormatProperties { const STATIC: Self = Self(vkGetPhysicalDeviceSparseImageFormatProperties); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10184,13 +9980,7 @@ unsafe impl crate::FromPtr for PFN_vkQueueBindSparse {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkQueueBindSparse {
-    const STATIC: Self = Self(vkQueueBindSparse);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkQueueBindSparse { const STATIC: Self = Self(vkQueueBindSparse); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10214,13 +10004,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateFence {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateFence {
-    const STATIC: Self = Self(vkCreateFence);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateFence { const STATIC: Self = Self(vkCreateFence); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10244,13 +10028,7 @@ unsafe impl crate::FromPtr for PFN_vkDestroyFence {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDestroyFence {
-    const STATIC: Self = Self(vkDestroyFence);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkDestroyFence { const STATIC: Self = Self(vkDestroyFence); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10274,13 +10052,7 @@ unsafe impl crate::FromPtr for PFN_vkResetFences {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkResetFences {
-    const STATIC: Self = Self(vkResetFences);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkResetFences { const STATIC: Self = Self(vkResetFences); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10304,13 +10076,7 @@ unsafe impl crate::FromPtr for PFN_vkGetFenceStatus {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetFenceStatus {
-    const STATIC: Self = Self(vkGetFenceStatus);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetFenceStatus { const STATIC: Self = Self(vkGetFenceStatus); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10334,13 +10100,7 @@ unsafe impl crate::FromPtr for PFN_vkWaitForFences {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkWaitForFences {
-    const STATIC: Self = Self(vkWaitForFences);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkWaitForFences { const STATIC: Self = Self(vkWaitForFences); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10364,13 +10124,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateSemaphore {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateSemaphore {
-    const STATIC: Self = Self(vkCreateSemaphore);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateSemaphore { const STATIC: Self = Self(vkCreateSemaphore); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10394,13 +10148,7 @@ unsafe impl crate::FromPtr for PFN_vkDestroySemaphore {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDestroySemaphore {
-    const STATIC: Self = Self(vkDestroySemaphore);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkDestroySemaphore { const STATIC: Self = Self(vkDestroySemaphore); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10424,13 +10172,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateEvent {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateEvent {
-    const STATIC: Self = Self(vkCreateEvent);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateEvent { const STATIC: Self = Self(vkCreateEvent); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10454,13 +10196,7 @@ unsafe impl crate::FromPtr for PFN_vkDestroyEvent {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDestroyEvent {
-    const STATIC: Self = Self(vkDestroyEvent);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkDestroyEvent { const STATIC: Self = Self(vkDestroyEvent); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10484,13 +10220,7 @@ unsafe impl crate::FromPtr for PFN_vkGetEventStatus {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetEventStatus {
-    const STATIC: Self = Self(vkGetEventStatus);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetEventStatus { const STATIC: Self = Self(vkGetEventStatus); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10514,13 +10244,7 @@ unsafe impl crate::FromPtr for PFN_vkSetEvent {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkSetEvent {
-    const STATIC: Self = Self(vkSetEvent);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkSetEvent { const STATIC: Self = Self(vkSetEvent); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10544,13 +10268,7 @@ unsafe impl crate::FromPtr for PFN_vkResetEvent {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkResetEvent {
-    const STATIC: Self = Self(vkResetEvent);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkResetEvent { const STATIC: Self = Self(vkResetEvent); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10574,13 +10292,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateQueryPool {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateQueryPool {
-    const STATIC: Self = Self(vkCreateQueryPool);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateQueryPool { const STATIC: Self = Self(vkCreateQueryPool); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10604,13 +10316,7 @@ unsafe impl crate::FromPtr for PFN_vkDestroyQueryPool {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDestroyQueryPool {
-    const STATIC: Self = Self(vkDestroyQueryPool);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkDestroyQueryPool { const STATIC: Self = Self(vkDestroyQueryPool); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10634,13 +10340,7 @@ unsafe impl crate::FromPtr for PFN_vkGetQueryPoolResults {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetQueryPoolResults {
-    const STATIC: Self = Self(vkGetQueryPoolResults);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetQueryPoolResults { const STATIC: Self = Self(vkGetQueryPoolResults); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10664,13 +10364,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateBuffer {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateBuffer {
-    const STATIC: Self = Self(vkCreateBuffer);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateBuffer { const STATIC: Self = Self(vkCreateBuffer); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10694,13 +10388,7 @@ unsafe impl crate::FromPtr for PFN_vkDestroyBuffer {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDestroyBuffer {
-    const STATIC: Self = Self(vkDestroyBuffer);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkDestroyBuffer { const STATIC: Self = Self(vkDestroyBuffer); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10724,13 +10412,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateBufferView {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateBufferView {
-    const STATIC: Self = Self(vkCreateBufferView);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateBufferView { const STATIC: Self = Self(vkCreateBufferView); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10754,13 +10436,7 @@ unsafe impl crate::FromPtr for PFN_vkDestroyBufferView {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDestroyBufferView {
-    const STATIC: Self = Self(vkDestroyBufferView);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkDestroyBufferView { const STATIC: Self = Self(vkDestroyBufferView); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10784,13 +10460,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateImage {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateImage {
-    const STATIC: Self = Self(vkCreateImage);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateImage { const STATIC: Self = Self(vkCreateImage); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10814,13 +10484,7 @@ unsafe impl crate::FromPtr for PFN_vkDestroyImage {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDestroyImage {
-    const STATIC: Self = Self(vkDestroyImage);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkDestroyImage { const STATIC: Self = Self(vkDestroyImage); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10844,13 +10508,7 @@ unsafe impl crate::FromPtr for PFN_vkGetImageSubresourceLayout {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetImageSubresourceLayout {
-    const STATIC: Self = Self(vkGetImageSubresourceLayout);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetImageSubresourceLayout { const STATIC: Self = Self(vkGetImageSubresourceLayout); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10874,13 +10532,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateImageView {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateImageView {
-    const STATIC: Self = Self(vkCreateImageView);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateImageView { const STATIC: Self = Self(vkCreateImageView); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10904,13 +10556,7 @@ unsafe impl crate::FromPtr for PFN_vkDestroyImageView {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDestroyImageView {
-    const STATIC: Self = Self(vkDestroyImageView);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkDestroyImageView { const STATIC: Self = Self(vkDestroyImageView); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10934,13 +10580,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateShaderModule {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateShaderModule {
-    const STATIC: Self = Self(vkCreateShaderModule);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateShaderModule { const STATIC: Self = Self(vkCreateShaderModule); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10964,13 +10604,7 @@ unsafe impl crate::FromPtr for PFN_vkDestroyShaderModule {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDestroyShaderModule {
-    const STATIC: Self = Self(vkDestroyShaderModule);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkDestroyShaderModule { const STATIC: Self = Self(vkDestroyShaderModule); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -10994,13 +10628,7 @@ unsafe impl crate::FromPtr for PFN_vkCreatePipelineCache {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreatePipelineCache {
-    const STATIC: Self = Self(vkCreatePipelineCache);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreatePipelineCache { const STATIC: Self = Self(vkCreatePipelineCache); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11024,13 +10652,7 @@ unsafe impl crate::FromPtr for PFN_vkDestroyPipelineCache {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDestroyPipelineCache {
-    const STATIC: Self = Self(vkDestroyPipelineCache);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkDestroyPipelineCache { const STATIC: Self = Self(vkDestroyPipelineCache); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11054,13 +10676,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPipelineCacheData {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPipelineCacheData {
-    const STATIC: Self = Self(vkGetPipelineCacheData);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPipelineCacheData { const STATIC: Self = Self(vkGetPipelineCacheData); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11084,13 +10700,7 @@ unsafe impl crate::FromPtr for PFN_vkMergePipelineCaches {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkMergePipelineCaches {
-    const STATIC: Self = Self(vkMergePipelineCaches);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkMergePipelineCaches { const STATIC: Self = Self(vkMergePipelineCaches); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11114,13 +10724,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateGraphicsPipelines {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateGraphicsPipelines {
-    const STATIC: Self = Self(vkCreateGraphicsPipelines);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateGraphicsPipelines { const STATIC: Self = Self(vkCreateGraphicsPipelines); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11144,13 +10748,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateComputePipelines {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateComputePipelines {
-    const STATIC: Self = Self(vkCreateComputePipelines);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateComputePipelines { const STATIC: Self = Self(vkCreateComputePipelines); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11174,13 +10772,7 @@ unsafe impl crate::FromPtr for PFN_vkDestroyPipeline {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDestroyPipeline {
-    const STATIC: Self = Self(vkDestroyPipeline);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkDestroyPipeline { const STATIC: Self = Self(vkDestroyPipeline); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11204,13 +10796,7 @@ unsafe impl crate::FromPtr for PFN_vkCreatePipelineLayout {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreatePipelineLayout {
-    const STATIC: Self = Self(vkCreatePipelineLayout);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreatePipelineLayout { const STATIC: Self = Self(vkCreatePipelineLayout); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11234,13 +10820,7 @@ unsafe impl crate::FromPtr for PFN_vkDestroyPipelineLayout {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDestroyPipelineLayout {
-    const STATIC: Self = Self(vkDestroyPipelineLayout);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkDestroyPipelineLayout { const STATIC: Self = Self(vkDestroyPipelineLayout); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11264,13 +10844,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateSampler {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateSampler {
-    const STATIC: Self = Self(vkCreateSampler);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateSampler { const STATIC: Self = Self(vkCreateSampler); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11294,13 +10868,7 @@ unsafe impl crate::FromPtr for PFN_vkDestroySampler {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDestroySampler {
-    const STATIC: Self = Self(vkDestroySampler);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkDestroySampler { const STATIC: Self = Self(vkDestroySampler); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11324,13 +10892,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateDescriptorSetLayout {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateDescriptorSetLayout {
-    const STATIC: Self = Self(vkCreateDescriptorSetLayout);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateDescriptorSetLayout { const STATIC: Self = Self(vkCreateDescriptorSetLayout); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11354,13 +10916,7 @@ unsafe impl crate::FromPtr for PFN_vkDestroyDescriptorSetLayout {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDestroyDescriptorSetLayout {
-    const STATIC: Self = Self(vkDestroyDescriptorSetLayout);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkDestroyDescriptorSetLayout { const STATIC: Self = Self(vkDestroyDescriptorSetLayout); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11384,13 +10940,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateDescriptorPool {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateDescriptorPool {
-    const STATIC: Self = Self(vkCreateDescriptorPool);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateDescriptorPool { const STATIC: Self = Self(vkCreateDescriptorPool); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11414,13 +10964,7 @@ unsafe impl crate::FromPtr for PFN_vkDestroyDescriptorPool {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDestroyDescriptorPool {
-    const STATIC: Self = Self(vkDestroyDescriptorPool);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkDestroyDescriptorPool { const STATIC: Self = Self(vkDestroyDescriptorPool); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11444,13 +10988,7 @@ unsafe impl crate::FromPtr for PFN_vkResetDescriptorPool {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkResetDescriptorPool {
-    const STATIC: Self = Self(vkResetDescriptorPool);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkResetDescriptorPool { const STATIC: Self = Self(vkResetDescriptorPool); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11474,13 +11012,7 @@ unsafe impl crate::FromPtr for PFN_vkAllocateDescriptorSets {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkAllocateDescriptorSets {
-    const STATIC: Self = Self(vkAllocateDescriptorSets);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkAllocateDescriptorSets { const STATIC: Self = Self(vkAllocateDescriptorSets); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11504,13 +11036,7 @@ unsafe impl crate::FromPtr for PFN_vkFreeDescriptorSets {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkFreeDescriptorSets {
-    const STATIC: Self = Self(vkFreeDescriptorSets);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkFreeDescriptorSets { const STATIC: Self = Self(vkFreeDescriptorSets); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11534,13 +11060,7 @@ unsafe impl crate::FromPtr for PFN_vkUpdateDescriptorSets {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkUpdateDescriptorSets {
-    const STATIC: Self = Self(vkUpdateDescriptorSets);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkUpdateDescriptorSets { const STATIC: Self = Self(vkUpdateDescriptorSets); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11564,13 +11084,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateFramebuffer {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateFramebuffer {
-    const STATIC: Self = Self(vkCreateFramebuffer);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateFramebuffer { const STATIC: Self = Self(vkCreateFramebuffer); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11594,13 +11108,7 @@ unsafe impl crate::FromPtr for PFN_vkDestroyFramebuffer {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDestroyFramebuffer {
-    const STATIC: Self = Self(vkDestroyFramebuffer);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkDestroyFramebuffer { const STATIC: Self = Self(vkDestroyFramebuffer); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11624,13 +11132,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateRenderPass {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateRenderPass {
-    const STATIC: Self = Self(vkCreateRenderPass);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateRenderPass { const STATIC: Self = Self(vkCreateRenderPass); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11654,13 +11156,7 @@ unsafe impl crate::FromPtr for PFN_vkDestroyRenderPass {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDestroyRenderPass {
-    const STATIC: Self = Self(vkDestroyRenderPass);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkDestroyRenderPass { const STATIC: Self = Self(vkDestroyRenderPass); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11684,13 +11180,7 @@ unsafe impl crate::FromPtr for PFN_vkGetRenderAreaGranularity {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetRenderAreaGranularity {
-    const STATIC: Self = Self(vkGetRenderAreaGranularity);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetRenderAreaGranularity { const STATIC: Self = Self(vkGetRenderAreaGranularity); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11714,13 +11204,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateCommandPool {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateCommandPool {
-    const STATIC: Self = Self(vkCreateCommandPool);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateCommandPool { const STATIC: Self = Self(vkCreateCommandPool); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11744,13 +11228,7 @@ unsafe impl crate::FromPtr for PFN_vkDestroyCommandPool {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDestroyCommandPool {
-    const STATIC: Self = Self(vkDestroyCommandPool);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkDestroyCommandPool { const STATIC: Self = Self(vkDestroyCommandPool); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11774,13 +11252,7 @@ unsafe impl crate::FromPtr for PFN_vkResetCommandPool {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkResetCommandPool {
-    const STATIC: Self = Self(vkResetCommandPool);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkResetCommandPool { const STATIC: Self = Self(vkResetCommandPool); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11804,13 +11276,7 @@ unsafe impl crate::FromPtr for PFN_vkAllocateCommandBuffers {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkAllocateCommandBuffers {
-    const STATIC: Self = Self(vkAllocateCommandBuffers);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkAllocateCommandBuffers { const STATIC: Self = Self(vkAllocateCommandBuffers); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11834,13 +11300,7 @@ unsafe impl crate::FromPtr for PFN_vkFreeCommandBuffers {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkFreeCommandBuffers {
-    const STATIC: Self = Self(vkFreeCommandBuffers);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkFreeCommandBuffers { const STATIC: Self = Self(vkFreeCommandBuffers); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11864,13 +11324,7 @@ unsafe impl crate::FromPtr for PFN_vkBeginCommandBuffer {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkBeginCommandBuffer {
-    const STATIC: Self = Self(vkBeginCommandBuffer);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkBeginCommandBuffer { const STATIC: Self = Self(vkBeginCommandBuffer); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11894,13 +11348,7 @@ unsafe impl crate::FromPtr for PFN_vkEndCommandBuffer {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkEndCommandBuffer {
-    const STATIC: Self = Self(vkEndCommandBuffer);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkEndCommandBuffer { const STATIC: Self = Self(vkEndCommandBuffer); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -11924,13 +11372,7 @@ unsafe impl crate::FromPtr for PFN_vkResetCommandBuffer {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkResetCommandBuffer {
-    const STATIC: Self = Self(vkResetCommandBuffer);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkResetCommandBuffer { const STATIC: Self = Self(vkResetCommandBuffer); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
@@ -11957,14 +11399,7 @@ unsafe impl crate::FromPtr for PFN_vkEnumerateInstanceVersion {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkEnumerateInstanceVersion {
-    const STATIC: Self = Self(vkEnumerateInstanceVersion);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkEnumerateInstanceVersion { const STATIC: Self = Self(vkEnumerateInstanceVersion); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_surface")]
 #[repr(transparent)]
@@ -11991,14 +11426,7 @@ unsafe impl crate::FromPtr for PFN_vkDestroySurfaceKHR {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_surface")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDestroySurfaceKHR {
-    const STATIC: Self = Self(vkDestroySurfaceKHR);
-}
-
+#[cfg(feature = "VK_KHR_surface")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkDestroySurfaceKHR { const STATIC: Self = Self(vkDestroySurfaceKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_surface")]
 #[repr(transparent)]
@@ -12025,14 +11453,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceSurfaceSupportKHR {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_surface")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceSurfaceSupportKHR {
-    const STATIC: Self = Self(vkGetPhysicalDeviceSurfaceSupportKHR);
-}
-
+#[cfg(feature = "VK_KHR_surface")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceSurfaceSupportKHR { const STATIC: Self = Self(vkGetPhysicalDeviceSurfaceSupportKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_surface")]
 #[repr(transparent)]
@@ -12059,14 +11480,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_surface")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR {
-    const STATIC: Self = Self(vkGetPhysicalDeviceSurfaceCapabilitiesKHR);
-}
-
+#[cfg(feature = "VK_KHR_surface")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR { const STATIC: Self = Self(vkGetPhysicalDeviceSurfaceCapabilitiesKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_surface")]
 #[repr(transparent)]
@@ -12093,14 +11507,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceSurfaceFormatsKHR {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_surface")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceSurfaceFormatsKHR {
-    const STATIC: Self = Self(vkGetPhysicalDeviceSurfaceFormatsKHR);
-}
-
+#[cfg(feature = "VK_KHR_surface")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceSurfaceFormatsKHR { const STATIC: Self = Self(vkGetPhysicalDeviceSurfaceFormatsKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_surface")]
 #[repr(transparent)]
@@ -12127,14 +11534,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceSurfacePresentModesKHR {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_surface")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceSurfacePresentModesKHR {
-    const STATIC: Self = Self(vkGetPhysicalDeviceSurfacePresentModesKHR);
-}
-
+#[cfg(feature = "VK_KHR_surface")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceSurfacePresentModesKHR { const STATIC: Self = Self(vkGetPhysicalDeviceSurfacePresentModesKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[repr(transparent)]
@@ -12161,14 +11561,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateSwapchainKHR {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_swapchain")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateSwapchainKHR {
-    const STATIC: Self = Self(vkCreateSwapchainKHR);
-}
-
+#[cfg(feature = "VK_KHR_swapchain")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateSwapchainKHR { const STATIC: Self = Self(vkCreateSwapchainKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[repr(transparent)]
@@ -12195,14 +11588,7 @@ unsafe impl crate::FromPtr for PFN_vkDestroySwapchainKHR {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_swapchain")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDestroySwapchainKHR {
-    const STATIC: Self = Self(vkDestroySwapchainKHR);
-}
-
+#[cfg(feature = "VK_KHR_swapchain")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkDestroySwapchainKHR { const STATIC: Self = Self(vkDestroySwapchainKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[repr(transparent)]
@@ -12229,14 +11615,7 @@ unsafe impl crate::FromPtr for PFN_vkGetSwapchainImagesKHR {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_swapchain")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetSwapchainImagesKHR {
-    const STATIC: Self = Self(vkGetSwapchainImagesKHR);
-}
-
+#[cfg(feature = "VK_KHR_swapchain")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetSwapchainImagesKHR { const STATIC: Self = Self(vkGetSwapchainImagesKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[repr(transparent)]
@@ -12263,14 +11642,7 @@ unsafe impl crate::FromPtr for PFN_vkAcquireNextImageKHR {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_swapchain")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkAcquireNextImageKHR {
-    const STATIC: Self = Self(vkAcquireNextImageKHR);
-}
-
+#[cfg(feature = "VK_KHR_swapchain")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkAcquireNextImageKHR { const STATIC: Self = Self(vkAcquireNextImageKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[repr(transparent)]
@@ -12297,14 +11669,7 @@ unsafe impl crate::FromPtr for PFN_vkQueuePresentKHR {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_swapchain")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkQueuePresentKHR {
-    const STATIC: Self = Self(vkQueuePresentKHR);
-}
-
+#[cfg(feature = "VK_KHR_swapchain")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkQueuePresentKHR { const STATIC: Self = Self(vkQueuePresentKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[repr(transparent)]
@@ -12331,14 +11696,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceDisplayPropertiesKHR {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_display")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceDisplayPropertiesKHR {
-    const STATIC: Self = Self(vkGetPhysicalDeviceDisplayPropertiesKHR);
-}
-
+#[cfg(feature = "VK_KHR_display")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceDisplayPropertiesKHR { const STATIC: Self = Self(vkGetPhysicalDeviceDisplayPropertiesKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[repr(transparent)]
@@ -12365,14 +11723,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR 
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_display")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR {
-    const STATIC: Self = Self(vkGetPhysicalDeviceDisplayPlanePropertiesKHR);
-}
-
+#[cfg(feature = "VK_KHR_display")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR { const STATIC: Self = Self(vkGetPhysicalDeviceDisplayPlanePropertiesKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[repr(transparent)]
@@ -12399,14 +11750,7 @@ unsafe impl crate::FromPtr for PFN_vkGetDisplayPlaneSupportedDisplaysKHR {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_display")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetDisplayPlaneSupportedDisplaysKHR {
-    const STATIC: Self = Self(vkGetDisplayPlaneSupportedDisplaysKHR);
-}
-
+#[cfg(feature = "VK_KHR_display")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetDisplayPlaneSupportedDisplaysKHR { const STATIC: Self = Self(vkGetDisplayPlaneSupportedDisplaysKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[repr(transparent)]
@@ -12433,14 +11777,7 @@ unsafe impl crate::FromPtr for PFN_vkGetDisplayModePropertiesKHR {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_display")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetDisplayModePropertiesKHR {
-    const STATIC: Self = Self(vkGetDisplayModePropertiesKHR);
-}
-
+#[cfg(feature = "VK_KHR_display")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetDisplayModePropertiesKHR { const STATIC: Self = Self(vkGetDisplayModePropertiesKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[repr(transparent)]
@@ -12467,14 +11804,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateDisplayModeKHR {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_display")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateDisplayModeKHR {
-    const STATIC: Self = Self(vkCreateDisplayModeKHR);
-}
-
+#[cfg(feature = "VK_KHR_display")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateDisplayModeKHR { const STATIC: Self = Self(vkCreateDisplayModeKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[repr(transparent)]
@@ -12501,14 +11831,7 @@ unsafe impl crate::FromPtr for PFN_vkGetDisplayPlaneCapabilitiesKHR {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_display")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetDisplayPlaneCapabilitiesKHR {
-    const STATIC: Self = Self(vkGetDisplayPlaneCapabilitiesKHR);
-}
-
+#[cfg(feature = "VK_KHR_display")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetDisplayPlaneCapabilitiesKHR { const STATIC: Self = Self(vkGetDisplayPlaneCapabilitiesKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[repr(transparent)]
@@ -12535,14 +11858,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateDisplayPlaneSurfaceKHR {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_display")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateDisplayPlaneSurfaceKHR {
-    const STATIC: Self = Self(vkCreateDisplayPlaneSurfaceKHR);
-}
-
+#[cfg(feature = "VK_KHR_display")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateDisplayPlaneSurfaceKHR { const STATIC: Self = Self(vkCreateDisplayPlaneSurfaceKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_xlib_surface")]
 #[repr(transparent)]
@@ -12569,14 +11885,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateXlibSurfaceKHR {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_xlib_surface")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateXlibSurfaceKHR {
-    const STATIC: Self = Self(vkCreateXlibSurfaceKHR);
-}
-
+#[cfg(feature = "VK_KHR_xlib_surface")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateXlibSurfaceKHR { const STATIC: Self = Self(vkCreateXlibSurfaceKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_xlib_surface")]
 #[repr(transparent)]
@@ -12603,14 +11912,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_xlib_surface")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR {
-    const STATIC: Self = Self(vkGetPhysicalDeviceXlibPresentationSupportKHR);
-}
-
+#[cfg(feature = "VK_KHR_xlib_surface")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR { const STATIC: Self = Self(vkGetPhysicalDeviceXlibPresentationSupportKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_xcb_surface")]
 #[repr(transparent)]
@@ -12637,14 +11939,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateXcbSurfaceKHR {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_xcb_surface")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateXcbSurfaceKHR {
-    const STATIC: Self = Self(vkCreateXcbSurfaceKHR);
-}
-
+#[cfg(feature = "VK_KHR_xcb_surface")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateXcbSurfaceKHR { const STATIC: Self = Self(vkCreateXcbSurfaceKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_xcb_surface")]
 #[repr(transparent)]
@@ -12671,14 +11966,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR 
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_xcb_surface")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR {
-    const STATIC: Self = Self(vkGetPhysicalDeviceXcbPresentationSupportKHR);
-}
-
+#[cfg(feature = "VK_KHR_xcb_surface")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR { const STATIC: Self = Self(vkGetPhysicalDeviceXcbPresentationSupportKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_wayland_surface")]
 #[repr(transparent)]
@@ -12705,14 +11993,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateWaylandSurfaceKHR {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_wayland_surface")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateWaylandSurfaceKHR {
-    const STATIC: Self = Self(vkCreateWaylandSurfaceKHR);
-}
-
+#[cfg(feature = "VK_KHR_wayland_surface")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateWaylandSurfaceKHR { const STATIC: Self = Self(vkCreateWaylandSurfaceKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_wayland_surface")]
 #[repr(transparent)]
@@ -12739,14 +12020,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceWaylandPresentationSupport
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_wayland_surface")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR {
-    const STATIC: Self = Self(vkGetPhysicalDeviceWaylandPresentationSupportKHR);
-}
-
+#[cfg(feature = "VK_KHR_wayland_surface")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR { const STATIC: Self = Self(vkGetPhysicalDeviceWaylandPresentationSupportKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_android_surface")]
 #[repr(transparent)]
@@ -12773,14 +12047,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateAndroidSurfaceKHR {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_android_surface")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateAndroidSurfaceKHR {
-    const STATIC: Self = Self(vkCreateAndroidSurfaceKHR);
-}
-
+#[cfg(feature = "VK_KHR_android_surface")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateAndroidSurfaceKHR { const STATIC: Self = Self(vkCreateAndroidSurfaceKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_win32_surface")]
 #[repr(transparent)]
@@ -12807,14 +12074,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateWin32SurfaceKHR {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_win32_surface")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateWin32SurfaceKHR {
-    const STATIC: Self = Self(vkCreateWin32SurfaceKHR);
-}
-
+#[cfg(feature = "VK_KHR_win32_surface")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateWin32SurfaceKHR { const STATIC: Self = Self(vkCreateWin32SurfaceKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_win32_surface")]
 #[repr(transparent)]
@@ -12841,14 +12101,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceWin32PresentationSupportKH
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_KHR_win32_surface")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR {
-    const STATIC: Self = Self(vkGetPhysicalDeviceWin32PresentationSupportKHR);
-}
-
+#[cfg(feature = "VK_KHR_win32_surface")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR { const STATIC: Self = Self(vkGetPhysicalDeviceWin32PresentationSupportKHR); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_metal_surface")]
 #[repr(transparent)]
@@ -12875,14 +12128,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateMetalSurfaceEXT {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_EXT_metal_surface")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateMetalSurfaceEXT {
-    const STATIC: Self = Self(vkCreateMetalSurfaceEXT);
-}
-
+#[cfg(feature = "VK_EXT_metal_surface")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateMetalSurfaceEXT { const STATIC: Self = Self(vkCreateMetalSurfaceEXT); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_memory_win32")]
 #[repr(transparent)]
@@ -13610,14 +12856,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceExternalBufferProperties {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceExternalBufferProperties {
-    const STATIC: Self = Self(vkGetPhysicalDeviceExternalBufferProperties);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceExternalBufferProperties { const STATIC: Self = Self(vkGetPhysicalDeviceExternalBufferProperties); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
 #[repr(transparent)]
@@ -13670,14 +12909,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceExternalSemaphorePropertie
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceExternalSemaphoreProperties {
-    const STATIC: Self = Self(vkGetPhysicalDeviceExternalSemaphoreProperties);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceExternalSemaphoreProperties { const STATIC: Self = Self(vkGetPhysicalDeviceExternalSemaphoreProperties); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_fence_capabilities")]
 #[repr(transparent)]
@@ -13730,14 +12962,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceExternalFenceProperties {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceExternalFenceProperties {
-    const STATIC: Self = Self(vkGetPhysicalDeviceExternalFenceProperties);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceExternalFenceProperties { const STATIC: Self = Self(vkGetPhysicalDeviceExternalFenceProperties); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_device_group")]
 #[repr(transparent)]
@@ -13790,14 +13015,7 @@ unsafe impl crate::FromPtr for PFN_vkGetDeviceGroupPeerMemoryFeatures {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetDeviceGroupPeerMemoryFeatures {
-    const STATIC: Self = Self(vkGetDeviceGroupPeerMemoryFeatures);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetDeviceGroupPeerMemoryFeatures { const STATIC: Self = Self(vkGetDeviceGroupPeerMemoryFeatures); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_device_group")]
 #[cfg(feature = "VK_KHR_surface")]
@@ -13970,14 +13188,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceFeatures2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceFeatures2 {
-    const STATIC: Self = Self(vkGetPhysicalDeviceFeatures2);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceFeatures2 { const STATIC: Self = Self(vkGetPhysicalDeviceFeatures2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[repr(transparent)]
@@ -14030,14 +13241,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceProperties2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceProperties2 {
-    const STATIC: Self = Self(vkGetPhysicalDeviceProperties2);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceProperties2 { const STATIC: Self = Self(vkGetPhysicalDeviceProperties2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[repr(transparent)]
@@ -14090,14 +13294,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceFormatProperties2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceFormatProperties2 {
-    const STATIC: Self = Self(vkGetPhysicalDeviceFormatProperties2);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceFormatProperties2 { const STATIC: Self = Self(vkGetPhysicalDeviceFormatProperties2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[repr(transparent)]
@@ -14150,14 +13347,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceImageFormatProperties2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceImageFormatProperties2 {
-    const STATIC: Self = Self(vkGetPhysicalDeviceImageFormatProperties2);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceImageFormatProperties2 { const STATIC: Self = Self(vkGetPhysicalDeviceImageFormatProperties2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[repr(transparent)]
@@ -14210,14 +13400,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceQueueFamilyProperties2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceQueueFamilyProperties2 {
-    const STATIC: Self = Self(vkGetPhysicalDeviceQueueFamilyProperties2);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceQueueFamilyProperties2 { const STATIC: Self = Self(vkGetPhysicalDeviceQueueFamilyProperties2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[repr(transparent)]
@@ -14270,14 +13453,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceMemoryProperties2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceMemoryProperties2 {
-    const STATIC: Self = Self(vkGetPhysicalDeviceMemoryProperties2);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceMemoryProperties2 { const STATIC: Self = Self(vkGetPhysicalDeviceMemoryProperties2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[repr(transparent)]
@@ -14330,14 +13506,7 @@ unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceSparseImageFormatPropertie
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetPhysicalDeviceSparseImageFormatProperties2 {
-    const STATIC: Self = Self(vkGetPhysicalDeviceSparseImageFormatProperties2);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetPhysicalDeviceSparseImageFormatProperties2 { const STATIC: Self = Self(vkGetPhysicalDeviceSparseImageFormatProperties2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_device_group_creation")]
 #[repr(transparent)]
@@ -14390,14 +13559,7 @@ unsafe impl crate::FromPtr for PFN_vkEnumeratePhysicalDeviceGroup {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkEnumeratePhysicalDeviceGroup {
-    const STATIC: Self = Self(vkEnumeratePhysicalDeviceGroup);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkEnumeratePhysicalDeviceGroup { const STATIC: Self = Self(vkEnumeratePhysicalDeviceGroup); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
 #[repr(transparent)]
@@ -14450,14 +13612,7 @@ unsafe impl crate::FromPtr for PFN_vkGetImageMemoryRequirements2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetImageMemoryRequirements2 {
-    const STATIC: Self = Self(vkGetImageMemoryRequirements2);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetImageMemoryRequirements2 { const STATIC: Self = Self(vkGetImageMemoryRequirements2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
 #[repr(transparent)]
@@ -14510,14 +13665,7 @@ unsafe impl crate::FromPtr for PFN_vkGetBufferMemoryRequirements2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetBufferMemoryRequirements2 {
-    const STATIC: Self = Self(vkGetBufferMemoryRequirements2);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetBufferMemoryRequirements2 { const STATIC: Self = Self(vkGetBufferMemoryRequirements2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
 #[repr(transparent)]
@@ -14570,14 +13718,7 @@ unsafe impl crate::FromPtr for PFN_vkGetImageSparseMemoryRequirements2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetImageSparseMemoryRequirements2 {
-    const STATIC: Self = Self(vkGetImageSparseMemoryRequirements2);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetImageSparseMemoryRequirements2 { const STATIC: Self = Self(vkGetImageSparseMemoryRequirements2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_bind_memory2")]
 #[repr(transparent)]
@@ -14630,14 +13771,7 @@ unsafe impl crate::FromPtr for PFN_vkBindBufferMemory2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkBindBufferMemory2 {
-    const STATIC: Self = Self(vkBindBufferMemory2);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkBindBufferMemory2 { const STATIC: Self = Self(vkBindBufferMemory2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_bind_memory2")]
 #[repr(transparent)]
@@ -14690,14 +13824,7 @@ unsafe impl crate::FromPtr for PFN_vkBindImageMemory2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkBindImageMemory2 {
-    const STATIC: Self = Self(vkBindImageMemory2);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkBindImageMemory2 { const STATIC: Self = Self(vkBindImageMemory2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[repr(transparent)]
@@ -14750,14 +13877,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateDescriptorUpdateTemplate {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateDescriptorUpdateTemplate {
-    const STATIC: Self = Self(vkCreateDescriptorUpdateTemplate);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateDescriptorUpdateTemplate { const STATIC: Self = Self(vkCreateDescriptorUpdateTemplate); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[repr(transparent)]
@@ -14810,14 +13930,7 @@ unsafe impl crate::FromPtr for PFN_vkDestroyDescriptorUpdateTemplate {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDestroyDescriptorUpdateTemplate {
-    const STATIC: Self = Self(vkDestroyDescriptorUpdateTemplate);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkDestroyDescriptorUpdateTemplate { const STATIC: Self = Self(vkDestroyDescriptorUpdateTemplate); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[repr(transparent)]
@@ -14870,14 +13983,7 @@ unsafe impl crate::FromPtr for PFN_vkUpdateDescriptorSetWithTemplate {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkUpdateDescriptorSetWithTemplate {
-    const STATIC: Self = Self(vkUpdateDescriptorSetWithTemplate);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkUpdateDescriptorSetWithTemplate { const STATIC: Self = Self(vkUpdateDescriptorSetWithTemplate); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_maintenance1")]
 #[repr(transparent)]
@@ -14930,14 +14036,7 @@ unsafe impl crate::FromPtr for PFN_vkTrimCommandPool {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkTrimCommandPool {
-    const STATIC: Self = Self(vkTrimCommandPool);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkTrimCommandPool { const STATIC: Self = Self(vkTrimCommandPool); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_maintenance3")]
 #[repr(transparent)]
@@ -14990,14 +14089,7 @@ unsafe impl crate::FromPtr for PFN_vkGetDescriptorSetLayoutSupport {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetDescriptorSetLayoutSupport {
-    const STATIC: Self = Self(vkGetDescriptorSetLayoutSupport);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetDescriptorSetLayoutSupport { const STATIC: Self = Self(vkGetDescriptorSetLayoutSupport); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
@@ -15050,14 +14142,7 @@ unsafe impl crate::FromPtr for PFN_vkQueueSubmit2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_3APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkQueueSubmit2 {
-    const STATIC: Self = Self(vkQueueSubmit2);
-}
-
+#[cfg(feature = "Allow1_3APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkQueueSubmit2 { const STATIC: Self = Self(vkQueueSubmit2); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15081,13 +14166,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdBindPipeline {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdBindPipeline {
-    const STATIC: Self = Self(vkCmdBindPipeline);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdBindPipeline { const STATIC: Self = Self(vkCmdBindPipeline); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15111,13 +14190,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdSetViewport {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdSetViewport {
-    const STATIC: Self = Self(vkCmdSetViewport);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdSetViewport { const STATIC: Self = Self(vkCmdSetViewport); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15141,13 +14214,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdSetScissor {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdSetScissor {
-    const STATIC: Self = Self(vkCmdSetScissor);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdSetScissor { const STATIC: Self = Self(vkCmdSetScissor); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15171,13 +14238,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdSetLineWidth {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdSetLineWidth {
-    const STATIC: Self = Self(vkCmdSetLineWidth);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdSetLineWidth { const STATIC: Self = Self(vkCmdSetLineWidth); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15201,13 +14262,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdSetDepthBias {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdSetDepthBias {
-    const STATIC: Self = Self(vkCmdSetDepthBias);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdSetDepthBias { const STATIC: Self = Self(vkCmdSetDepthBias); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15231,13 +14286,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdSetBlendConstants {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdSetBlendConstants {
-    const STATIC: Self = Self(vkCmdSetBlendConstants);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdSetBlendConstants { const STATIC: Self = Self(vkCmdSetBlendConstants); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15261,13 +14310,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdSetDepthBounds {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdSetDepthBounds {
-    const STATIC: Self = Self(vkCmdSetDepthBounds);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdSetDepthBounds { const STATIC: Self = Self(vkCmdSetDepthBounds); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15291,13 +14334,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdSetStencilCompareMask {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdSetStencilCompareMask {
-    const STATIC: Self = Self(vkCmdSetStencilCompareMask);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdSetStencilCompareMask { const STATIC: Self = Self(vkCmdSetStencilCompareMask); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15321,13 +14358,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdSetStencilWriteMask {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdSetStencilWriteMask {
-    const STATIC: Self = Self(vkCmdSetStencilWriteMask);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdSetStencilWriteMask { const STATIC: Self = Self(vkCmdSetStencilWriteMask); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15351,13 +14382,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdSetStencilReference {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdSetStencilReference {
-    const STATIC: Self = Self(vkCmdSetStencilReference);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdSetStencilReference { const STATIC: Self = Self(vkCmdSetStencilReference); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15381,13 +14406,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdBindDescriptorSets {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdBindDescriptorSets {
-    const STATIC: Self = Self(vkCmdBindDescriptorSets);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdBindDescriptorSets { const STATIC: Self = Self(vkCmdBindDescriptorSets); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15411,13 +14430,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdBindIndexBuffer {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdBindIndexBuffer {
-    const STATIC: Self = Self(vkCmdBindIndexBuffer);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdBindIndexBuffer { const STATIC: Self = Self(vkCmdBindIndexBuffer); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15441,13 +14454,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdBindVertexBuffers {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdBindVertexBuffers {
-    const STATIC: Self = Self(vkCmdBindVertexBuffers);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdBindVertexBuffers { const STATIC: Self = Self(vkCmdBindVertexBuffers); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15471,13 +14478,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdDraw {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdDraw {
-    const STATIC: Self = Self(vkCmdDraw);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdDraw { const STATIC: Self = Self(vkCmdDraw); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15501,13 +14502,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdDrawIndexed {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdDrawIndexed {
-    const STATIC: Self = Self(vkCmdDrawIndexed);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdDrawIndexed { const STATIC: Self = Self(vkCmdDrawIndexed); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15531,13 +14526,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdDrawIndirect {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdDrawIndirect {
-    const STATIC: Self = Self(vkCmdDrawIndirect);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdDrawIndirect { const STATIC: Self = Self(vkCmdDrawIndirect); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15561,13 +14550,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdDrawIndexedIndirect {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdDrawIndexedIndirect {
-    const STATIC: Self = Self(vkCmdDrawIndexedIndirect);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdDrawIndexedIndirect { const STATIC: Self = Self(vkCmdDrawIndexedIndirect); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15591,13 +14574,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdDispatch {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdDispatch {
-    const STATIC: Self = Self(vkCmdDispatch);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdDispatch { const STATIC: Self = Self(vkCmdDispatch); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15621,13 +14598,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdDispatchIndirect {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdDispatchIndirect {
-    const STATIC: Self = Self(vkCmdDispatchIndirect);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdDispatchIndirect { const STATIC: Self = Self(vkCmdDispatchIndirect); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15651,13 +14622,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdCopyBuffer {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdCopyBuffer {
-    const STATIC: Self = Self(vkCmdCopyBuffer);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdCopyBuffer { const STATIC: Self = Self(vkCmdCopyBuffer); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15681,13 +14646,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdCopyImage {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdCopyImage {
-    const STATIC: Self = Self(vkCmdCopyImage);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdCopyImage { const STATIC: Self = Self(vkCmdCopyImage); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15711,13 +14670,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdBlitImage {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdBlitImage {
-    const STATIC: Self = Self(vkCmdBlitImage);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdBlitImage { const STATIC: Self = Self(vkCmdBlitImage); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15741,13 +14694,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdCopyBufferToImage {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdCopyBufferToImage {
-    const STATIC: Self = Self(vkCmdCopyBufferToImage);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdCopyBufferToImage { const STATIC: Self = Self(vkCmdCopyBufferToImage); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15771,13 +14718,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdCopyImageToBuffer {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdCopyImageToBuffer {
-    const STATIC: Self = Self(vkCmdCopyImageToBuffer);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdCopyImageToBuffer { const STATIC: Self = Self(vkCmdCopyImageToBuffer); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15801,13 +14742,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdUpdateBuffer {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdUpdateBuffer {
-    const STATIC: Self = Self(vkCmdUpdateBuffer);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdUpdateBuffer { const STATIC: Self = Self(vkCmdUpdateBuffer); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15831,13 +14766,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdFillBuffer {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdFillBuffer {
-    const STATIC: Self = Self(vkCmdFillBuffer);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdFillBuffer { const STATIC: Self = Self(vkCmdFillBuffer); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15861,13 +14790,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdClearColorImage {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdClearColorImage {
-    const STATIC: Self = Self(vkCmdClearColorImage);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdClearColorImage { const STATIC: Self = Self(vkCmdClearColorImage); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15891,13 +14814,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdClearDepthStencilImage {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdClearDepthStencilImage {
-    const STATIC: Self = Self(vkCmdClearDepthStencilImage);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdClearDepthStencilImage { const STATIC: Self = Self(vkCmdClearDepthStencilImage); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15921,13 +14838,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdClearAttachments {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdClearAttachments {
-    const STATIC: Self = Self(vkCmdClearAttachments);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdClearAttachments { const STATIC: Self = Self(vkCmdClearAttachments); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15951,13 +14862,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdResolveImage {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdResolveImage {
-    const STATIC: Self = Self(vkCmdResolveImage);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdResolveImage { const STATIC: Self = Self(vkCmdResolveImage); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -15981,13 +14886,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdSetEvent {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdSetEvent {
-    const STATIC: Self = Self(vkCmdSetEvent);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdSetEvent { const STATIC: Self = Self(vkCmdSetEvent); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -16011,13 +14910,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdResetEvent {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdResetEvent {
-    const STATIC: Self = Self(vkCmdResetEvent);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdResetEvent { const STATIC: Self = Self(vkCmdResetEvent); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -16041,13 +14934,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdWaitEvents {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdWaitEvents {
-    const STATIC: Self = Self(vkCmdWaitEvents);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdWaitEvents { const STATIC: Self = Self(vkCmdWaitEvents); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -16071,13 +14958,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdPipelineBarrier {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdPipelineBarrier {
-    const STATIC: Self = Self(vkCmdPipelineBarrier);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdPipelineBarrier { const STATIC: Self = Self(vkCmdPipelineBarrier); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -16101,13 +14982,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdBeginQuery {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdBeginQuery {
-    const STATIC: Self = Self(vkCmdBeginQuery);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdBeginQuery { const STATIC: Self = Self(vkCmdBeginQuery); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -16131,13 +15006,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdEndQuery {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdEndQuery {
-    const STATIC: Self = Self(vkCmdEndQuery);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdEndQuery { const STATIC: Self = Self(vkCmdEndQuery); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -16161,13 +15030,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdResetQueryPool {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdResetQueryPool {
-    const STATIC: Self = Self(vkCmdResetQueryPool);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdResetQueryPool { const STATIC: Self = Self(vkCmdResetQueryPool); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -16191,13 +15054,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdWriteTimestamp {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdWriteTimestamp {
-    const STATIC: Self = Self(vkCmdWriteTimestamp);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdWriteTimestamp { const STATIC: Self = Self(vkCmdWriteTimestamp); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -16221,13 +15078,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdCopyQueryPoolResults {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdCopyQueryPoolResults {
-    const STATIC: Self = Self(vkCmdCopyQueryPoolResults);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdCopyQueryPoolResults { const STATIC: Self = Self(vkCmdCopyQueryPoolResults); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -16251,13 +15102,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdPushConstants {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdPushConstants {
-    const STATIC: Self = Self(vkCmdPushConstants);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdPushConstants { const STATIC: Self = Self(vkCmdPushConstants); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -16281,13 +15126,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdBeginRenderPass {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdBeginRenderPass {
-    const STATIC: Self = Self(vkCmdBeginRenderPass);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdBeginRenderPass { const STATIC: Self = Self(vkCmdBeginRenderPass); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -16311,13 +15150,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdNextSubpass {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdNextSubpass {
-    const STATIC: Self = Self(vkCmdNextSubpass);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdNextSubpass { const STATIC: Self = Self(vkCmdNextSubpass); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -16341,13 +15174,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdEndRenderPass {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdEndRenderPass {
-    const STATIC: Self = Self(vkCmdEndRenderPass);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdEndRenderPass { const STATIC: Self = Self(vkCmdEndRenderPass); }
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy)]
@@ -16371,13 +15198,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdExecuteCommands {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdExecuteCommands {
-    const STATIC: Self = Self(vkCmdExecuteCommands);
-}
-
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdExecuteCommands { const STATIC: Self = Self(vkCmdExecuteCommands); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[repr(transparent)]
@@ -16511,14 +15332,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdSetDeviceMask {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdSetDeviceMask {
-    const STATIC: Self = Self(vkCmdSetDeviceMask);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdSetDeviceMask { const STATIC: Self = Self(vkCmdSetDeviceMask); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_device_group")]
 #[repr(transparent)]
@@ -16571,14 +15385,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdDispatchBase {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdDispatchBase {
-    const STATIC: Self = Self(vkCmdDispatchBase);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdDispatchBase { const STATIC: Self = Self(vkCmdDispatchBase); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
@@ -16631,14 +15438,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdSetEvent2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_3APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdSetEvent2 {
-    const STATIC: Self = Self(vkCmdSetEvent2);
-}
-
+#[cfg(feature = "Allow1_3APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdSetEvent2 { const STATIC: Self = Self(vkCmdSetEvent2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
@@ -16691,14 +15491,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdResetEvent2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_3APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdResetEvent2 {
-    const STATIC: Self = Self(vkCmdResetEvent2);
-}
-
+#[cfg(feature = "Allow1_3APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdResetEvent2 { const STATIC: Self = Self(vkCmdResetEvent2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
@@ -16751,14 +15544,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdWaitEvents2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_3APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdWaitEvents2 {
-    const STATIC: Self = Self(vkCmdWaitEvents2);
-}
-
+#[cfg(feature = "Allow1_3APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdWaitEvents2 { const STATIC: Self = Self(vkCmdWaitEvents2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
@@ -16811,14 +15597,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdPipelineBarrier2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_3APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdPipelineBarrier2 {
-    const STATIC: Self = Self(vkCmdPipelineBarrier2);
-}
-
+#[cfg(feature = "Allow1_3APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdPipelineBarrier2 { const STATIC: Self = Self(vkCmdPipelineBarrier2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
@@ -16871,14 +15650,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdWriteTimestamp2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_3APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdWriteTimestamp2 {
-    const STATIC: Self = Self(vkCmdWriteTimestamp2);
-}
-
+#[cfg(feature = "Allow1_3APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdWriteTimestamp2 { const STATIC: Self = Self(vkCmdWriteTimestamp2); }
 #[cfg(feature = "VK_KHR_surface")]
 #[rustfmt::skip]
 pub const VK_KHR_SURFACE_EXTENSION_NAME: &str = "VK_KHR_surface";
@@ -17630,14 +16402,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateSamplerYcbcrConversion {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateSamplerYcbcrConversion {
-    const STATIC: Self = Self(vkCreateSamplerYcbcrConversion);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateSamplerYcbcrConversion { const STATIC: Self = Self(vkCreateSamplerYcbcrConversion); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[repr(transparent)]
@@ -17690,14 +16455,7 @@ unsafe impl crate::FromPtr for PFN_vkDestroySamplerYcbcrConversion {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkDestroySamplerYcbcrConversion {
-    const STATIC: Self = Self(vkDestroySamplerYcbcrConversion);
-}
-
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkDestroySamplerYcbcrConversion { const STATIC: Self = Self(vkDestroySamplerYcbcrConversion); }
 #[derive(Debug, Clone)]
 #[repr(C)]
 #[rustfmt::skip]
@@ -18081,14 +16839,7 @@ unsafe impl crate::FromPtr for PFN_vkGetBufferDeviceAddress {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetBufferDeviceAddress {
-    const STATIC: Self = Self(vkGetBufferDeviceAddress);
-}
-
+#[cfg(feature = "Allow1_2APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetBufferDeviceAddress { const STATIC: Self = Self(vkGetBufferDeviceAddress); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_buffer_device_address")]
 #[repr(transparent)]
@@ -18141,14 +16892,7 @@ unsafe impl crate::FromPtr for PFN_vkGetBufferOpaqueCaptureAddress {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetBufferOpaqueCaptureAddress {
-    const STATIC: Self = Self(vkGetBufferOpaqueCaptureAddress);
-}
-
+#[cfg(feature = "Allow1_2APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetBufferOpaqueCaptureAddress { const STATIC: Self = Self(vkGetBufferOpaqueCaptureAddress); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_buffer_device_address")]
 #[repr(transparent)]
@@ -18201,14 +16945,7 @@ unsafe impl crate::FromPtr for PFN_vkGetDeviceMemoryOpaqueCaptureAddress {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetDeviceMemoryOpaqueCaptureAddress {
-    const STATIC: Self = Self(vkGetDeviceMemoryOpaqueCaptureAddress);
-}
-
+#[cfg(feature = "Allow1_2APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetDeviceMemoryOpaqueCaptureAddress { const STATIC: Self = Self(vkGetDeviceMemoryOpaqueCaptureAddress); }
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
 #[rustfmt::skip]
 pub const VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME: &str = "VK_KHR_timeline_semaphore";
@@ -18534,14 +17271,7 @@ unsafe impl crate::FromPtr for PFN_vkGetSemaphoreCounterValue {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetSemaphoreCounterValue {
-    const STATIC: Self = Self(vkGetSemaphoreCounterValue);
-}
-
+#[cfg(feature = "Allow1_2APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetSemaphoreCounterValue { const STATIC: Self = Self(vkGetSemaphoreCounterValue); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
 #[repr(transparent)]
@@ -18594,14 +17324,7 @@ unsafe impl crate::FromPtr for PFN_vkSignalSemaphore {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkSignalSemaphore {
-    const STATIC: Self = Self(vkSignalSemaphore);
-}
-
+#[cfg(feature = "Allow1_2APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkSignalSemaphore { const STATIC: Self = Self(vkSignalSemaphore); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
 #[repr(transparent)]
@@ -18654,14 +17377,7 @@ unsafe impl crate::FromPtr for PFN_vkWaitSemaphores {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkWaitSemaphores {
-    const STATIC: Self = Self(vkWaitSemaphores);
-}
-
+#[cfg(feature = "Allow1_2APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkWaitSemaphores { const STATIC: Self = Self(vkWaitSemaphores); }
 #[cfg(feature = "VK_KHR_image_format_list")]
 #[rustfmt::skip]
 pub const VK_KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME: &str = "VK_KHR_image_format_list";
@@ -19256,14 +17972,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateRenderPass2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateRenderPass2 {
-    const STATIC: Self = Self(vkCreateRenderPass2);
-}
-
+#[cfg(feature = "Allow1_2APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateRenderPass2 { const STATIC: Self = Self(vkCreateRenderPass2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_create_renderpass2")]
 #[repr(transparent)]
@@ -19316,14 +18025,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdBeginRenderPass2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdBeginRenderPass2 {
-    const STATIC: Self = Self(vkCmdBeginRenderPass2);
-}
-
+#[cfg(feature = "Allow1_2APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdBeginRenderPass2 { const STATIC: Self = Self(vkCmdBeginRenderPass2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_create_renderpass2")]
 #[repr(transparent)]
@@ -19376,14 +18078,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdNextSubpass2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdNextSubpass2 {
-    const STATIC: Self = Self(vkCmdNextSubpass2);
-}
-
+#[cfg(feature = "Allow1_2APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdNextSubpass2 { const STATIC: Self = Self(vkCmdNextSubpass2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_create_renderpass2")]
 #[repr(transparent)]
@@ -19436,14 +18131,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdEndRenderPass2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_2APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdEndRenderPass2 {
-    const STATIC: Self = Self(vkCmdEndRenderPass2);
-}
-
+#[cfg(feature = "Allow1_2APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdEndRenderPass2 { const STATIC: Self = Self(vkCmdEndRenderPass2); }
 #[cfg(feature = "VK_KHR_depth_stencil_resolve")]
 #[rustfmt::skip]
 pub const VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME: &str = "VK_KHR_depth_stencil_resolve";
@@ -20058,14 +18746,7 @@ unsafe impl crate::FromPtr for PFN_vkGetDeviceBufferMemoryRequirements {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_3APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetDeviceBufferMemoryRequirements {
-    const STATIC: Self = Self(vkGetDeviceBufferMemoryRequirements);
-}
-
+#[cfg(feature = "Allow1_3APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetDeviceBufferMemoryRequirements { const STATIC: Self = Self(vkGetDeviceBufferMemoryRequirements); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_maintenance4")]
 #[repr(transparent)]
@@ -20118,14 +18799,7 @@ unsafe impl crate::FromPtr for PFN_vkGetDeviceImageMemoryREquirements {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_3APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetDeviceImageMemoryREquirements {
-    const STATIC: Self = Self(vkGetDeviceImageMemoryREquirements);
-}
-
+#[cfg(feature = "Allow1_3APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetDeviceImageMemoryREquirements { const STATIC: Self = Self(vkGetDeviceImageMemoryREquirements); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_maintenance4")]
 #[repr(transparent)]
@@ -20178,14 +18852,7 @@ unsafe impl crate::FromPtr for PFN_vkGetDeviceImageSparseMemoryRequirements {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_3APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetDeviceImageSparseMemoryRequirements {
-    const STATIC: Self = Self(vkGetDeviceImageSparseMemoryRequirements);
-}
-
+#[cfg(feature = "Allow1_3APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetDeviceImageSparseMemoryRequirements { const STATIC: Self = Self(vkGetDeviceImageSparseMemoryRequirements); }
 #[cfg(feature = "VK_KHR_format_feature_flags2")]
 #[rustfmt::skip]
 pub const VK_KHR_FORMAT_FEATURE_FLAGS2_EXTENSION_NAME: &str = "VK_KHR_format_feature_flags2";
@@ -20809,14 +19476,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdCopyBuffer2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_3APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdCopyBuffer2 {
-    const STATIC: Self = Self(vkCmdCopyBuffer2);
-}
-
+#[cfg(feature = "Allow1_3APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdCopyBuffer2 { const STATIC: Self = Self(vkCmdCopyBuffer2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_copy_commands2")]
 #[repr(transparent)]
@@ -20869,14 +19529,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdCopyImage2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_3APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdCopyImage2 {
-    const STATIC: Self = Self(vkCmdCopyImage2);
-}
-
+#[cfg(feature = "Allow1_3APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdCopyImage2 { const STATIC: Self = Self(vkCmdCopyImage2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_copy_commands2")]
 #[repr(transparent)]
@@ -20929,14 +19582,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdCopyBufferToImage2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_3APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdCopyBufferToImage2 {
-    const STATIC: Self = Self(vkCmdCopyBufferToImage2);
-}
-
+#[cfg(feature = "Allow1_3APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdCopyBufferToImage2 { const STATIC: Self = Self(vkCmdCopyBufferToImage2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_copy_commands2")]
 #[repr(transparent)]
@@ -20989,14 +19635,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdCopyImageToBuffer2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_3APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdCopyImageToBuffer2 {
-    const STATIC: Self = Self(vkCmdCopyImageToBuffer2);
-}
-
+#[cfg(feature = "Allow1_3APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdCopyImageToBuffer2 { const STATIC: Self = Self(vkCmdCopyImageToBuffer2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_copy_commands2")]
 #[repr(transparent)]
@@ -21049,14 +19688,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdBlitImage2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_3APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdBlitImage2 {
-    const STATIC: Self = Self(vkCmdBlitImage2);
-}
-
+#[cfg(feature = "Allow1_3APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdBlitImage2 { const STATIC: Self = Self(vkCmdBlitImage2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_copy_commands2")]
 #[repr(transparent)]
@@ -21109,14 +19741,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdResolveImage2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_3APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdResolveImage2 {
-    const STATIC: Self = Self(vkCmdResolveImage2);
-}
-
+#[cfg(feature = "Allow1_3APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdResolveImage2 { const STATIC: Self = Self(vkCmdResolveImage2); }
 #[cfg(feature = "VK_KHR_dynamic_rendering")]
 #[rustfmt::skip]
 pub const VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME: &str = "VK_KHR_dynamic_rendering";
@@ -21421,14 +20046,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdBeginRendering {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_3APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdBeginRendering {
-    const STATIC: Self = Self(vkCmdBeginRendering);
-}
-
+#[cfg(feature = "Allow1_3APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdBeginRendering { const STATIC: Self = Self(vkCmdBeginRendering); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_dynamic_rendering")]
 #[repr(transparent)]
@@ -21481,14 +20099,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdEndRendering {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_3APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdEndRendering {
-    const STATIC: Self = Self(vkCmdEndRendering);
-}
-
+#[cfg(feature = "Allow1_3APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdEndRendering { const STATIC: Self = Self(vkCmdEndRendering); }
 #[cfg(feature = "VK_KHR_maintenance5")]
 #[rustfmt::skip]
 pub const VK_KHR_MAINTENANCE5_EXTENSION_NAME: &str = "VK_KHR_maintenance5";
@@ -21952,14 +20563,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdBindIndexBuffer2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_4APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdBindIndexBuffer2 {
-    const STATIC: Self = Self(vkCmdBindIndexBuffer2);
-}
-
+#[cfg(feature = "Allow1_4APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdBindIndexBuffer2 { const STATIC: Self = Self(vkCmdBindIndexBuffer2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_maintenance5")]
 #[repr(transparent)]
@@ -22012,14 +20616,7 @@ unsafe impl crate::FromPtr for PFN_vkGetRenderingAreaGranularity {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_4APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetRenderingAreaGranularity {
-    const STATIC: Self = Self(vkGetRenderingAreaGranularity);
-}
-
+#[cfg(feature = "Allow1_4APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetRenderingAreaGranularity { const STATIC: Self = Self(vkGetRenderingAreaGranularity); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_maintenance5")]
 #[repr(transparent)]
@@ -22072,14 +20669,7 @@ unsafe impl crate::FromPtr for PFN_vkGetDeviceImageSubresourceLayout {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_4APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetDeviceImageSubresourceLayout {
-    const STATIC: Self = Self(vkGetDeviceImageSubresourceLayout);
-}
-
+#[cfg(feature = "Allow1_4APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetDeviceImageSubresourceLayout { const STATIC: Self = Self(vkGetDeviceImageSubresourceLayout); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_maintenance5")]
 #[repr(transparent)]
@@ -22132,14 +20722,7 @@ unsafe impl crate::FromPtr for PFN_vkGetImageSubresourceLayout2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_4APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetImageSubresourceLayout2 {
-    const STATIC: Self = Self(vkGetImageSubresourceLayout2);
-}
-
+#[cfg(feature = "Allow1_4APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetImageSubresourceLayout2 { const STATIC: Self = Self(vkGetImageSubresourceLayout2); }
 #[cfg(feature = "VK_KHR_maintenance6")]
 #[rustfmt::skip]
 pub const VK_KHR_MAINTENANCE6_EXTENSION_NAME: &str = "VK_KHR_maintenance6";
@@ -22471,14 +21054,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdBindDescriptorSets2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_4APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdBindDescriptorSets2 {
-    const STATIC: Self = Self(vkCmdBindDescriptorSets2);
-}
-
+#[cfg(feature = "Allow1_4APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdBindDescriptorSets2 { const STATIC: Self = Self(vkCmdBindDescriptorSets2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_maintenance6")]
 #[repr(transparent)]
@@ -22531,14 +21107,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdPushConstants2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_4APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdPushConstants2 {
-    const STATIC: Self = Self(vkCmdPushConstants2);
-}
-
+#[cfg(feature = "Allow1_4APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdPushConstants2 { const STATIC: Self = Self(vkCmdPushConstants2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_maintenance6")]
 #[cfg(feature = "VK_KHR_push_descriptor")]
@@ -22597,15 +21166,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdPushDescriptorSet2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_4APIs")]
-#[cfg(feature = "VK_KHR_push_descriptor")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdPushDescriptorSet2 {
-    const STATIC: Self = Self(vkCmdPushDescriptorSet2);
-}
-
+#[cfg(feature = "Allow1_4APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdPushDescriptorSet2 { const STATIC: Self = Self(vkCmdPushDescriptorSet2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_maintenance6")]
 #[cfg(feature = "VK_KHR_push_descriptor")]
@@ -22664,15 +21225,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdPushDescriptorSetWithTemplate2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_4APIs")]
-#[cfg(feature = "VK_KHR_push_descriptor")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdPushDescriptorSetWithTemplate2 {
-    const STATIC: Self = Self(vkCmdPushDescriptorSetWithTemplate2);
-}
-
+#[cfg(feature = "Allow1_4APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdPushDescriptorSetWithTemplate2 { const STATIC: Self = Self(vkCmdPushDescriptorSetWithTemplate2); }
 #[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
 #[rustfmt::skip]
 pub const VK_KHR_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME: &str = "VK_KHR_vertex_attribute_divisor";
@@ -23199,14 +21752,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdPushDescriptorSet {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_4APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdPushDescriptorSet {
-    const STATIC: Self = Self(vkCmdPushDescriptorSet);
-}
-
+#[cfg(feature = "Allow1_4APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdPushDescriptorSet { const STATIC: Self = Self(vkCmdPushDescriptorSet); }
 #[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[cfg(feature = "VK_KHR_push_descriptor")]
 #[rustfmt::skip]
@@ -23274,15 +21820,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdPushDescriptorSetWithTemplate {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_4APIs")]
-#[cfg(feature = "VK_KHR_descriptor_update_template")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdPushDescriptorSetWithTemplate {
-    const STATIC: Self = Self(vkCmdPushDescriptorSetWithTemplate);
-}
-
+#[cfg(feature = "Allow1_4APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdPushDescriptorSetWithTemplate { const STATIC: Self = Self(vkCmdPushDescriptorSetWithTemplate); }
 #[cfg(feature = "VK_KHR_dynamic_rendering_local_read")]
 #[rustfmt::skip]
 pub const VK_KHR_DYNAMIC_RENDERING_LOCAL_READ_EXTENSION_NAME: &str = "VK_KHR_dynamic_rendering_local_read";
@@ -23458,14 +21996,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdSetRenderingAttachmentLocations {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_4APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdSetRenderingAttachmentLocations {
-    const STATIC: Self = Self(vkCmdSetRenderingAttachmentLocations);
-}
-
+#[cfg(feature = "Allow1_4APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdSetRenderingAttachmentLocations { const STATIC: Self = Self(vkCmdSetRenderingAttachmentLocations); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_dynamic_rendering_local_read")]
 #[repr(transparent)]
@@ -23518,14 +22049,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdSetRenderingInputAttachmentIndices {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_4APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdSetRenderingInputAttachmentIndices {
-    const STATIC: Self = Self(vkCmdSetRenderingInputAttachmentIndices);
-}
-
+#[cfg(feature = "Allow1_4APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdSetRenderingInputAttachmentIndices { const STATIC: Self = Self(vkCmdSetRenderingInputAttachmentIndices); }
 #[cfg(feature = "VK_KHR_index_type_uint8")]
 #[rustfmt::skip]
 pub const VK_KHR_INDEX_TYPE_UINT8_EXTENSION_NAME: &str = "VK_KHR_index_type_uint8";
@@ -23802,14 +22326,7 @@ unsafe impl crate::FromPtr for PFN_vkCmdSetLineStipple {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_4APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCmdSetLineStipple {
-    const STATIC: Self = Self(vkCmdSetLineStipple);
-}
-
+#[cfg(feature = "Allow1_4APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCmdSetLineStipple { const STATIC: Self = Self(vkCmdSetLineStipple); }
 #[cfg(feature = "VK_KHR_map_memory2")]
 #[rustfmt::skip]
 pub const VK_KHR_MAP_MEMORY2_EXTENSION_NAME: &str = "VK_KHR_map_memory2";
@@ -23960,14 +22477,7 @@ unsafe impl crate::FromPtr for PFN_vkMapMemory2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_4APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkMapMemory2 {
-    const STATIC: Self = Self(vkMapMemory2);
-}
-
+#[cfg(feature = "Allow1_4APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkMapMemory2 { const STATIC: Self = Self(vkMapMemory2); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_map_memory2")]
 #[repr(transparent)]
@@ -24020,14 +22530,7 @@ unsafe impl crate::FromPtr for PFN_vkUnmapMemory2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_4APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkUnmapMemory2 {
-    const STATIC: Self = Self(vkUnmapMemory2);
-}
-
+#[cfg(feature = "Allow1_4APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkUnmapMemory2 { const STATIC: Self = Self(vkUnmapMemory2); }
 #[cfg(feature = "VK_KHR_shader_subgroup_rotate")]
 #[rustfmt::skip]
 pub const VK_KHR_SHADER_SUBGROUP_ROTATE_EXTENSION_NAME: &str = "VK_KHR_shader_subgroup_rotate";
@@ -24681,14 +23184,7 @@ unsafe impl crate::FromPtr for PFN_vkCopyMemoryToImage {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_4APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCopyMemoryToImage {
-    const STATIC: Self = Self(vkCopyMemoryToImage);
-}
-
+#[cfg(feature = "Allow1_4APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCopyMemoryToImage { const STATIC: Self = Self(vkCopyMemoryToImage); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_host_image_copy")]
 #[repr(transparent)]
@@ -24741,14 +23237,7 @@ unsafe impl crate::FromPtr for PFN_vkCopyImageToMemory {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_4APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCopyImageToMemory {
-    const STATIC: Self = Self(vkCopyImageToMemory);
-}
-
+#[cfg(feature = "Allow1_4APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCopyImageToMemory { const STATIC: Self = Self(vkCopyImageToMemory); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_host_image_copy")]
 #[repr(transparent)]
@@ -24801,14 +23290,7 @@ unsafe impl crate::FromPtr for PFN_vkCopyImageToImage {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_4APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCopyImageToImage {
-    const STATIC: Self = Self(vkCopyImageToImage);
-}
-
+#[cfg(feature = "Allow1_4APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCopyImageToImage { const STATIC: Self = Self(vkCopyImageToImage); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_host_image_copy")]
 #[repr(transparent)]
@@ -24861,14 +23343,7 @@ unsafe impl crate::FromPtr for PFN_vkTransitionImageLayout {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_4APIs")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkTransitionImageLayout {
-    const STATIC: Self = Self(vkTransitionImageLayout);
-}
-
+#[cfg(feature = "Allow1_4APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkTransitionImageLayout { const STATIC: Self = Self(vkTransitionImageLayout); }
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_host_image_copy")]
 #[cfg(not(feature = "VK_KHR_maintenance5"))]
@@ -24927,15 +23402,7 @@ unsafe impl crate::FromPtr for PFN_vkGetImageSubresourceLayout2 {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Allow1_4APIs")]
-#[cfg(not(feature = "VK_KHR_maintenance5"))]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkGetImageSubresourceLayout2 {
-    const STATIC: Self = Self(vkGetImageSubresourceLayout2);
-}
-
+#[cfg(feature = "Allow1_4APIs")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkGetImageSubresourceLayout2 { const STATIC: Self = Self(vkGetImageSubresourceLayout2); }
 #[cfg(feature = "VK_EXT_pipeline_protected_access")]
 #[rustfmt::skip]
 pub const VK_EXT_PIPELINE_PROTECTED_ACCESS_EXTENSION_NAME: &str = "VK_EXT_pipeline_protected_access";
@@ -28008,14 +26475,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateViSurfaceNN {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_NN_vi_surface")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateViSurfaceNN {
-    const STATIC: Self = Self(vkCreateViSurfaceNN);
-}
-
+#[cfg(feature = "VK_NN_vi_surface")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateViSurfaceNN { const STATIC: Self = Self(vkCreateViSurfaceNN); }
 #[cfg(feature = "VK_EXT_display_surface_counter")]
 #[rustfmt::skip]
 pub const VK_EXT_DISPLAY_SURFACE_COUNTER_EXTENSION_NAME: &str = "VK_EXT_display_surface_counter";
@@ -30056,14 +28516,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateMacOSSurfaceMVK {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_MVK_macos_surface")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateMacOSSurfaceMVK {
-    const STATIC: Self = Self(vkCreateMacOSSurfaceMVK);
-}
-
+#[cfg(feature = "VK_MVK_macos_surface")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateMacOSSurfaceMVK { const STATIC: Self = Self(vkCreateMacOSSurfaceMVK); }
 #[cfg(feature = "VK_MVK_ios_surface")]
 #[rustfmt::skip]
 pub const VK_MVK_IOS_SURFACE_EXTENSION_NAME: &str = "VK_MVK_ios_surface";
@@ -30134,14 +28587,7 @@ unsafe impl crate::FromPtr for PFN_vkCreateIOSSurfaceMVK {
         unsafe { core::mem::transmute::<*const core::ffi::c_void, Self>(p) }
     }
 }
-#[cfg(not(feature = "DynamicLoaded"))]
-#[cfg(feature = "Implements")]
-#[cfg(feature = "VK_MVK_ios_surface")]
-#[rustfmt::skip]
-impl crate::StaticCallable for PFN_vkCreateIOSSurfaceMVK {
-    const STATIC: Self = Self(vkCreateIOSSurfaceMVK);
-}
-
+#[cfg(feature = "VK_MVK_ios_surface")]#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_vkCreateIOSSurfaceMVK { const STATIC: Self = Self(vkCreateIOSSurfaceMVK); }
 #[cfg(feature = "VK_EXT_depth_range_unrestricted")]
 #[rustfmt::skip]
 pub const VK_EXT_DEPTH_RANGE_UNRESTRICTED_EXTENSION_NAME: &str = "VK_EXT_depth_range_unrestricted";
@@ -31174,353 +29620,244 @@ unsafe impl crate::FromPtr for PFN_vkGetShaderInfoAMD {
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]
 #[rustfmt::skip]
 unsafe extern "system" {
-    pub fn vkCreateInstance(pCreateInfo: *const VkInstanceCreateInfo, pAllocator: *const VkAllocationCallbacks, pInstance: *mut VkInstance) -> VkResult;
-    pub fn vkDestroyInstance(instance: VkInstance, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkEnumeratePhysicalDevices(instance: VkInstance, pPhysicalDeviceCount: *mut u32, pPhysicalDevices: *mut VkPhysicalDevice) -> VkResult;
-    pub fn vkGetPhysicalDeviceFeatures(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkPhysicalDeviceFeatures);
-    pub fn vkGetPhysicalDeviceFormatProperties(physicalDevice: VkPhysicalDevice, format: VkFormat, pFormatProperties: *mut VkFormatProperties);
-    pub fn vkGetPhysicalDeviceImageFormatProperties(physicalDevice: VkPhysicalDevice, format: VkFormat, r#type: VkImageType, tiling: VkImageTiling, usage: VkImageUsageFlags, flags: VkImageCreateFlags, pImageFormatProperties: *mut VkImageFormatProperties) -> VkResult;
-    pub fn vkGetPhysicalDeviceProperties(physicalDevice: VkPhysicalDevice, pProperties: *mut VkPhysicalDeviceProperties);
-    pub fn vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice: VkPhysicalDevice, pQueueFamilyPropertyCount: *mut u32, pQueueFamilyProperties: *mut VkQueueFamilyProperties);
-    pub fn vkGetPhysicalDeviceMemoryProperties(physicalDevice: VkPhysicalDevice, pMemoryProperties: *mut VkPhysicalDeviceMemoryProperties);
-    pub fn vkGetInstanceProcAddr(instance: VkInstance, pName: *const core::ffi::c_char) -> Option<PFN_vkVoidFunction>;
-    pub fn vkGetDeviceProcAddr(device: VkDevice, pName: *const core::ffi::c_char) -> Option<PFN_vkVoidFunction>;
-    pub fn vkCreateDevice(physicalDevice: VkPhysicalDevice, pCreateInfo: *const VkDeviceCreateInfo, pAllocator: *const VkAllocationCallbacks, pDevice: *mut VkDevice) -> VkResult;
-    pub fn vkDestroyDevice(device: VkDevice, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkEnumerateInstanceExtensionProperties(pLayerName: *const core::ffi::c_char, pPropertyCount: *mut u32, pProperties: *mut VkExtensionProperties) -> VkResult;
-    pub fn vkEnumerateDeviceExtensionProperties(physicalDevice: VkPhysicalDevice, pLayerName: *const core::ffi::c_char, pPropertyCount: *mut u32, pProperties: *mut VkExtensionProperties) -> VkResult;
-    pub fn vkEnumerateInstanceLayerProperties(pPropertyCount: *mut u32, pProperties: *mut VkLayerProperties) -> VkResult;
-    pub fn vkEnumerateDeviceLayerProperties(physicalDevice: VkPhysicalDevice, pPropertyCount: *mut u32, pProperties: *mut VkLayerProperties) -> VkResult;
-    pub fn vkGetDeviceQueue(device: VkDevice, queueFamilyIndex: u32, queueIndex: u32, pQueue: *mut VkQueue);
-    pub fn vkQueueSubmit(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo, fence: Option<VkFence>) -> VkResult;
-    pub fn vkQueueWaitIdle(queue: VkQueue) -> VkResult;
-    pub fn vkDeviceWaitIdle(device: VkDevice) -> VkResult;
-    pub fn vkAllocateMemory(device: VkDevice, pAllocateInfo: *const VkMemoryAllocateInfo, pAllocator: *const VkAllocationCallbacks, pMemory: *mut VkDeviceMemory) -> VkResult;
-    pub fn vkFreeMemory(device: VkDevice, memory: VkDeviceMemory, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkMapMemory(device: VkDevice, memory: VkDeviceMemory, offset: VkDeviceSize, size: VkDeviceSize, flags: VkMemoryMapFlags, ppData: *mut *mut core::ffi::c_void) -> VkResult;
-    pub fn vkUnmapMemory(device: VkDevice, memory: VkDeviceMemory);
-    pub fn vkFlushMappedMemoryRanges(device: VkDevice, memoryRangeCount: u32, pMemoryRanges: *const VkMappedMemoryRange) -> VkResult;
-    pub fn vkInvalidateMappedMemoryRanges(device: VkDevice, memoryRangeCount: u32, pMemoryRanges: *const VkMappedMemoryRange) -> VkResult;
-    pub fn vkGetDeviceMemoryCommitment(device: VkDevice, memory: VkDeviceMemory, pCommitmentMemoryInBytes: *mut VkDeviceSize);
-    pub fn vkBindBufferMemory(device: VkDevice, buffer: VkBuffer, memory: VkDeviceMemory, memoryOffset: VkDeviceSize) -> VkResult;
-    pub fn vkBindImageMemory(device: VkDevice, image: VkImage, memory: VkDeviceMemory, memoryOffset: VkDeviceSize) -> VkResult;
-    pub fn vkGetBufferMemoryRequirements(device: VkDevice, buffer: VkBuffer, pMemoryRequirements: *mut VkMemoryRequirements);
-    pub fn vkGetImageMemoryRequirements(device: VkDevice, image: VkImage, pMemoryRequirements: *mut VkMemoryRequirements);
-    pub fn vkGetImageSparseMemoryRequirements(device: VkDevice, image: VkImage, pSparseMemoryRequirementsCount: *mut u32, pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements);
-    pub fn vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevice: VkPhysicalDevice, format: VkFormat, r#type: VkImageType, samples: VkSampleCountFlags, usage: VkImageUsageFlags, tiling: VkImageTiling, pPropertyCount: *mut u32, pProperties: *mut VkSparseImageFormatProperties);
-    pub fn vkQueueBindSparse(queue: VkQueue, bindInfoCount: u32, pBindInfos: *const VkBindSparseInfo, fence: Option<VkFence>) -> VkResult;
-    pub fn vkCreateFence(device: VkDevice, pCreateInfo: *const VkFenceCreateInfo, pAllocator: *const VkAllocationCallbacks, pFence: *mut VkFence) -> VkResult;
-    pub fn vkDestroyFence(device: VkDevice, fence: VkFence, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkResetFences(device: VkDevice, fenceCount: u32, pFences: *const VkFence) -> VkResult;
-    pub fn vkGetFenceStatus(device: VkDevice, fence: VkFence) -> VkResult;
-    pub fn vkWaitForFences(device: VkDevice, fenceCount: u32, pFences: *const VkFence, waitAll: VkBool32, timeout: u64) -> VkResult;
-    pub fn vkCreateSemaphore(device: VkDevice, pCreateInfo: *const VkSemaphoreCreateInfo, pAllocator: *const VkAllocationCallbacks, pSemaphore: *mut VkSemaphore) -> VkResult;
-    pub fn vkDestroySemaphore(device: VkDevice, semaphore: VkSemaphore, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkCreateEvent(device: VkDevice, pCreateInfo: *const VkEventCreateInfo, pAllocator: *const VkAllocationCallbacks, pEvent: *mut VkEvent) -> VkResult;
-    pub fn vkDestroyEvent(device: VkDevice, event: VkEvent, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkGetEventStatus(device: VkDevice, event: VkEvent) -> VkResult;
-    pub fn vkSetEvent(device: VkDevice, event: VkEvent) -> VkResult;
-    pub fn vkResetEvent(device: VkDevice, event: VkEvent) -> VkResult;
-    pub fn vkCreateQueryPool(device: VkDevice, pCreateInfo: *const VkQueryPoolCreateInfo, pAllocator: *const VkAllocationCallbacks, pQueryPool: *mut VkQueryPool) -> VkResult;
-    pub fn vkDestroyQueryPool(device: VkDevice, queryPool: VkQueryPool, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkGetQueryPoolResults(device: VkDevice, queryPool: VkQueryPool, firstQuery: u32, queryCount: u32, dataSize: usize, pData: *mut core::ffi::c_void, stride: VkDeviceSize, flags: VkQueryResultFlags) -> VkResult;
-    pub fn vkCreateBuffer(device: VkDevice, pCreateInfo: *const VkBufferCreateInfo, pAllocator: *const VkAllocationCallbacks, pBuffer: *mut VkBuffer) -> VkResult;
-    pub fn vkDestroyBuffer(device: VkDevice, buffer: VkBuffer, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkCreateBufferView(device: VkDevice, pCreateInfo: *const VkBufferViewCreateInfo, pAllocator: *const VkAllocationCallbacks, pView: *mut VkBufferView) -> VkResult;
-    pub fn vkDestroyBufferView(device: VkDevice, bufferView: VkBufferView, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkCreateImage(device: VkDevice, pCreateInfo: *const VkImageCreateInfo, pAllocator: *const VkAllocationCallbacks, pImage: *mut VkImage) -> VkResult;
-    pub fn vkDestroyImage(device: VkDevice, image: VkImage, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkGetImageSubresourceLayout(device: VkDevice, image: VkImage, pSubresource: *const VkImageSubresource, pLayout: *mut VkSubresourceLayout);
-    pub fn vkCreateImageView(device: VkDevice, pCreateInfo: *const VkImageViewCreateInfo, pAllocator: *const VkAllocationCallbacks, pView: *mut VkImageView) -> VkResult;
-    pub fn vkDestroyImageView(device: VkDevice, view: VkImageView, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkCreateShaderModule(device: VkDevice, pCreateInfo: *const VkShaderModuleCreateInfo, pAllocator: *const VkAllocationCallbacks, pModule: *mut VkShaderModule) -> VkResult;
-    pub fn vkDestroyShaderModule(device: VkDevice, module: VkShaderModule, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkCreatePipelineCache(device: VkDevice, pCreateInfo: *const VkPipelineCacheCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelineCache: *mut VkPipelineCache) -> VkResult;
-    pub fn vkDestroyPipelineCache(device: VkDevice, pipelineCache: VkPipelineCache, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkGetPipelineCacheData(device: VkDevice, pipelineCache: VkPipelineCache, pDataSize: *mut usize, pData: *mut core::ffi::c_void) -> VkResult;
-    pub fn vkMergePipelineCaches(device: VkDevice, dstCache: VkPipelineCache, srcCacheCount: u32, pSrcCaches: *const VkPipelineCache) -> VkResult;
-    pub fn vkCreateGraphicsPipelines(device: VkDevice, pipelineCache: Option<VkPipelineCache>, createInfoCount: u32, pCreateInfos: *const VkGraphicsPipelineCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelines: *mut VkPipeline) -> VkResult;
-    pub fn vkCreateComputePipelines(device: VkDevice, pipelineCache: Option<VkPipelineCache>, createInfoCount: u32, pCreateInfos: *const VkComputePipelineCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelines: *mut VkPipeline) -> VkResult;
-    pub fn vkDestroyPipeline(device: VkDevice, pipeline: VkPipeline, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkCreatePipelineLayout(device: VkDevice, pCreateInfo: *const VkPipelineLayoutCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelineLayout: *mut VkPipelineLayout) -> VkResult;
-    pub fn vkDestroyPipelineLayout(device: VkDevice, pipelineLayout: VkPipelineLayout, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkCreateSampler(device: VkDevice, pCreateInfo: *const VkSamplerCreateInfo, pAllocator: *const VkAllocationCallbacks, pSampler: *mut VkSampler) -> VkResult;
-    pub fn vkDestroySampler(device: VkDevice, sampler: VkSampler, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkCreateDescriptorSetLayout(device: VkDevice, pCreateInfo: *const VkDescriptorSetLayoutCreateInfo, pAllocator: *const VkAllocationCallbacks, pSetLayout: *mut VkDescriptorSetLayout) -> VkResult;
-    pub fn vkDestroyDescriptorSetLayout(device: VkDevice, descriptorSetLayout: VkDescriptorSetLayout, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkCreateDescriptorPool(device: VkDevice, pCreateInfo: *const VkDescriptorPoolCreateInfo, pAllocator: *const VkAllocationCallbacks, pPool: *mut VkDescriptorPool) -> VkResult;
-    pub fn vkDestroyDescriptorPool(device: VkDevice, descriptorPool: VkDescriptorPool, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkResetDescriptorPool(device: VkDevice, descriptorPool: VkDescriptorPool, flags: VkDescriptorPoolResetFlags) -> VkResult;
-    pub fn vkAllocateDescriptorSets(device: VkDevice, pAllocateInfo: *const VkDescriptorSetAllocateInfo, pDescriptorSets: *mut VkDescriptorSet) -> VkResult;
-    pub fn vkFreeDescriptorSets(device: VkDevice, descriptorPool: VkDescriptorPool, descriptorSetCount: u32, pDescriptorSets: *const VkDescriptorSet) -> VkResult;
-    pub fn vkUpdateDescriptorSets(device: VkDevice, descriptorWriteCount: u32, pDescriptorWrites: *const VkWriteDescriptorSet, descriptorCopyCount: u32, pDescriptorCopies: *const VkCopyDescriptorSet);
-    pub fn vkCreateFramebuffer(device: VkDevice, pCreateInfo: *const VkFramebufferCreateInfo, pAllocator: *const VkAllocationCallbacks, pFramebuffer: *mut VkFramebuffer) -> VkResult;
-    pub fn vkDestroyFramebuffer(device: VkDevice, framebuffer: VkFramebuffer, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkCreateRenderPass(device: VkDevice, pCreateInfo: *const VkRenderPassCreateInfo, pAllocator: *const VkAllocationCallbacks, pRenderPass: *mut VkRenderPass) -> VkResult;
-    pub fn vkDestroyRenderPass(device: VkDevice, renderPass: VkRenderPass, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkGetRenderAreaGranularity(device: VkDevice, renderPass: VkRenderPass, pGranularity: *mut VkExtent2D);
-    pub fn vkCreateCommandPool(device: VkDevice, pCreateInfo: *const VkCommandPoolCreateInfo, pAllocator: *const VkAllocationCallbacks, pCommandPool: *mut VkCommandPool) -> VkResult;
-    pub fn vkDestroyCommandPool(device: VkDevice, commandPool: VkCommandPool, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkResetCommandPool(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolResetFlags) -> VkResult;
     pub fn vkAllocateCommandBuffers(device: VkDevice, pAllocateInfo: *const VkCommandBufferAllocateInfo, pCommandBuffers: *mut VkCommandBuffer) -> VkResult;
-    pub fn vkFreeCommandBuffers(device: VkDevice, commandPool: VkCommandPool, commandBufferCount: u32, pCommandBuffers: *const VkCommandBuffer);
+    pub fn vkAllocateDescriptorSets(device: VkDevice, pAllocateInfo: *const VkDescriptorSetAllocateInfo, pDescriptorSets: *mut VkDescriptorSet) -> VkResult;
+    pub fn vkAllocateMemory(device: VkDevice, pAllocateInfo: *const VkMemoryAllocateInfo, pAllocator: *const VkAllocationCallbacks, pMemory: *mut VkDeviceMemory) -> VkResult;
     pub fn vkBeginCommandBuffer(commandBuffer: VkCommandBuffer, pBeginInfo: *const VkCommandBufferBeginInfo) -> VkResult;
+    pub fn vkBindBufferMemory(device: VkDevice, buffer: VkBuffer, memory: VkDeviceMemory, memoryOffset: VkDeviceSize) -> VkResult;
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkBindBufferMemory2(device: VkDevice, bindInfoCount: u32, pBindInfos: *const VkBindBufferMemoryInfoKHR) -> VkResult;
+    pub fn vkBindImageMemory(device: VkDevice, image: VkImage, memory: VkDeviceMemory, memoryOffset: VkDeviceSize) -> VkResult;
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkBindImageMemory2(device: VkDevice, bindInfoCount: u32, pBindInfos: *const VkBindImageMemoryInfoKHR) -> VkResult;
+    #[cfg(feature = "Allow1_4APIs")]pub fn vkCopyImageToImage(device: VkDevice, pCopyImageToImageInfo: *const VkCopyImageToImageInfoEXT) -> VkResult;
+    #[cfg(feature = "Allow1_4APIs")]pub fn vkCopyImageToMemory(device: VkDevice, pCopyImageToMemoryInfo: *const VkCopyImageToMemoryInfoEXT) -> VkResult;
+    #[cfg(feature = "Allow1_4APIs")]pub fn vkCopyMemoryToImage(device: VkDevice, pCopyMemoryToImageInfo: *const VkCopyMemoryToImageInfoEXT) -> VkResult;
+    pub fn vkCreateBuffer(device: VkDevice, pCreateInfo: *const VkBufferCreateInfo, pAllocator: *const VkAllocationCallbacks, pBuffer: *mut VkBuffer) -> VkResult;
+    pub fn vkCreateBufferView(device: VkDevice, pCreateInfo: *const VkBufferViewCreateInfo, pAllocator: *const VkAllocationCallbacks, pView: *mut VkBufferView) -> VkResult;
+    pub fn vkCreateCommandPool(device: VkDevice, pCreateInfo: *const VkCommandPoolCreateInfo, pAllocator: *const VkAllocationCallbacks, pCommandPool: *mut VkCommandPool) -> VkResult;
+    pub fn vkCreateComputePipelines(device: VkDevice, pipelineCache: Option<VkPipelineCache>, createInfoCount: u32, pCreateInfos: *const VkComputePipelineCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelines: *mut VkPipeline) -> VkResult;
+    pub fn vkCreateDescriptorPool(device: VkDevice, pCreateInfo: *const VkDescriptorPoolCreateInfo, pAllocator: *const VkAllocationCallbacks, pPool: *mut VkDescriptorPool) -> VkResult;
+    pub fn vkCreateDescriptorSetLayout(device: VkDevice, pCreateInfo: *const VkDescriptorSetLayoutCreateInfo, pAllocator: *const VkAllocationCallbacks, pSetLayout: *mut VkDescriptorSetLayout) -> VkResult;
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkCreateDescriptorUpdateTemplate(device: VkDevice, pCreateInfo: *const VkDescriptorUpdateTemplateCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pDescriptorUpdateTemplate: *mut VkDescriptorUpdateTemplateKHR) -> VkResult;
+    pub fn vkCreateDevice(physicalDevice: VkPhysicalDevice, pCreateInfo: *const VkDeviceCreateInfo, pAllocator: *const VkAllocationCallbacks, pDevice: *mut VkDevice) -> VkResult;
+    pub fn vkCreateEvent(device: VkDevice, pCreateInfo: *const VkEventCreateInfo, pAllocator: *const VkAllocationCallbacks, pEvent: *mut VkEvent) -> VkResult;
+    pub fn vkCreateFence(device: VkDevice, pCreateInfo: *const VkFenceCreateInfo, pAllocator: *const VkAllocationCallbacks, pFence: *mut VkFence) -> VkResult;
+    pub fn vkCreateFramebuffer(device: VkDevice, pCreateInfo: *const VkFramebufferCreateInfo, pAllocator: *const VkAllocationCallbacks, pFramebuffer: *mut VkFramebuffer) -> VkResult;
+    pub fn vkCreateGraphicsPipelines(device: VkDevice, pipelineCache: Option<VkPipelineCache>, createInfoCount: u32, pCreateInfos: *const VkGraphicsPipelineCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelines: *mut VkPipeline) -> VkResult;
+    pub fn vkCreateImage(device: VkDevice, pCreateInfo: *const VkImageCreateInfo, pAllocator: *const VkAllocationCallbacks, pImage: *mut VkImage) -> VkResult;
+    pub fn vkCreateImageView(device: VkDevice, pCreateInfo: *const VkImageViewCreateInfo, pAllocator: *const VkAllocationCallbacks, pView: *mut VkImageView) -> VkResult;
+    pub fn vkCreateInstance(pCreateInfo: *const VkInstanceCreateInfo, pAllocator: *const VkAllocationCallbacks, pInstance: *mut VkInstance) -> VkResult;
+    pub fn vkCreatePipelineCache(device: VkDevice, pCreateInfo: *const VkPipelineCacheCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelineCache: *mut VkPipelineCache) -> VkResult;
+    pub fn vkCreatePipelineLayout(device: VkDevice, pCreateInfo: *const VkPipelineLayoutCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelineLayout: *mut VkPipelineLayout) -> VkResult;
+    pub fn vkCreateQueryPool(device: VkDevice, pCreateInfo: *const VkQueryPoolCreateInfo, pAllocator: *const VkAllocationCallbacks, pQueryPool: *mut VkQueryPool) -> VkResult;
+    pub fn vkCreateRenderPass(device: VkDevice, pCreateInfo: *const VkRenderPassCreateInfo, pAllocator: *const VkAllocationCallbacks, pRenderPass: *mut VkRenderPass) -> VkResult;
+    #[cfg(feature = "Allow1_2APIs")]pub fn vkCreateRenderPass2(device: VkDevice, pCreateInfo: *const VkRenderPassCreateInfo2KHR, pAllocator: *const VkAllocationCallbacks, pRenderPass: *mut VkRenderPass) -> VkResult;
+    pub fn vkCreateSampler(device: VkDevice, pCreateInfo: *const VkSamplerCreateInfo, pAllocator: *const VkAllocationCallbacks, pSampler: *mut VkSampler) -> VkResult;
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkCreateSamplerYcbcrConversion(device: VkDevice, pCreateInfo: VkSamplerYcbcrConversionCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pYcbcrConversion: *mut VkSamplerYcbcrConversionKHR) -> VkResult;
+    pub fn vkCreateSemaphore(device: VkDevice, pCreateInfo: *const VkSemaphoreCreateInfo, pAllocator: *const VkAllocationCallbacks, pSemaphore: *mut VkSemaphore) -> VkResult;
+    pub fn vkCreateShaderModule(device: VkDevice, pCreateInfo: *const VkShaderModuleCreateInfo, pAllocator: *const VkAllocationCallbacks, pModule: *mut VkShaderModule) -> VkResult;
+    pub fn vkDestroyBuffer(device: VkDevice, buffer: VkBuffer, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkDestroyBufferView(device: VkDevice, bufferView: VkBufferView, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkDestroyCommandPool(device: VkDevice, commandPool: VkCommandPool, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkDestroyDescriptorPool(device: VkDevice, descriptorPool: VkDescriptorPool, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkDestroyDescriptorSetLayout(device: VkDevice, descriptorSetLayout: VkDescriptorSetLayout, pAllocator: *const VkAllocationCallbacks);
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkDestroyDescriptorUpdateTemplate(device: VkDevice, descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkDestroyDevice(device: VkDevice, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkDestroyEvent(device: VkDevice, event: VkEvent, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkDestroyFence(device: VkDevice, fence: VkFence, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkDestroyFramebuffer(device: VkDevice, framebuffer: VkFramebuffer, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkDestroyImage(device: VkDevice, image: VkImage, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkDestroyImageView(device: VkDevice, view: VkImageView, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkDestroyInstance(instance: VkInstance, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkDestroyPipeline(device: VkDevice, pipeline: VkPipeline, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkDestroyPipelineCache(device: VkDevice, pipelineCache: VkPipelineCache, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkDestroyPipelineLayout(device: VkDevice, pipelineLayout: VkPipelineLayout, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkDestroyQueryPool(device: VkDevice, queryPool: VkQueryPool, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkDestroyRenderPass(device: VkDevice, renderPass: VkRenderPass, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkDestroySampler(device: VkDevice, sampler: VkSampler, pAllocator: *const VkAllocationCallbacks);
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkDestroySamplerYcbcrConversion(device: VkDevice, ycbcrConversion: VkSamplerYcbcrConversionKHR, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkDestroySemaphore(device: VkDevice, semaphore: VkSemaphore, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkDestroyShaderModule(device: VkDevice, module: VkShaderModule, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkDeviceWaitIdle(device: VkDevice) -> VkResult;
     pub fn vkEndCommandBuffer(commandBuffer: VkCommandBuffer) -> VkResult;
+    pub fn vkEnumerateDeviceExtensionProperties(physicalDevice: VkPhysicalDevice, pLayerName: *const core::ffi::c_char, pPropertyCount: *mut u32, pProperties: *mut VkExtensionProperties) -> VkResult;
+    pub fn vkEnumerateDeviceLayerProperties(physicalDevice: VkPhysicalDevice, pPropertyCount: *mut u32, pProperties: *mut VkLayerProperties) -> VkResult;
+    pub fn vkEnumerateInstanceExtensionProperties(pLayerName: *const core::ffi::c_char, pPropertyCount: *mut u32, pProperties: *mut VkExtensionProperties) -> VkResult;
+    pub fn vkEnumerateInstanceLayerProperties(pPropertyCount: *mut u32, pProperties: *mut VkLayerProperties) -> VkResult;
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkEnumerateInstanceVersion(pApiVersion: *mut u32) -> VkResult;
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkEnumeratePhysicalDeviceGroup(instance: VkInstance, pPhysicalDeviceGroupCount: *mut u32, pPhysicalDeviceGroupProperties: *mut VkPhysicalDeviceGroupPropertiesKHR) -> VkResult;
+    pub fn vkEnumeratePhysicalDevices(instance: VkInstance, pPhysicalDeviceCount: *mut u32, pPhysicalDevices: *mut VkPhysicalDevice) -> VkResult;
+    pub fn vkFlushMappedMemoryRanges(device: VkDevice, memoryRangeCount: u32, pMemoryRanges: *const VkMappedMemoryRange) -> VkResult;
+    pub fn vkFreeCommandBuffers(device: VkDevice, commandPool: VkCommandPool, commandBufferCount: u32, pCommandBuffers: *const VkCommandBuffer);
+    pub fn vkFreeDescriptorSets(device: VkDevice, descriptorPool: VkDescriptorPool, descriptorSetCount: u32, pDescriptorSets: *const VkDescriptorSet) -> VkResult;
+    pub fn vkFreeMemory(device: VkDevice, memory: VkDeviceMemory, pAllocator: *const VkAllocationCallbacks);
+    #[cfg(feature = "Allow1_2APIs")]pub fn vkGetBufferDeviceAddress(device: VkDevice, pInfo: *const VkBufferDeviceAddressInfoKHR) -> VkDeviceAddress;
+    pub fn vkGetBufferMemoryRequirements(device: VkDevice, buffer: VkBuffer, pMemoryRequirements: *mut VkMemoryRequirements);
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkGetBufferMemoryRequirements2(device: VkDevice, pInfo: *const VkBufferMemoryRequirementsInfo2KHR, pMemoryRequirements: *mut VkMemoryRequirements2KHR);
+    #[cfg(feature = "Allow1_2APIs")]pub fn vkGetBufferOpaqueCaptureAddress(device: VkDevice, pInfo: *const VkBufferDeviceAddressInfoKHR) -> u64;
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkGetDescriptorSetLayoutSupport(device: VkDevice, pCreateInfo: *const VkDescriptorSetLayoutCreateInfo, pSupport: *mut VkDescriptorSetLayoutSupport);
+    #[cfg(feature = "Allow1_3APIs")]pub fn vkGetDeviceBufferMemoryRequirements(device: VkDevice, pInfo: *const VkDeviceBufferMemoryRequirementsKHR, pMemoryRequirements: *mut VkMemoryRequirements2KHR);
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkGetDeviceGroupPeerMemoryFeatures(device: VkDevice, heapIndex: u32, localDeviceIndex: u32, remoteDeviceIndex: u32, pPeerMemoryFeatures: *mut VkPeerMemoryFeatureFlags);
+    #[cfg(feature = "Allow1_3APIs")]pub fn vkGetDeviceImageMemoryREquirements(device: VkDevice, pInfo: *const VkDeviceImageMemoryRequirementsKHR, pMemoryRequirements: *mut VkMemoryRequirements2KHR);
+    #[cfg(feature = "Allow1_3APIs")]pub fn vkGetDeviceImageSparseMemoryRequirements(device: VkDevice, pInfo: *const VkDeviceImageMemoryRequirementsKHR, pSparseMemoryRequirementsCount: *mut u32, pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements2KHR);
+    #[cfg(feature = "Allow1_4APIs")]pub fn vkGetDeviceImageSubresourceLayout(device: VkDevice, pInfo: *const VkDeviceImageSubresourceInfoKHR, pLayout: *mut VkSubresourceLayout2KHR);
+    pub fn vkGetDeviceMemoryCommitment(device: VkDevice, memory: VkDeviceMemory, pCommitmentMemoryInBytes: *mut VkDeviceSize);
+    #[cfg(feature = "Allow1_2APIs")]pub fn vkGetDeviceMemoryOpaqueCaptureAddress(device: VkDevice, pInfo: *const VkDeviceMemoryOpaqueCaptureAddressInfoKHR) -> u64;
+    pub fn vkGetDeviceProcAddr(device: VkDevice, pName: *const core::ffi::c_char) -> Option<PFN_vkVoidFunction>;
+    pub fn vkGetDeviceQueue(device: VkDevice, queueFamilyIndex: u32, queueIndex: u32, pQueue: *mut VkQueue);
+    pub fn vkGetEventStatus(device: VkDevice, event: VkEvent) -> VkResult;
+    pub fn vkGetFenceStatus(device: VkDevice, fence: VkFence) -> VkResult;
+    pub fn vkGetImageMemoryRequirements(device: VkDevice, image: VkImage, pMemoryRequirements: *mut VkMemoryRequirements);
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkGetImageMemoryRequirements2(device: VkDevice, pInfo: *const VkImageMemoryRequirementsInfo2KHR, pMemoryRequirements: *mut VkMemoryRequirements2KHR);
+    pub fn vkGetImageSparseMemoryRequirements(device: VkDevice, image: VkImage, pSparseMemoryRequirementsCount: *mut u32, pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements);
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkGetImageSparseMemoryRequirements2(device: VkDevice, pInfo: *const VkImageSparseMemoryRequirementsInfo2KHR, pSparseMemoryRequirementCount: *mut u32, pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements2KHR);
+    pub fn vkGetImageSubresourceLayout(device: VkDevice, image: VkImage, pSubresource: *const VkImageSubresource, pLayout: *mut VkSubresourceLayout);
+    #[cfg(feature = "Allow1_4APIs")]pub fn vkGetImageSubresourceLayout2(device: VkDevice, image: VkImage, pSubresource: *const VkImageSubresource2KHR, pLayout: *mut VkSubresourceLayout2KHR);
+    pub fn vkGetInstanceProcAddr(instance: VkInstance, pName: *const core::ffi::c_char) -> Option<PFN_vkVoidFunction>;
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkGetPhysicalDeviceExternalBufferProperties(physicalDevice: VkPhysicalDevice, pExternalBufferInfo: *const VkPhysicalDeviceExternalBufferInfoKHR, pExternalBufferProperties: *mut VkExternalBufferPropertiesKHR);
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkGetPhysicalDeviceExternalFenceProperties(physicalDevice: VkPhysicalDevice, pExternalFenceInfo: *const VkPhysicalDeviceExternalFenceInfoKHR, pExternalFenceProperties: *mut VkExternalFencePropertiesKHR);
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkGetPhysicalDeviceExternalSemaphoreProperties(physicalDevice: VkPhysicalDevice, pExternalSemaphoreInfo: *const VkPhysicalDeviceExternalSemaphoreInfoKHR, pExternalSemaphoreProperties: *mut VkExternalSemaphorePropertiesKHR);
+    pub fn vkGetPhysicalDeviceFeatures(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkPhysicalDeviceFeatures);
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkGetPhysicalDeviceFeatures2(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkPhysicalDeviceFeatures2KHR);
+    pub fn vkGetPhysicalDeviceFormatProperties(physicalDevice: VkPhysicalDevice, format: VkFormat, pFormatProperties: *mut VkFormatProperties);
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkGetPhysicalDeviceFormatProperties2(physicalDevice: VkPhysicalDevice, format: VkFormat, pFormatProperties: *mut VkFormatProperties2KHR);
+    pub fn vkGetPhysicalDeviceImageFormatProperties(physicalDevice: VkPhysicalDevice, format: VkFormat, r#type: VkImageType, tiling: VkImageTiling, usage: VkImageUsageFlags, flags: VkImageCreateFlags, pImageFormatProperties: *mut VkImageFormatProperties) -> VkResult;
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkGetPhysicalDeviceImageFormatProperties2(physicalDevice: VkPhysicalDevice, pImageFormatInfo: *const VkPhysicalDeviceImageFormatInfo2KHR, pImageFormatProperties: *mut VkImageFormatProperties2KHR) -> VkResult;
+    pub fn vkGetPhysicalDeviceMemoryProperties(physicalDevice: VkPhysicalDevice, pMemoryProperties: *mut VkPhysicalDeviceMemoryProperties);
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkGetPhysicalDeviceMemoryProperties2(physicalDevice: VkPhysicalDevice, pMemoryProperties: *mut VkPhysicalDeviceMemoryProperties2KHR);
+    pub fn vkGetPhysicalDeviceProperties(physicalDevice: VkPhysicalDevice, pProperties: *mut VkPhysicalDeviceProperties);
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkGetPhysicalDeviceProperties2(physicalDevice: VkPhysicalDevice, pProperties: *mut VkPhysicalDeviceProperties2KHR);
+    pub fn vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice: VkPhysicalDevice, pQueueFamilyPropertyCount: *mut u32, pQueueFamilyProperties: *mut VkQueueFamilyProperties);
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice: VkPhysicalDevice, pQueueFamilyPropertyCount: *mut u32, pQueueFamilyProperties: *mut VkQueueFamilyProperties2KHR);
+    pub fn vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevice: VkPhysicalDevice, format: VkFormat, r#type: VkImageType, samples: VkSampleCountFlags, usage: VkImageUsageFlags, tiling: VkImageTiling, pPropertyCount: *mut u32, pProperties: *mut VkSparseImageFormatProperties);
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice: VkPhysicalDevice, pFormatInfo: *const VkPhysicalDeviceSparseImageFormatInfo2KHR, pPropertyCount: *mut u32, pProperties: *mut VkSparseImageFormatProperties2KHR);
+    pub fn vkGetPipelineCacheData(device: VkDevice, pipelineCache: VkPipelineCache, pDataSize: *mut usize, pData: *mut core::ffi::c_void) -> VkResult;
+    pub fn vkGetQueryPoolResults(device: VkDevice, queryPool: VkQueryPool, firstQuery: u32, queryCount: u32, dataSize: usize, pData: *mut core::ffi::c_void, stride: VkDeviceSize, flags: VkQueryResultFlags) -> VkResult;
+    pub fn vkGetRenderAreaGranularity(device: VkDevice, renderPass: VkRenderPass, pGranularity: *mut VkExtent2D);
+    #[cfg(feature = "Allow1_4APIs")]pub fn vkGetRenderingAreaGranularity(device: VkDevice, pRenderingAreaInfo: *const VkRenderingAreaInfoKHR, pGranularity: *mut VkExtent2D);
+    #[cfg(feature = "Allow1_2APIs")]pub fn vkGetSemaphoreCounterValue(device: VkDevice, semaphore: VkSemaphore, pValue: *mut u64) -> VkResult;
+    pub fn vkInvalidateMappedMemoryRanges(device: VkDevice, memoryRangeCount: u32, pMemoryRanges: *const VkMappedMemoryRange) -> VkResult;
+    pub fn vkMapMemory(device: VkDevice, memory: VkDeviceMemory, offset: VkDeviceSize, size: VkDeviceSize, flags: VkMemoryMapFlags, ppData: *mut *mut core::ffi::c_void) -> VkResult;
+    #[cfg(feature = "Allow1_4APIs")]pub fn vkMapMemory2(device: VkDevice, pMemoryMapInfo: *const VkMemoryMapInfoKHR, ppData: *mut *mut core::ffi::c_void) -> VkResult;
+    pub fn vkMergePipelineCaches(device: VkDevice, dstCache: VkPipelineCache, srcCacheCount: u32, pSrcCaches: *const VkPipelineCache) -> VkResult;
+    pub fn vkQueueBindSparse(queue: VkQueue, bindInfoCount: u32, pBindInfos: *const VkBindSparseInfo, fence: Option<VkFence>) -> VkResult;
+    pub fn vkQueueSubmit(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo, fence: Option<VkFence>) -> VkResult;
+    #[cfg(feature = "Allow1_3APIs")]pub fn vkQueueSubmit2(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo2KHR, fence: Option<VkFence>) -> VkResult;
+    pub fn vkQueueWaitIdle(queue: VkQueue) -> VkResult;
     pub fn vkResetCommandBuffer(commandBuffer: VkCommandBuffer, flags: VkCommandBufferResetFlags) -> VkResult;
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkEnumerateInstanceVersion(pApiVersion: *mut u32) -> VkResult;
-    #[cfg(feature = "VK_KHR_surface")]
-    pub fn vkDestroySurfaceKHR(instance: VkInstance, surface: VkSurfaceKHR, pAllocator: *const VkAllocationCallbacks);
-    #[cfg(feature = "VK_KHR_surface")]
-    pub fn vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, surface: VkSurfaceKHR, pSupported: *mut VkBool32) -> VkResult;
-    #[cfg(feature = "VK_KHR_surface")]
-    pub fn vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pSurfaceCapabilities: *mut VkSurfaceCapabilitiesKHR) -> VkResult;
-    #[cfg(feature = "VK_KHR_surface")]
-    pub fn vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pSurfaceFormatsCount: *mut u32, pSurfaceFormats: *mut VkSurfaceFormatKHR) -> VkResult;
-    #[cfg(feature = "VK_KHR_surface")]
-    pub fn vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pPresentModeCount: *mut u32, pPresentModes: *mut VkPresentModeKHR) -> VkResult;
-    #[cfg(feature = "VK_KHR_swapchain")]
-    pub fn vkCreateSwapchainKHR(device: VkDevice, pCreateInfo: *const VkSwapchainCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSwapchain: *mut VkSwapchainKHR) -> VkResult;
-    #[cfg(feature = "VK_KHR_swapchain")]
-    pub fn vkDestroySwapchainKHR(device: VkDevice, swapchain: VkSwapchainKHR, pAllocator: *const VkAllocationCallbacks);
-    #[cfg(feature = "VK_KHR_swapchain")]
-    pub fn vkGetSwapchainImagesKHR(device: VkDevice, swapchain: VkSwapchainKHR, pSwapchainImageCount: *mut u32, pSwapchainImages: *mut VkImage) -> VkResult;
-    #[cfg(feature = "VK_KHR_swapchain")]
-    pub fn vkAcquireNextImageKHR(device: VkDevice, swapchain: VkSwapchainKHR, timeout: u64, semaphore: Option<VkSemaphore>, fence: Option<VkFence>, pImageIndex: *mut u32) -> VkResult;
-    #[cfg(feature = "VK_KHR_swapchain")]
-    pub fn vkQueuePresentKHR(queue: VkQueue, pPresentInfo: *const VkPresentInfoKHR) -> VkResult;
-    #[cfg(feature = "VK_KHR_display")]
-    pub fn vkGetPhysicalDeviceDisplayPropertiesKHR(physicalDevice: VkPhysicalDevice, pPropertyCount: *mut u32, pProperties: *mut VkDisplayPropertiesKHR) -> VkResult;
-    #[cfg(feature = "VK_KHR_display")]
-    pub fn vkGetPhysicalDeviceDisplayPlanePropertiesKHR(physicalDevice: VkPhysicalDevice, pPropertyCount: *mut u32, pProperties: *mut VkDisplayPlanePropertiesKHR) -> VkResult;
-    #[cfg(feature = "VK_KHR_display")]
-    pub fn vkGetDisplayPlaneSupportedDisplaysKHR(physicalDevice: VkPhysicalDevice, planeIndex: u32, pDisplayCount: *mut u32, pDisplays: *mut VkDisplayKHR) -> VkResult;
-    #[cfg(feature = "VK_KHR_display")]
-    pub fn vkGetDisplayModePropertiesKHR(physicalDevice: VkPhysicalDevice, display: VkDisplayKHR, pPropertyCount: *mut u32, pProperties: *mut VkDisplayModePropertiesKHR) -> VkResult;
-    #[cfg(feature = "VK_KHR_display")]
-    pub fn vkCreateDisplayModeKHR(physicalDevice: VkPhysicalDevice, display: VkDisplayKHR, pCreateInfo: *const VkDisplayModeCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pMode: *mut VkDisplayModeKHR) -> VkResult;
-    #[cfg(feature = "VK_KHR_display")]
-    pub fn vkGetDisplayPlaneCapabilitiesKHR(physicalDevice: VkPhysicalDevice, mode: VkDisplayModeKHR, planeIndex: u32, pCapabilities: *mut VkDisplayPlaneCapabilitiesKHR) -> VkResult;
-    #[cfg(feature = "VK_KHR_display")]
-    pub fn vkCreateDisplayPlaneSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkDisplaySurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
-    #[cfg(feature = "VK_KHR_xlib_surface")]
-    pub fn vkCreateXlibSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkXlibSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
-    #[cfg(feature = "VK_KHR_xlib_surface")]
-    pub fn vkGetPhysicalDeviceXlibPresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, dpy: *mut x11::xlib::Display, visualID: x11::xlib::VisualID) -> VkBool32;
-    #[cfg(feature = "VK_KHR_xcb_surface")]
-    pub fn vkCreateXcbSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkXcbSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
-    #[cfg(feature = "VK_KHR_xcb_surface")]
-    pub fn vkGetPhysicalDeviceXcbPresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, connection: *mut xcb::ffi::xcb_connection_t, visual_id: xcb::x::Visualid) -> VkBool32;
-    #[cfg(feature = "VK_KHR_wayland_surface")]
-    pub fn vkCreateWaylandSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkWaylandSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
-    #[cfg(feature = "VK_KHR_wayland_surface")]
-    pub fn vkGetPhysicalDeviceWaylandPresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, display: *mut core::ffi::c_void) -> VkBool32;
-    #[cfg(feature = "VK_KHR_android_surface")]
-    pub fn vkCreateAndroidSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkAndroidSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
-    #[cfg(feature = "VK_KHR_win32_surface")]
-    pub fn vkCreateWin32SurfaceKHR(instance: VkInstance, pCreateInfo: *const VkWin32SurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
-    #[cfg(feature = "VK_KHR_win32_surface")]
-    pub fn vkGetPhysicalDeviceWin32PresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32) -> VkBool32;
-    #[cfg(feature = "VK_EXT_metal_surface")]
-    pub fn vkCreateMetalSurfaceEXT(instance: VkInstance, pCreateInfo: *const VkMetalSurfaceCreateInfoEXT, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkGetPhysicalDeviceExternalBufferProperties(physicalDevice: VkPhysicalDevice, pExternalBufferInfo: *const VkPhysicalDeviceExternalBufferInfoKHR, pExternalBufferProperties: *mut VkExternalBufferPropertiesKHR);
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkGetPhysicalDeviceExternalSemaphoreProperties(physicalDevice: VkPhysicalDevice, pExternalSemaphoreInfo: *const VkPhysicalDeviceExternalSemaphoreInfoKHR, pExternalSemaphoreProperties: *mut VkExternalSemaphorePropertiesKHR);
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkGetPhysicalDeviceExternalFenceProperties(physicalDevice: VkPhysicalDevice, pExternalFenceInfo: *const VkPhysicalDeviceExternalFenceInfoKHR, pExternalFenceProperties: *mut VkExternalFencePropertiesKHR);
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkGetDeviceGroupPeerMemoryFeatures(device: VkDevice, heapIndex: u32, localDeviceIndex: u32, remoteDeviceIndex: u32, pPeerMemoryFeatures: *mut VkPeerMemoryFeatureFlags);
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkGetPhysicalDeviceFeatures2(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkPhysicalDeviceFeatures2KHR);
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkGetPhysicalDeviceProperties2(physicalDevice: VkPhysicalDevice, pProperties: *mut VkPhysicalDeviceProperties2KHR);
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkGetPhysicalDeviceFormatProperties2(physicalDevice: VkPhysicalDevice, format: VkFormat, pFormatProperties: *mut VkFormatProperties2KHR);
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkGetPhysicalDeviceImageFormatProperties2(physicalDevice: VkPhysicalDevice, pImageFormatInfo: *const VkPhysicalDeviceImageFormatInfo2KHR, pImageFormatProperties: *mut VkImageFormatProperties2KHR) -> VkResult;
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice: VkPhysicalDevice, pQueueFamilyPropertyCount: *mut u32, pQueueFamilyProperties: *mut VkQueueFamilyProperties2KHR);
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkGetPhysicalDeviceMemoryProperties2(physicalDevice: VkPhysicalDevice, pMemoryProperties: *mut VkPhysicalDeviceMemoryProperties2KHR);
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice: VkPhysicalDevice, pFormatInfo: *const VkPhysicalDeviceSparseImageFormatInfo2KHR, pPropertyCount: *mut u32, pProperties: *mut VkSparseImageFormatProperties2KHR);
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkEnumeratePhysicalDeviceGroup(instance: VkInstance, pPhysicalDeviceGroupCount: *mut u32, pPhysicalDeviceGroupProperties: *mut VkPhysicalDeviceGroupPropertiesKHR) -> VkResult;
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkGetImageMemoryRequirements2(device: VkDevice, pInfo: *const VkImageMemoryRequirementsInfo2KHR, pMemoryRequirements: *mut VkMemoryRequirements2KHR);
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkGetBufferMemoryRequirements2(device: VkDevice, pInfo: *const VkBufferMemoryRequirementsInfo2KHR, pMemoryRequirements: *mut VkMemoryRequirements2KHR);
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkGetImageSparseMemoryRequirements2(device: VkDevice, pInfo: *const VkImageSparseMemoryRequirementsInfo2KHR, pSparseMemoryRequirementCount: *mut u32, pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements2KHR);
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkBindBufferMemory2(device: VkDevice, bindInfoCount: u32, pBindInfos: *const VkBindBufferMemoryInfoKHR) -> VkResult;
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkBindImageMemory2(device: VkDevice, bindInfoCount: u32, pBindInfos: *const VkBindImageMemoryInfoKHR) -> VkResult;
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkCreateDescriptorUpdateTemplate(device: VkDevice, pCreateInfo: *const VkDescriptorUpdateTemplateCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pDescriptorUpdateTemplate: *mut VkDescriptorUpdateTemplateKHR) -> VkResult;
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkDestroyDescriptorUpdateTemplate(device: VkDevice, descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR, pAllocator: *const VkAllocationCallbacks);
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkUpdateDescriptorSetWithTemplate(device: VkDevice, descriptorSet: VkDescriptorSet, descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR, pData: *const core::ffi::c_void);
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkTrimCommandPool(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolTrimFlagsKHR);
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkGetDescriptorSetLayoutSupport(device: VkDevice, pCreateInfo: *const VkDescriptorSetLayoutCreateInfo, pSupport: *mut VkDescriptorSetLayoutSupport);
-    #[cfg(feature = "Allow1_3APIs")]
-    pub fn vkQueueSubmit2(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo2KHR, fence: Option<VkFence>) -> VkResult;
-    pub fn vkCmdBindPipeline(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, pipeline: VkPipeline);
-    pub fn vkCmdSetViewport(commandBuffer: VkCommandBuffer, firstViewport: u32, viewportCount: u32, pViewports: *const VkViewport);
-    pub fn vkCmdSetScissor(commandBuffer: VkCommandBuffer, firstScissor: u32, scissorCount: u32, pScissors: *const VkRect2D);
-    pub fn vkCmdSetLineWidth(commandBuffer: VkCommandBuffer, lineWidth: core::ffi::c_float);
-    pub fn vkCmdSetDepthBias(commandBuffer: VkCommandBuffer, depthBiasConstantFactor: core::ffi::c_float, depthBiasClamp: core::ffi::c_float, depthBiasSlopeFactor: core::ffi::c_float);
-    pub fn vkCmdSetBlendConstants(commandBuffer: VkCommandBuffer, blendConstants: *const core::ffi::c_float);
-    pub fn vkCmdSetDepthBounds(commandBuffer: VkCommandBuffer, minDepthBounds: core::ffi::c_float, maxDepthBounds: core::ffi::c_float);
-    pub fn vkCmdSetStencilCompareMask(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, compareMask: u32);
-    pub fn vkCmdSetStencilWriteMask(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, writeMask: u32);
-    pub fn vkCmdSetStencilReference(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, reference: u32);
+    pub fn vkResetCommandPool(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolResetFlags) -> VkResult;
+    pub fn vkResetDescriptorPool(device: VkDevice, descriptorPool: VkDescriptorPool, flags: VkDescriptorPoolResetFlags) -> VkResult;
+    pub fn vkResetEvent(device: VkDevice, event: VkEvent) -> VkResult;
+    pub fn vkResetFences(device: VkDevice, fenceCount: u32, pFences: *const VkFence) -> VkResult;
+    pub fn vkSetEvent(device: VkDevice, event: VkEvent) -> VkResult;
+    #[cfg(feature = "Allow1_2APIs")]pub fn vkSignalSemaphore(device: VkDevice, pSignalInfo: *const VkSemaphoreSignalInfoKHR) -> VkResult;
+    #[cfg(feature = "Allow1_4APIs")]pub fn vkTransitionImageLayout(device: VkDevice, transitionCount: u32, pTransitions: *const VkHostImageLayoutTransitionInfoEXT) -> VkResult;
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkTrimCommandPool(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolTrimFlagsKHR);
+    pub fn vkUnmapMemory(device: VkDevice, memory: VkDeviceMemory);
+    #[cfg(feature = "Allow1_4APIs")]pub fn vkUnmapMemory2(device: VkDevice, pMemoryUnmapInfo: *const VkMemoryUnmapInfoKHR) -> VkResult;
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkUpdateDescriptorSetWithTemplate(device: VkDevice, descriptorSet: VkDescriptorSet, descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR, pData: *const core::ffi::c_void);
+    pub fn vkUpdateDescriptorSets(device: VkDevice, descriptorWriteCount: u32, pDescriptorWrites: *const VkWriteDescriptorSet, descriptorCopyCount: u32, pDescriptorCopies: *const VkCopyDescriptorSet);
+    pub fn vkWaitForFences(device: VkDevice, fenceCount: u32, pFences: *const VkFence, waitAll: VkBool32, timeout: u64) -> VkResult;
+    #[cfg(feature = "Allow1_2APIs")]pub fn vkWaitSemaphores(device: VkDevice, pWaitInfo: *const VkSemaphoreWaitInfoKHR, timeout: u64) -> VkResult;
+    #[cfg(feature = "VK_KHR_swapchain")]pub fn vkAcquireNextImageKHR(device: VkDevice, swapchain: VkSwapchainKHR, timeout: u64, semaphore: Option<VkSemaphore>, fence: Option<VkFence>, pImageIndex: *mut u32) -> VkResult;
+    #[cfg(feature = "VK_KHR_android_surface")]pub fn vkCreateAndroidSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkAndroidSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_display")]pub fn vkCreateDisplayModeKHR(physicalDevice: VkPhysicalDevice, display: VkDisplayKHR, pCreateInfo: *const VkDisplayModeCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pMode: *mut VkDisplayModeKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_display")]pub fn vkCreateDisplayPlaneSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkDisplaySurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    #[cfg(feature = "VK_MVK_ios_surface")]pub fn vkCreateIOSSurfaceMVK(instance: VkInstance, pCreateInfo: *const VkIOSSurfaceCreateInfoMVK, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    #[cfg(feature = "VK_MVK_macos_surface")]pub fn vkCreateMacOSSurfaceMVK(instance: VkInstance, pCreateInfo: *const VkMacOSSurfaceCreateInfoMVK, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    #[cfg(feature = "VK_EXT_metal_surface")]pub fn vkCreateMetalSurfaceEXT(instance: VkInstance, pCreateInfo: *const VkMetalSurfaceCreateInfoEXT, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_swapchain")]pub fn vkCreateSwapchainKHR(device: VkDevice, pCreateInfo: *const VkSwapchainCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSwapchain: *mut VkSwapchainKHR) -> VkResult;
+    #[cfg(feature = "VK_NN_vi_surface")]pub fn vkCreateViSurfaceNN(instance: VkInstance, pCreateInfo: *const VkViSurfaceCreateInfoNN, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_wayland_surface")]pub fn vkCreateWaylandSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkWaylandSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_win32_surface")]pub fn vkCreateWin32SurfaceKHR(instance: VkInstance, pCreateInfo: *const VkWin32SurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_xcb_surface")]pub fn vkCreateXcbSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkXcbSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_xlib_surface")]pub fn vkCreateXlibSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkXlibSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_surface")]pub fn vkDestroySurfaceKHR(instance: VkInstance, surface: VkSurfaceKHR, pAllocator: *const VkAllocationCallbacks);
+    #[cfg(feature = "VK_KHR_swapchain")]pub fn vkDestroySwapchainKHR(device: VkDevice, swapchain: VkSwapchainKHR, pAllocator: *const VkAllocationCallbacks);
+    #[cfg(feature = "VK_KHR_display")]pub fn vkGetDisplayModePropertiesKHR(physicalDevice: VkPhysicalDevice, display: VkDisplayKHR, pPropertyCount: *mut u32, pProperties: *mut VkDisplayModePropertiesKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_display")]pub fn vkGetDisplayPlaneCapabilitiesKHR(physicalDevice: VkPhysicalDevice, mode: VkDisplayModeKHR, planeIndex: u32, pCapabilities: *mut VkDisplayPlaneCapabilitiesKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_display")]pub fn vkGetDisplayPlaneSupportedDisplaysKHR(physicalDevice: VkPhysicalDevice, planeIndex: u32, pDisplayCount: *mut u32, pDisplays: *mut VkDisplayKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_display")]pub fn vkGetPhysicalDeviceDisplayPlanePropertiesKHR(physicalDevice: VkPhysicalDevice, pPropertyCount: *mut u32, pProperties: *mut VkDisplayPlanePropertiesKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_display")]pub fn vkGetPhysicalDeviceDisplayPropertiesKHR(physicalDevice: VkPhysicalDevice, pPropertyCount: *mut u32, pProperties: *mut VkDisplayPropertiesKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_surface")]pub fn vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pSurfaceCapabilities: *mut VkSurfaceCapabilitiesKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_surface")]pub fn vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pSurfaceFormatsCount: *mut u32, pSurfaceFormats: *mut VkSurfaceFormatKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_surface")]pub fn vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pPresentModeCount: *mut u32, pPresentModes: *mut VkPresentModeKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_surface")]pub fn vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, surface: VkSurfaceKHR, pSupported: *mut VkBool32) -> VkResult;
+    #[cfg(feature = "VK_KHR_wayland_surface")]pub fn vkGetPhysicalDeviceWaylandPresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, display: *mut core::ffi::c_void) -> VkBool32;
+    #[cfg(feature = "VK_KHR_win32_surface")]pub fn vkGetPhysicalDeviceWin32PresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32) -> VkBool32;
+    #[cfg(feature = "VK_KHR_xcb_surface")]pub fn vkGetPhysicalDeviceXcbPresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, connection: *mut xcb::ffi::xcb_connection_t, visual_id: xcb::x::Visualid) -> VkBool32;
+    #[cfg(feature = "VK_KHR_xlib_surface")]pub fn vkGetPhysicalDeviceXlibPresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, dpy: *mut x11::xlib::Display, visualID: x11::xlib::VisualID) -> VkBool32;
+    #[cfg(feature = "VK_KHR_swapchain")]pub fn vkGetSwapchainImagesKHR(device: VkDevice, swapchain: VkSwapchainKHR, pSwapchainImageCount: *mut u32, pSwapchainImages: *mut VkImage) -> VkResult;
+    #[cfg(feature = "VK_KHR_swapchain")]pub fn vkQueuePresentKHR(queue: VkQueue, pPresentInfo: *const VkPresentInfoKHR) -> VkResult;
+    pub fn vkCmdBeginQuery(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, query: u32, flags: VkQueryControlFlags);
+    pub fn vkCmdBeginRenderPass(commandBuffer: VkCommandBuffer, pRenderPassBegin: *const VkRenderPassBeginInfo, contents: VkSubpassContents);
+    #[cfg(feature = "Allow1_2APIs")]pub fn vkCmdBeginRenderPass2(commandBuffer: VkCommandBuffer, pRenderPassBegin: *const VkRenderPassBeginInfo, pSubpassBeginInfo: *const VkSubpassBeginInfoKHR);
+    #[cfg(feature = "Allow1_3APIs")]pub fn vkCmdBeginRendering(commandBuffer: VkCommandBuffer, pRenderingInfo: *const VkRenderingInfoKHR);
     pub fn vkCmdBindDescriptorSets(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, layout: VkPipelineLayout, firstSet: u32, descriptorSetCount: u32, pDescriptorSets: *const VkDescriptorSet, dynamicOffsetCount: u32, pDynamicOffsets: *const u32);
+    #[cfg(feature = "Allow1_4APIs")]pub fn vkCmdBindDescriptorSets2(commandBuffer: VkCommandBuffer, pBindDescriptorSetsInfo: *const VkBindDescriptorSetsInfoKHR);
     pub fn vkCmdBindIndexBuffer(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, indexType: VkIndexType);
+    #[cfg(feature = "Allow1_4APIs")]pub fn vkCmdBindIndexBuffer2(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, size: VkDeviceSize, indexType: VkIndexType);
+    pub fn vkCmdBindPipeline(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, pipeline: VkPipeline);
     pub fn vkCmdBindVertexBuffers(commandBuffer: VkCommandBuffer, firstBinding: u32, bindingCount: u32, pBuffers: *const VkBuffer, pOffsets: *const VkDeviceSize);
-    pub fn vkCmdDraw(commandBuffer: VkCommandBuffer, vertexCount: u32, instanceCount: u32, firstVertex: u32, firstInstance: u32);
-    pub fn vkCmdDrawIndexed(commandBuffer: VkCommandBuffer, indexCount: u32, instanceCount: u32, firstIndex: u32, vertexOffset: i32, firstInstance: u32);
-    pub fn vkCmdDrawIndirect(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, drawCount: u32, stride: u32);
-    pub fn vkCmdDrawIndexedIndirect(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, drawCount: u32, stride: u32);
-    pub fn vkCmdDispatch(commandBuffer: VkCommandBuffer, groupCountX: u32, groupCountY: u32, groupCountZ: u32);
-    pub fn vkCmdDispatchIndirect(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize);
-    pub fn vkCmdCopyBuffer(commandBuffer: VkCommandBuffer, srcBuffer: VkBuffer, dstBuffer: VkBuffer, regionCount: u32, pRegions: *const VkBufferCopy);
-    pub fn vkCmdCopyImage(commandBuffer: VkCommandBuffer, srcImage: VkImage, srcImageLayout: VkImageLayout, dstImage: VkImage, dstImageLayout: VkImageLayout, regionCount: u32, pRegions: *const VkImageCopy);
     pub fn vkCmdBlitImage(commandBuffer: VkCommandBuffer, srcImage: VkImage, srcImageLayout: VkImageLayout, dstImage: VkImage, dstImageLayout: VkImageLayout, regionCount: u32, pRegions: *const VkImageBlit, filters: VkFilter);
-    pub fn vkCmdCopyBufferToImage(commandBuffer: VkCommandBuffer, srcBuffer: VkBuffer, dstImage: VkImage, dstImageLayout: VkImageLayout, regionCount: u32, pRegions: *const VkBufferImageCopy);
-    pub fn vkCmdCopyImageToBuffer(commandBuffer: VkCommandBuffer, srcImage: VkImage, srcImageLayout: VkImageLayout, dstBuffer: VkBuffer, regionCount: u32, pRegions: *const VkBufferImageCopy);
-    pub fn vkCmdUpdateBuffer(commandBuffer: VkCommandBuffer, dstBuffer: VkBuffer, dstOffset: VkDeviceSize, dataSize: VkDeviceSize, pData: *const core::ffi::c_void);
-    pub fn vkCmdFillBuffer(commandBuffer: VkCommandBuffer, dstBuffer: VkBuffer, dstOffset: VkDeviceSize, dataSize: VkDeviceSize, data: u32);
+    #[cfg(feature = "Allow1_3APIs")]pub fn vkCmdBlitImage2(commandBuffer: VkCommandBuffer, pBlitImageInfo: *const VkBlitImageInfo2KHR);
+    pub fn vkCmdClearAttachments(commandBuffer: VkCommandBuffer, attachmentCount: u32, pAttachments: *const VkClearAttachment, rectCount: u32, pRects: *const VkClearRect);
     pub fn vkCmdClearColorImage(commandBuffer: VkCommandBuffer, image: VkImage, imageLayout: VkImageLayout, pColor: *const VkClearColorValue, rangeCount: u32, pRanges: *const VkImageSubresourceRange);
     pub fn vkCmdClearDepthStencilImage(commandBuffer: VkCommandBuffer, image: VkImage, imageLayout: VkImageLayout, pDepthStencil: *const VkClearDepthStencilValue, rangeCount: u32, pRanges: *const VkImageSubresourceRange);
-    pub fn vkCmdClearAttachments(commandBuffer: VkCommandBuffer, attachmentCount: u32, pAttachments: *const VkClearAttachment, rectCount: u32, pRects: *const VkClearRect);
-    pub fn vkCmdResolveImage(commandBuffer: VkCommandBuffer, srcImage: VkImage, srcImageLayout: VkImageLayout, dstImage: VkImage, dstImageLayout: VkImageLayout, regionCount: u32, pRegions: *const VkImageResolve);
-    pub fn vkCmdSetEvent(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags);
-    pub fn vkCmdResetEvent(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags);
-    pub fn vkCmdWaitEvents(commandBuffer: VkCommandBuffer, eventCount: u32, pEvents: *const VkEvent, srcStageMask: VkPipelineStageFlags, dstStageMask: VkPipelineStageFlags, memoryBarrierCount: u32, pMemoryBarriers: *const VkMemoryBarrier, bufferMemoryBarrierCount: u32, pBufferMemoryBarriers: *const VkBufferMemoryBarrier, imageMemoryBarrierCount: u32, pImageMemoryBarriers: *const VkImageMemoryBarrier);
-    pub fn vkCmdPipelineBarrier(commandBuffer: VkCommandBuffer, srcStageMask: VkPipelineStageFlags, dstStageMask: VkPipelineStageFlags, dependencyFlags: VkDependencyFlags, memoryBarrierCount: u32, pMemoryBarriers: *const VkMemoryBarrier, bufferMemoryBarrierCount: u32, pBufferMemoryBarriers: *const VkBufferMemoryBarrier, imageMemoryBarrierCount: u32, pImageMemoryBarriers: *const VkImageMemoryBarrier);
-    pub fn vkCmdBeginQuery(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, query: u32, flags: VkQueryControlFlags);
-    pub fn vkCmdEndQuery(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, query: u32);
-    pub fn vkCmdResetQueryPool(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, firstQuery: u32, queryCount: u32);
-    pub fn vkCmdWriteTimestamp(commandBuffer: VkCommandBuffer, pipelineStage: VkPipelineStageFlags, queryPool: VkQueryPool, query: u32);
+    pub fn vkCmdCopyBuffer(commandBuffer: VkCommandBuffer, srcBuffer: VkBuffer, dstBuffer: VkBuffer, regionCount: u32, pRegions: *const VkBufferCopy);
+    #[cfg(feature = "Allow1_3APIs")]pub fn vkCmdCopyBuffer2(commandBuffer: VkCommandBuffer, pCopyBufferInfo: *const VkCopyBufferInfo2KHR);
+    pub fn vkCmdCopyBufferToImage(commandBuffer: VkCommandBuffer, srcBuffer: VkBuffer, dstImage: VkImage, dstImageLayout: VkImageLayout, regionCount: u32, pRegions: *const VkBufferImageCopy);
+    #[cfg(feature = "Allow1_3APIs")]pub fn vkCmdCopyBufferToImage2(commandBuffer: VkCommandBuffer, pCopyBufferToImageInfo: *const VkCopyBufferToImageInfo2KHR);
+    pub fn vkCmdCopyImage(commandBuffer: VkCommandBuffer, srcImage: VkImage, srcImageLayout: VkImageLayout, dstImage: VkImage, dstImageLayout: VkImageLayout, regionCount: u32, pRegions: *const VkImageCopy);
+    #[cfg(feature = "Allow1_3APIs")]pub fn vkCmdCopyImage2(commandBuffer: VkCommandBuffer, pCopyImageInfo: *const VkCopyImageInfo2KHR);
+    pub fn vkCmdCopyImageToBuffer(commandBuffer: VkCommandBuffer, srcImage: VkImage, srcImageLayout: VkImageLayout, dstBuffer: VkBuffer, regionCount: u32, pRegions: *const VkBufferImageCopy);
+    #[cfg(feature = "Allow1_3APIs")]pub fn vkCmdCopyImageToBuffer2(commandBuffer: VkCommandBuffer, pCopyImageToBufferInfo: *const VkCopyImageToBufferInfo2KHR);
     pub fn vkCmdCopyQueryPoolResults(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, firstQuery: u32, queryCount: u32, dstBuffer: VkBuffer, dstOffset: VkDeviceSize, stride: VkDeviceSize, flags: VkQueryResultFlags);
-    pub fn vkCmdPushConstants(commandBuffer: VkCommandBuffer, pipelineLayout: VkPipelineLayout, stageFlags: VkShaderStageFlags, offset: u32, size: u32, pValues: *const core::ffi::c_void);
-    pub fn vkCmdBeginRenderPass(commandBuffer: VkCommandBuffer, pRenderPassBegin: *const VkRenderPassBeginInfo, contents: VkSubpassContents);
-    pub fn vkCmdNextSubpass(commandBuffer: VkCommandBuffer, contents: VkSubpassContents);
+    pub fn vkCmdDispatch(commandBuffer: VkCommandBuffer, groupCountX: u32, groupCountY: u32, groupCountZ: u32);
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkCmdDispatchBase(commandBuffer: VkCommandBuffer, baseGroupX: u32, baseGroupY: u32, baseGroupZ: u32, groupCountX: u32, groupCountY: u32, groupCountZ: u32);
+    pub fn vkCmdDispatchIndirect(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize);
+    pub fn vkCmdDraw(commandBuffer: VkCommandBuffer, vertexCount: u32, instanceCount: u32, firstVertex: u32, firstInstance: u32);
+    pub fn vkCmdDrawIndexed(commandBuffer: VkCommandBuffer, indexCount: u32, instanceCount: u32, firstIndex: u32, vertexOffset: i32, firstInstance: u32);
+    pub fn vkCmdDrawIndexedIndirect(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, drawCount: u32, stride: u32);
+    pub fn vkCmdDrawIndirect(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, drawCount: u32, stride: u32);
+    pub fn vkCmdEndQuery(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, query: u32);
     pub fn vkCmdEndRenderPass(commandBuffer: VkCommandBuffer);
+    #[cfg(feature = "Allow1_2APIs")]pub fn vkCmdEndRenderPass2(commandBuffer: VkCommandBuffer, pSubpassEndInfo: *const VkSubpassEndInfoKHR);
+    #[cfg(feature = "Allow1_3APIs")]pub fn vkCmdEndRendering(commandBuffer: VkCommandBuffer);
     pub fn vkCmdExecuteCommands(commandBuffer: VkCommandBuffer, commandBufferCount: u32, pCommandBuffers: *const VkCommandBuffer);
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkCmdSetDeviceMask(commandBuffer: VkCommandBuffer, deviceMask: u32);
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkCmdDispatchBase(commandBuffer: VkCommandBuffer, baseGroupX: u32, baseGroupY: u32, baseGroupZ: u32, groupCountX: u32, groupCountY: u32, groupCountZ: u32);
-    #[cfg(feature = "Allow1_3APIs")]
-    pub fn vkCmdSetEvent2(commandBuffer: VkCommandBuffer, event: VkEvent, pDependencyInfo: *const VkDependencyInfoKHR);
-    #[cfg(feature = "Allow1_3APIs")]
-    pub fn vkCmdResetEvent2(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags2KHR);
-    #[cfg(feature = "Allow1_3APIs")]
-    pub fn vkCmdWaitEvents2(commandBuffer: VkCommandBuffer, eventCount: u32, pEvents: *const VkEvent, pDependencyInfos: *const VkDependencyInfoKHR);
-    #[cfg(feature = "Allow1_3APIs")]
-    pub fn vkCmdPipelineBarrier2(commandBuffer: VkCommandBuffer, pDependencyInfo: *const VkDependencyInfoKHR);
-    #[cfg(feature = "Allow1_3APIs")]
-    pub fn vkCmdWriteTimestamp2(commandBuffer: VkCommandBuffer, stage: VkPipelineStageFlags2KHR, queryPool: VkQueryPool, query: u32);
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkCreateSamplerYcbcrConversion(device: VkDevice, pCreateInfo: VkSamplerYcbcrConversionCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pYcbcrConversion: *mut VkSamplerYcbcrConversionKHR) -> VkResult;
-    #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkDestroySamplerYcbcrConversion(device: VkDevice, ycbcrConversion: VkSamplerYcbcrConversionKHR, pAllocator: *const VkAllocationCallbacks);
-    #[cfg(feature = "Allow1_2APIs")]
-    pub fn vkGetBufferDeviceAddress(device: VkDevice, pInfo: *const VkBufferDeviceAddressInfoKHR) -> VkDeviceAddress;
-    #[cfg(feature = "Allow1_2APIs")]
-    pub fn vkGetBufferOpaqueCaptureAddress(device: VkDevice, pInfo: *const VkBufferDeviceAddressInfoKHR) -> u64;
-    #[cfg(feature = "Allow1_2APIs")]
-    pub fn vkGetDeviceMemoryOpaqueCaptureAddress(device: VkDevice, pInfo: *const VkDeviceMemoryOpaqueCaptureAddressInfoKHR) -> u64;
-    #[cfg(feature = "Allow1_2APIs")]
-    pub fn vkGetSemaphoreCounterValue(device: VkDevice, semaphore: VkSemaphore, pValue: *mut u64) -> VkResult;
-    #[cfg(feature = "Allow1_2APIs")]
-    pub fn vkSignalSemaphore(device: VkDevice, pSignalInfo: *const VkSemaphoreSignalInfoKHR) -> VkResult;
-    #[cfg(feature = "Allow1_2APIs")]
-    pub fn vkWaitSemaphores(device: VkDevice, pWaitInfo: *const VkSemaphoreWaitInfoKHR, timeout: u64) -> VkResult;
-    #[cfg(feature = "Allow1_2APIs")]
-    pub fn vkCreateRenderPass2(device: VkDevice, pCreateInfo: *const VkRenderPassCreateInfo2KHR, pAllocator: *const VkAllocationCallbacks, pRenderPass: *mut VkRenderPass) -> VkResult;
-    #[cfg(feature = "Allow1_2APIs")]
-    pub fn vkCmdBeginRenderPass2(commandBuffer: VkCommandBuffer, pRenderPassBegin: *const VkRenderPassBeginInfo, pSubpassBeginInfo: *const VkSubpassBeginInfoKHR);
-    #[cfg(feature = "Allow1_2APIs")]
-    pub fn vkCmdNextSubpass2(commandBuffer: VkCommandBuffer, pSubpassBeginInfo: *const VkSubpassBeginInfoKHR, pSubpassEndInfo: *const VkSubpassEndInfoKHR);
-    #[cfg(feature = "Allow1_2APIs")]
-    pub fn vkCmdEndRenderPass2(commandBuffer: VkCommandBuffer, pSubpassEndInfo: *const VkSubpassEndInfoKHR);
-    #[cfg(feature = "Allow1_3APIs")]
-    pub fn vkGetDeviceBufferMemoryRequirements(device: VkDevice, pInfo: *const VkDeviceBufferMemoryRequirementsKHR, pMemoryRequirements: *mut VkMemoryRequirements2KHR);
-    #[cfg(feature = "Allow1_3APIs")]
-    pub fn vkGetDeviceImageMemoryREquirements(device: VkDevice, pInfo: *const VkDeviceImageMemoryRequirementsKHR, pMemoryRequirements: *mut VkMemoryRequirements2KHR);
-    #[cfg(feature = "Allow1_3APIs")]
-    pub fn vkGetDeviceImageSparseMemoryRequirements(device: VkDevice, pInfo: *const VkDeviceImageMemoryRequirementsKHR, pSparseMemoryRequirementsCount: *mut u32, pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements2KHR);
-    #[cfg(feature = "Allow1_3APIs")]
-    pub fn vkCmdCopyBuffer2(commandBuffer: VkCommandBuffer, pCopyBufferInfo: *const VkCopyBufferInfo2KHR);
-    #[cfg(feature = "Allow1_3APIs")]
-    pub fn vkCmdCopyImage2(commandBuffer: VkCommandBuffer, pCopyImageInfo: *const VkCopyImageInfo2KHR);
-    #[cfg(feature = "Allow1_3APIs")]
-    pub fn vkCmdCopyBufferToImage2(commandBuffer: VkCommandBuffer, pCopyBufferToImageInfo: *const VkCopyBufferToImageInfo2KHR);
-    #[cfg(feature = "Allow1_3APIs")]
-    pub fn vkCmdCopyImageToBuffer2(commandBuffer: VkCommandBuffer, pCopyImageToBufferInfo: *const VkCopyImageToBufferInfo2KHR);
-    #[cfg(feature = "Allow1_3APIs")]
-    pub fn vkCmdBlitImage2(commandBuffer: VkCommandBuffer, pBlitImageInfo: *const VkBlitImageInfo2KHR);
-    #[cfg(feature = "Allow1_3APIs")]
-    pub fn vkCmdResolveImage2(commandBuffer: VkCommandBuffer, pResolveImageInfo: *const VkResolveImageInfo2KHR);
-    #[cfg(feature = "Allow1_3APIs")]
-    pub fn vkCmdBeginRendering(commandBuffer: VkCommandBuffer, pRenderingInfo: *const VkRenderingInfoKHR);
-    #[cfg(feature = "Allow1_3APIs")]
-    pub fn vkCmdEndRendering(commandBuffer: VkCommandBuffer);
-    #[cfg(feature = "Allow1_4APIs")]
-    pub fn vkCmdBindIndexBuffer2(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, size: VkDeviceSize, indexType: VkIndexType);
-    #[cfg(feature = "Allow1_4APIs")]
-    pub fn vkGetRenderingAreaGranularity(device: VkDevice, pRenderingAreaInfo: *const VkRenderingAreaInfoKHR, pGranularity: *mut VkExtent2D);
-    #[cfg(feature = "Allow1_4APIs")]
-    pub fn vkGetDeviceImageSubresourceLayout(device: VkDevice, pInfo: *const VkDeviceImageSubresourceInfoKHR, pLayout: *mut VkSubresourceLayout2KHR);
-    #[cfg(feature = "Allow1_4APIs")]
-    pub fn vkGetImageSubresourceLayout2(device: VkDevice, image: VkImage, pSubresource: *const VkImageSubresource2KHR, pLayout: *mut VkSubresourceLayout2KHR);
-    #[cfg(feature = "Allow1_4APIs")]
-    pub fn vkCmdBindDescriptorSets2(commandBuffer: VkCommandBuffer, pBindDescriptorSetsInfo: *const VkBindDescriptorSetsInfoKHR);
-    #[cfg(feature = "Allow1_4APIs")]
-    pub fn vkCmdPushConstants2(commandBuffer: VkCommandBuffer, pPushConstantsInfo: *const VkPushConstantsInfoKHR);
-    #[cfg(feature = "Allow1_4APIs")]
-#[cfg(feature = "VK_KHR_push_descriptor")]
-    pub fn vkCmdPushDescriptorSet2(commandBuffer: VkCommandBuffer, pPushDescriptorSetInfo: *const VkPushDescriptorSetInfoKHR);
-    #[cfg(feature = "Allow1_4APIs")]
-#[cfg(feature = "VK_KHR_push_descriptor")]
-    pub fn vkCmdPushDescriptorSetWithTemplate2(commandBuffer: VkCommandBuffer, pPushDescriptorSetWithTemplateInfo: *const VkPushDescriptorSetWithTemplateInfoKHR);
-    #[cfg(feature = "Allow1_4APIs")]
-    pub fn vkCmdPushDescriptorSet(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, layout: VkPipelineLayout, set: u32, descriptorWriteCount: u32, pDescriptorWrites: *const VkWriteDescriptorSet);
-    #[cfg(feature = "Allow1_4APIs")]
-#[cfg(feature = "VK_KHR_descriptor_update_template")]
-    pub fn vkCmdPushDescriptorSetWithTemplate(commandBuffer: VkCommandBuffer, descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR, layout: VkPipelineLayout, set: u32, pData: *const core::ffi::c_void);
-    #[cfg(feature = "Allow1_4APIs")]
-    pub fn vkCmdSetRenderingAttachmentLocations(commandBuffer: VkCommandBuffer, pLocationInfo: *const VkRenderingAttachmentLocationInfoKHR);
-    #[cfg(feature = "Allow1_4APIs")]
-    pub fn vkCmdSetRenderingInputAttachmentIndices(commandBuffer: VkCommandBuffer, pInputAttachmentIndexInfo: *const VkRenderingInputAttachmentIndexInfoKHR);
-    #[cfg(feature = "Allow1_4APIs")]
-    pub fn vkCmdSetLineStipple(commandBuffer: VkCommandBuffer, lineStippleFactor: u32, lineStipplePattern: u16);
-    #[cfg(feature = "Allow1_4APIs")]
-    pub fn vkMapMemory2(device: VkDevice, pMemoryMapInfo: *const VkMemoryMapInfoKHR, ppData: *mut *mut core::ffi::c_void) -> VkResult;
-    #[cfg(feature = "Allow1_4APIs")]
-    pub fn vkUnmapMemory2(device: VkDevice, pMemoryUnmapInfo: *const VkMemoryUnmapInfoKHR) -> VkResult;
-    #[cfg(feature = "Allow1_4APIs")]
-    pub fn vkCopyMemoryToImage(device: VkDevice, pCopyMemoryToImageInfo: *const VkCopyMemoryToImageInfoEXT) -> VkResult;
-    #[cfg(feature = "Allow1_4APIs")]
-    pub fn vkCopyImageToMemory(device: VkDevice, pCopyImageToMemoryInfo: *const VkCopyImageToMemoryInfoEXT) -> VkResult;
-    #[cfg(feature = "Allow1_4APIs")]
-    pub fn vkCopyImageToImage(device: VkDevice, pCopyImageToImageInfo: *const VkCopyImageToImageInfoEXT) -> VkResult;
-    #[cfg(feature = "Allow1_4APIs")]
-    pub fn vkTransitionImageLayout(device: VkDevice, transitionCount: u32, pTransitions: *const VkHostImageLayoutTransitionInfoEXT) -> VkResult;
-    #[cfg(feature = "Allow1_4APIs")]
-#[cfg(not(feature = "VK_KHR_maintenance5"))]
-    pub fn vkGetImageSubresourceLayout2(device: VkDevice, image: VkImage, pSubresource: *const VkImageSubresource2EXT, pLayout: *mut VkSubresourceLayout2EXT);
-    #[cfg(feature = "VK_NN_vi_surface")]
-    pub fn vkCreateViSurfaceNN(instance: VkInstance, pCreateInfo: *const VkViSurfaceCreateInfoNN, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
-    #[cfg(feature = "VK_MVK_macos_surface")]
-    pub fn vkCreateMacOSSurfaceMVK(instance: VkInstance, pCreateInfo: *const VkMacOSSurfaceCreateInfoMVK, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
-    #[cfg(feature = "VK_MVK_ios_surface")]
-    pub fn vkCreateIOSSurfaceMVK(instance: VkInstance, pCreateInfo: *const VkIOSSurfaceCreateInfoMVK, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    pub fn vkCmdFillBuffer(commandBuffer: VkCommandBuffer, dstBuffer: VkBuffer, dstOffset: VkDeviceSize, dataSize: VkDeviceSize, data: u32);
+    pub fn vkCmdNextSubpass(commandBuffer: VkCommandBuffer, contents: VkSubpassContents);
+    #[cfg(feature = "Allow1_2APIs")]pub fn vkCmdNextSubpass2(commandBuffer: VkCommandBuffer, pSubpassBeginInfo: *const VkSubpassBeginInfoKHR, pSubpassEndInfo: *const VkSubpassEndInfoKHR);
+    pub fn vkCmdPipelineBarrier(commandBuffer: VkCommandBuffer, srcStageMask: VkPipelineStageFlags, dstStageMask: VkPipelineStageFlags, dependencyFlags: VkDependencyFlags, memoryBarrierCount: u32, pMemoryBarriers: *const VkMemoryBarrier, bufferMemoryBarrierCount: u32, pBufferMemoryBarriers: *const VkBufferMemoryBarrier, imageMemoryBarrierCount: u32, pImageMemoryBarriers: *const VkImageMemoryBarrier);
+    #[cfg(feature = "Allow1_3APIs")]pub fn vkCmdPipelineBarrier2(commandBuffer: VkCommandBuffer, pDependencyInfo: *const VkDependencyInfoKHR);
+    pub fn vkCmdPushConstants(commandBuffer: VkCommandBuffer, pipelineLayout: VkPipelineLayout, stageFlags: VkShaderStageFlags, offset: u32, size: u32, pValues: *const core::ffi::c_void);
+    #[cfg(feature = "Allow1_4APIs")]pub fn vkCmdPushConstants2(commandBuffer: VkCommandBuffer, pPushConstantsInfo: *const VkPushConstantsInfoKHR);
+    #[cfg(feature = "Allow1_4APIs")]pub fn vkCmdPushDescriptorSet(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, layout: VkPipelineLayout, set: u32, descriptorWriteCount: u32, pDescriptorWrites: *const VkWriteDescriptorSet);
+    #[cfg(feature = "Allow1_4APIs")]pub fn vkCmdPushDescriptorSet2(commandBuffer: VkCommandBuffer, pPushDescriptorSetInfo: *const VkPushDescriptorSetInfoKHR);
+    #[cfg(feature = "Allow1_4APIs")]pub fn vkCmdPushDescriptorSetWithTemplate(commandBuffer: VkCommandBuffer, descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR, layout: VkPipelineLayout, set: u32, pData: *const core::ffi::c_void);
+    #[cfg(feature = "Allow1_4APIs")]pub fn vkCmdPushDescriptorSetWithTemplate2(commandBuffer: VkCommandBuffer, pPushDescriptorSetWithTemplateInfo: *const VkPushDescriptorSetWithTemplateInfoKHR);
+    pub fn vkCmdResetEvent(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags);
+    #[cfg(feature = "Allow1_3APIs")]pub fn vkCmdResetEvent2(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags2KHR);
+    pub fn vkCmdResetQueryPool(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, firstQuery: u32, queryCount: u32);
+    pub fn vkCmdResolveImage(commandBuffer: VkCommandBuffer, srcImage: VkImage, srcImageLayout: VkImageLayout, dstImage: VkImage, dstImageLayout: VkImageLayout, regionCount: u32, pRegions: *const VkImageResolve);
+    #[cfg(feature = "Allow1_3APIs")]pub fn vkCmdResolveImage2(commandBuffer: VkCommandBuffer, pResolveImageInfo: *const VkResolveImageInfo2KHR);
+    pub fn vkCmdSetBlendConstants(commandBuffer: VkCommandBuffer, blendConstants: *const core::ffi::c_float);
+    pub fn vkCmdSetDepthBias(commandBuffer: VkCommandBuffer, depthBiasConstantFactor: core::ffi::c_float, depthBiasClamp: core::ffi::c_float, depthBiasSlopeFactor: core::ffi::c_float);
+    pub fn vkCmdSetDepthBounds(commandBuffer: VkCommandBuffer, minDepthBounds: core::ffi::c_float, maxDepthBounds: core::ffi::c_float);
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkCmdSetDeviceMask(commandBuffer: VkCommandBuffer, deviceMask: u32);
+    pub fn vkCmdSetEvent(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags);
+    #[cfg(feature = "Allow1_3APIs")]pub fn vkCmdSetEvent2(commandBuffer: VkCommandBuffer, event: VkEvent, pDependencyInfo: *const VkDependencyInfoKHR);
+    #[cfg(feature = "Allow1_4APIs")]pub fn vkCmdSetLineStipple(commandBuffer: VkCommandBuffer, lineStippleFactor: u32, lineStipplePattern: u16);
+    pub fn vkCmdSetLineWidth(commandBuffer: VkCommandBuffer, lineWidth: core::ffi::c_float);
+    #[cfg(feature = "Allow1_4APIs")]pub fn vkCmdSetRenderingAttachmentLocations(commandBuffer: VkCommandBuffer, pLocationInfo: *const VkRenderingAttachmentLocationInfoKHR);
+    #[cfg(feature = "Allow1_4APIs")]pub fn vkCmdSetRenderingInputAttachmentIndices(commandBuffer: VkCommandBuffer, pInputAttachmentIndexInfo: *const VkRenderingInputAttachmentIndexInfoKHR);
+    pub fn vkCmdSetScissor(commandBuffer: VkCommandBuffer, firstScissor: u32, scissorCount: u32, pScissors: *const VkRect2D);
+    pub fn vkCmdSetStencilCompareMask(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, compareMask: u32);
+    pub fn vkCmdSetStencilReference(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, reference: u32);
+    pub fn vkCmdSetStencilWriteMask(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, writeMask: u32);
+    pub fn vkCmdSetViewport(commandBuffer: VkCommandBuffer, firstViewport: u32, viewportCount: u32, pViewports: *const VkViewport);
+    pub fn vkCmdUpdateBuffer(commandBuffer: VkCommandBuffer, dstBuffer: VkBuffer, dstOffset: VkDeviceSize, dataSize: VkDeviceSize, pData: *const core::ffi::c_void);
+    pub fn vkCmdWaitEvents(commandBuffer: VkCommandBuffer, eventCount: u32, pEvents: *const VkEvent, srcStageMask: VkPipelineStageFlags, dstStageMask: VkPipelineStageFlags, memoryBarrierCount: u32, pMemoryBarriers: *const VkMemoryBarrier, bufferMemoryBarrierCount: u32, pBufferMemoryBarriers: *const VkBufferMemoryBarrier, imageMemoryBarrierCount: u32, pImageMemoryBarriers: *const VkImageMemoryBarrier);
+    #[cfg(feature = "Allow1_3APIs")]pub fn vkCmdWaitEvents2(commandBuffer: VkCommandBuffer, eventCount: u32, pEvents: *const VkEvent, pDependencyInfos: *const VkDependencyInfoKHR);
+    pub fn vkCmdWriteTimestamp(commandBuffer: VkCommandBuffer, pipelineStage: VkPipelineStageFlags, queryPool: VkQueryPool, query: u32);
+    #[cfg(feature = "Allow1_3APIs")]pub fn vkCmdWriteTimestamp2(commandBuffer: VkCommandBuffer, stage: VkPipelineStageFlags2KHR, queryPool: VkQueryPool, query: u32);
 }

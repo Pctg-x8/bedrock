@@ -1,14 +1,15 @@
-use std::io::Write;
+use std::{collections::HashMap, io::Write};
 
 use parts::{
     Bitmask, Command, Element, Enum, ExtensionHeaderConstants, FuncPointer, Object, Struct, StructUsage, TypeAlias,
     Union, emit_c_enum_type, emit_const, emit_result_const, emit_result_err_const,
 };
 
-use crate::v1_4::VK_KHR_MAINTENANCE_5;
+use crate::{rs_item::CompilationCondition, v1_4::VK_KHR_MAINTENANCE_5};
 
 mod extensions;
 mod parts;
+mod rs_item;
 mod v1_1;
 mod v1_2;
 mod v1_3;
@@ -221,33 +222,38 @@ fn main() -> std::io::Result<()> {
     o.write_all(b"#[cfg_attr(all(windows, not(feature = \"DynamicLoaded\"), feature = \"Implements\"), link(name = \"vulkan-1\"))]\n")?;
     o.write_all(b"#[rustfmt::skip]\n")?;
     o.write_all(b"unsafe extern \"system\" {\n")?;
-    for c in COMMANDS {
-        c.emit_static_symbol(&mut o)?;
+    let mut fntable = HashMap::new();
+    let commands = COMMANDS.iter().chain(
+        extensions::ELEMENTS
+            .iter()
+            .chain(v1_1::ELEMENTS)
+            .chain(v1_2::ELEMENTS)
+            .chain(v1_3::ELEMENTS)
+            .chain(v1_4::ELEMENTS)
+            .filter_map(|x| match x {
+                Element::Command(x) => Some(x),
+                _ => None,
+            }),
+    );
+    for c in commands {
+        c.static_function_stubs(|e| match fntable.entry(e.name.clone()) {
+            std::collections::hash_map::Entry::Vacant(v) => {
+                v.insert(e);
+            }
+            std::collections::hash_map::Entry::Occupied(mut o) => {
+                // try merge conditions
+                o.get_mut().compilation_condition =
+                    core::mem::replace(&mut o.get_mut().compilation_condition, CompilationCondition::Empty)
+                        .or(e.compilation_condition);
+            }
+        });
     }
-    for x in v1_1::ELEMENTS {
-        if let Element::Command(x) = x {
-            x.emit_static_symbol(&mut o)?;
-        }
-    }
-    for x in v1_2::ELEMENTS {
-        if let Element::Command(x) = x {
-            x.emit_static_symbol(&mut o)?;
-        }
-    }
-    for x in v1_3::ELEMENTS {
-        if let Element::Command(x) = x {
-            x.emit_static_symbol(&mut o)?;
-        }
-    }
-    for x in v1_4::ELEMENTS {
-        if let Element::Command(x) = x {
-            x.emit_static_symbol(&mut o)?;
-        }
-    }
-    for x in extensions::ELEMENTS {
-        if let Element::Command(x) = x {
-            x.emit_static_symbol(&mut o)?;
-        }
+    let mut sorted = fntable.into_values().collect::<Vec<_>>();
+    sorted.sort_by(|a, b| a.name.cmp(&b.name));
+    for f in sorted {
+        o.write_all(b"    ")?;
+        f.emit(&mut o)?;
+        o.write_all(b"\n")?;
     }
     o.write_all(b"}\n")?;
 
