@@ -3076,7 +3076,7 @@ pub const VK_FORMAT_S8_UINT: VkFormat = 127;
 pub const VK_FORMAT_D16_UNORM_S8_UINT: VkFormat = 128;
 pub const VK_FORMAT_D24_UNORM_S8_UINT: VkFormat = 129;
 pub const VK_FORMAT_D32_SFLOAT_S8_UINT: VkFormat = 130;
-#[cfg(feature = "VK_KHR_maintenace5")]
+#[cfg(feature = "VK_KHR_maintenance5")]
 pub const VK_FORMAT_A1B5G5R4_UNORM_PACK16_KHR: VkFormat = 1000470000;
 #[cfg(feature = "Allow1_4APIs")]
 pub const VK_FORMAT_A1B5G5R4_UNORM_PACK16: VkFormat = 1000470000;
@@ -20644,7 +20644,7 @@ pub const VK_STRUCTURE_TYPE_IMAGE_COPY_2: VkStructureType = VK_STRUCTURE_TYPE_IM
 #[derive(Debug, Clone)]
 #[repr(C)]
 #[rustfmt::skip]
-pub struct VkImageBlir2KHR {
+pub struct VkImageBlit2KHR {
     pub sType: VkStructureType,
     pub pNext: *const core::ffi::c_void,
     pub srcSubresources: VkImageSubresourceLayers,
@@ -20657,7 +20657,7 @@ pub struct VkImageBlir2KHR {
 pub const VK_STRUCTURE_TYPE_IMAGE_BLIT_2_KHR: VkStructureType = 1000337008;
 #[cfg(feature = "VK_KHR_copy_commands2")]
 #[rustfmt::skip]
-unsafe impl crate::VulkanStructure for VkImageBlir2KHR {
+unsafe impl crate::VulkanStructure for VkImageBlit2KHR {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
@@ -20670,10 +20670,10 @@ unsafe impl crate::VulkanStructure for VkImageBlir2KHR {
 }
 #[cfg(feature = "VK_KHR_copy_commands2")]
 #[rustfmt::skip]
-impl crate::TypedVulkanStructure for VkImageBlir2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_BLIT_2_KHR; }
+impl crate::TypedVulkanStructure for VkImageBlit2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_BLIT_2_KHR; }
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
-pub type VkImageBlir2 = VkImageBlir2KHR;
+pub type VkImageBlit2 = VkImageBlit2KHR;
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
 pub const VK_STRUCTURE_TYPE_IMAGE_BLIT_2: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_BLIT_2_KHR;
@@ -20688,7 +20688,7 @@ pub struct VkBufferImageCopy2KHR {
     pub bufferOffset: VkDeviceSize,
     pub bufferRowLength: u32,
     pub bufferImageHeight: u32,
-    pub imageSubresource: VkImageSubreourceLayers,
+    pub imageSubresource: VkImageSubresourceLayers,
     pub imageOffset: VkOffset3D,
     pub imageExtent: VkExtent3D,
 }
@@ -21201,7 +21201,7 @@ pub type VkRenderingInfo = VkRenderingInfoKHR;
 pub const VK_STRUCTURE_TYPE_RENDERING_INFO: VkStructureType = VK_STRUCTURE_TYPE_RENDERING_INFO_KHR;
 
 #[cfg(feature = "VK_KHR_dynamic_rendering")]
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 #[repr(C)]
 #[rustfmt::skip]
 pub struct VkRenderingAttachmentInfoKHR {
@@ -23707,7 +23707,7 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES: VkStr
 pub struct VkPipelineRasterizationLineStateCreateInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const core::ffi::c_void,
-    pub lineRasterizationMode: VkLineRAsterizationModeKHR,
+    pub lineRasterizationMode: VkLineRasterizationModeKHR,
     pub stippledLineEnable: VkBool32,
     pub lineStippleFactor: u32,
     pub lineStippledPattern: u16,

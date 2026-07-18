@@ -6930,7 +6930,7 @@ fn emit_format_enum(w: &mut impl Write) -> std::io::Result<()> {
     f2(w, "D16", "UNORM", "S8", "UINT", 128)?;
     f2(w, "D24", "UNORM", "S8", "UINT", 129)?;
     f2(w, "D32", "SFLOAT", "S8", "UINT", 130)?;
-    writeln!(w, "#[cfg(feature = \"VK_KHR_maintenace5\")]")?;
+    writeln!(w, "#[cfg(feature = \"VK_KHR_maintenance5\")]")?;
     writeln!(
         w,
         "pub const VK_FORMAT_A1B5G5R4_UNORM_PACK16_KHR: VkFormat = {};",

@@ -286,7 +286,7 @@ pub const ELEMENTS: &[Element] = &[
     .promoted(VERSION)
     .into_element(),
     Struct::typed(
-        "ImageBlir2",
+        "ImageBlit2",
         "IMAGE_BLIT_2",
         VK_KHR_COPY_COMMANDS2.ext_enum(8) as _,
         StructUsage::Source,
@@ -309,7 +309,7 @@ pub const ELEMENTS: &[Element] = &[
             Struct::member("bufferOffset", "VkDeviceSize"),
             Struct::member("bufferRowLength", "u32"),
             Struct::member("bufferImageHeight", "u32"),
-            Struct::member("imageSubresource", "VkImageSubreourceLayers"),
+            Struct::member("imageSubresource", "VkImageSubresourceLayers"),
             Struct::member("imageOffset", "VkOffset3D"),
             Struct::member("imageExtent", "VkExtent3D"),
         ],
@@ -428,6 +428,7 @@ pub const ELEMENTS: &[Element] = &[
             Struct::member("clearValue", "VkClearValue"),
         ],
     )
+    .non_debuggable()
     .extensions(&[VK_KHR_DYNAMIC_RENDERING])
     .promoted(VERSION)
     .into_element(),

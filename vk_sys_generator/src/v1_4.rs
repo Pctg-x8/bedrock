@@ -729,7 +729,7 @@ pub const ELEMENTS: &[Element] = &[
         VK_KHR_LINE_RASTERIZATION.ext_enum(1) as _,
         StructUsage::Source,
         &[
-            Struct::member("lineRasterizationMode", "VkLineRAsterizationModeKHR"),
+            Struct::member("lineRasterizationMode", "VkLineRasterizationModeKHR"),
             Struct::member("stippledLineEnable", TY_VK_BOOL),
             Struct::member("lineStippleFactor", "u32"),
             Struct::member("lineStippledPattern", "u16"),
