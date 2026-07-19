@@ -14522,7 +14522,6 @@ pub const VK_STRUCTURE_TYPE_HOST_IMAGE_COPY_DEVICE_PERFORMANCE_QUERY: VkStructur
 #[derive(Debug, Clone)]
 #[repr(C)]
 #[rustfmt::skip]
-#[cfg(not(feature = "VK_KHR_maintenance5"))]
 pub struct VkSubresourceLayout2EXT {
     pub sType: VkStructureType,
     pub pNext: *mut core::ffi::c_void,
@@ -14530,11 +14529,9 @@ pub struct VkSubresourceLayout2EXT {
 }
 #[cfg(feature = "VK_EXT_host_image_copy")]
 #[rustfmt::skip]
-#[cfg(not(feature = "VK_KHR_maintenance5"))]
 pub const VK_STRUCTURE_TYPE_SURESOURCE_LAYOUT_2_EXT: VkStructureType = 1000338002;
 #[cfg(feature = "VK_EXT_host_image_copy")]
 #[rustfmt::skip]
-#[cfg(not(feature = "VK_KHR_maintenance5"))]
 unsafe impl crate::VulkanStructure for VkSubresourceLayout2EXT {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -14548,11 +14545,9 @@ unsafe impl crate::VulkanStructure for VkSubresourceLayout2EXT {
 }
 #[cfg(feature = "VK_EXT_host_image_copy")]
 #[rustfmt::skip]
-#[cfg(not(feature = "VK_KHR_maintenance5"))]
 impl crate::TypedVulkanStructure for VkSubresourceLayout2EXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SURESOURCE_LAYOUT_2_EXT; }
 #[cfg(feature = "VK_EXT_host_image_copy")]
 #[rustfmt::skip]
-#[cfg(not(feature = "VK_KHR_maintenance5"))]
 unsafe impl crate::VulkanSinkStructure for VkSubresourceLayout2EXT {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
@@ -14562,22 +14557,18 @@ unsafe impl crate::VulkanSinkStructure for VkSubresourceLayout2EXT {
 }
 #[cfg(feature = "VK_EXT_host_image_copy")]
 #[rustfmt::skip]
-#[cfg(not(feature = "VK_KHR_maintenance5"))]
 impl crate::TypedVulkanSinkStructure for VkSubresourceLayout2EXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SURESOURCE_LAYOUT_2_EXT; }
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
-#[cfg(not(feature = "VK_KHR_maintenance5"))]
 pub type VkSubresourceLayout2 = VkSubresourceLayout2EXT;
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
-#[cfg(not(feature = "VK_KHR_maintenance5"))]
 pub const VK_STRUCTURE_TYPE_SURESOURCE_LAYOUT_2: VkStructureType = VK_STRUCTURE_TYPE_SURESOURCE_LAYOUT_2_EXT;
 
 #[cfg(feature = "VK_EXT_host_image_copy")]
 #[derive(Debug, Clone)]
 #[repr(C)]
 #[rustfmt::skip]
-#[cfg(not(feature = "VK_KHR_maintenance5"))]
 pub struct VkImageSubresource2EXT {
     pub sType: VkStructureType,
     pub pNext: *mut core::ffi::c_void,
@@ -14585,11 +14576,9 @@ pub struct VkImageSubresource2EXT {
 }
 #[cfg(feature = "VK_EXT_host_image_copy")]
 #[rustfmt::skip]
-#[cfg(not(feature = "VK_KHR_maintenance5"))]
 pub const VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_EXT: VkStructureType = 1000338003;
 #[cfg(feature = "VK_EXT_host_image_copy")]
 #[rustfmt::skip]
-#[cfg(not(feature = "VK_KHR_maintenance5"))]
 unsafe impl crate::VulkanStructure for VkImageSubresource2EXT {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -14603,11 +14592,9 @@ unsafe impl crate::VulkanStructure for VkImageSubresource2EXT {
 }
 #[cfg(feature = "VK_EXT_host_image_copy")]
 #[rustfmt::skip]
-#[cfg(not(feature = "VK_KHR_maintenance5"))]
 impl crate::TypedVulkanStructure for VkImageSubresource2EXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_EXT; }
 #[cfg(feature = "VK_EXT_host_image_copy")]
 #[rustfmt::skip]
-#[cfg(not(feature = "VK_KHR_maintenance5"))]
 unsafe impl crate::VulkanSinkStructure for VkImageSubresource2EXT {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
@@ -14617,15 +14604,12 @@ unsafe impl crate::VulkanSinkStructure for VkImageSubresource2EXT {
 }
 #[cfg(feature = "VK_EXT_host_image_copy")]
 #[rustfmt::skip]
-#[cfg(not(feature = "VK_KHR_maintenance5"))]
 impl crate::TypedVulkanSinkStructure for VkImageSubresource2EXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_EXT; }
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
-#[cfg(not(feature = "VK_KHR_maintenance5"))]
 pub type VkImageSubresource2 = VkImageSubresource2EXT;
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
-#[cfg(not(feature = "VK_KHR_maintenance5"))]
 pub const VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_EXT;
 
 

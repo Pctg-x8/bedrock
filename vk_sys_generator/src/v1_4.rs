@@ -1023,7 +1023,6 @@ pub const ELEMENTS: &[Element] = &[
     )
     .extensions(&[VK_EXT_HOST_IMAGE_COPY])
     .promoted(VERSION)
-    .available_condition("not(feature = \"VK_KHR_maintenance5\")")
     .into_element(),
     Struct::typed(
         "ImageSubresource2",
@@ -1034,7 +1033,6 @@ pub const ELEMENTS: &[Element] = &[
     )
     .extensions(&[VK_EXT_HOST_IMAGE_COPY])
     .promoted(VERSION)
-    .available_condition("not(feature = \"VK_KHR_maintenance5\")")
     .into_element(),
     Command::new(
         "CopyMemoryToImage",
@@ -1092,7 +1090,6 @@ pub const ELEMENTS: &[Element] = &[
     )
     .extension(VK_EXT_HOST_IMAGE_COPY)
     .promoted(VERSION)
-    .available_condition("not(feature = \"VK_KHR_maintenance5\")")
     .into_element(),
     // VK_EXT_pipeline_protected_access
     VK_EXT_PIPELINE_PROTECTED_ACCESS.header_constants().into_element(),
