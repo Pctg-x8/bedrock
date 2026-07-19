@@ -181,11 +181,6 @@ fn main() -> std::io::Result<()> {
         s.emit(&mut o)?;
     }
 
-    for c in COMMANDS {
-        o.write_all(b"\n")?;
-        c.emit(&mut o)?;
-    }
-
     for c in EXTENSION_HEADER_CONSTANTS {
         o.write_all(b"\n")?;
         c.emit(&mut o)?;
@@ -216,6 +211,9 @@ fn main() -> std::io::Result<()> {
         x.emit(&mut o)?;
     }
 
+    let mut function_ptr_newtype_impls = HashMap::new();
+    let mut pfn_impls = HashMap::new();
+    let mut from_ptr_impls = HashMap::new();
     let mut static_callable_impls = HashMap::new();
     let mut fntable = HashMap::new();
     let commands = COMMANDS.iter().chain(
@@ -231,17 +229,52 @@ fn main() -> std::io::Result<()> {
             }),
     );
     for c in commands {
-        c.emit_static_callable_impls(|e| match static_callable_impls.entry(e.fn_name.clone()) {
-            std::collections::hash_map::Entry::Vacant(v) => {
-                v.insert(e);
-            }
-            std::collections::hash_map::Entry::Occupied(mut o) => {
-                // try merge conditions
-                o.get_mut().compilation_condition =
-                    core::mem::replace(&mut o.get_mut().compilation_condition, CompilationCondition::Empty)
-                        .or(e.compilation_condition);
-            }
-        });
+        c.emit_pfn_impls(
+            |e| match function_ptr_newtype_impls.entry(e.name.clone()) {
+                std::collections::hash_map::Entry::Vacant(v) => {
+                    v.insert(e);
+                }
+                std::collections::hash_map::Entry::Occupied(mut o) => {
+                    // try merge conditions
+                    o.get_mut().compilation_condition =
+                        core::mem::replace(&mut o.get_mut().compilation_condition, CompilationCondition::Empty)
+                            .or(e.compilation_condition);
+                }
+            },
+            |e| match pfn_impls.entry(e.fn_name.clone()) {
+                std::collections::hash_map::Entry::Vacant(v) => {
+                    v.insert(e);
+                }
+                std::collections::hash_map::Entry::Occupied(mut o) => {
+                    // try merge conditions
+                    o.get_mut().compilation_condition =
+                        core::mem::replace(&mut o.get_mut().compilation_condition, CompilationCondition::Empty)
+                            .or(e.compilation_condition);
+                }
+            },
+            |e| match from_ptr_impls.entry(e.fn_name.clone()) {
+                std::collections::hash_map::Entry::Vacant(v) => {
+                    v.insert(e);
+                }
+                std::collections::hash_map::Entry::Occupied(mut o) => {
+                    // try merge conditions
+                    o.get_mut().compilation_condition =
+                        core::mem::replace(&mut o.get_mut().compilation_condition, CompilationCondition::Empty)
+                            .or(e.compilation_condition);
+                }
+            },
+            |e| match static_callable_impls.entry(e.fn_name.clone()) {
+                std::collections::hash_map::Entry::Vacant(v) => {
+                    v.insert(e);
+                }
+                std::collections::hash_map::Entry::Occupied(mut o) => {
+                    // try merge conditions
+                    o.get_mut().compilation_condition =
+                        core::mem::replace(&mut o.get_mut().compilation_condition, CompilationCondition::Empty)
+                            .or(e.compilation_condition);
+                }
+            },
+        );
         c.static_function_stubs(|e| match fntable.entry(e.name.clone()) {
             std::collections::hash_map::Entry::Vacant(v) => {
                 v.insert(e);
@@ -255,6 +288,24 @@ fn main() -> std::io::Result<()> {
         });
     }
 
+    let mut sorted = function_ptr_newtype_impls.into_values().collect::<Vec<_>>();
+    sorted.sort_by(|a, b| a.name.cmp(&b.name));
+    for x in sorted {
+        x.emit(&mut o)?;
+        o.write_all(b"\n")?;
+    }
+    let mut sorted = pfn_impls.into_values().collect::<Vec<_>>();
+    sorted.sort_by(|a, b| a.fn_name.cmp(&b.fn_name));
+    for x in sorted {
+        x.emit(&mut o)?;
+        o.write_all(b"\n")?;
+    }
+    let mut sorted = from_ptr_impls.into_values().collect::<Vec<_>>();
+    sorted.sort_by(|a, b| a.fn_name.cmp(&b.fn_name));
+    for x in sorted {
+        x.emit(&mut o)?;
+        o.write_all(b"\n")?;
+    }
     let mut sorted = static_callable_impls.into_values().collect::<Vec<_>>();
     sorted.sort_by(|a, b| a.fn_name.cmp(&b.fn_name));
     for x in sorted {

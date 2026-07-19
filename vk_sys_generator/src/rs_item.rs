@@ -1,6 +1,6 @@
 use std::collections::BTreeSet;
 
-#[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub enum FeatureName<'s> {
     Raw(&'s str),
     VulkanExt { tag: &'s str, name: &'s str },
@@ -17,7 +17,7 @@ impl core::fmt::Display for FeatureName<'_> {
     }
 }
 
-#[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub enum CompilationCondition<'s> {
     Empty,
     /// 原則使わない(available_conditionsの仕組みは将来的に廃止する)
@@ -256,6 +256,76 @@ impl StaticCallableImpl<'_> {
             "#[cfg(all(feature = \"Implements\", not(feature = \"DynamicLoaded\")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_{n} {{ const STATIC: Self = Self({n}); }}",
             n = self.fn_name
         )?;
+
+        Ok(())
+    }
+}
+
+pub struct FromPtrImpl<'s> {
+    pub compilation_condition: CompilationCondition<'s>,
+    pub fn_name: FnSymbol<'s>,
+}
+impl FromPtrImpl<'_> {
+    pub fn emit(self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
+        self.compilation_condition.emit_single_attr(w)?;
+        write!(
+            w,
+            "#[rustfmt::skip] unsafe impl crate::FromPtr for PFN_{n} {{ #[inline(always)] unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {{ unsafe {{ core::mem::transmute::<*const core::ffi::c_void, Self>(p) }} }} }}",
+            n = self.fn_name
+        )?;
+
+        Ok(())
+    }
+}
+
+pub struct PFNImpl<'s> {
+    pub compilation_condition: CompilationCondition<'s>,
+    pub fn_name: FnSymbol<'s>,
+}
+impl PFNImpl<'_> {
+    pub fn emit(self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
+        self.compilation_condition.emit_single_attr(w)?;
+        write!(
+            w,
+            "#[rustfmt::skip] unsafe impl crate::PFN for PFN_{n} {{ const NAME_CSTR: &'static core::ffi::CStr = c\"{n}\"; #[inline(always)] unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {{ unsafe {{ core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }} }} }}",
+            n = self.fn_name
+        )?;
+
+        Ok(())
+    }
+}
+
+pub struct FunctionPtrNewtype<'s, Args> {
+    pub compilation_condition: CompilationCondition<'s>,
+    pub name: FnSymbol<'s>,
+    pub args: Args,
+    pub return_type: Option<Type<'s>>,
+}
+impl<'s, Args: Iterator<Item = (&'s str, Type<'s>)>> FunctionPtrNewtype<'s, Args> {
+    pub fn emit(self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
+        self.compilation_condition.emit_single_attr(w)?;
+        write!(
+            w,
+            "#[repr(transparent)] #[derive(Debug, Clone, Copy)] #[rustfmt::skip] pub struct PFN_{}(pub unsafe extern \"system\" fn(",
+            self.name
+        )?;
+        let mut first = true;
+        for x in self.args {
+            if !first {
+                w.write_all(b", ")?;
+            }
+
+            w.write_all(x.0.as_bytes())?;
+            w.write_all(b": ")?;
+            x.1.emit(w)?;
+            first = false;
+        }
+        w.write_all(b")")?;
+        if let Some(r) = self.return_type {
+            w.write_all(b" -> ")?;
+            r.emit(w)?;
+        }
+        w.write_all(b");")?;
 
         Ok(())
     }

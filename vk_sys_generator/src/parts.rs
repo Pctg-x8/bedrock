@@ -1,6 +1,9 @@
 use std::collections::{HashMap, HashSet};
 
-use crate::rs_item::{CompilationCondition, FeatureName, FnSymbol, FunctionStub, StaticCallableImpl, Type};
+use crate::rs_item::{
+    CompilationCondition, FeatureName, FnSymbol, FromPtrImpl, FunctionPtrNewtype, FunctionStub, PFNImpl,
+    StaticCallableImpl, Type,
+};
 
 pub const TY_VK_BOOL: &str = "VkBool32";
 
@@ -1565,7 +1568,6 @@ impl Command {
     }
 
     fn emit_feature_gate(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
-        w.write_all(b"#[cfg(feature = \"Implements\")]\n")?;
         if let Some((tag, name)) = self.extension_old {
             writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
         }
@@ -1583,176 +1585,104 @@ impl Command {
         Ok(())
     }
 
-    pub fn emit(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
-        let (type_name, org_fn_name);
-        if let Some(Extension { tag, .. }) = self.extension {
+    pub fn emit_pfn_impls(
+        &self,
+        mut function_ptr_newtype_cb: impl FnMut(FunctionPtrNewtype<'static, FunctionStubArgsIterator<'static>>),
+        mut pfn_cb: impl FnMut(PFNImpl<'static>),
+        mut from_ptr_cb: impl FnMut(FromPtrImpl<'static>),
+        mut static_callable_cb: impl FnMut(StaticCallableImpl<'static>),
+    ) {
+        let fn_name = if let Some(Extension { tag, .. }) = self.extension {
             if self.is_command_buffer_inst {
-                type_name = format!("PFN_vkCmd{}{tag}", self.name);
-                org_fn_name = format!("vkCmd{}{tag}", self.name);
+                FnSymbol::CmdSuffixed {
+                    stem: self.name,
+                    suffix: tag,
+                }
             } else {
-                type_name = format!("PFN_vk{}{tag}", self.name);
-                org_fn_name = format!("vk{}{tag}", self.name);
+                FnSymbol::Suffixed {
+                    stem: self.name,
+                    suffix: tag,
+                }
             }
         } else {
             match (self.is_command_buffer_inst, self.extension_old) {
-                (false, None) => {
-                    type_name = format!("PFN_vk{}", self.name);
-                    org_fn_name = format!("vk{}", self.name);
-                }
-                (true, None) => {
-                    type_name = format!("PFN_vkCmd{}", self.name);
-                    org_fn_name = format!("vkCmd{}", self.name);
-                }
-                (false, Some((tag, _))) => {
-                    type_name = format!("PFN_vk{}{tag}", self.name);
-                    org_fn_name = format!("vk{}{tag}", self.name);
-                }
-                (true, Some((tag, _))) => {
-                    type_name = format!("PFN_vkCmd{}{tag}", self.name);
-                    org_fn_name = format!("vkCmd{}{tag}", self.name);
-                }
-            }
-        }
-
-        self.emit_feature_gate(w)?;
-        writeln!(w, "#[repr(transparent)]")?;
-        writeln!(w, "#[derive(Debug, Clone, Copy)]")?;
-        writeln!(w, "#[rustfmt::skip]")?;
-        write!(w, "pub struct {type_name}(pub unsafe extern \"system\" fn(")?;
-        let mut cont = false;
-        if self.is_command_buffer_inst {
-            // command buffer instruction always takes a VkCommandBuffer as the first argument
-            write!(w, "commandBuffer: VkCommandBuffer")?;
-            cont = true;
-        }
-        for (n, t) in self.args {
-            if cont {
-                w.write_all(b", ")?;
-            }
-            write!(w, "{n}: {t}")?;
-            cont = true;
-        }
-        w.write_all(b")")?;
-        if let Some(return_type) = self.return_type {
-            write!(w, " -> {return_type}")?;
-        }
-        w.write_all(b");\n")?;
-
-        self.emit_feature_gate(w)?;
-        Self::emit_pfn(w, &type_name, &org_fn_name)?;
-        self.emit_feature_gate(w)?;
-        Self::emit_from_ptr(w, &type_name)?;
-
-        if let Some(p) = self.promoted {
-            let (type_name, org_fn_name);
-            match self.is_command_buffer_inst {
-                false => {
-                    type_name = format!("PFN_vk{}", self.name);
-                    org_fn_name = format!("vk{}", self.name);
-                }
-                true => {
-                    type_name = format!("PFN_vkCmd{}", self.name);
-                    org_fn_name = format!("vkCmd{}", self.name);
-                }
-            }
-
-            writeln!(w, "#[cfg(feature = \"Implements\")]")?;
-            writeln!(w, "#[cfg(feature = \"Allow{p}APIs\")]")?;
-            if !self.available_condition.is_empty() {
-                writeln!(w, "#[cfg({})]", self.available_condition)?;
-            }
-            writeln!(w, "#[repr(transparent)]")?;
-            writeln!(w, "#[derive(Debug, Clone, Copy)]")?;
-            writeln!(w, "#[rustfmt::skip]")?;
-            write!(w, "pub struct {type_name}(pub unsafe extern \"system\" fn(")?;
-            let mut cont = false;
-            if self.is_command_buffer_inst {
-                // command buffer instruction always takes a VkCommandBuffer as the first argument
-                write!(w, "commandBuffer: VkCommandBuffer")?;
-                cont = true;
-            }
-            for (n, t) in self.args {
-                if cont {
-                    w.write_all(b", ")?;
-                }
-                write!(w, "{n}: {t}")?;
-                cont = true;
-            }
-            w.write_all(b")")?;
-            if let Some(return_type) = self.return_type {
-                write!(w, " -> {return_type}")?;
-            }
-            w.write_all(b");\n")?;
-
-            writeln!(w, "#[cfg(feature = \"Implements\")]")?;
-            writeln!(w, "#[cfg(feature = \"Allow{p}APIs\")]")?;
-            if !self.available_condition.is_empty() {
-                writeln!(w, "#[cfg({})]", self.available_condition)?;
-            }
-            Self::emit_pfn(w, &type_name, &org_fn_name)?;
-            writeln!(w, "#[cfg(feature = \"Implements\")]")?;
-            writeln!(w, "#[cfg(feature = \"Allow{p}APIs\")]")?;
-            if !self.available_condition.is_empty() {
-                writeln!(w, "#[cfg({})]", self.available_condition)?;
-            }
-            Self::emit_from_ptr(w, &type_name)?;
-        }
-
-        Ok(())
-    }
-
-    pub fn emit_static_callable_impls(&self, mut cb: impl FnMut(StaticCallableImpl<'static>)) {
-        if self.static_callable {
-            let mut cond = CompilationCondition::Empty;
-            if let Some((tag, name)) = self.extension_old {
-                cond = cond.and(CompilationCondition::Feature(FeatureName::VulkanExt { tag, name }));
-            }
-            if let Some(Extension { tag, name, .. }) = self.extension {
-                cond = cond.and(CompilationCondition::Feature(FeatureName::VulkanExt { tag, name }));
-            }
-            if let Some(v) = self.version_since {
-                cond = cond.and(CompilationCondition::Feature(FeatureName::AllowApiVersion(v)));
-            }
-
-            cb(StaticCallableImpl {
-                compilation_condition: cond,
-                fn_name: if let Some(Extension { tag, .. }) = self.extension {
-                    if self.is_command_buffer_inst {
-                        FnSymbol::CmdSuffixed {
-                            stem: self.name,
-                            suffix: tag,
-                        }
-                    } else {
-                        FnSymbol::Suffixed {
-                            stem: self.name,
-                            suffix: tag,
-                        }
-                    }
-                } else {
-                    match (self.is_command_buffer_inst, self.extension_old) {
-                        (false, None) => FnSymbol::Raw(self.name),
-                        (true, None) => FnSymbol::Cmd(self.name),
-                        (false, Some((tag, _))) => FnSymbol::Suffixed {
-                            stem: self.name,
-                            suffix: tag,
-                        },
-                        (true, Some((tag, _))) => FnSymbol::CmdSuffixed {
-                            stem: self.name,
-                            suffix: tag,
-                        },
-                    }
+                (false, None) => FnSymbol::Raw(self.name),
+                (true, None) => FnSymbol::Cmd(self.name),
+                (false, Some((tag, _))) => FnSymbol::Suffixed {
+                    stem: self.name,
+                    suffix: tag,
                 },
+                (true, Some((tag, _))) => FnSymbol::CmdSuffixed {
+                    stem: self.name,
+                    suffix: tag,
+                },
+            }
+        };
+        let mut cond = CompilationCondition::Empty;
+        if let Some((tag, name)) = self.extension_old {
+            cond = cond.and(CompilationCondition::Feature(FeatureName::VulkanExt { tag, name }));
+        }
+        if let Some(Extension { tag, name, .. }) = self.extension {
+            cond = cond.and(CompilationCondition::Feature(FeatureName::VulkanExt { tag, name }));
+        }
+        if let Some(v) = self.version_since {
+            cond = cond.and(CompilationCondition::Feature(FeatureName::AllowApiVersion(v)));
+        }
+
+        function_ptr_newtype_cb(FunctionPtrNewtype {
+            compilation_condition: cond.clone(),
+            name: fn_name.clone(),
+            args: FunctionStubArgsIterator {
+                require_target_command_buffer: self.is_command_buffer_inst,
+                args: self.args,
+                args_iter_ptr: 0,
+            },
+            return_type: self.return_type.map(Type::Raw),
+        });
+        pfn_cb(PFNImpl {
+            compilation_condition: cond.clone(),
+            fn_name: fn_name.clone(),
+        });
+        from_ptr_cb(FromPtrImpl {
+            compilation_condition: cond.clone(),
+            fn_name: fn_name.clone(),
+        });
+        if self.static_callable {
+            static_callable_cb(StaticCallableImpl {
+                compilation_condition: cond,
+                fn_name,
             });
         }
 
         if let Some(p) = self.promoted {
-            // promoted symbols always static callable
-            cb(StaticCallableImpl {
-                compilation_condition: CompilationCondition::Feature(FeatureName::AllowApiVersion(p)),
-                fn_name: match self.is_command_buffer_inst {
-                    false => FnSymbol::Raw(self.name),
-                    true => FnSymbol::Cmd(self.name),
+            let fn_name = match self.is_command_buffer_inst {
+                false => FnSymbol::Raw(self.name),
+                true => FnSymbol::Cmd(self.name),
+            };
+            let cond = CompilationCondition::Feature(FeatureName::AllowApiVersion(p));
+
+            function_ptr_newtype_cb(FunctionPtrNewtype {
+                compilation_condition: cond.clone(),
+                name: fn_name.clone(),
+                args: FunctionStubArgsIterator {
+                    require_target_command_buffer: self.is_command_buffer_inst,
+                    args: self.args,
+                    args_iter_ptr: 0,
                 },
+                return_type: self.return_type.map(Type::Raw),
+            });
+            pfn_cb(PFNImpl {
+                compilation_condition: cond.clone(),
+                fn_name: fn_name.clone(),
+            });
+            from_ptr_cb(FromPtrImpl {
+                compilation_condition: cond.clone(),
+                fn_name: fn_name.clone(),
+            });
+            // promoted symbols always static callable
+            static_callable_cb(StaticCallableImpl {
+                compilation_condition: cond,
+                fn_name,
             });
         }
     }
@@ -1933,7 +1863,7 @@ impl Element {
             Self::Object(x) => x.emit(w),
             Self::Struct(x) => x.emit(w),
             Self::Union(x) => x.emit(w),
-            Self::Command(x) => x.emit(w),
+            Self::Command(x) => Ok(()),
         }
     }
 }
