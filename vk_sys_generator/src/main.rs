@@ -5,7 +5,10 @@ use parts::{
     Union, emit_c_enum_type, emit_const, emit_result_const, emit_result_err_const,
 };
 
-use crate::{rs_item::CompilationCondition, v1_4::VK_KHR_MAINTENANCE_5};
+use crate::{
+    rs_item::{CompilationCondition, Constant, ConstantSymbol, RustCodeEmitter, StructSymbol},
+    v1_4::VK_KHR_MAINTENANCE_5,
+};
 
 mod extensions;
 mod parts;
@@ -16,6 +19,7 @@ mod v1_3;
 mod v1_4;
 
 fn main() -> std::io::Result<()> {
+    let mut generator = CodeGenerator::new();
     let mut o = std::io::stdout().lock();
     o.write_all(HEADER.replace("**VER**", "1.4.305").as_bytes())?;
 
@@ -139,7 +143,7 @@ fn main() -> std::io::Result<()> {
 
     for s in STRUCTS {
         o.write_all(b"\n")?;
-        s.emit(&mut o)?;
+        s.emit(&mut generator, &mut o)?;
     }
 
     // chaotic requirement structure
@@ -188,27 +192,27 @@ fn main() -> std::io::Result<()> {
 
     for x in v1_1::ELEMENTS {
         o.write_all(b"\n")?;
-        x.emit(&mut o)?;
+        x.emit(&mut generator, &mut o)?;
     }
 
     for x in v1_2::ELEMENTS {
         o.write_all(b"\n")?;
-        x.emit(&mut o)?;
+        x.emit(&mut generator, &mut o)?;
     }
 
     for x in v1_3::ELEMENTS {
         o.write_all(b"\n")?;
-        x.emit(&mut o)?;
+        x.emit(&mut generator, &mut o)?;
     }
 
     for x in v1_4::ELEMENTS {
         o.write_all(b"\n")?;
-        x.emit(&mut o)?;
+        x.emit(&mut generator, &mut o)?;
     }
 
     for x in extensions::ELEMENTS {
         o.write_all(b"\n")?;
-        x.emit(&mut o)?;
+        x.emit(&mut generator, &mut o)?;
     }
 
     let mut function_ptr_newtype_impls = HashMap::new();
@@ -288,6 +292,8 @@ fn main() -> std::io::Result<()> {
         });
     }
 
+    generator.generate(&mut o)?;
+
     let mut sorted = function_ptr_newtype_impls.into_values().collect::<Vec<_>>();
     sorted.sort_by(|a, b| a.name.cmp(&b.name));
     for x in sorted {
@@ -329,6 +335,64 @@ fn main() -> std::io::Result<()> {
     o.write_all(b"}\n")?;
 
     Ok(())
+}
+
+struct CodeGenerator {
+    consts: HashMap<ConstantSymbol<'static>, Constant<'static>>,
+    structs: HashMap<StructSymbol<'static>, rs_item::Struct<'static>>,
+}
+impl CodeGenerator {
+    pub fn new() -> Self {
+        Self {
+            consts: HashMap::new(),
+            structs: HashMap::new(),
+        }
+    }
+
+    pub fn generate(self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
+        let mut sorted = self.consts.into_values().collect::<Vec<_>>();
+        sorted.sort_by(|a, b| a.name.cmp(&b.name));
+        for c in sorted {
+            c.emit(w)?;
+            w.write_all(b"\n")?;
+        }
+
+        let mut sorted = self.structs.into_values().collect::<Vec<_>>();
+        sorted.sort_by(|a, b| a.name.cmp(&b.name));
+        for c in sorted {
+            c.emit(w)?;
+            w.write_all(b"\n")?;
+        }
+
+        Ok(())
+    }
+}
+impl RustCodeEmitter for CodeGenerator {
+    fn emit_const(&mut self, e: Constant<'static>) {
+        match self.consts.entry(e.name.clone()) {
+            std::collections::hash_map::Entry::Vacant(v) => {
+                v.insert(e);
+            }
+            std::collections::hash_map::Entry::Occupied(mut o) => {
+                o.get_mut().compilation_condition =
+                    core::mem::replace(&mut o.get_mut().compilation_condition, CompilationCondition::Empty)
+                        .or(e.compilation_condition);
+            }
+        }
+    }
+
+    fn emit_struct(&mut self, e: rs_item::Struct<'static>) {
+        match self.structs.entry(e.name.clone()) {
+            std::collections::hash_map::Entry::Vacant(v) => {
+                v.insert(e);
+            }
+            std::collections::hash_map::Entry::Occupied(mut o) => {
+                o.get_mut().compilation_condition =
+                    core::mem::replace(&mut o.get_mut().compilation_condition, CompilationCondition::Empty)
+                        .or(e.compilation_condition);
+            }
+        }
+    }
 }
 
 #[allow(clippy::inconsistent_digit_grouping)]

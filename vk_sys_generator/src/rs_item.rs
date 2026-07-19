@@ -1,5 +1,7 @@
 use std::collections::BTreeSet;
 
+use bitflags::bitflags;
+
 #[derive(Debug, Clone, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub enum FeatureName<'s> {
     Raw(&'s str),
@@ -20,7 +22,7 @@ impl core::fmt::Display for FeatureName<'_> {
 #[derive(Debug, Clone, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub enum CompilationCondition<'s> {
     Empty,
-    /// 原則使わない(available_conditionsの仕組みは将来的に廃止する)
+    #[deprecated = "原則使わない(available_conditionsの仕組みは将来的に廃止する)"]
     Raw(&'s str),
     Feature(FeatureName<'s>),
     All(BTreeSet<CompilationCondition<'s>>),
@@ -191,6 +193,14 @@ impl Type<'_> {
             }
         }
     }
+
+    pub fn const_ptr(self) -> Self {
+        Self::ConstPtr(Box::new(self))
+    }
+
+    pub fn mut_ptr(self) -> Self {
+        Self::MutPtr(Box::new(self))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -334,12 +344,14 @@ impl<'s, Args: Iterator<Item = (&'s str, Type<'s>)>> FunctionPtrNewtype<'s, Args
 #[derive(Debug, Clone, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub enum ConstantSymbol<'s> {
     StructureType(&'s str),
+    StructureTypeSuffixed { stem: &'s str, suffix: &'s str },
 }
 impl core::fmt::Display for ConstantSymbol<'_> {
     #[inline]
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::StructureType(s) => write!(f, "VK_STRUCTURE_TYPE_{s}"),
+            Self::StructureTypeSuffixed { stem, suffix } => write!(f, "VK_STRUCTURE_TYPE_{stem}_{suffix}"),
         }
     }
 }
@@ -374,4 +386,101 @@ impl Constant<'_> {
 
         Ok(())
     }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct StructSymbol<'s> {
+    pub stem: &'s str,
+    pub suffix: Option<&'s str>,
+}
+impl core::fmt::Display for StructSymbol<'_> {
+    #[inline]
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Vk{}", self.stem)?;
+        if let Some(suffix) = self.suffix {
+            f.write_str(suffix)?;
+        }
+        Ok(())
+    }
+}
+
+bitflags! {
+    pub struct StructDerives : u8 {
+        const DEBUG = 0x01;
+        const CLONE = 0x02;
+        const COPY = 0x04;
+        const EQ = 0x08;
+        const HASH = 0x10;
+    }
+}
+
+pub struct StructMember<'s> {
+    pub name: &'s str,
+    pub ty: Type<'s>,
+}
+
+pub struct Struct<'s> {
+    pub compilation_condition: CompilationCondition<'s>,
+    pub name: StructSymbol<'s>,
+    pub derives: StructDerives,
+    pub members: Vec<StructMember<'s>>,
+}
+impl Struct<'_> {
+    pub fn emit(self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
+        self.compilation_condition.emit_single_attr(w)?;
+        if !self.derives.is_empty() {
+            write!(w, "#[derive(")?;
+            let mut first = true;
+            if self.derives.contains(StructDerives::DEBUG) {
+                if !first {
+                    w.write_all(b", ")?;
+                }
+                write!(w, "Debug")?;
+                first = false;
+            }
+            if self.derives.contains(StructDerives::CLONE) {
+                if !first {
+                    w.write_all(b", ")?;
+                }
+                write!(w, "Clone")?;
+                first = false;
+            }
+            if self.derives.contains(StructDerives::COPY) {
+                if !first {
+                    w.write_all(b", ")?;
+                }
+                write!(w, "Copy")?;
+                first = false;
+            }
+            if self.derives.contains(StructDerives::EQ) {
+                if !first {
+                    w.write_all(b", ")?;
+                }
+                write!(w, "PartialEq, Eq")?;
+                first = false;
+            }
+            if self.derives.contains(StructDerives::HASH) {
+                if !first {
+                    w.write_all(b", ")?;
+                }
+                write!(w, "Hash")?;
+                first = false;
+            }
+            write!(w, ")] ")?;
+        }
+        write!(w, "#[rustfmt::skip]#[repr(C)]pub struct {}{{", self.name)?;
+        for member in self.members {
+            write!(w, "pub {}: ", member.name)?;
+            member.ty.emit(w)?;
+            w.write_all(b",")?;
+        }
+        write!(w, "}}")?;
+
+        Ok(())
+    }
+}
+
+pub trait RustCodeEmitter {
+    fn emit_const(&mut self, e: Constant<'static>);
+    fn emit_struct(&mut self, e: Struct<'static>);
 }

@@ -2,7 +2,7 @@ use std::collections::{HashMap, HashSet};
 
 use crate::rs_item::{
     CompilationCondition, Constant, ConstantSymbol, ConstantValue, FeatureName, FnSymbol, FromPtrImpl,
-    FunctionPtrNewtype, FunctionStub, PFNImpl, StaticCallableImpl, Type,
+    FunctionPtrNewtype, FunctionStub, PFNImpl, RustCodeEmitter, StaticCallableImpl, StructDerives, StructSymbol, Type,
 };
 
 pub const TY_VK_BOOL: &str = "VkBool32";
@@ -956,73 +956,71 @@ impl Struct {
         Element::Struct(self)
     }
 
+    fn derives(&self) -> StructDerives {
+        let mut derives = StructDerives::empty();
+        if self.debuggable {
+            derives |= StructDerives::DEBUG;
+        }
+        if self.cloneable {
+            derives |= StructDerives::CLONE;
+        }
+        if self.copyable {
+            derives |= StructDerives::COPY;
+        }
+        if self.equatable {
+            derives |= StructDerives::EQ;
+        }
+        if self.hashable {
+            derives |= StructDerives::HASH;
+        }
+
+        derives
+    }
+
+    fn build_all_rs_members(
+        direct_members: &[StructMember],
+        usage: Option<StructUsage>,
+    ) -> Vec<crate::rs_item::StructMember<'static>> {
+        let mut emit_members = Vec::with_capacity(direct_members.len() + 2);
+        if let Some(u) = usage {
+            emit_members.extend([
+                crate::rs_item::StructMember {
+                    name: "sType",
+                    ty: Type::Raw("VkStructureType"),
+                },
+                crate::rs_item::StructMember {
+                    name: "pNext",
+                    ty: match u {
+                        StructUsage::Source => Type::Raw("core::ffi::c_void").const_ptr(),
+                        StructUsage::Sink => Type::Raw("core::ffi::c_void").mut_ptr(),
+                        // prefer mut pointer
+                        StructUsage::Both => Type::Raw("core::ffi::c_void").mut_ptr(),
+                    },
+                },
+            ]);
+        }
+        emit_members.extend(direct_members.iter().map(|m| crate::rs_item::StructMember {
+            name: m.name,
+            ty: Type::Raw(m.r#type),
+        }));
+
+        emit_members
+    }
+
     fn emit_core(
-        w: &mut impl std::io::Write,
-        type_name: &str,
+        emitter: &mut (impl RustCodeEmitter + ?Sized),
+        compilation_condition: CompilationCondition<'static>,
+        name: StructSymbol<'static>,
         members: &[StructMember],
         usage: Option<StructUsage>,
-        debuggable: bool,
-        cloneable: bool,
-        copyable: bool,
-        equatable: bool,
-        hashable: bool,
-        available_condition: Option<&'static str>,
-    ) -> std::io::Result<()> {
-        let mut derives = Vec::with_capacity(8);
-        if debuggable {
-            derives.push("Debug");
-        }
-        if cloneable {
-            derives.push("Clone");
-        }
-        if copyable {
-            derives.push("Copy");
-        }
-        if equatable {
-            derives.extend(["Eq", "PartialEq"]);
-        }
-        if hashable {
-            derives.push("Hash");
-        }
-        if !derives.is_empty() {
-            write!(w, "#[derive(")?;
-            let mut cont = false;
-            for d in derives {
-                if cont {
-                    w.write_all(b", ")?;
-                }
-                w.write_all(d.as_bytes())?;
-                cont = true;
-            }
-            w.write_all(b")]\n")?;
-        }
-
-        writeln!(w, "#[repr(C)]")?;
-        writeln!(w, "#[rustfmt::skip]")?;
-        if let Some(a) = available_condition {
-            writeln!(w, "#[cfg({a})]")?;
-        }
-        writeln!(w, "pub struct {type_name} {{")?;
-        if let Some(u) = usage {
-            // common headers
-            StructMember::new("sType", "VkStructureType").emit(w)?;
-            StructMember::new(
-                "pNext",
-                match u {
-                    StructUsage::Source => "*const core::ffi::c_void",
-                    StructUsage::Sink => "*mut core::ffi::c_void",
-                    // prefer mut pointer
-                    StructUsage::Both => "*mut core::ffi::c_void",
-                },
-            )
-            .emit(w)?;
-        }
-        for m in members {
-            m.emit(w)?;
-        }
-        writeln!(w, "}}")?;
-
-        Ok(())
+        derives: StructDerives,
+    ) {
+        emitter.emit_struct(crate::rs_item::Struct {
+            compilation_condition,
+            name,
+            derives,
+            members: Self::build_all_rs_members(members, usage),
+        });
     }
 
     fn emit_vulkan_structure_impl(
@@ -1139,32 +1137,34 @@ impl Struct {
         writeln!(w, "}}")
     }
 
-    pub fn emit(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
+    pub fn emit(
+        &self,
+        emitter: &mut (impl RustCodeEmitter + ?Sized),
+        w: &mut impl std::io::Write,
+    ) -> std::io::Result<()> {
         if self.extensions.is_empty() && self.extensions2.is_empty() {
             assert!(self.promoted.is_none());
             // no extensions: simple define
             let type_name = format!("Vk{}", self.name);
 
             Self::emit_core(
-                w,
-                &type_name,
+                emitter,
+                CompilationCondition::Empty,
+                StructSymbol {
+                    stem: self.name,
+                    suffix: None,
+                },
                 self.members,
                 self.stype.map(|(_, _, u)| u),
-                self.debuggable,
-                self.cloneable,
-                self.copyable,
-                self.equatable,
-                self.hashable,
-                self.available_condition,
-            )?;
+                self.derives(),
+            );
             if let Some((up, v, u)) = self.stype {
-                Constant {
+                emitter.emit_const(Constant {
                     compilation_condition: CompilationCondition::Empty,
                     name: ConstantSymbol::StructureType(up),
                     ty: Type::Raw("VkStructureType"),
                     value: ConstantValue::Unsigned(v as _),
-                }
-                .emit(w)?;
+                });
                 if u.is_source() {
                     Self::emit_vulkan_structure_impl(w, &type_name, self.available_condition)?;
                     Self::emit_typed_vulkan_structure_impl(w, &type_name, up, self.available_condition)?;
@@ -1203,31 +1203,34 @@ impl Struct {
                         .join(", ")
                 ),
             };
+            let cond = match &names[..] {
+                &[name] => CompilationCondition::Feature(FeatureName::VulkanExt { tag, name }),
+                xs => CompilationCondition::all(
+                    xs.iter()
+                        .map(|name| CompilationCondition::Feature(FeatureName::VulkanExt { tag, name })),
+                ),
+            };
 
-            writeln!(w, "{feature_gate}")?;
             Self::emit_core(
-                w,
-                &type_name,
+                emitter,
+                cond.clone(),
+                StructSymbol {
+                    stem: self.name,
+                    suffix: Some(tag),
+                },
                 self.members,
                 self.stype.map(|(_, _, u)| u),
-                self.debuggable,
-                self.cloneable,
-                self.copyable,
-                self.equatable,
-                self.hashable,
-                self.available_condition,
-            )?;
+                self.derives(),
+            );
             if let Some((up, v, u)) = self.stype {
                 let structure_type_name = format!("{up}_{tag}");
 
-                writeln!(w, "{feature_gate}")?;
-                Constant {
-                    compilation_condition: CompilationCondition::Empty,
-                    name: ConstantSymbol::StructureType(&structure_type_name),
+                emitter.emit_const(Constant {
+                    compilation_condition: cond,
+                    name: ConstantSymbol::StructureTypeSuffixed { stem: up, suffix: tag },
                     ty: Type::Raw("VkStructureType"),
                     value: ConstantValue::Unsigned(v as _),
-                }
-                .emit(w)?;
+                });
                 if u.is_source() {
                     writeln!(w, "{feature_gate}")?;
                     Self::emit_vulkan_structure_impl(w, &type_name, self.available_condition)?;
@@ -1270,16 +1273,13 @@ impl Struct {
                 }
                 writeln!(w, "pub type {promoted_type_name} = {type_name};")?;
 
-                if let Some((up, _, _)) = self.stype {
-                    writeln!(w, "#[cfg(feature = \"Allow{pv}APIs\")]")?;
-                    writeln!(w, "#[rustfmt::skip]")?;
-                    if let Some(a) = self.available_condition {
-                        writeln!(w, "#[cfg({a})]")?;
-                    }
-                    writeln!(
-                        w,
-                        "pub const VK_STRUCTURE_TYPE_{up}: VkStructureType = VK_STRUCTURE_TYPE_{up}_{tag};"
-                    )?;
+                if let Some((up, v, _)) = self.stype {
+                    emitter.emit_const(Constant {
+                        compilation_condition: CompilationCondition::Feature(FeatureName::AllowApiVersion(pv)),
+                        name: ConstantSymbol::StructureType(up),
+                        ty: Type::Raw("VkStructureType"),
+                        value: ConstantValue::Unsigned(v as _),
+                    });
                 }
             }
 
@@ -1298,23 +1298,19 @@ impl Struct {
         // no extensions: simple define
         let type_name = format!("Vk{}", self.name);
 
-        writeln!(w, "#[cfg({cfg})]")?;
-        Self::emit_core(
-            w,
-            &type_name,
-            self.members,
-            self.stype.map(|(_, _, u)| u),
-            self.debuggable,
-            self.cloneable,
-            self.copyable,
-            self.equatable,
-            self.hashable,
-            self.available_condition,
-        )?;
+        crate::rs_item::Struct {
+            compilation_condition: CompilationCondition::Raw(cfg),
+            name: StructSymbol {
+                stem: self.name,
+                suffix: None,
+            },
+            members: Self::build_all_rs_members(self.members, self.stype.map(|(_, _, u)| u)),
+            derives: self.derives(),
+        }
+        .emit(w)?;
         if let Some((up, v, u)) = self.stype {
-            writeln!(w, "#[cfg({cfg})]")?;
             Constant {
-                compilation_condition: CompilationCondition::Empty,
+                compilation_condition: CompilationCondition::Raw(cfg),
                 name: ConstantSymbol::StructureType(up),
                 ty: Type::Raw("VkStructureType"),
                 value: ConstantValue::Unsigned(v as _),
@@ -1805,7 +1801,11 @@ pub enum Element {
     Command(Command),
 }
 impl Element {
-    pub fn emit(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
+    pub fn emit(
+        &self,
+        emitter: &mut (impl RustCodeEmitter + ?Sized),
+        w: &mut impl std::io::Write,
+    ) -> std::io::Result<()> {
         match self {
             Self::ExtensionHeaderConstants(x) => x.emit(w),
             Self::ExtensionHeaderConstants2(x) => x.emit(w),
@@ -1813,9 +1813,9 @@ impl Element {
             Self::Enum(x) => x.emit(w),
             Self::FuncPointer(x) => x.emit(w),
             Self::Object(x) => x.emit(w),
-            Self::Struct(x) => x.emit(w),
+            Self::Struct(x) => x.emit(emitter, w),
             Self::Union(x) => x.emit(w),
-            Self::Command(x) => Ok(()),
+            Self::Command(_) => Ok(()),
         }
     }
 }
