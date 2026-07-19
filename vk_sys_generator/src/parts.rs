@@ -1,8 +1,8 @@
 use std::collections::{HashMap, HashSet};
 
 use crate::rs_item::{
-    CompilationCondition, FeatureName, FnSymbol, FromPtrImpl, FunctionPtrNewtype, FunctionStub, PFNImpl,
-    StaticCallableImpl, Type,
+    CompilationCondition, Constant, ConstantSymbol, ConstantValue, FeatureName, FnSymbol, FromPtrImpl,
+    FunctionPtrNewtype, FunctionStub, PFNImpl, StaticCallableImpl, Type,
 };
 
 pub const TY_VK_BOOL: &str = "VkBool32";
@@ -1110,22 +1110,6 @@ impl Struct {
         )
     }
 
-    fn emit_structure_type_const(
-        w: &mut impl std::io::Write,
-        structure_type_name: &str,
-        value: u32,
-        available_condition: Option<&'static str>,
-    ) -> std::io::Result<()> {
-        writeln!(w, "#[rustfmt::skip]")?;
-        if let Some(a) = available_condition {
-            writeln!(w, "#[cfg({a})]")?;
-        }
-        writeln!(
-            w,
-            "pub const VK_STRUCTURE_TYPE_{structure_type_name}: VkStructureType = {value};"
-        )
-    }
-
     fn emit_default_zero(
         w: &mut impl std::io::Write,
         type_name: &str,
@@ -1174,7 +1158,13 @@ impl Struct {
                 self.available_condition,
             )?;
             if let Some((up, v, u)) = self.stype {
-                Self::emit_structure_type_const(w, up, v, self.available_condition)?;
+                Constant {
+                    compilation_condition: CompilationCondition::Empty,
+                    name: ConstantSymbol::StructureType(up),
+                    ty: Type::Raw("VkStructureType"),
+                    value: ConstantValue::Unsigned(v as _),
+                }
+                .emit(w)?;
                 if u.is_source() {
                     Self::emit_vulkan_structure_impl(w, &type_name, self.available_condition)?;
                     Self::emit_typed_vulkan_structure_impl(w, &type_name, up, self.available_condition)?;
@@ -1231,7 +1221,13 @@ impl Struct {
                 let structure_type_name = format!("{up}_{tag}");
 
                 writeln!(w, "{feature_gate}")?;
-                Self::emit_structure_type_const(w, &structure_type_name, v, self.available_condition)?;
+                Constant {
+                    compilation_condition: CompilationCondition::Empty,
+                    name: ConstantSymbol::StructureType(&structure_type_name),
+                    ty: Type::Raw("VkStructureType"),
+                    value: ConstantValue::Unsigned(v as _),
+                }
+                .emit(w)?;
                 if u.is_source() {
                     writeln!(w, "{feature_gate}")?;
                     Self::emit_vulkan_structure_impl(w, &type_name, self.available_condition)?;
@@ -1317,7 +1313,13 @@ impl Struct {
         )?;
         if let Some((up, v, u)) = self.stype {
             writeln!(w, "#[cfg({cfg})]")?;
-            Self::emit_structure_type_const(w, up, v, self.available_condition)?;
+            Constant {
+                compilation_condition: CompilationCondition::Empty,
+                name: ConstantSymbol::StructureType(up),
+                ty: Type::Raw("VkStructureType"),
+                value: ConstantValue::Unsigned(v as _),
+            }
+            .emit(w)?;
             if u.is_source() {
                 writeln!(w, "#[cfg({cfg})]")?;
                 Self::emit_vulkan_structure_impl(w, &type_name, self.available_condition)?;
@@ -1533,56 +1535,6 @@ impl Command {
 
     pub const fn into_element(self) -> Element {
         Element::Command(self)
-    }
-
-    fn emit_pfn(w: &mut impl std::io::Write, type_name: &str, org_fn_name: &str) -> std::io::Result<()> {
-        writeln!(w, "#[rustfmt::skip]")?;
-        writeln!(w, "unsafe impl crate::PFN for {type_name} {{")?;
-        writeln!(w, "    const NAME_CSTR: &'static core::ffi::CStr = c\"{org_fn_name}\";")?;
-        writeln!(w)?;
-        writeln!(w, "    #[inline(always)]")?;
-        writeln!(w, "    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {{")?;
-        writeln!(
-            w,
-            "        unsafe {{ core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }}"
-        )?;
-        writeln!(w, "    }}")?;
-        writeln!(w, "}}")?;
-
-        Ok(())
-    }
-
-    fn emit_from_ptr(w: &mut impl std::io::Write, type_name: &str) -> std::io::Result<()> {
-        writeln!(w, "#[rustfmt::skip]")?;
-        writeln!(w, "unsafe impl crate::FromPtr for {type_name} {{")?;
-        writeln!(w, "    #[inline(always)]")?;
-        writeln!(w, "    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {{")?;
-        writeln!(
-            w,
-            "        unsafe {{ core::mem::transmute::<*const core::ffi::c_void, Self>(p) }}"
-        )?;
-        writeln!(w, "    }}")?;
-        writeln!(w, "}}")?;
-
-        Ok(())
-    }
-
-    fn emit_feature_gate(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
-        if let Some((tag, name)) = self.extension_old {
-            writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
-        }
-        if let Some(Extension { tag, name, .. }) = self.extension {
-            writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
-        }
-        if let Some(v) = self.version_since {
-            writeln!(w, "#[cfg(feature = \"Allow{v}APIs\")]")?;
-        }
-
-        if !self.available_condition.is_empty() {
-            writeln!(w, "#[cfg({})]", self.available_condition)?;
-        }
-
-        Ok(())
     }
 
     pub fn emit_pfn_impls(

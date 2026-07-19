@@ -330,3 +330,48 @@ impl<'s, Args: Iterator<Item = (&'s str, Type<'s>)>> FunctionPtrNewtype<'s, Args
         Ok(())
     }
 }
+
+#[derive(Debug, Clone, Hash, PartialEq, Eq, PartialOrd, Ord)]
+pub enum ConstantSymbol<'s> {
+    StructureType(&'s str),
+}
+impl core::fmt::Display for ConstantSymbol<'_> {
+    #[inline]
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::StructureType(s) => write!(f, "VK_STRUCTURE_TYPE_{s}"),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum ConstantValue {
+    Signed(i64),
+    Unsigned(u64),
+}
+impl core::fmt::Display for ConstantValue {
+    #[inline]
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Signed(v) => write!(f, "{v}"),
+            Self::Unsigned(v) => write!(f, "{v}"),
+        }
+    }
+}
+
+pub struct Constant<'s> {
+    pub compilation_condition: CompilationCondition<'s>,
+    pub name: ConstantSymbol<'s>,
+    pub ty: Type<'s>,
+    pub value: ConstantValue,
+}
+impl Constant<'_> {
+    pub fn emit(self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
+        self.compilation_condition.emit_single_attr(w)?;
+        write!(w, "#[rustfmt::skip] pub const {}: ", self.name)?;
+        self.ty.emit(w)?;
+        write!(w, " = {};", self.value)?;
+
+        Ok(())
+    }
+}

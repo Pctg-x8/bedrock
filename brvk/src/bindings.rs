@@ -3315,9 +3315,7 @@ pub struct VkAcquireNextImageInfoKHR {
     pub deviceMask: u32,
 }
 #[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHR: VkStructureType = 1000060010;
-#[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHR: VkStructureType = 1000060010;#[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkAcquireNextImageInfoKHR {
     #[inline(always)]
@@ -3357,9 +3355,7 @@ pub struct VkAndroidSurfaceCreateInfoKHR {
     pub window: *mut android::ANativeWindow,
 }
 #[cfg(feature = "VK_KHR_android_surface")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR: VkStructureType = 1000008000;
-#[cfg(feature = "VK_KHR_android_surface")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR: VkStructureType = 1000008000;#[cfg(feature = "VK_KHR_android_surface")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkAndroidSurfaceCreateInfoKHR {
     #[inline(always)]
@@ -3388,9 +3384,7 @@ pub struct VkApplicationInfo {
     pub engineVersion: u32,
     pub apiVersion: u32,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_APPLICATION_INFO: VkStructureType = 0;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_APPLICATION_INFO: VkStructureType = 0;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkApplicationInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -3439,9 +3433,7 @@ pub struct VkBindBufferMemoryDeviceGroupInfoKHR {
     pub pDeviceIndices: *const u32,
 }
 #[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_bind_memory2"))]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO_KHR: VkStructureType = 1000060013;
-#[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_bind_memory2"))]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO_KHR: VkStructureType = 1000060013;#[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_bind_memory2"))]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkBindBufferMemoryDeviceGroupInfoKHR {
     #[inline(always)]
@@ -3476,9 +3468,7 @@ pub struct VkBindBufferMemoryInfoKHR {
     pub memoryOffset: VkDeviceSize,
 }
 #[cfg(feature = "VK_KHR_bind_memory2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO_KHR: VkStructureType = 1000157000;
-#[cfg(feature = "VK_KHR_bind_memory2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO_KHR: VkStructureType = 1000157000;#[cfg(feature = "VK_KHR_bind_memory2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkBindBufferMemoryInfoKHR {
     #[inline(always)]
@@ -3514,9 +3504,7 @@ pub struct VkBindImageMemoryDeviceGroupInfoKHR {
     pub pSplitInstanceBindRegions: *const VkRect2D,
 }
 #[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_bind_memory2"))]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO_KHR: VkStructureType = 1000060014;
-#[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_bind_memory2"))]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO_KHR: VkStructureType = 1000060014;#[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_bind_memory2"))]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkBindImageMemoryDeviceGroupInfoKHR {
     #[inline(always)]
@@ -3551,9 +3539,7 @@ pub struct VkBindImageMemoryInfoKHR {
     pub memoryOffset: VkDeviceSize,
 }
 #[cfg(feature = "VK_KHR_bind_memory2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO_KHR: VkStructureType = 1000157001;
-#[cfg(feature = "VK_KHR_bind_memory2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO_KHR: VkStructureType = 1000157001;#[cfg(feature = "VK_KHR_bind_memory2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkBindImageMemoryInfoKHR {
     #[inline(always)]
@@ -3587,9 +3573,7 @@ pub struct VkBindImageMemorySwapchainInfoKHR {
     pub imageIndex: u32,
 }
 #[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHR: VkStructureType = 1000060009;
-#[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHR: VkStructureType = 1000060009;#[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkBindImageMemorySwapchainInfoKHR {
     #[inline(always)]
@@ -3623,9 +3607,7 @@ pub struct VkBindSparseInfo {
     pub signalSemaphoreCount: u32,
     pub pSignalSemaphores: *const VkSemaphore,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_BIND_SPARSE_INFO: VkStructureType = 7;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_BIND_SPARSE_INFO: VkStructureType = 7;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkBindSparseInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -3662,9 +3644,7 @@ pub struct VkBufferCreateInfo {
     pub queueFamilyIndexCount: u32,
     pub pQueueFamilyIndices: *const u32,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO: VkStructureType = 12;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO: VkStructureType = 12;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkBufferCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -3705,9 +3685,7 @@ pub struct VkBufferMemoryBarrier {
     pub offset: VkDeviceSize,
     pub size: VkDeviceSize,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER: VkStructureType = 44;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER: VkStructureType = 44;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkBufferMemoryBarrier {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -3732,9 +3710,7 @@ pub struct VkBufferMemoryRequirementsInfo2KHR {
     pub buffer: VkBuffer,
 }
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2_KHR: VkStructureType = 1000146000;
-#[cfg(feature = "VK_KHR_get_memory_requirements2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2_KHR: VkStructureType = 1000146000;#[cfg(feature = "VK_KHR_get_memory_requirements2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkBufferMemoryRequirementsInfo2KHR {
     #[inline(always)]
@@ -3769,9 +3745,7 @@ pub struct VkBufferViewCreateInfo {
     pub offset: VkDeviceSize,
     pub range: VkDeviceSize,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO: VkStructureType = 13;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO: VkStructureType = 13;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkBufferViewCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -3822,9 +3796,7 @@ pub struct VkCommandBufferAllocateInfo {
     pub level: VkCommandBufferLevel,
     pub commandBufferCount: u32,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO: VkStructureType = 40;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO: VkStructureType = 40;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkCommandBufferAllocateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -3848,9 +3820,7 @@ pub struct VkCommandBufferBeginInfo {
     pub flags: VkCommandBufferUsageFlags,
     pub pInheritanceInfo: *const VkCommandBufferInheritanceInfo,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO: VkStructureType = 42;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO: VkStructureType = 42;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkCommandBufferBeginInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -3878,9 +3848,7 @@ pub struct VkCommandBufferInheritanceInfo {
     pub queryFlags: VkQueryControlFlags,
     pub pipelineStatistics: VkQueryPipelineStatisticFlags,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO: VkStructureType = 41;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO: VkStructureType = 41;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkCommandBufferInheritanceInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -3904,9 +3872,7 @@ pub struct VkCommandPoolCreateInfo {
     pub flags: VkCommandPoolCreateFlags,
     pub queueFamilyIndex: u32,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO: VkStructureType = 39;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO: VkStructureType = 39;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkCommandPoolCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -3943,9 +3909,7 @@ pub struct VkComputePipelineCreateInfo {
     pub basePipelineHandle: Option<VkPipeline>,
     pub basePipelineIndex: i32,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO: VkStructureType = 29;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO: VkStructureType = 29;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkComputePipelineCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -3974,9 +3938,7 @@ pub struct VkCopyDescriptorSet {
     pub dstArrayElement: u32,
     pub descriptorCount: u32,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET: VkStructureType = 36;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET: VkStructureType = 36;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkCopyDescriptorSet {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -4004,9 +3966,7 @@ pub struct VkD3D12FenceSubmitInfoKHR {
     pub pSignalSemaphoreValues: *const u64,
 }
 #[cfg(feature = "VK_KHR_external_semaphore_win32")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_D3D12_FENCE_SUBMIT_INFO_KHR: VkStructureType = 1000078002;
-#[cfg(feature = "VK_KHR_external_semaphore_win32")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_D3D12_FENCE_SUBMIT_INFO_KHR: VkStructureType = 1000078002;#[cfg(feature = "VK_KHR_external_semaphore_win32")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkD3D12FenceSubmitInfoKHR {
     #[inline(always)]
@@ -4035,9 +3995,7 @@ pub struct VkDebugReportCallbackCreateInfoEXT {
     pub pUserData: *mut core::ffi::c_void,
 }
 #[cfg(feature = "VK_EXT_debug_report")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT: VkStructureType = 1000011000;
-#[cfg(feature = "VK_EXT_debug_report")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT: VkStructureType = 1000011000;#[cfg(feature = "VK_EXT_debug_report")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDebugReportCallbackCreateInfoEXT {
     #[inline(always)]
@@ -4065,9 +4023,7 @@ pub struct VkDebugUtilsLabelEXT {
     pub pColor: [core::ffi::c_float; 4],
 }
 #[cfg(feature = "VK_EXT_debug_utils")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT: VkStructureType = 1000128002;
-#[cfg(feature = "VK_EXT_debug_utils")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT: VkStructureType = 1000128002;#[cfg(feature = "VK_EXT_debug_utils")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDebugUtilsLabelEXT {
     #[inline(always)]
@@ -4103,9 +4059,7 @@ pub struct VkDebugUtilsMessengerCallbackDataEXT {
     pub pObjects: *const VkDebugUtilsObjectNameInfoEXT,
 }
 #[cfg(feature = "VK_EXT_debug_utils")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT: VkStructureType = 1000128003;
-#[cfg(feature = "VK_EXT_debug_utils")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT: VkStructureType = 1000128003;#[cfg(feature = "VK_EXT_debug_utils")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDebugUtilsMessengerCallbackDataEXT {
     #[inline(always)]
@@ -4136,9 +4090,7 @@ pub struct VkDebugUtilsMessengerCreateInfoEXT {
     pub pUserData: *mut core::ffi::c_void,
 }
 #[cfg(feature = "VK_EXT_debug_utils")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT: VkStructureType = 1000128004;
-#[cfg(feature = "VK_EXT_debug_utils")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT: VkStructureType = 1000128004;#[cfg(feature = "VK_EXT_debug_utils")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDebugUtilsMessengerCreateInfoEXT {
     #[inline(always)]
@@ -4167,9 +4119,7 @@ pub struct VkDebugUtilsObjectNameInfoEXT {
     pub pObjectName: *const core::ffi::c_char,
 }
 #[cfg(feature = "VK_EXT_debug_utils")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT: VkStructureType = 1000128000;
-#[cfg(feature = "VK_EXT_debug_utils")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT: VkStructureType = 1000128000;#[cfg(feature = "VK_EXT_debug_utils")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDebugUtilsObjectNameInfoEXT {
     #[inline(always)]
@@ -4200,9 +4150,7 @@ pub struct VkDebugUtilsObjectTagInfoEXT {
     pub pTag: *const core::ffi::c_void,
 }
 #[cfg(feature = "VK_EXT_debug_utils")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT: VkStructureType = 1000128001;
-#[cfg(feature = "VK_EXT_debug_utils")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT: VkStructureType = 1000128001;#[cfg(feature = "VK_EXT_debug_utils")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDebugUtilsObjectTagInfoEXT {
     #[inline(always)]
@@ -4248,9 +4196,7 @@ pub struct VkDescriptorPoolCreateInfo {
     pub poolSizeCount: u32,
     pub pPoolSizes: *const VkDescriptorPoolSize,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO: VkStructureType = 33;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO: VkStructureType = 33;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDescriptorPoolCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -4283,9 +4229,7 @@ pub struct VkDescriptorSetAllocateInfo {
     pub descriptorSetCount: u32,
     pub pSetLayouts: *const VkDescriptorSetLayout,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO: VkStructureType = 34;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO: VkStructureType = 34;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDescriptorSetAllocateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -4321,9 +4265,7 @@ pub struct VkDescriptorSetLayoutCreateInfo {
     pub bindingCount: u32,
     pub pBindings: *const VkDescriptorSetLayoutBinding,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO: VkStructureType = 32;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO: VkStructureType = 32;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDescriptorSetLayoutCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -4348,9 +4290,7 @@ pub struct VkDescriptorSetLayoutSupportKHR {
     pub supported: VkBool32,
 }
 #[cfg(feature = "VK_KHR_maintenance3")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT_KHR: VkStructureType = 1000168001;
-#[cfg(feature = "VK_KHR_maintenance3")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT_KHR: VkStructureType = 1000168001;#[cfg(feature = "VK_KHR_maintenance3")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkDescriptorSetLayoutSupportKHR {
     #[inline(always)]
@@ -4386,9 +4326,7 @@ pub struct VkDescriptorUpdateTemplateCreateInfoKHR {
     pub set: u32,
 }
 #[cfg(feature = "VK_KHR_descriptor_update_template")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO_KHR: VkStructureType = 1000085000;
-#[cfg(feature = "VK_KHR_descriptor_update_template")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO_KHR: VkStructureType = 1000085000;#[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDescriptorUpdateTemplateCreateInfoKHR {
     #[inline(always)]
@@ -4442,9 +4380,7 @@ pub struct VkDeviceCreateInfo {
     pub ppEnabledExtensionNames: *const *const core::ffi::c_char,
     pub pEnabledFeatures: *const VkPhysicalDeviceFeatures,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO: VkStructureType = 3;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO: VkStructureType = 3;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDeviceCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -4470,9 +4406,7 @@ pub struct VkDeviceGroupBindSparseInfoKHR {
     pub memoryDeviceIndex: u32,
 }
 #[cfg(feature = "VK_KHR_device_group")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_BIND_SPARSE_INFO_KHR: VkStructureType = 1000060006;
-#[cfg(feature = "VK_KHR_device_group")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_BIND_SPARSE_INFO_KHR: VkStructureType = 1000060006;#[cfg(feature = "VK_KHR_device_group")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDeviceGroupBindSparseInfoKHR {
     #[inline(always)]
@@ -4505,9 +4439,7 @@ pub struct VkDeviceGroupCommandBufferBeginInfoKHR {
     pub deviceMask: u32,
 }
 #[cfg(feature = "VK_KHR_device_group")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO_KHR: VkStructureType = 1000060004;
-#[cfg(feature = "VK_KHR_device_group")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO_KHR: VkStructureType = 1000060004;#[cfg(feature = "VK_KHR_device_group")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDeviceGroupCommandBufferBeginInfoKHR {
     #[inline(always)]
@@ -4541,9 +4473,7 @@ pub struct VkDeviceGroupCreateInfoKHR {
     pub pPhysicalDevices: *const VkPhysicalDevice,
 }
 #[cfg(feature = "VK_KHR_device_group_creation")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_CREATE_INFO_KHR: VkStructureType = 1000070001;
-#[cfg(feature = "VK_KHR_device_group_creation")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_CREATE_INFO_KHR: VkStructureType = 1000070001;#[cfg(feature = "VK_KHR_device_group_creation")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDeviceGroupCreateInfoKHR {
     #[inline(always)]
@@ -4577,9 +4507,7 @@ pub struct VkDeviceGroupPresentCapabilitiesKHR {
     pub modes: VkDeviceGroupPresentModeFlagsKHR,
 }
 #[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_surface"))]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR: VkStructureType = 1000060007;
-#[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_surface"))]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR: VkStructureType = 1000060007;#[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_surface"))]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkDeviceGroupPresentCapabilitiesKHR {
     #[inline(always)]
@@ -4604,9 +4532,7 @@ pub struct VkDeviceGroupPresentInfoKHR {
     pub mode: VkDeviceGroupPresentModeFlagBitsKHR,
 }
 #[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHR: VkStructureType = 1000060011;
-#[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHR: VkStructureType = 1000060011;#[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDeviceGroupPresentInfoKHR {
     #[inline(always)]
@@ -4635,9 +4561,7 @@ pub struct VkDeviceGroupRenderPassBeginInfoKHR {
     pub pDeviceRenderAreas: *const VkRect2D,
 }
 #[cfg(feature = "VK_KHR_device_group")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_RENDER_PASS_BEGIN_INFO_KHR: VkStructureType = 1000060003;
-#[cfg(feature = "VK_KHR_device_group")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_RENDER_PASS_BEGIN_INFO_KHR: VkStructureType = 1000060003;#[cfg(feature = "VK_KHR_device_group")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDeviceGroupRenderPassBeginInfoKHR {
     #[inline(always)]
@@ -4675,9 +4599,7 @@ pub struct VkDeviceGroupSubmitInfoKHR {
     pub pSignalSemaphoreDeviceIndices: *const u32,
 }
 #[cfg(feature = "VK_KHR_device_group")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_SUBMIT_INFO_KHR: VkStructureType = 1000060005;
-#[cfg(feature = "VK_KHR_device_group")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_SUBMIT_INFO_KHR: VkStructureType = 1000060005;#[cfg(feature = "VK_KHR_device_group")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDeviceGroupSubmitInfoKHR {
     #[inline(always)]
@@ -4710,9 +4632,7 @@ pub struct VkDeviceGroupSwapchainCreateInfoKHR {
     pub modes: VkDeviceGroupPresentModeFlagsKHR,
 }
 #[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR: VkStructureType = 1000060012;
-#[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR: VkStructureType = 1000060012;#[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDeviceGroupSwapchainCreateInfoKHR {
     #[inline(always)]
@@ -4740,9 +4660,7 @@ pub struct VkDeviceQueueCreateInfo {
     pub queueCount: u32,
     pub pQueuePriorities: *const core::ffi::c_float,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO: VkStructureType = 2;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO: VkStructureType = 2;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDeviceQueueCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -4777,9 +4695,7 @@ pub struct VkDisplayModeCreateInfoKHR {
     pub parameters: VkDisplayModeParametersKHR,
 }
 #[cfg(feature = "VK_KHR_display")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DISPLAY_MODE_CREATE_INFO_KHR: VkStructureType = 1000002000;
-#[cfg(feature = "VK_KHR_display")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DISPLAY_MODE_CREATE_INFO_KHR: VkStructureType = 1000002000;#[cfg(feature = "VK_KHR_display")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDisplayModeCreateInfoKHR {
     #[inline(always)]
@@ -4870,9 +4786,7 @@ pub struct VkDisplaySurfaceCreateInfoKHR {
     pub imageExtent: VkExtent2D,
 }
 #[cfg(feature = "VK_KHR_display")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR: VkStructureType = 1000002001;
-#[cfg(feature = "VK_KHR_display")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR: VkStructureType = 1000002001;#[cfg(feature = "VK_KHR_display")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDisplaySurfaceCreateInfoKHR {
     #[inline(always)]
@@ -4918,9 +4832,7 @@ pub struct VkEventCreateInfo {
     pub pNext: *const core::ffi::c_void,
     pub flags: VkEventCreateFlags,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_EVENT_CREATE_INFO: VkStructureType = 10;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_EVENT_CREATE_INFO: VkStructureType = 10;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkEventCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -4958,9 +4870,7 @@ pub struct VkExportFenceWin32HandleInfoKHR {
     pub name: windows::core::PCWSTR,
 }
 #[cfg(feature = "VK_KHR_external_fence_win32")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_EXPORT_FENCE_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000114001;
-#[cfg(feature = "VK_KHR_external_fence_win32")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_EXPORT_FENCE_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000114001;#[cfg(feature = "VK_KHR_external_fence_win32")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkExportFenceWin32HandleInfoKHR {
     #[inline(always)]
@@ -4987,9 +4897,7 @@ pub struct VkVkExportMemoryAllocateInfoKHR {
     pub handleTypes: VkExternalMemoryHandleTypeFlagsKHR,
 }
 #[cfg(feature = "VK_KHR_external_memory")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO_KHR: VkStructureType = 1000072002;
-#[cfg(feature = "VK_KHR_external_memory")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO_KHR: VkStructureType = 1000072002;#[cfg(feature = "VK_KHR_external_memory")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkVkExportMemoryAllocateInfoKHR {
     #[inline(always)]
@@ -5024,9 +4932,7 @@ pub struct VkExportMemoryWin32HandleInfoKHR {
     pub name: windows::core::PCWSTR,
 }
 #[cfg(feature = "VK_KHR_external_memory_win32")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000073001;
-#[cfg(feature = "VK_KHR_external_memory_win32")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000073001;#[cfg(feature = "VK_KHR_external_memory_win32")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkExportMemoryWin32HandleInfoKHR {
     #[inline(always)]
@@ -5053,9 +4959,7 @@ pub struct VkExportSemaphoreCreateInfoKHR {
     pub handleType: VkExternalSemaphoreHandleTypeFlagsKHR,
 }
 #[cfg(feature = "VK_KHR_external_semaphore")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO_KHR: VkStructureType = 1000077000;
-#[cfg(feature = "VK_KHR_external_semaphore")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO_KHR: VkStructureType = 1000077000;#[cfg(feature = "VK_KHR_external_semaphore")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkExportSemaphoreCreateInfoKHR {
     #[inline(always)]
@@ -5090,9 +4994,7 @@ pub struct VkExportSemaphoreWin32HandleInfoKHR {
     pub name: windows::core::PCWSTR,
 }
 #[cfg(feature = "VK_KHR_external_semaphore_win32")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000078001;
-#[cfg(feature = "VK_KHR_external_semaphore_win32")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000078001;#[cfg(feature = "VK_KHR_external_semaphore_win32")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkExportSemaphoreWin32HandleInfoKHR {
     #[inline(always)]
@@ -5144,9 +5046,7 @@ pub struct VkExternalBufferPropertiesKHR {
     pub externalMemoryProperties: VkExternalMemoryPropertiesKHR,
 }
 #[cfg(feature = "VK_KHR_external_memory_capabilities")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES_KHR: VkStructureType = 1000071003;
-#[cfg(feature = "VK_KHR_external_memory_capabilities")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES_KHR: VkStructureType = 1000071003;#[cfg(feature = "VK_KHR_external_memory_capabilities")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkExternalBufferPropertiesKHR {
     #[inline(always)]
@@ -5177,9 +5077,7 @@ pub struct VkExternalFencePropertiesKHR {
     pub externalFenceFeatures: VkExternalFenceFeatureFlagsKHR,
 }
 #[cfg(feature = "VK_KHR_external_fence_capabilities")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES_KHR: VkStructureType = 1000112001;
-#[cfg(feature = "VK_KHR_external_fence_capabilities")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES_KHR: VkStructureType = 1000112001;#[cfg(feature = "VK_KHR_external_fence_capabilities")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkExternalFencePropertiesKHR {
     #[inline(always)]
@@ -5208,9 +5106,7 @@ pub struct VkExternalImageFormatPropertiesKHR {
     pub externalMemoryProperties: VkExternalMemoryPropertiesKHR,
 }
 #[cfg(feature = "VK_KHR_external_memory_capabilities")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_EXTERANL_IMAGE_FORMAT_PROPERTIES_KHR: VkStructureType = 1000071001;
-#[cfg(feature = "VK_KHR_external_memory_capabilities")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_EXTERANL_IMAGE_FORMAT_PROPERTIES_KHR: VkStructureType = 1000071001;#[cfg(feature = "VK_KHR_external_memory_capabilities")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkExternalImageFormatPropertiesKHR {
     #[inline(always)]
@@ -5239,9 +5135,7 @@ pub struct VkExternalMemoryBufferCreateInfoKHR {
     pub handleTypes: VkExternalMemoryHandleTypeFlagsKHR,
 }
 #[cfg(feature = "VK_KHR_external_memory")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO_KHR: VkStructureType = 1000072000;
-#[cfg(feature = "VK_KHR_external_memory")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO_KHR: VkStructureType = 1000072000;#[cfg(feature = "VK_KHR_external_memory")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkExternalMemoryBufferCreateInfoKHR {
     #[inline(always)]
@@ -5274,9 +5168,7 @@ pub struct VkExternalMemoryImageCreateInfoKHR {
     pub handleTypes: VkExternalMemoryHandleTypeFlagsKHR,
 }
 #[cfg(feature = "VK_KHR_external_memory")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO_KHR: VkStructureType = 1000072001;
-#[cfg(feature = "VK_KHR_external_memory")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO_KHR: VkStructureType = 1000072001;#[cfg(feature = "VK_KHR_external_memory")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkExternalMemoryImageCreateInfoKHR {
     #[inline(always)]
@@ -5324,9 +5216,7 @@ pub struct VkExternalSemaphorePropertiesKHR {
     pub externalSemaphoreFeatures: VkExternalSemaphoreFeatureFlagsKHR,
 }
 #[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES_KHR: VkStructureType = 1000076001;
-#[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES_KHR: VkStructureType = 1000076001;#[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkExternalSemaphorePropertiesKHR {
     #[inline(always)]
@@ -5353,9 +5243,7 @@ pub struct VkFenceCreateInfo {
     pub pNext: *const core::ffi::c_void,
     pub flags: VkFenceCreateFlags,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_FENCE_CREATE_INFO: VkStructureType = 8;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_FENCE_CREATE_INFO: VkStructureType = 8;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkFenceCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -5381,9 +5269,7 @@ pub struct VkFenceGetFdInfoKHR {
     pub handleType: VkExternalFenceHandleTypeFlagsKHR,
 }
 #[cfg(feature = "VK_KHR_external_fence_fd")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_FENCE_GET_FD_INFO_KHR: VkStructureType = 1000115001;
-#[cfg(feature = "VK_KHR_external_fence_fd")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_FENCE_GET_FD_INFO_KHR: VkStructureType = 1000115001;#[cfg(feature = "VK_KHR_external_fence_fd")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkFenceGetFdInfoKHR {
     #[inline(always)]
@@ -5411,9 +5297,7 @@ pub struct VkFenceGetWin32HandleInfoKHR {
     pub handleType: VkExternalFenceHandleTypeFlagsKHR,
 }
 #[cfg(feature = "VK_KHR_external_fence_win32")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_FENCE_GET_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000114002;
-#[cfg(feature = "VK_KHR_external_fence_win32")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_FENCE_GET_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000114002;#[cfg(feature = "VK_KHR_external_fence_win32")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkFenceGetWin32HandleInfoKHR {
     #[inline(always)]
@@ -5449,9 +5333,7 @@ pub struct VkFormatProperties2KHR {
     pub formatProperties: VkFormatProperties,
 }
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2_KHR: VkStructureType = 1000059002;
-#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2_KHR: VkStructureType = 1000059002;#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkFormatProperties2KHR {
     #[inline(always)]
@@ -5484,9 +5366,7 @@ pub struct VkFramebufferCreateInfo {
     pub height: u32,
     pub layers: u32,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO: VkStructureType = 37;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO: VkStructureType = 37;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkFramebufferCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -5525,9 +5405,7 @@ pub struct VkGraphicsPipelineCreateInfo {
     pub basePipelineHandle: Option<VkPipeline>,
     pub basePipelineIndex: i32,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO: VkStructureType = 28;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO: VkStructureType = 28;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkGraphicsPipelineCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -5583,9 +5461,7 @@ pub struct VkImageCreateInfo {
     pub pQueueFamilyIndices: *const u32,
     pub initialLayout: VkImageLayout,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO: VkStructureType = 14;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO: VkStructureType = 14;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImageCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -5621,9 +5497,7 @@ pub struct VkImageFormatProperties2KHR {
     pub imageFormatProperties: VkImageFormatProperties,
 }
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2_KHR: VkStructureType = 1000059003;
-#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2_KHR: VkStructureType = 1000059003;#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkImageFormatProperties2KHR {
     #[inline(always)]
@@ -5657,9 +5531,7 @@ pub struct VkImageMemoryBarrier {
     pub image: VkImage,
     pub subresourceRange: VkImageSubresourceRange,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER: VkStructureType = 45;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER: VkStructureType = 45;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImageMemoryBarrier {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -5684,9 +5556,7 @@ pub struct VkImageMemoryRequirementsInfo2KHR {
     pub image: VkImage,
 }
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2_KHR: VkStructureType = 1000146001;
-#[cfg(feature = "VK_KHR_get_memory_requirements2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2_KHR: VkStructureType = 1000146001;#[cfg(feature = "VK_KHR_get_memory_requirements2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImageMemoryRequirementsInfo2KHR {
     #[inline(always)]
@@ -5730,9 +5600,7 @@ pub struct VkImageSparseMemoryRequirementsInfo2KHR {
     pub image: VkImage,
 }
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMAGE_SPARSE_MEMORY_REQUIREMENTS_INFO_2_KHR: VkStructureType = 1000146002;
-#[cfg(feature = "VK_KHR_get_memory_requirements2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMAGE_SPARSE_MEMORY_REQUIREMENTS_INFO_2_KHR: VkStructureType = 1000146002;#[cfg(feature = "VK_KHR_get_memory_requirements2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImageSparseMemoryRequirementsInfo2KHR {
     #[inline(always)]
@@ -5795,9 +5663,7 @@ pub struct VkImageSwapchainCreateInfoKHR {
     pub swapchain: VkSwapchainKHR,
 }
 #[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMAGE_SWAPCHAIN_CREATE_INFO_KHR: VkStructureType = 1000060008;
-#[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMAGE_SWAPCHAIN_CREATE_INFO_KHR: VkStructureType = 1000060008;#[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImageSwapchainCreateInfoKHR {
     #[inline(always)]
@@ -5827,9 +5693,7 @@ pub struct VkImageViewCreateInfo {
     pub components: VkComponentMapping,
     pub subresourceRange: VkImageSubresourceRange,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO: VkStructureType = 15;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO: VkStructureType = 15;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImageViewCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -5855,9 +5719,7 @@ pub struct VkImageViewUsageCreateInfoKHR {
     pub sliceCount: u32,
 }
 #[cfg(feature = "VK_KHR_maintenance2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO_KHR: VkStructureType = 1000117002;
-#[cfg(feature = "VK_KHR_maintenance2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO_KHR: VkStructureType = 1000117002;#[cfg(feature = "VK_KHR_maintenance2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImageViewUsageCreateInfoKHR {
     #[inline(always)]
@@ -5893,9 +5755,7 @@ pub struct VkImportFenceFdInfoKHR {
     pub fd: core::ffi::c_int,
 }
 #[cfg(feature = "VK_KHR_external_fence_fd")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMPORT_FENCE_FD_INFO_KHR: VkStructureType = 1000115000;
-#[cfg(feature = "VK_KHR_external_fence_fd")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMPORT_FENCE_FD_INFO_KHR: VkStructureType = 1000115000;#[cfg(feature = "VK_KHR_external_fence_fd")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImportFenceFdInfoKHR {
     #[inline(always)]
@@ -5926,9 +5786,7 @@ pub struct VkImportFenceWin32HandleInfoKHR {
     pub name: windows::core::PCWSTR,
 }
 #[cfg(feature = "VK_KHR_external_fence_win32")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMPORT_FENCE_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000114000;
-#[cfg(feature = "VK_KHR_external_fence_win32")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMPORT_FENCE_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000114000;#[cfg(feature = "VK_KHR_external_fence_win32")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImportFenceWin32HandleInfoKHR {
     #[inline(always)]
@@ -5956,9 +5814,7 @@ pub struct VkImportMemoryFdInfoKHR {
     pub fd: core::ffi::c_int,
 }
 #[cfg(feature = "VK_KHR_external_memory_fd")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR: VkStructureType = 1000074000;
-#[cfg(feature = "VK_KHR_external_memory_fd")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR: VkStructureType = 1000074000;#[cfg(feature = "VK_KHR_external_memory_fd")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImportMemoryFdInfoKHR {
     #[inline(always)]
@@ -5987,9 +5843,7 @@ pub struct VkImportMemoryWin32HandleInfoKHR {
     pub name: windows::core::PCWSTR,
 }
 #[cfg(feature = "VK_KHR_external_memory_win32")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000073000;
-#[cfg(feature = "VK_KHR_external_memory_win32")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000073000;#[cfg(feature = "VK_KHR_external_memory_win32")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImportMemoryWin32HandleInfoKHR {
     #[inline(always)]
@@ -6019,9 +5873,7 @@ pub struct VkImportSemaphoreFdInfoKHR {
     pub fd: core::ffi::c_int,
 }
 #[cfg(feature = "VK_KHR_external_semaphore_fd")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR: VkStructureType = 1000079000;
-#[cfg(feature = "VK_KHR_external_semaphore_fd")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR: VkStructureType = 1000079000;#[cfg(feature = "VK_KHR_external_semaphore_fd")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImportSemaphoreFdInfoKHR {
     #[inline(always)]
@@ -6052,9 +5904,7 @@ pub struct VkImportSemaphoreWin32HandleInfoKHR {
     pub name: windows::core::PCWSTR,
 }
 #[cfg(feature = "VK_KHR_external_semaphore_win32")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000078000;
-#[cfg(feature = "VK_KHR_external_semaphore_win32")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000078000;#[cfg(feature = "VK_KHR_external_semaphore_win32")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImportSemaphoreWin32HandleInfoKHR {
     #[inline(always)]
@@ -6097,9 +5947,7 @@ pub struct VkInstanceCreateInfo {
     pub enabledExtensionCount: u32,
     pub ppEnabledExtensionNames: *const *const core::ffi::c_char,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO: VkStructureType = 1;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO: VkStructureType = 1;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkInstanceCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -6134,9 +5982,7 @@ pub struct VkMappedMemoryRange {
     pub offset: VkDeviceSize,
     pub size: VkDeviceSize,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE: VkStructureType = 6;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE: VkStructureType = 6;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkMappedMemoryRange {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -6162,9 +6008,7 @@ pub struct VkMemoryAllocateFlagsInfoKHR {
     pub deviceMask: u32,
 }
 #[cfg(feature = "VK_KHR_device_group")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO_KHR: VkStructureType = 1000060000;
-#[cfg(feature = "VK_KHR_device_group")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO_KHR: VkStructureType = 1000060000;#[cfg(feature = "VK_KHR_device_group")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkMemoryAllocateFlagsInfoKHR {
     #[inline(always)]
@@ -6196,9 +6040,7 @@ pub struct VkMemoryAllocateInfo {
     pub allocationSize: VkDeviceSize,
     pub memoryTypeIndex: u32,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO: VkStructureType = 5;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO: VkStructureType = 5;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkMemoryAllocateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -6222,9 +6064,7 @@ pub struct VkMemoryBarrier {
     pub srcAccessMask: VkAccessFlags,
     pub dstAccessMask: VkAccessFlags,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_MEMORY_BARRIER: VkStructureType = 46;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_MEMORY_BARRIER: VkStructureType = 46;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkMemoryBarrier {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -6250,9 +6090,7 @@ pub struct VkMemoryDedicatedAllocateInfoKHR {
     pub buffer: Option<VkBuffer>,
 }
 #[cfg(feature = "VK_KHR_dedicated_allocation")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO_KHR: VkStructureType = 1000127001;
-#[cfg(feature = "VK_KHR_dedicated_allocation")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO_KHR: VkStructureType = 1000127001;#[cfg(feature = "VK_KHR_dedicated_allocation")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkMemoryDedicatedAllocateInfoKHR {
     #[inline(always)]
@@ -6286,9 +6124,7 @@ pub struct VkMemoryDedicatedRequirementsKHR {
     pub requiresDedicatedAllocation: VkBool32,
 }
 #[cfg(feature = "VK_KHR_dedicated_allocation")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS_KHR: VkStructureType = 1000127000;
-#[cfg(feature = "VK_KHR_dedicated_allocation")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS_KHR: VkStructureType = 1000127000;#[cfg(feature = "VK_KHR_dedicated_allocation")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkMemoryDedicatedRequirementsKHR {
     #[inline(always)]
@@ -6317,9 +6153,7 @@ pub struct VkMemoryFdPropertiesKHR {
     pub memoryTypeBits: u32,
 }
 #[cfg(feature = "VK_KHR_external_memory_fd")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR: VkStructureType = 1000074001;
-#[cfg(feature = "VK_KHR_external_memory_fd")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR: VkStructureType = 1000074001;#[cfg(feature = "VK_KHR_external_memory_fd")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkMemoryFdPropertiesKHR {
     #[inline(always)]
@@ -6343,9 +6177,7 @@ pub struct VkMemoryGetFdInfoKHR {
     pub handleType: VkExternalMemoryHandleTypeFlagsKHR,
 }
 #[cfg(feature = "VK_KHR_external_memory_fd")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR: VkStructureType = 1000074002;
-#[cfg(feature = "VK_KHR_external_memory_fd")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR: VkStructureType = 1000074002;#[cfg(feature = "VK_KHR_external_memory_fd")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkMemoryGetFdInfoKHR {
     #[inline(always)]
@@ -6373,9 +6205,7 @@ pub struct VkMemoryGetWin32HandleInfoKHR {
     pub handleType: VkExternalMemoryHandleTypeFlagsKHR,
 }
 #[cfg(feature = "VK_KHR_external_memory_win32")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000073003;
-#[cfg(feature = "VK_KHR_external_memory_win32")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000073003;#[cfg(feature = "VK_KHR_external_memory_win32")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkMemoryGetWin32HandleInfoKHR {
     #[inline(always)]
@@ -6411,9 +6241,7 @@ pub struct VkMemoryRequirements2KHR {
     pub memoryRequirements: VkMemoryRequirements,
 }
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2_KHR: VkStructureType = 1000146003;
-#[cfg(feature = "VK_KHR_get_memory_requirements2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2_KHR: VkStructureType = 1000146003;#[cfg(feature = "VK_KHR_get_memory_requirements2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkMemoryRequirements2KHR {
     #[inline(always)]
@@ -6458,9 +6286,7 @@ pub struct VkMemoryWin32HandlePropertiesKHR {
     pub memoryTypeBits: u32,
 }
 #[cfg(feature = "VK_KHR_external_memory_win32")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR: VkStructureType = 1000073002;
-#[cfg(feature = "VK_KHR_external_memory_win32")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR: VkStructureType = 1000073002;#[cfg(feature = "VK_KHR_external_memory_win32")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkMemoryWin32HandlePropertiesKHR {
     #[inline(always)]
@@ -6484,9 +6310,7 @@ pub struct VkMetalSurfaceCreateInfoEXT {
     pub pLayer: *const core::ffi::c_void,
 }
 #[cfg(feature = "VK_EXT_metal_surface")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT: VkStructureType = 1000217000;
-#[cfg(feature = "VK_EXT_metal_surface")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT: VkStructureType = 1000217000;#[cfg(feature = "VK_EXT_metal_surface")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkMetalSurfaceCreateInfoEXT {
     #[inline(always)]
@@ -6533,9 +6357,7 @@ pub struct VkPhysicalDevice16BitStorageFeaturesKHR {
     pub storageInputOutput16: VkBool32,
 }
 #[cfg(feature = "VK_KHR_16bit_storage")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES_KHR: VkStructureType = 1000083000;
-#[cfg(feature = "VK_KHR_16bit_storage")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES_KHR: VkStructureType = 1000083000;#[cfg(feature = "VK_KHR_16bit_storage")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDevice16BitStorageFeaturesKHR {
     #[inline(always)]
@@ -6582,9 +6404,7 @@ pub struct VkPhysicalDeviceExternalBufferInfoKHR {
     pub handleType: VkExternalMemoryHandleTypeFlagsKHR,
 }
 #[cfg(feature = "VK_KHR_external_memory_capabilities")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO_KHR: VkStructureType = 1000071002;
-#[cfg(feature = "VK_KHR_external_memory_capabilities")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO_KHR: VkStructureType = 1000071002;#[cfg(feature = "VK_KHR_external_memory_capabilities")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceExternalBufferInfoKHR {
     #[inline(always)]
@@ -6617,9 +6437,7 @@ pub struct VkPhysicalDeviceExternalFenceInfoKHR {
     pub handleType: VkExternalFenceHandleTypeFlagsKHR,
 }
 #[cfg(feature = "VK_KHR_external_fence_capabilities")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO_KHR: VkStructureType = 1000112000;
-#[cfg(feature = "VK_KHR_external_fence_capabilities")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO_KHR: VkStructureType = 1000112000;#[cfg(feature = "VK_KHR_external_fence_capabilities")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceExternalFenceInfoKHR {
     #[inline(always)]
@@ -6652,9 +6470,7 @@ pub struct VkPhysicalDeviceExternalImageFormatInfoKHR {
     pub handleType: VkExternalMemoryHandleTypeFlagsKHR,
 }
 #[cfg(feature = "VK_KHR_external_memory_capabilities")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO_KHR: VkStructureType = 1000071000;
-#[cfg(feature = "VK_KHR_external_memory_capabilities")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO_KHR: VkStructureType = 1000071000;#[cfg(feature = "VK_KHR_external_memory_capabilities")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceExternalImageFormatInfoKHR {
     #[inline(always)]
@@ -6687,9 +6503,7 @@ pub struct VkPhysicalDeviceExternalSemaphoreInfoKHR {
     pub handleType: VkExternalSemaphoreHandleTypeFlagsKHR,
 }
 #[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO_KHR: VkStructureType = 1000076000;
-#[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO_KHR: VkStructureType = 1000076000;#[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceExternalSemaphoreInfoKHR {
     #[inline(always)]
@@ -6790,9 +6604,7 @@ pub struct VkPhysicalDeviceFeatures2KHR {
     pub features: VkPhysicalDeviceFeatures,
 }
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR: VkStructureType = 1000059000;
-#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR: VkStructureType = 1000059000;#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceFeatures2KHR {
     #[inline(always)]
@@ -6839,9 +6651,7 @@ pub struct VkPhysicalDeviceGroupPropertiesKHR {
     pub subsetAllocation: VkBool32,
 }
 #[cfg(feature = "VK_KHR_device_group_creation")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES_KHR: VkStructureType = 1000070000;
-#[cfg(feature = "VK_KHR_device_group_creation")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES_KHR: VkStructureType = 1000070000;#[cfg(feature = "VK_KHR_device_group_creation")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceGroupPropertiesKHR {
     #[inline(always)]
@@ -6874,9 +6684,7 @@ pub struct VkPhysicalDeviceImageFormatInfo2KHR {
     pub flags: VkImageCreateFlags,
 }
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2_KHR: VkStructureType = 1000059004;
-#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2_KHR: VkStructureType = 1000059004;#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceImageFormatInfo2KHR {
     #[inline(always)]
@@ -7022,9 +6830,7 @@ pub struct VkPhysicalDeviceMaintenance3PropertiesKHR {
     pub maxMemoryAllocationSize: VkDeviceSize,
 }
 #[cfg(feature = "VK_KHR_maintenance3")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES_KHR: VkStructureType = 1000168000;
-#[cfg(feature = "VK_KHR_maintenance3")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES_KHR: VkStructureType = 1000168000;#[cfg(feature = "VK_KHR_maintenance3")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMaintenance3PropertiesKHR {
     #[inline(always)]
@@ -7063,9 +6869,7 @@ pub struct VkPhysicalDeviceMemoryProperties2KHR {
     pub memoryProperties: VkPhysicalDeviceMemoryProperties,
 }
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2_KHR: VkStructureType = 1000059006;
-#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2_KHR: VkStructureType = 1000059006;#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMemoryProperties2KHR {
     #[inline(always)]
@@ -7096,9 +6900,7 @@ pub struct VkPhysicalDeviceMultiviewFeaturesKHR {
     pub multiviewTessellationShader: VkBool32,
 }
 #[cfg(feature = "VK_KHR_multiview")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES_KHR: VkStructureType = 1000053001;
-#[cfg(feature = "VK_KHR_multiview")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES_KHR: VkStructureType = 1000053001;#[cfg(feature = "VK_KHR_multiview")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceMultiviewFeaturesKHR {
     #[inline(always)]
@@ -7144,9 +6946,7 @@ pub struct VkPhysicalDeviceMultiviewPropertiesKHR {
     pub maxMultiviewInstanceIndex: u32,
 }
 #[cfg(feature = "VK_KHR_multiview")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES_KHR: VkStructureType = 1000053002;
-#[cfg(feature = "VK_KHR_multiview")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES_KHR: VkStructureType = 1000053002;#[cfg(feature = "VK_KHR_multiview")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMultiviewPropertiesKHR {
     #[inline(always)]
@@ -7175,9 +6975,7 @@ pub struct VkPhysicalDevicePointClippingPropertiesKHR {
     pub pointClippingBehavior: VkPointClippingBehaviorKHR,
 }
 #[cfg(feature = "VK_KHR_maintenance2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES_KHR: VkStructureType = 1000117000;
-#[cfg(feature = "VK_KHR_maintenance2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES_KHR: VkStructureType = 1000117000;#[cfg(feature = "VK_KHR_maintenance2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDevicePointClippingPropertiesKHR {
     #[inline(always)]
@@ -7221,9 +7019,7 @@ pub struct VkPhysicalDeviceProperties2KHR {
     pub properties: VkPhysicalDeviceProperties,
 }
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR: VkStructureType = 1000059001;
-#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR: VkStructureType = 1000059001;#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceProperties2KHR {
     #[inline(always)]
@@ -7256,9 +7052,7 @@ pub struct VkPhysicalDeviceSparseImageFormatInfo2KHR {
     pub tiling: VkImageTiling,
 }
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2_KHR: VkStructureType = 1000059008;
-#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2_KHR: VkStructureType = 1000059008;#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceSparseImageFormatInfo2KHR {
     #[inline(always)]
@@ -7302,9 +7096,7 @@ pub struct VkPhysicalDeviceSurfaceInfo2KHR {
     pub surface: VkSurfaceKHR,
 }
 #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR: VkStructureType = 1000119000;
-#[cfg(feature = "VK_KHR_get_surface_capabilities2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR: VkStructureType = 1000119000;#[cfg(feature = "VK_KHR_get_surface_capabilities2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceSurfaceInfo2KHR {
     #[inline(always)]
@@ -7332,9 +7124,7 @@ pub struct VkPhysicalDeviceVariablePointersFeaturesKHR {
     pub variablePointers: VkBool32,
 }
 #[cfg(feature = "VK_KHR_variable_pointers")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES_KHR: VkStructureType = 1000120000;
-#[cfg(feature = "VK_KHR_variable_pointers")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES_KHR: VkStructureType = 1000120000;#[cfg(feature = "VK_KHR_variable_pointers")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceVariablePointersFeaturesKHR {
     #[inline(always)]
@@ -7379,9 +7169,7 @@ pub struct VkPipelineCacheCreateInfo {
     pub initialDataSize: usize,
     pub pInitialData: *const core::ffi::c_void,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO: VkStructureType = 17;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO: VkStructureType = 17;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineCacheCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -7423,9 +7211,7 @@ pub struct VkPipelineColorBlendStateCreateInfo {
     pub pAttachments: *const VkPipelineColorBlendAttachmentState,
     pub blendConstants: [core::ffi::c_float; 4],
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO: VkStructureType = 26;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO: VkStructureType = 26;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineColorBlendStateCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -7457,9 +7243,7 @@ pub struct VkPipelineDepthStencilStateCreateInfo {
     pub minDepthBounds: core::ffi::c_float,
     pub maxDepthBounds: core::ffi::c_float,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO: VkStructureType = 25;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO: VkStructureType = 25;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineDepthStencilStateCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -7484,9 +7268,7 @@ pub struct VkPipelineDynamicStateCreateInfo {
     pub dynamicStateCount: u32,
     pub pDynamicStates: *const VkDynamicState,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO: VkStructureType = 27;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO: VkStructureType = 27;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineDynamicStateCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -7511,9 +7293,7 @@ pub struct VkPipelineInputAssemblyStateCreateInfo {
     pub topology: VkPrimitiveTopology,
     pub primitiveRestartEnable: VkBool32,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO: VkStructureType = 20;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO: VkStructureType = 20;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineInputAssemblyStateCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -7540,9 +7320,7 @@ pub struct VkPipelineLayoutCreateInfo {
     pub pushConstantRangeCount: u32,
     pub pPushConstantRanges: *const VkPushConstantRange,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO: VkStructureType = 30;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO: VkStructureType = 30;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineLayoutCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -7571,9 +7349,7 @@ pub struct VkPipelineMultisampleStateCreateInfo {
     pub alphaToCoverageEnable: VkBool32,
     pub alphaToOneEnable: VkBool32,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO: VkStructureType = 24;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO: VkStructureType = 24;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineMultisampleStateCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -7606,9 +7382,7 @@ pub struct VkPipelineRasterizationStateCreateInfo {
     pub depthBiasSlopeFactor: core::ffi::c_float,
     pub lineWidth: core::ffi::c_float,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO: VkStructureType = 23;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO: VkStructureType = 23;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineRasterizationStateCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -7635,9 +7409,7 @@ pub struct VkPipelineShaderStageCreateInfo {
     pub pName: *const core::ffi::c_char,
     pub pSpecializationInfo: *const VkSpecializationInfo,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO: VkStructureType = 18;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO: VkStructureType = 18;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineShaderStageCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -7662,9 +7434,7 @@ pub struct VkPipelineTessellationDomainOriginStateCreateInfoKHR {
     pub domainOrigin: VkTessellationDomainOriginKHR,
 }
 #[cfg(feature = "VK_KHR_maintenance2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO_KHR: VkStructureType = 1000117003;
-#[cfg(feature = "VK_KHR_maintenance2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO_KHR: VkStructureType = 1000117003;#[cfg(feature = "VK_KHR_maintenance2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineTessellationDomainOriginStateCreateInfoKHR {
     #[inline(always)]
@@ -7696,9 +7466,7 @@ pub struct VkPipelineTessellationStateCreateInfo {
     pub flags: VkPipelineTessellationStateCreateFlags,
     pub patchControlPoints: u32,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO: VkStructureType = 21;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO: VkStructureType = 21;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineTessellationStateCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -7725,9 +7493,7 @@ pub struct VkPipelineVertexInputStateCreateInfo {
     pub vertexAttributeDescriptionCount: u32,
     pub pVertexAttributeDescriptions: *const VkVertexInputAttributeDescription,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO: VkStructureType = 19;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO: VkStructureType = 19;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineVertexInputStateCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -7754,9 +7520,7 @@ pub struct VkPipelineViewportStateCreateInfo {
     pub scissorCount: u32,
     pub pScissors: *const VkRect2D,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO: VkStructureType = 22;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO: VkStructureType = 22;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineViewportStateCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -7786,9 +7550,7 @@ pub struct VkPresentInfoKHR {
     pub pResults: *mut VkResult,
 }
 #[cfg(feature = "VK_KHR_swapchain")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PRESENT_INFO_KHR: VkStructureType = 1000001001;
-#[cfg(feature = "VK_KHR_swapchain")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PRESENT_INFO_KHR: VkStructureType = 1000001001;#[cfg(feature = "VK_KHR_swapchain")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPresentInfoKHR {
     #[inline(always)]
@@ -7825,9 +7587,7 @@ pub struct VkQueryPoolCreateInfo {
     pub queryCount: u32,
     pub pipelineStatistics: VkQueryPipelineStatisticFlags,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO: VkStructureType = 11;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO: VkStructureType = 11;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkQueryPoolCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -7862,9 +7622,7 @@ pub struct VkQueueFamilyProperties2KHR {
     pub queueFamilyProperties: VkQueueFamilyProperties,
 }
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2_KHR: VkStructureType = 1000059005;
-#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2_KHR: VkStructureType = 1000059005;#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkQueueFamilyProperties2KHR {
     #[inline(always)]
@@ -7903,9 +7661,7 @@ pub struct VkRenderPassBeginInfo {
     pub clearValueCount: u32,
     pub pClearValues: *const VkClearValue,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO: VkStructureType = 43;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO: VkStructureType = 43;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkRenderPassBeginInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -7934,9 +7690,7 @@ pub struct VkRenderPassCreateInfo {
     pub dependencyCount: u32,
     pub pDependencies: *const VkSubpassDependency,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO: VkStructureType = 38;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO: VkStructureType = 38;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkRenderPassCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -7962,9 +7716,7 @@ pub struct VkRenderPassInputAttachmentAspectCreateInfoKHR {
     pub pAspectReferences: *const VkInputAttachmentAspectReferenceKHR,
 }
 #[cfg(feature = "VK_KHR_maintenance2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO_KHR: VkStructureType = 1000117001;
-#[cfg(feature = "VK_KHR_maintenance2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO_KHR: VkStructureType = 1000117001;#[cfg(feature = "VK_KHR_maintenance2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkRenderPassInputAttachmentAspectCreateInfoKHR {
     #[inline(always)]
@@ -8002,9 +7754,7 @@ pub struct VkRenderPassMultiviewCreateInfoKHR {
     pub pCorrelationMasks: *const u32,
 }
 #[cfg(feature = "VK_KHR_multiview")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO_KHR: VkStructureType = 1000053000;
-#[cfg(feature = "VK_KHR_multiview")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO_KHR: VkStructureType = 1000053000;#[cfg(feature = "VK_KHR_multiview")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkRenderPassMultiviewCreateInfoKHR {
     #[inline(always)]
@@ -8050,9 +7800,7 @@ pub struct VkSamplerCreateInfo {
     pub borderColor: VkBorderColor,
     pub unnormalizedCoordinates: VkBool32,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO: VkStructureType = 31;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO: VkStructureType = 31;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkSamplerCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -8075,9 +7823,7 @@ pub struct VkSemaphoreCreateInfo {
     pub pNext: *const core::ffi::c_void,
     pub flags: VkSemaphoreCreateFlags,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO: VkStructureType = 9;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO: VkStructureType = 9;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkSemaphoreCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -8103,9 +7849,7 @@ pub struct VkSemaphoreGetFdInfoKHR {
     pub handleType: VkExternalSemaphoreHandleTypeFlagBitsKHR,
 }
 #[cfg(feature = "VK_KHR_external_semaphore_fd")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR: VkStructureType = 1000079001;
-#[cfg(feature = "VK_KHR_external_semaphore_fd")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR: VkStructureType = 1000079001;#[cfg(feature = "VK_KHR_external_semaphore_fd")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkSemaphoreGetFdInfoKHR {
     #[inline(always)]
@@ -8133,9 +7877,7 @@ pub struct VkSemaphoreGetWin32HandleInfoKHR {
     pub handleType: VkExternalSemaphoreHandleTypeFlagBitsKHR,
 }
 #[cfg(feature = "VK_KHR_external_semaphore_win32")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000078003;
-#[cfg(feature = "VK_KHR_external_semaphore_win32")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000078003;#[cfg(feature = "VK_KHR_external_semaphore_win32")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkSemaphoreGetWin32HandleInfoKHR {
     #[inline(always)]
@@ -8162,9 +7904,7 @@ pub struct VkShaderModuleCreateInfo {
     pub codeSize: usize,
     pub pCode: *const u32,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO: VkStructureType = 16;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO: VkStructureType = 16;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkShaderModuleCreateInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -8207,9 +7947,7 @@ pub struct VkSparseImageFormatProperties2KHR {
     pub properties: VkSparseImageFormatProperties,
 }
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SPARSE_IMAGE_FORMAT_PROPERTIES_2_KHR: VkStructureType = 1000059007;
-#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SPARSE_IMAGE_FORMAT_PROPERTIES_2_KHR: VkStructureType = 1000059007;#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkSparseImageFormatProperties2KHR {
     #[inline(always)]
@@ -8270,9 +8008,7 @@ pub struct VkSparseImageMemoryRequirements2KHR {
     pub memoryRequirements: VkSparseImageMemoryRequirements,
 }
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SPARSE_IMAGE_MEMORY_REQUIREMENTS_2_KHR: VkStructureType = 1000146004;
-#[cfg(feature = "VK_KHR_get_memory_requirements2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SPARSE_IMAGE_MEMORY_REQUIREMENTS_2_KHR: VkStructureType = 1000146004;#[cfg(feature = "VK_KHR_get_memory_requirements2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkSparseImageMemoryRequirements2KHR {
     #[inline(always)]
@@ -8357,9 +8093,7 @@ pub struct VkSubmitInfo {
     pub signalSemaphoreCount: u32,
     pub pSignalSemaphores: *const VkSemaphore,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SUBMIT_INFO: VkStructureType = 4;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SUBMIT_INFO: VkStructureType = 4;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkSubmitInfo {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -8441,9 +8175,7 @@ pub struct VkSurfaceCapabilities2KHR {
     pub surfaceCapabilities: VkSurfaceCapabilitiesKHR,
 }
 #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR: VkStructureType = 1000119001;
-#[cfg(feature = "VK_KHR_get_surface_capabilities2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR: VkStructureType = 1000119001;#[cfg(feature = "VK_KHR_get_surface_capabilities2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkSurfaceCapabilities2KHR {
     #[inline(always)]
@@ -8475,9 +8207,7 @@ pub struct VkSurfaceFormat2KHR {
     pub surfaceFormat: VkSurfaceFormatKHR,
 }
 #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR: VkStructureType = 1000119002;
-#[cfg(feature = "VK_KHR_get_surface_capabilities2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR: VkStructureType = 1000119002;#[cfg(feature = "VK_KHR_get_surface_capabilities2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkSurfaceFormat2KHR {
     #[inline(always)]
@@ -8515,9 +8245,7 @@ pub struct VkSwapchainCreateInfoKHR {
     pub oldSwapchain: Option<VkSwapchainKHR>,
 }
 #[cfg(feature = "VK_KHR_swapchain")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR: VkStructureType = 1000001000;
-#[cfg(feature = "VK_KHR_swapchain")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR: VkStructureType = 1000001000;#[cfg(feature = "VK_KHR_swapchain")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkSwapchainCreateInfoKHR {
     #[inline(always)]
@@ -8577,9 +8305,7 @@ pub struct VkWaylandSurfaceCreateInfoKHR {
     pub surface: *mut core::ffi::c_void,
 }
 #[cfg(feature = "VK_KHR_wayland_surface")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR: VkStructureType = 1000006000;
-#[cfg(feature = "VK_KHR_wayland_surface")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR: VkStructureType = 1000006000;#[cfg(feature = "VK_KHR_wayland_surface")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkWaylandSurfaceCreateInfoKHR {
     #[inline(always)]
@@ -8612,9 +8338,7 @@ pub struct VkWin32KeyedMutexAcquireReleaseInfoKHR {
     pub pReleaseKeys: *const u64,
 }
 #[cfg(feature = "VK_KHR_win32_keyed_mutex")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_KHR: VkStructureType = 1000075000;
-#[cfg(feature = "VK_KHR_win32_keyed_mutex")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_KHR: VkStructureType = 1000075000;#[cfg(feature = "VK_KHR_win32_keyed_mutex")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkWin32KeyedMutexAcquireReleaseInfoKHR {
     #[inline(always)]
@@ -8643,9 +8367,7 @@ pub struct VkWin32SurfaceCreateInfoKHR {
     pub hwnd: windows::Win32::Foundation::HWND,
 }
 #[cfg(feature = "VK_KHR_win32_surface")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR: VkStructureType = 1000009000;
-#[cfg(feature = "VK_KHR_win32_surface")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR: VkStructureType = 1000009000;#[cfg(feature = "VK_KHR_win32_surface")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkWin32SurfaceCreateInfoKHR {
     #[inline(always)]
@@ -8677,9 +8399,7 @@ pub struct VkWriteDescriptorSet {
     pub pBufferInfo: *const VkDescriptorBufferInfo,
     pub pTexelBufferView: *const VkBufferView,
 }
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET: VkStructureType = 35;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET: VkStructureType = 35;#[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkWriteDescriptorSet {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -8706,9 +8426,7 @@ pub struct VkXcbSurfaceCreateInfoKHR {
     pub window: xcb::x::Window,
 }
 #[cfg(feature = "VK_KHR_xcb_surface")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR: VkStructureType = 1000005000;
-#[cfg(feature = "VK_KHR_xcb_surface")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR: VkStructureType = 1000005000;#[cfg(feature = "VK_KHR_xcb_surface")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkXcbSurfaceCreateInfoKHR {
     #[inline(always)]
@@ -8737,9 +8455,7 @@ pub struct VkXlibSurfaceCreateInfoKHR {
     pub window: x11::xlib::Window,
 }
 #[cfg(feature = "VK_KHR_xlib_surface")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR: VkStructureType = 1000004000;
-#[cfg(feature = "VK_KHR_xlib_surface")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR: VkStructureType = 1000004000;#[cfg(feature = "VK_KHR_xlib_surface")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkXlibSurfaceCreateInfoKHR {
     #[inline(always)]
@@ -8769,9 +8485,7 @@ pub struct VkMemoryBarrier2KHR {
     pub dstAccessMask: VkAccessFlags2KHR,
 }
 #[cfg(feature = "VK_KHR_synchronization2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_MEMORY_BARRIER_2_KHR: VkStructureType = 1000314000;
-#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_MEMORY_BARRIER_2_KHR: VkStructureType = 1000314000;#[cfg(feature = "VK_KHR_synchronization2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkMemoryBarrier2KHR {
     #[inline(always)]
@@ -8812,9 +8526,7 @@ pub struct VkBufferMemoryBarrier2KHR {
     pub size: VkDeviceSize,
 }
 #[cfg(feature = "VK_KHR_synchronization2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER_2_KHR: VkStructureType = 1000314001;
-#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER_2_KHR: VkStructureType = 1000314001;#[cfg(feature = "VK_KHR_synchronization2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkBufferMemoryBarrier2KHR {
     #[inline(always)]
@@ -8856,9 +8568,7 @@ pub struct VkImageMemoryBarrier2KHR {
     pub subresourceRange: VkImageSubresourceRange,
 }
 #[cfg(feature = "VK_KHR_synchronization2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2_KHR: VkStructureType = 1000314002;
-#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2_KHR: VkStructureType = 1000314002;#[cfg(feature = "VK_KHR_synchronization2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImageMemoryBarrier2KHR {
     #[inline(always)]
@@ -8897,9 +8607,7 @@ pub struct VkDependencyInfoKHR {
     pub pImageMemoryBarriers: *const VkImageMemoryBarrier2KHR,
 }
 #[cfg(feature = "VK_KHR_synchronization2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEPENDENCY_INFO_KHR: VkStructureType = 1000314003;
-#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEPENDENCY_INFO_KHR: VkStructureType = 1000314003;#[cfg(feature = "VK_KHR_synchronization2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDependencyInfoKHR {
     #[inline(always)]
@@ -8938,9 +8646,7 @@ pub struct VkSubmitInfo2KHR {
     pub pSignalSemaphoreInfos: *const VkSemaphoreSubmitInfoKHR,
 }
 #[cfg(feature = "VK_KHR_synchronization2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SUBMIT_INFO_2_KHR: VkStructureType = 1000314004;
-#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SUBMIT_INFO_2_KHR: VkStructureType = 1000314004;#[cfg(feature = "VK_KHR_synchronization2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkSubmitInfo2KHR {
     #[inline(always)]
@@ -8976,9 +8682,7 @@ pub struct VkSemaphoreSubmitInfoKHR {
     pub deviceIndex: u32,
 }
 #[cfg(feature = "VK_KHR_synchronization2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SEMAPHORE_SUBMIT_INFO_KHR: VkStructureType = 1000314005;
-#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SEMAPHORE_SUBMIT_INFO_KHR: VkStructureType = 1000314005;#[cfg(feature = "VK_KHR_synchronization2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkSemaphoreSubmitInfoKHR {
     #[inline(always)]
@@ -9012,9 +8716,7 @@ pub struct VkCommandBufferSubmitInfoKHR {
     pub deviceMask: u32,
 }
 #[cfg(feature = "VK_KHR_synchronization2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_COMMAND_BUFFER_SUBMIT_INFO_KHR: VkStructureType = 1000314006;
-#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_COMMAND_BUFFER_SUBMIT_INFO_KHR: VkStructureType = 1000314006;#[cfg(feature = "VK_KHR_synchronization2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkCommandBufferSubmitInfoKHR {
     #[inline(always)]
@@ -9047,9 +8749,7 @@ pub struct VkPhysicalDeviceSynchronization2FeaturesKHR {
     pub synchronization2: VkBool32,
 }
 #[cfg(feature = "VK_KHR_synchronization2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES_KHR: VkStructureType = 1000314007;
-#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES_KHR: VkStructureType = 1000314007;#[cfg(feature = "VK_KHR_synchronization2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceSynchronization2FeaturesKHR {
     #[inline(always)]
@@ -9097,9 +8797,7 @@ pub struct VkPhysicalDeviceIDPropertiesKHR {
     pub deviceLUIDValid: VkBool32,
 }
 #[cfg(any(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR: VkStructureType = 1000071004;
-#[cfg(any(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR: VkStructureType = 1000071004;#[cfg(any(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceIDPropertiesKHR {
     #[inline(always)]
@@ -9625,9 +9323,7 @@ pub struct VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR {
     pub samplerYcbcrConversion: VkBool32,
 }
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES_KHR: VkStructureType = 1000156004;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES_KHR: VkStructureType = 1000156004;#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR {
     #[inline(always)]
@@ -9672,9 +9368,7 @@ pub struct VkBindImagePlaneMemoryInfoKHR {
     pub planeAspect: VkImageAspectFlags,
 }
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO_KHR: VkStructureType = 1000156002;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO_KHR: VkStructureType = 1000156002;#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkBindImagePlaneMemoryInfoKHR {
     #[inline(always)]
@@ -9707,9 +9401,7 @@ pub struct VkImagePlaneMemoryRequirementsInfoKHR {
     pub planeAspect: VkImageAspectFlagBits,
 }
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO_KHR: VkStructureType = 1000156002;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO_KHR: VkStructureType = 1000156002;#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImagePlaneMemoryRequirementsInfoKHR {
     #[inline(always)]
@@ -9749,9 +9441,7 @@ pub struct VkSamplerYcbcrConversionCreateInfoKHR {
     pub forceExplicitReconstruction: VkBool32,
 }
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO_KHR: VkStructureType = 1000156000;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO_KHR: VkStructureType = 1000156000;#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkSamplerYcbcrConversionCreateInfoKHR {
     #[inline(always)]
@@ -9784,9 +9474,7 @@ pub struct VkSamplerYcbcrConversionImageFormatPropertiesKHR {
     pub combinedImageSamplerDescriptorCount: u32,
 }
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES_KHR: VkStructureType = 1000156005;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES_KHR: VkStructureType = 1000156005;#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkSamplerYcbcrConversionImageFormatPropertiesKHR {
     #[inline(always)]
@@ -9815,9 +9503,7 @@ pub struct VkSamplerYcbcrConversionInfoKHR {
     pub conversion: VkSamplerYcbcrConversion,
 }
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO_KHR: VkStructureType = 1000156001;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO_KHR: VkStructureType = 1000156001;#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkSamplerYcbcrConversionInfoKHR {
     #[inline(always)]
@@ -9862,10 +9548,7 @@ pub struct VkPhysicalDeviceVulkan11Features {
     pub samplerYcbcrConversion: VkBool32,
     pub shaderDrawParameters: VkBool32,
 }
-#[rustfmt::skip]
-#[cfg(feature = "Allow1_2APIs")]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES: VkStructureType = 49;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES: VkStructureType = 49;#[rustfmt::skip]
 #[cfg(feature = "Allow1_2APIs")]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceVulkan11Features {
     #[inline(always)]
@@ -9927,10 +9610,7 @@ pub struct VkPhysicalDeviceVulkan11Properties {
     pub maxPerSetDescriptors: u32,
     pub maxMemoryAllocationSize: VkDeviceSize,
 }
-#[rustfmt::skip]
-#[cfg(feature = "Allow1_2APIs")]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES: VkStructureType = 50;
-#[rustfmt::skip]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES: VkStructureType = 50;#[rustfmt::skip]
 #[cfg(feature = "Allow1_2APIs")]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceVulkan11Properties {
     #[inline(always)]
@@ -9994,9 +9674,7 @@ pub struct VkBufferDeviceAddressInfoKHR {
     pub buffer: VkBuffer,
 }
 #[cfg(feature = "VK_KHR_buffer_device_address")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO_KHR: VkStructureType = 1000244001;
-#[cfg(feature = "VK_KHR_buffer_device_address")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO_KHR: VkStructureType = 1000244001;#[cfg(feature = "VK_KHR_buffer_device_address")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkBufferDeviceAddressInfoKHR {
     #[inline(always)]
@@ -10029,9 +9707,7 @@ pub struct VkBufferOpaqueCaptureAddressCreateInfoKHR {
     pub opaqueCaptureAddress: u64,
 }
 #[cfg(feature = "VK_KHR_buffer_device_address")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO_KHR: VkStructureType = 1000257002;
-#[cfg(feature = "VK_KHR_buffer_device_address")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO_KHR: VkStructureType = 1000257002;#[cfg(feature = "VK_KHR_buffer_device_address")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkBufferOpaqueCaptureAddressCreateInfoKHR {
     #[inline(always)]
@@ -10064,9 +9740,7 @@ pub struct VkDeviceMemoryOpaqueCaptureAddressInfoKHR {
     pub memory: VkDeviceMemory,
 }
 #[cfg(feature = "VK_KHR_buffer_device_address")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO_KHR: VkStructureType = 1000257004;
-#[cfg(feature = "VK_KHR_buffer_device_address")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO_KHR: VkStructureType = 1000257004;#[cfg(feature = "VK_KHR_buffer_device_address")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDeviceMemoryOpaqueCaptureAddressInfoKHR {
     #[inline(always)]
@@ -10099,9 +9773,7 @@ pub struct VkMemoryOpaqueCaptureAddressAllocateInfoKHR {
     pub opaqueCaptureAddress: u64,
 }
 #[cfg(feature = "VK_KHR_buffer_device_address")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO_KHR: VkStructureType = 1000257003;
-#[cfg(feature = "VK_KHR_buffer_device_address")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO_KHR: VkStructureType = 1000257003;#[cfg(feature = "VK_KHR_buffer_device_address")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkMemoryOpaqueCaptureAddressAllocateInfoKHR {
     #[inline(always)]
@@ -10136,9 +9808,7 @@ pub struct VkPhysicalDeviceBufferDeviceAddressFeaturesKHR {
     pub bufferDeviceAddressMultiDevice: VkBool32,
 }
 #[cfg(feature = "VK_KHR_buffer_device_address")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES_KHR: VkStructureType = 1000257000;
-#[cfg(feature = "VK_KHR_buffer_device_address")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES_KHR: VkStructureType = 1000257000;#[cfg(feature = "VK_KHR_buffer_device_address")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceBufferDeviceAddressFeaturesKHR {
     #[inline(always)]
@@ -10233,9 +9903,7 @@ pub struct VkPhysicalDeviceTimelineSemaphoreFeaturesKHR {
     pub timelineSemaphore: VkBool32,
 }
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR: VkStructureType = 1000207000;
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR: VkStructureType = 1000207000;#[cfg(feature = "VK_KHR_timeline_semaphore")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceTimelineSemaphoreFeaturesKHR {
     #[inline(always)]
@@ -10280,9 +9948,7 @@ pub struct VkPhysicalDeviceTimelineSemaphorePropertiesKHR {
     pub maxTimelineSemaphoreValueDifference: u64,
 }
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES_KHR: VkStructureType = 1000207001;
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES_KHR: VkStructureType = 1000207001;#[cfg(feature = "VK_KHR_timeline_semaphore")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceTimelineSemaphorePropertiesKHR {
     #[inline(always)]
@@ -10312,9 +9978,7 @@ pub struct VkSemaphoreSignalInfoKHR {
     pub value: u64,
 }
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO_KHR: VkStructureType = 1000207005;
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO_KHR: VkStructureType = 1000207005;#[cfg(feature = "VK_KHR_timeline_semaphore")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkSemaphoreSignalInfoKHR {
     #[inline(always)]
@@ -10348,9 +10012,7 @@ pub struct VkSemaphoreTypeCreateInfoKHR {
     pub initialValue: u64,
 }
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO_KHR: VkStructureType = 1000207002;
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO_KHR: VkStructureType = 1000207002;#[cfg(feature = "VK_KHR_timeline_semaphore")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkSemaphoreTypeCreateInfoKHR {
     #[inline(always)]
@@ -10386,9 +10048,7 @@ pub struct VkSemaphoreWaitInfoKHR {
     pub pValues: *const u64,
 }
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO_KHR: VkStructureType = 1000207004;
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO_KHR: VkStructureType = 1000207004;#[cfg(feature = "VK_KHR_timeline_semaphore")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkSemaphoreWaitInfoKHR {
     #[inline(always)]
@@ -10424,9 +10084,7 @@ pub struct VkTimelineSemaphoreSubmitInfoKHR {
     pub pSignalSemaphoreValues: *const u64,
 }
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO_KHR: VkStructureType = 1000207003;
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO_KHR: VkStructureType = 1000207003;#[cfg(feature = "VK_KHR_timeline_semaphore")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkTimelineSemaphoreSubmitInfoKHR {
     #[inline(always)]
@@ -10470,9 +10128,7 @@ pub struct VkImageFormatListCreateInfoKHR {
     pub pViewFormats: *const VkFormat,
 }
 #[cfg(feature = "VK_KHR_image_format_list")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO_KHR: VkStructureType = 1000147000;
-#[cfg(feature = "VK_KHR_image_format_list")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO_KHR: VkStructureType = 1000147000;#[cfg(feature = "VK_KHR_image_format_list")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImageFormatListCreateInfoKHR {
     #[inline(always)]
@@ -10547,9 +10203,7 @@ pub struct VkSamplerReductionModeCreateInfoEXT {
     pub reductionMode: VkSamplerReductionModeEXT,
 }
 #[cfg(feature = "VK_EXT_sampler_filter_minmax")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO_EXT: VkStructureType = 1000130001;
-#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO_EXT: VkStructureType = 1000130001;#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkSamplerReductionModeCreateInfoEXT {
     #[inline(always)]
@@ -10583,9 +10237,7 @@ pub struct VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT {
     pub filterMinmaxImageComponentMapping: VkBool32,
 }
 #[cfg(feature = "VK_EXT_sampler_filter_minmax")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES_EXT: VkStructureType = 1000130000;
-#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES_EXT: VkStructureType = 1000130000;#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT {
     #[inline(always)]
@@ -10680,9 +10332,7 @@ pub struct VkPhysicalDeviceFloatControlsPropertiesKHR {
     pub shaderRoundingModeRTZFloat64: VkBool32,
 }
 #[cfg(feature = "VK_KHR_shader_float_controls")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES_KHR: VkStructureType = 1000197000;
-#[cfg(feature = "VK_KHR_shader_float_controls")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES_KHR: VkStructureType = 1000197000;#[cfg(feature = "VK_KHR_shader_float_controls")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceFloatControlsPropertiesKHR {
     #[inline(always)]
@@ -10733,9 +10383,7 @@ pub struct VkRenderPassCreateInfo2KHR {
     pub pCorrelatedViewMasks: *const u32,
 }
 #[cfg(feature = "VK_KHR_create_renderpass2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2_KHR: VkStructureType = 1000109004;
-#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2_KHR: VkStructureType = 1000109004;#[cfg(feature = "VK_KHR_create_renderpass2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkRenderPassCreateInfo2KHR {
     #[inline(always)]
@@ -10776,9 +10424,7 @@ pub struct VkAttachmentDescription2KHR {
     pub finalLayout: VkImageLayout,
 }
 #[cfg(feature = "VK_KHR_create_renderpass2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2_KHR: VkStructureType = 1000109000;
-#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2_KHR: VkStructureType = 1000109000;#[cfg(feature = "VK_KHR_create_renderpass2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkAttachmentDescription2KHR {
     #[inline(always)]
@@ -10813,9 +10459,7 @@ pub struct VkAttachmentReference2KHR {
     pub aspectMask: VkImageAspectFlags,
 }
 #[cfg(feature = "VK_KHR_create_renderpass2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2_KHR: VkStructureType = 1000109001;
-#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2_KHR: VkStructureType = 1000109001;#[cfg(feature = "VK_KHR_create_renderpass2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkAttachmentReference2KHR {
     #[inline(always)]
@@ -10858,9 +10502,7 @@ pub struct VkSubpassDescription2KHR {
     pub pPreserveAttachments: *const u32,
 }
 #[cfg(feature = "VK_KHR_create_renderpass2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_2_KHR: VkStructureType = 1000109002;
-#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_2_KHR: VkStructureType = 1000109002;#[cfg(feature = "VK_KHR_create_renderpass2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkSubpassDescription2KHR {
     #[inline(always)]
@@ -10900,9 +10542,7 @@ pub struct VkSubpassDependency2KHR {
     pub viewOffset: i32,
 }
 #[cfg(feature = "VK_KHR_create_renderpass2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2_KHR: VkStructureType = 1000109003;
-#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2_KHR: VkStructureType = 1000109003;#[cfg(feature = "VK_KHR_create_renderpass2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkSubpassDependency2KHR {
     #[inline(always)]
@@ -10935,9 +10575,7 @@ pub struct VkSubpassBeginInfoKHR {
     pub contents: VkSubpassContents,
 }
 #[cfg(feature = "VK_KHR_create_renderpass2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO_KHR: VkStructureType = 1000109005;
-#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO_KHR: VkStructureType = 1000109005;#[cfg(feature = "VK_KHR_create_renderpass2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkSubpassBeginInfoKHR {
     #[inline(always)]
@@ -10969,9 +10607,7 @@ pub struct VkSubpassEndInfoKHR {
     pub pNext: *const core::ffi::c_void,
 }
 #[cfg(feature = "VK_KHR_create_renderpass2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SUBPASS_END_INFO_KHR: VkStructureType = 1000109006;
-#[cfg(feature = "VK_KHR_create_renderpass2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SUBPASS_END_INFO_KHR: VkStructureType = 1000109006;#[cfg(feature = "VK_KHR_create_renderpass2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkSubpassEndInfoKHR {
     #[inline(always)]
@@ -11055,9 +10691,7 @@ pub struct VkPhysicalDeviceDepthStencilResolvePropertiesKHR {
     pub independentREsolve: VkBool32,
 }
 #[cfg(feature = "VK_KHR_depth_stencil_resolve")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES_KHR: VkStructureType = 1000199000;
-#[cfg(feature = "VK_KHR_depth_stencil_resolve")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES_KHR: VkStructureType = 1000199000;#[cfg(feature = "VK_KHR_depth_stencil_resolve")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceDepthStencilResolvePropertiesKHR {
     #[inline(always)]
@@ -11088,9 +10722,7 @@ pub struct VkSubpassDescriptionDepthStencilResolveKHR {
     pub pDepthStencilResolveAttachment: *const VkAttachmentReference2KHR,
 }
 #[cfg(feature = "VK_KHR_depth_stencil_resolve")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE_KHR: VkStructureType = 1000199001;
-#[cfg(feature = "VK_KHR_depth_stencil_resolve")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE_KHR: VkStructureType = 1000199001;#[cfg(feature = "VK_KHR_depth_stencil_resolve")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkSubpassDescriptionDepthStencilResolveKHR {
     #[inline(always)]
@@ -11189,9 +10821,7 @@ pub struct VkDescriptorSetLayoutBindingFlagsCreateInfoEXT {
     pub pBindingFlags: *const VkDescriptorBindingFlagsEXT,
 }
 #[cfg(feature = "VK_EXT_descriptor_indexing")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT: VkStructureType = 1000161000;
-#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT: VkStructureType = 1000161000;#[cfg(feature = "VK_EXT_descriptor_indexing")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDescriptorSetLayoutBindingFlagsCreateInfoEXT {
     #[inline(always)]
@@ -11243,9 +10873,7 @@ pub struct VkPhysicalDeviceDescriptorIndexingFeaturesEXT {
     pub runtimeDescriptorArray: VkBool32,
 }
 #[cfg(feature = "VK_EXT_descriptor_indexing")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT: VkStructureType = 1000161001;
-#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT: VkStructureType = 1000161001;#[cfg(feature = "VK_EXT_descriptor_indexing")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceDescriptorIndexingFeaturesEXT {
     #[inline(always)]
@@ -11312,9 +10940,7 @@ pub struct VkPhysicalDeviceDescriptorIndexingPropertiesEXT {
     pub maxDescriptorSetUpdateAfterBindInputAttachments: u32,
 }
 #[cfg(feature = "VK_EXT_descriptor_indexing")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES_EXT: VkStructureType = 1000161002;
-#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES_EXT: VkStructureType = 1000161002;#[cfg(feature = "VK_EXT_descriptor_indexing")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceDescriptorIndexingPropertiesEXT {
     #[inline(always)]
@@ -11344,9 +10970,7 @@ pub struct VkDescriptorSetVariableDescriptorCountAllocateInfoEXT {
     pub pDescriptorCounts: *const u32,
 }
 #[cfg(feature = "VK_EXT_descriptor_indexing")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO_EXT: VkStructureType = 1000161003;
-#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO_EXT: VkStructureType = 1000161003;#[cfg(feature = "VK_EXT_descriptor_indexing")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDescriptorSetVariableDescriptorCountAllocateInfoEXT {
     #[inline(always)]
@@ -11379,9 +11003,7 @@ pub struct VkDescriptorSetVariableDescriptorCountLayoutSupportEXT {
     pub maxVariableDescriptorCount: u32,
 }
 #[cfg(feature = "VK_EXT_descriptor_indexing")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_LAYOUT_SUPPORT_EXT: VkStructureType = 1000161004;
-#[cfg(feature = "VK_EXT_descriptor_indexing")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_LAYOUT_SUPPORT_EXT: VkStructureType = 1000161004;#[cfg(feature = "VK_EXT_descriptor_indexing")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkDescriptorSetVariableDescriptorCountLayoutSupportEXT {
     #[inline(always)]
@@ -11421,9 +11043,7 @@ pub struct VkPhysicalDeviceMaintenance4FeaturesKHR {
     pub maintenance4: VkBool32,
 }
 #[cfg(feature = "VK_KHR_maintenance4")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES_KHR: VkStructureType = 1000413000;
-#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES_KHR: VkStructureType = 1000413000;#[cfg(feature = "VK_KHR_maintenance4")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceMaintenance4FeaturesKHR {
     #[inline(always)]
@@ -11468,9 +11088,7 @@ pub struct VkPhysicalDeviceMaintenance4PropertiesKHR {
     pub maxBufferSize: VkDeviceSize,
 }
 #[cfg(feature = "VK_KHR_maintenance4")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_PROPERTIES_KHR: VkStructureType = 1000413001;
-#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_PROPERTIES_KHR: VkStructureType = 1000413001;#[cfg(feature = "VK_KHR_maintenance4")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMaintenance4PropertiesKHR {
     #[inline(always)]
@@ -11499,9 +11117,7 @@ pub struct VkDeviceBufferMemoryRequirementsKHR {
     pub pCreateInfo: *const VkBufferCreateInfo,
 }
 #[cfg(feature = "VK_KHR_maintenance4")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEVICE_BUFFER_MEMORY_REQUIREMENTS_KHR: VkStructureType = 1000413002;
-#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEVICE_BUFFER_MEMORY_REQUIREMENTS_KHR: VkStructureType = 1000413002;#[cfg(feature = "VK_KHR_maintenance4")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDeviceBufferMemoryRequirementsKHR {
     #[inline(always)]
@@ -11535,9 +11151,7 @@ pub struct VkDeviceImageMemoryRequirementsKHR {
     pub planeAspect: VkImageAspectFlagBits,
 }
 #[cfg(feature = "VK_KHR_maintenance4")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEVICE_IMAGE_MEMORY_REQUIREMENTS_KHR: VkStructureType = 1000413003;
-#[cfg(feature = "VK_KHR_maintenance4")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEVICE_IMAGE_MEMORY_REQUIREMENTS_KHR: VkStructureType = 1000413003;#[cfg(feature = "VK_KHR_maintenance4")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDeviceImageMemoryRequirementsKHR {
     #[inline(always)]
@@ -11676,9 +11290,7 @@ pub struct VkFormatProperties3KHR {
     pub bufferFeatures: VkFormatFeatureFlags2KHR,
 }
 #[cfg(feature = "VK_KHR_format_feature_flags2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_3_KHR: VkStructureType = 1000360000;
-#[cfg(feature = "VK_KHR_format_feature_flags2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_3_KHR: VkStructureType = 1000360000;#[cfg(feature = "VK_KHR_format_feature_flags2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkFormatProperties3KHR {
     #[inline(always)]
@@ -11717,9 +11329,7 @@ pub struct VkCopyBufferInfo2KHR {
     pub pRegions: *const VkBufferCopy2KHR,
 }
 #[cfg(feature = "VK_KHR_copy_commands2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_COPY_BUFFER_INFO_2_KHR: VkStructureType = 1000337000;
-#[cfg(feature = "VK_KHR_copy_commands2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_COPY_BUFFER_INFO_2_KHR: VkStructureType = 1000337000;#[cfg(feature = "VK_KHR_copy_commands2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkCopyBufferInfo2KHR {
     #[inline(always)]
@@ -11757,9 +11367,7 @@ pub struct VkCopyImageInfo2KHR {
     pub pRegions: *const VkImageCopy2KHR,
 }
 #[cfg(feature = "VK_KHR_copy_commands2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_COPY_IMAGE_INFO_2_KHR: VkStructureType = 1000337001;
-#[cfg(feature = "VK_KHR_copy_commands2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_COPY_IMAGE_INFO_2_KHR: VkStructureType = 1000337001;#[cfg(feature = "VK_KHR_copy_commands2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkCopyImageInfo2KHR {
     #[inline(always)]
@@ -11796,9 +11404,7 @@ pub struct VkCopyBufferToImageInfo2KHR {
     pub pRegions: *const VkBufferImageCopy2KHR,
 }
 #[cfg(feature = "VK_KHR_copy_commands2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_COPY_BUFFER_TO_IMAGE_INFO_2_KHR: VkStructureType = 1000337002;
-#[cfg(feature = "VK_KHR_copy_commands2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_COPY_BUFFER_TO_IMAGE_INFO_2_KHR: VkStructureType = 1000337002;#[cfg(feature = "VK_KHR_copy_commands2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkCopyBufferToImageInfo2KHR {
     #[inline(always)]
@@ -11835,9 +11441,7 @@ pub struct VkCopyImageToBufferInfo2KHR {
     pub pRegions: *const VkBufferImageCopy2KHR,
 }
 #[cfg(feature = "VK_KHR_copy_commands2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_COPY_IMAGE_TO_BUFFER_INFO_2_KHR: VkStructureType = 1000337003;
-#[cfg(feature = "VK_KHR_copy_commands2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_COPY_IMAGE_TO_BUFFER_INFO_2_KHR: VkStructureType = 1000337003;#[cfg(feature = "VK_KHR_copy_commands2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkCopyImageToBufferInfo2KHR {
     #[inline(always)]
@@ -11876,9 +11480,7 @@ pub struct VkBlitImageInfo2KHR {
     pub filter: VkFilter,
 }
 #[cfg(feature = "VK_KHR_copy_commands2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_BLIT_IMAGE_INFO_2_KHR: VkStructureType = 1000337004;
-#[cfg(feature = "VK_KHR_copy_commands2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_BLIT_IMAGE_INFO_2_KHR: VkStructureType = 1000337004;#[cfg(feature = "VK_KHR_copy_commands2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkBlitImageInfo2KHR {
     #[inline(always)]
@@ -11916,9 +11518,7 @@ pub struct VkResolveImageInfo2KHR {
     pub pRegions: *const VkImageResolve2KHR,
 }
 #[cfg(feature = "VK_KHR_copy_commands2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_RESOLVE_IMAGE_INFO_2_KHR: VkStructureType = 1000337005;
-#[cfg(feature = "VK_KHR_copy_commands2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_RESOLVE_IMAGE_INFO_2_KHR: VkStructureType = 1000337005;#[cfg(feature = "VK_KHR_copy_commands2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkResolveImageInfo2KHR {
     #[inline(always)]
@@ -11953,9 +11553,7 @@ pub struct VkBufferCopy2KHR {
     pub size: VkDeviceSize,
 }
 #[cfg(feature = "VK_KHR_copy_commands2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_BUFFER_COPY_2_KHR: VkStructureType = 1000337006;
-#[cfg(feature = "VK_KHR_copy_commands2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_BUFFER_COPY_2_KHR: VkStructureType = 1000337006;#[cfg(feature = "VK_KHR_copy_commands2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkBufferCopy2KHR {
     #[inline(always)]
@@ -11992,9 +11590,7 @@ pub struct VkImageCopy2KHR {
     pub extent: VkExtent3D,
 }
 #[cfg(feature = "VK_KHR_copy_commands2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMAGE_COPY_2_KHR: VkStructureType = 1000337007;
-#[cfg(feature = "VK_KHR_copy_commands2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMAGE_COPY_2_KHR: VkStructureType = 1000337007;#[cfg(feature = "VK_KHR_copy_commands2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImageCopy2KHR {
     #[inline(always)]
@@ -12030,9 +11626,7 @@ pub struct VkImageBlit2KHR {
     pub dstOffset: [VkOffset3D; 2],
 }
 #[cfg(feature = "VK_KHR_copy_commands2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMAGE_BLIT_2_KHR: VkStructureType = 1000337008;
-#[cfg(feature = "VK_KHR_copy_commands2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMAGE_BLIT_2_KHR: VkStructureType = 1000337008;#[cfg(feature = "VK_KHR_copy_commands2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImageBlit2KHR {
     #[inline(always)]
@@ -12070,9 +11664,7 @@ pub struct VkBufferImageCopy2KHR {
     pub imageExtent: VkExtent3D,
 }
 #[cfg(feature = "VK_KHR_copy_commands2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_BUFFER_IMAGE_COPY_2_KHR: VkStructureType = 1000337009;
-#[cfg(feature = "VK_KHR_copy_commands2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_BUFFER_IMAGE_COPY_2_KHR: VkStructureType = 1000337009;#[cfg(feature = "VK_KHR_copy_commands2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkBufferImageCopy2KHR {
     #[inline(always)]
@@ -12109,9 +11701,7 @@ pub struct VkImageResolve2KHR {
     pub extent: VkExtent3D,
 }
 #[cfg(feature = "VK_KHR_copy_commands2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMAGE_RESOLVE_2_KHR: VkStructureType = 1000337010;
-#[cfg(feature = "VK_KHR_copy_commands2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMAGE_RESOLVE_2_KHR: VkStructureType = 1000337010;#[cfg(feature = "VK_KHR_copy_commands2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImageResolve2KHR {
     #[inline(always)]
@@ -12198,9 +11788,7 @@ pub struct VkRenderingInfoKHR {
     pub pStencilAttachment: *const VkRenderingAttachmentInfoKHR,
 }
 #[cfg(feature = "VK_KHR_dynamic_rendering")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_RENDERING_INFO_KHR: VkStructureType = 1000044000;
-#[cfg(feature = "VK_KHR_dynamic_rendering")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_RENDERING_INFO_KHR: VkStructureType = 1000044000;#[cfg(feature = "VK_KHR_dynamic_rendering")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkRenderingInfoKHR {
     #[inline(always)]
@@ -12240,9 +11828,7 @@ pub struct VkRenderingAttachmentInfoKHR {
     pub clearValue: VkClearValue,
 }
 #[cfg(feature = "VK_KHR_dynamic_rendering")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO_KHR: VkStructureType = 1000044001;
-#[cfg(feature = "VK_KHR_dynamic_rendering")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO_KHR: VkStructureType = 1000044001;#[cfg(feature = "VK_KHR_dynamic_rendering")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkRenderingAttachmentInfoKHR {
     #[inline(always)]
@@ -12279,9 +11865,7 @@ pub struct VkPipelineRenderingCreateInfoKHR {
     pub stencilAttachmentFormat: VkFormat,
 }
 #[cfg(feature = "VK_KHR_dynamic_rendering")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO_KHR: VkStructureType = 1000044002;
-#[cfg(feature = "VK_KHR_dynamic_rendering")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO_KHR: VkStructureType = 1000044002;#[cfg(feature = "VK_KHR_dynamic_rendering")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineRenderingCreateInfoKHR {
     #[inline(always)]
@@ -12314,9 +11898,7 @@ pub struct VkPhysicalDeviceDynamicRenderingFeaturesKHR {
     pub dynamicRendering: VkBool32,
 }
 #[cfg(feature = "VK_KHR_dynamic_rendering")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR: VkStructureType = 1000044003;
-#[cfg(feature = "VK_KHR_dynamic_rendering")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR: VkStructureType = 1000044003;#[cfg(feature = "VK_KHR_dynamic_rendering")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceDynamicRenderingFeaturesKHR {
     #[inline(always)]
@@ -12367,9 +11949,7 @@ pub struct VkCommandBufferInheritanceRenderingInfoKHR {
     pub rasterizationSamples: VkSampleCountFlagBits,
 }
 #[cfg(feature = "VK_KHR_dynamic_rendering")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_RENDERING_INFO_KHR: VkStructureType = 1000044004;
-#[cfg(feature = "VK_KHR_dynamic_rendering")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_RENDERING_INFO_KHR: VkStructureType = 1000044004;#[cfg(feature = "VK_KHR_dynamic_rendering")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkCommandBufferInheritanceRenderingInfoKHR {
     #[inline(always)]
@@ -12521,9 +12101,7 @@ pub struct VkPhysicalDeviceMaintenance5FeaturesKHR {
     pub maintenance5: VkBool32,
 }
 #[cfg(feature = "VK_KHR_maintenance5")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_FEATURES_KHR: VkStructureType = 1000470000;
-#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_FEATURES_KHR: VkStructureType = 1000470000;#[cfg(feature = "VK_KHR_maintenance5")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceMaintenance5FeaturesKHR {
     #[inline(always)]
@@ -12573,9 +12151,7 @@ pub struct VkPhysicalDeviceMaintenance5PropertiesKHR {
     pub nonStrictWideLinesUseParallelogram: VkBool32,
 }
 #[cfg(feature = "VK_KHR_maintenance5")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_PROPERTIES_KHR: VkStructureType = 1000470001;
-#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_PROPERTIES_KHR: VkStructureType = 1000470001;#[cfg(feature = "VK_KHR_maintenance5")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMaintenance5PropertiesKHR {
     #[inline(always)]
@@ -12608,9 +12184,7 @@ pub struct VkRenderingAreaInfoKHR {
     pub stencilAttachmentFormat: VkFormat,
 }
 #[cfg(feature = "VK_KHR_maintenance5")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_RENDERING_AREA_INFO_KHR: VkStructureType = 1000470003;
-#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_RENDERING_AREA_INFO_KHR: VkStructureType = 1000470003;#[cfg(feature = "VK_KHR_maintenance5")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkRenderingAreaInfoKHR {
     #[inline(always)]
@@ -12643,9 +12217,7 @@ pub struct VkImageSubresource2KHR {
     pub imageSubresource: VkImageSubresource,
 }
 #[cfg(feature = "VK_KHR_maintenance5")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_KHR: VkStructureType = 1000338003;
-#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_KHR: VkStructureType = 1000338003;#[cfg(feature = "VK_KHR_maintenance5")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImageSubresource2KHR {
     #[inline(always)]
@@ -12679,9 +12251,7 @@ pub struct VkDeviceImageSubresourceInfoKHR {
     pub pSubresource: *const VkImageSubresource2KHR,
 }
 #[cfg(feature = "VK_KHR_maintenance5")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEVICE_IMAGE_SUBRESOURCE_INFO_KHR: VkStructureType = 1000470004;
-#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEVICE_IMAGE_SUBRESOURCE_INFO_KHR: VkStructureType = 1000470004;#[cfg(feature = "VK_KHR_maintenance5")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDeviceImageSubresourceInfoKHR {
     #[inline(always)]
@@ -12714,9 +12284,7 @@ pub struct VkSubresourceLayout2KHR {
     pub subresourceLayout: VkSubresourceLayout,
 }
 #[cfg(feature = "VK_KHR_maintenance5")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2_KHR: VkStructureType = 1000338002;
-#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2_KHR: VkStructureType = 1000338002;#[cfg(feature = "VK_KHR_maintenance5")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkSubresourceLayout2KHR {
     #[inline(always)]
@@ -12745,9 +12313,7 @@ pub struct VkPipelineCreateFlags2CreateInfoKHR {
     pub flags: VkPipelineCreateFlags2KHR,
 }
 #[cfg(feature = "VK_KHR_maintenance5")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_CREATE_FLAGS_2_CREATE_INFO_KHR: VkStructureType = 1000470005;
-#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_CREATE_FLAGS_2_CREATE_INFO_KHR: VkStructureType = 1000470005;#[cfg(feature = "VK_KHR_maintenance5")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineCreateFlags2CreateInfoKHR {
     #[inline(always)]
@@ -12780,9 +12346,7 @@ pub struct VkBufferUsageFlags2CreateInfoKHR {
     pub usage: VkBufferUsageFlags2KHR,
 }
 #[cfg(feature = "VK_KHR_maintenance5")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_BUFFER_USAGE_FLAGS_2_CREATE_INFO_KHR: VkStructureType = 1000470006;
-#[cfg(feature = "VK_KHR_maintenance5")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_BUFFER_USAGE_FLAGS_2_CREATE_INFO_KHR: VkStructureType = 1000470006;#[cfg(feature = "VK_KHR_maintenance5")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkBufferUsageFlags2CreateInfoKHR {
     #[inline(always)]
@@ -12826,9 +12390,7 @@ pub struct VkPhysicalDeviceMaintenance6FeaturesKHR {
     pub maintenance6: VkBool32,
 }
 #[cfg(feature = "VK_KHR_maintenance6")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_FEATURES_KHR: VkStructureType = 1000545000;
-#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_FEATURES_KHR: VkStructureType = 1000545000;#[cfg(feature = "VK_KHR_maintenance6")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceMaintenance6FeaturesKHR {
     #[inline(always)]
@@ -12875,9 +12437,7 @@ pub struct VkPhysicalDeviceMaintenance6PropertiesKHR {
     pub fragmentShadingRateClampCombinerInputs: VkBool32,
 }
 #[cfg(feature = "VK_KHR_maintenance6")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_PROPERTIES_KHR: VkStructureType = 1000545001;
-#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_PROPERTIES_KHR: VkStructureType = 1000545001;#[cfg(feature = "VK_KHR_maintenance6")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMaintenance6PropertiesKHR {
     #[inline(always)]
@@ -12906,9 +12466,7 @@ pub struct VkBindMemoryStatusKHR {
     pub pResult: *mut VkResult,
 }
 #[cfg(feature = "VK_KHR_maintenance6")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_BIND_MEMORY_STATUS_KHR: VkStructureType = 1000545002;
-#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_BIND_MEMORY_STATUS_KHR: VkStructureType = 1000545002;#[cfg(feature = "VK_KHR_maintenance6")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkBindMemoryStatusKHR {
     #[inline(always)]
@@ -12947,9 +12505,7 @@ pub struct VkBindDescriptorSetsInfoKHR {
     pub pDynamicOffsets: *const u32,
 }
 #[cfg(feature = "VK_KHR_maintenance6")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_SETS_INFO_KHR: VkStructureType = 1000545003;
-#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_SETS_INFO_KHR: VkStructureType = 1000545003;#[cfg(feature = "VK_KHR_maintenance6")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkBindDescriptorSetsInfoKHR {
     #[inline(always)]
@@ -12986,9 +12542,7 @@ pub struct VkPushConstantsInfoKHR {
     pub pValues: *const core::ffi::c_void,
 }
 #[cfg(feature = "VK_KHR_maintenance6")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PUSH_CONSTANTS_INFO_KHR: VkStructureType = 1000545004;
-#[cfg(feature = "VK_KHR_maintenance6")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PUSH_CONSTANTS_INFO_KHR: VkStructureType = 1000545004;#[cfg(feature = "VK_KHR_maintenance6")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPushConstantsInfoKHR {
     #[inline(always)]
@@ -13025,9 +12579,7 @@ pub struct VkPushDescriptorSetInfoKHR {
     pub pDescriptorWrites: *const VkWriteDescriptorSet,
 }
 #[cfg(all(feature = "VK_KHR_maintenance6", feature = "VK_KHR_push_descriptor"))]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_INFO_KHR: VkStructureType = 1000545005;
-#[cfg(all(feature = "VK_KHR_maintenance6", feature = "VK_KHR_push_descriptor"))]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_INFO_KHR: VkStructureType = 1000545005;#[cfg(all(feature = "VK_KHR_maintenance6", feature = "VK_KHR_push_descriptor"))]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPushDescriptorSetInfoKHR {
     #[inline(always)]
@@ -13063,9 +12615,7 @@ pub struct VkPushDescriptorSetWithTemplateInfoKHR {
     pub pData: *const core::ffi::c_void,
 }
 #[cfg(all(feature = "VK_KHR_maintenance6", feature = "VK_KHR_push_descriptor"))]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_WITH_TEMPLATE_INFO_KHR: VkStructureType = 1000545006;
-#[cfg(all(feature = "VK_KHR_maintenance6", feature = "VK_KHR_push_descriptor"))]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_WITH_TEMPLATE_INFO_KHR: VkStructureType = 1000545006;#[cfg(all(feature = "VK_KHR_maintenance6", feature = "VK_KHR_push_descriptor"))]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPushDescriptorSetWithTemplateInfoKHR {
     #[inline(always)]
@@ -13110,9 +12660,7 @@ pub struct VkPhysicalDeviceVertexAttributeDivisorPropertiesKHR {
     pub supportsNonZeroFirstInstance: VkBool32,
 }
 #[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_KHR: VkStructureType = 1000190000;
-#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_KHR: VkStructureType = 1000190000;#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceVertexAttributeDivisorPropertiesKHR {
     #[inline(always)]
@@ -13154,9 +12702,7 @@ pub struct VkPipelineVertexInputDivisorStateCreateInfoKHR {
     pub pVertexBindingDivisors: *const VkVertexInputBindingDivisorDescriptionKHR,
 }
 #[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_KHR: VkStructureType = 1000190001;
-#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_KHR: VkStructureType = 1000190001;#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineVertexInputDivisorStateCreateInfoKHR {
     #[inline(always)]
@@ -13190,9 +12736,7 @@ pub struct VkPhysicalDeviceVertexAttributeDivisorFeaturesKHR {
     pub vertexAttributeInstanceRateZeroDivisor: VkBool32,
 }
 #[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_KHR: VkStructureType = 1000190002;
-#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_KHR: VkStructureType = 1000190002;#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceVertexAttributeDivisorFeaturesKHR {
     #[inline(always)]
@@ -13286,9 +12830,7 @@ pub struct VkDeviceQueueGlobalPriorityCreateInfoKHR {
     pub globalPriority: VkQueueGlobalPriorityKHR,
 }
 #[cfg(feature = "VK_KHR_global_priority")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_KHR: VkStructureType = 1000174000;
-#[cfg(feature = "VK_KHR_global_priority")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_KHR: VkStructureType = 1000174000;#[cfg(feature = "VK_KHR_global_priority")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDeviceQueueGlobalPriorityCreateInfoKHR {
     #[inline(always)]
@@ -13321,9 +12863,7 @@ pub struct VkPhysicalDeviceGlobalPriorityQueryFeaturesKHR {
     pub globalPriorityQuery: VkBool32,
 }
 #[cfg(feature = "VK_KHR_global_priority")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GLOBAL_PRIORITY_QUERY_FEATURES_KHR: VkStructureType = 1000388000;
-#[cfg(feature = "VK_KHR_global_priority")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GLOBAL_PRIORITY_QUERY_FEATURES_KHR: VkStructureType = 1000388000;#[cfg(feature = "VK_KHR_global_priority")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceGlobalPriorityQueryFeaturesKHR {
     #[inline(always)]
@@ -13369,9 +12909,7 @@ pub struct VkQueueFamilyGlobalPriorityPropertiesKHR {
     pub priorities: [VkQueueGlobalPriorityKHR; VK_MAX_GLOBAL_PRIORITY_SIZE_KHR],
 }
 #[cfg(feature = "VK_KHR_global_priority")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_QUEUE_FAMILY_GLOBAL_PRIORITY_PROPERTIES_KHR: VkStructureType = 1000388001;
-#[cfg(feature = "VK_KHR_global_priority")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_QUEUE_FAMILY_GLOBAL_PRIORITY_PROPERTIES_KHR: VkStructureType = 1000388001;#[cfg(feature = "VK_KHR_global_priority")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkQueueFamilyGlobalPriorityPropertiesKHR {
     #[inline(always)]
@@ -13430,9 +12968,7 @@ pub struct VkPhysicalDeviceShaderExpectAssumeFeaturesKHR {
     pub shaderExpectAssume: VkBool32,
 }
 #[cfg(feature = "VK_KHR_shader_expect_assume")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_EXPECT_ASSUME_FEATURES_KHR: VkStructureType = 1000544000;
-#[cfg(feature = "VK_KHR_shader_expect_assume")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_EXPECT_ASSUME_FEATURES_KHR: VkStructureType = 1000544000;#[cfg(feature = "VK_KHR_shader_expect_assume")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceShaderExpectAssumeFeaturesKHR {
     #[inline(always)]
@@ -13484,9 +13020,7 @@ pub struct VkPhysicalDeviceShaderFloatControls2FeaturesKHR {
     pub shaderFloatControls2: VkBool32,
 }
 #[cfg(feature = "VK_KHR_shader_float_controls2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT_CONTROLS_2_FEATURES_KHR: VkStructureType = 1000528000;
-#[cfg(feature = "VK_KHR_shader_float_controls2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT_CONTROLS_2_FEATURES_KHR: VkStructureType = 1000528000;#[cfg(feature = "VK_KHR_shader_float_controls2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceShaderFloatControls2FeaturesKHR {
     #[inline(always)]
@@ -13545,9 +13079,7 @@ pub struct VkPhysicalDevicePushDescriptorPropertiesKHR {
     pub maxPushDescriptors: u32,
 }
 #[cfg(feature = "VK_KHR_push_descriptor")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES_KHR: VkStructureType = 1000080000;
-#[cfg(feature = "VK_KHR_push_descriptor")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES_KHR: VkStructureType = 1000080000;#[cfg(feature = "VK_KHR_push_descriptor")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDevicePushDescriptorPropertiesKHR {
     #[inline(always)]
@@ -13601,9 +13133,7 @@ pub struct VkPhysicalDeviceDynamicRenderingLocalReadFeaturesKHR {
     pub dynamicRenderingLocalRead: VkBool32,
 }
 #[cfg(feature = "VK_KHR_dynamic_rendering_local_read")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_LOCAL_READ_FEATURES_KHR: VkStructureType = 1000232000;
-#[cfg(feature = "VK_KHR_dynamic_rendering_local_read")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_LOCAL_READ_FEATURES_KHR: VkStructureType = 1000232000;#[cfg(feature = "VK_KHR_dynamic_rendering_local_read")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceDynamicRenderingLocalReadFeaturesKHR {
     #[inline(always)]
@@ -13637,9 +13167,7 @@ pub struct VkRenderingAttachmentLocationInfoKHR {
     pub pColorAttachmentLocations: *const u32,
 }
 #[cfg(feature = "VK_KHR_dynamic_rendering_local_read")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_LOCATION_INFO_KHR: VkStructureType = 1000232001;
-#[cfg(feature = "VK_KHR_dynamic_rendering_local_read")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_LOCATION_INFO_KHR: VkStructureType = 1000232001;#[cfg(feature = "VK_KHR_dynamic_rendering_local_read")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkRenderingAttachmentLocationInfoKHR {
     #[inline(always)]
@@ -13675,9 +13203,7 @@ pub struct VkRenderingInputAttachmentIndexInfoKHR {
     pub pStencilInputAttachmentIndex: *const u32,
 }
 #[cfg(feature = "VK_KHR_dynamic_rendering_local_read")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_RENDERING_INPUT_ATTACHMENT_INDEX_INFO_KHR: VkStructureType = 1000232002;
-#[cfg(feature = "VK_KHR_dynamic_rendering_local_read")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_RENDERING_INPUT_ATTACHMENT_INDEX_INFO_KHR: VkStructureType = 1000232002;#[cfg(feature = "VK_KHR_dynamic_rendering_local_read")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkRenderingInputAttachmentIndexInfoKHR {
     #[inline(always)]
@@ -13726,9 +13252,7 @@ pub struct VkPhysicalDeviceIndexTypeUint8FeaturesKHR {
     pub indexTypeUint8: VkBool32,
 }
 #[cfg(feature = "VK_KHR_index_type_uint8")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES_KHR: VkStructureType = 1000265000;
-#[cfg(feature = "VK_KHR_index_type_uint8")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES_KHR: VkStructureType = 1000265000;#[cfg(feature = "VK_KHR_index_type_uint8")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceIndexTypeUint8FeaturesKHR {
     #[inline(always)]
@@ -13820,9 +13344,7 @@ pub struct VkPhysicalDeviceLineRasterizationFeaturesKHR {
     pub stippledSmoothLines: VkBool32,
 }
 #[cfg(feature = "VK_KHR_line_rasterization")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_KHR: VkStructureType = 1000534000;
-#[cfg(feature = "VK_KHR_line_rasterization")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_KHR: VkStructureType = 1000534000;#[cfg(feature = "VK_KHR_line_rasterization")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceLineRasterizationFeaturesKHR {
     #[inline(always)]
@@ -13867,9 +13389,7 @@ pub struct VkPhysicalDeviceLineRasterizationPropertiesKHR {
     pub lineSubPixelPrecisionBits: u32,
 }
 #[cfg(feature = "VK_KHR_line_rasterization")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_KHR: VkStructureType = 1000534002;
-#[cfg(feature = "VK_KHR_line_rasterization")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_KHR: VkStructureType = 1000534002;#[cfg(feature = "VK_KHR_line_rasterization")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceLineRasterizationPropertiesKHR {
     #[inline(always)]
@@ -13901,9 +13421,7 @@ pub struct VkPipelineRasterizationLineStateCreateInfoKHR {
     pub lineStipplePattern: u16,
 }
 #[cfg(feature = "VK_KHR_line_rasterization")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_KHR: VkStructureType = 1000534001;
-#[cfg(feature = "VK_KHR_line_rasterization")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_KHR: VkStructureType = 1000534001;#[cfg(feature = "VK_KHR_line_rasterization")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineRasterizationLineStateCreateInfoKHR {
     #[inline(always)]
@@ -13964,9 +13482,7 @@ pub struct VkMemoryMapInfoKHR {
     pub memory: VkDeviceMemory,
 }
 #[cfg(feature = "VK_KHR_map_memory2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_MEMORY_MAP_INFO_KHR: VkStructureType = 1000271000;
-#[cfg(feature = "VK_KHR_map_memory2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_MEMORY_MAP_INFO_KHR: VkStructureType = 1000271000;#[cfg(feature = "VK_KHR_map_memory2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkMemoryMapInfoKHR {
     #[inline(always)]
@@ -14000,9 +13516,7 @@ pub struct VkMemoryUnmapInfoKHR {
     pub memory: VkDeviceMemory,
 }
 #[cfg(feature = "VK_KHR_map_memory2")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_MEMORY_UNMAP_INFO_KHR: VkStructureType = 1000271001;
-#[cfg(feature = "VK_KHR_map_memory2")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_MEMORY_UNMAP_INFO_KHR: VkStructureType = 1000271001;#[cfg(feature = "VK_KHR_map_memory2")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkMemoryUnmapInfoKHR {
     #[inline(always)]
@@ -14058,9 +13572,7 @@ pub struct VkPhysicalDeviceShaderSubgroupRotateFeaturesKHR {
     pub shaderSubgroupRotateClustered: VkBool32,
 }
 #[cfg(feature = "VK_KHR_shader_subgroup_rotate")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_ROTATE_FEATURES_KHR: VkStructureType = 1000416000;
-#[cfg(feature = "VK_KHR_shader_subgroup_rotate")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_ROTATE_FEATURES_KHR: VkStructureType = 1000416000;#[cfg(feature = "VK_KHR_shader_subgroup_rotate")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceShaderSubgroupRotateFeaturesKHR {
     #[inline(always)]
@@ -14145,9 +13657,7 @@ pub struct VkPhysicalDeviceHostImageCopyFeaturesEXT {
     pub hostImageCopy: VkBool32,
 }
 #[cfg(feature = "VK_EXT_host_image_copy")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_FEATURES_EXT: VkStructureType = 1000270000;
-#[cfg(feature = "VK_EXT_host_image_copy")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_FEATURES_EXT: VkStructureType = 1000270000;#[cfg(feature = "VK_EXT_host_image_copy")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceHostImageCopyFeaturesEXT {
     #[inline(always)]
@@ -14197,9 +13707,7 @@ pub struct VkPhysicalDeviceHostImageCopyProperitesEXT {
     pub identicalMemoryTypeRequirements: VkBool32,
 }
 #[cfg(feature = "VK_EXT_host_image_copy")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_PROPERTIES_EXT: VkStructureType = 1000270001;
-#[cfg(feature = "VK_EXT_host_image_copy")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_PROPERTIES_EXT: VkStructureType = 1000270001;#[cfg(feature = "VK_EXT_host_image_copy")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceHostImageCopyProperitesEXT {
     #[inline(always)]
@@ -14233,9 +13741,7 @@ pub struct VkMemoryToImageCopyEXT {
     pub imageExtent: VkExtent3D,
 }
 #[cfg(feature = "VK_EXT_host_image_copy")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_MEMORY_TO_IMAGE_COPY_EXT: VkStructureType = 1000270002;
-#[cfg(feature = "VK_EXT_host_image_copy")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_MEMORY_TO_IMAGE_COPY_EXT: VkStructureType = 1000270002;#[cfg(feature = "VK_EXT_host_image_copy")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkMemoryToImageCopyEXT {
     #[inline(always)]
@@ -14273,9 +13779,7 @@ pub struct VkImageToMemoryCopyEXT {
     pub imageExtent: VkExtent3D,
 }
 #[cfg(feature = "VK_EXT_host_image_copy")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMAGE_TO_MEMORY_COPY_EXT: VkStructureType = 1000270003;
-#[cfg(feature = "VK_EXT_host_image_copy")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMAGE_TO_MEMORY_COPY_EXT: VkStructureType = 1000270003;#[cfg(feature = "VK_EXT_host_image_copy")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImageToMemoryCopyEXT {
     #[inline(always)]
@@ -14312,9 +13816,7 @@ pub struct VkCopyMemoryToImageInfoEXT {
     pub pRegions: *const VkMemoryToImageCopyEXT,
 }
 #[cfg(feature = "VK_EXT_host_image_copy")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_COPY_MEMORY_TO_IMAGE_INFO_EXT: VkStructureType = 1000270005;
-#[cfg(feature = "VK_EXT_host_image_copy")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_COPY_MEMORY_TO_IMAGE_INFO_EXT: VkStructureType = 1000270005;#[cfg(feature = "VK_EXT_host_image_copy")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkCopyMemoryToImageInfoEXT {
     #[inline(always)]
@@ -14351,9 +13853,7 @@ pub struct VkCopyImageToMemoryInfoEXT {
     pub pRegions: *const VkImageToMemoryCopyEXT,
 }
 #[cfg(feature = "VK_EXT_host_image_copy")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_COPY_IMAGE_TO_MEMORY_INFO_EXT: VkStructureType = 1000270004;
-#[cfg(feature = "VK_EXT_host_image_copy")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_COPY_IMAGE_TO_MEMORY_INFO_EXT: VkStructureType = 1000270004;#[cfg(feature = "VK_EXT_host_image_copy")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkCopyImageToMemoryInfoEXT {
     #[inline(always)]
@@ -14392,9 +13892,7 @@ pub struct VkCopyImageToImageInfoEXT {
     pub pRegions: *const VkImageCopy2KHR,
 }
 #[cfg(feature = "VK_EXT_host_image_copy")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_COPY_IMAGE_TO_IMAGE_INFO_EXT: VkStructureType = 1000270007;
-#[cfg(feature = "VK_EXT_host_image_copy")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_COPY_IMAGE_TO_IMAGE_INFO_EXT: VkStructureType = 1000270007;#[cfg(feature = "VK_EXT_host_image_copy")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkCopyImageToImageInfoEXT {
     #[inline(always)]
@@ -14430,9 +13928,7 @@ pub struct VkHostImageLayoutTransitionInfoEXT {
     pub subresourceRange: VkImageSubresourceRange,
 }
 #[cfg(feature = "VK_EXT_host_image_copy")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_HOST_IMAGE_LAYOUT_TRANSITION_EXT: VkStructureType = 1000270006;
-#[cfg(feature = "VK_EXT_host_image_copy")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_HOST_IMAGE_LAYOUT_TRANSITION_EXT: VkStructureType = 1000270006;#[cfg(feature = "VK_EXT_host_image_copy")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkHostImageLayoutTransitionInfoEXT {
     #[inline(always)]
@@ -14465,9 +13961,7 @@ pub struct VkSubresourceHostMemcpySizeEXT {
     pub size: VkDeviceSize,
 }
 #[cfg(feature = "VK_EXT_host_image_copy")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SUBRESOURCE_HOST_MEMCPY_SIZE_EXT: VkStructureType = 1000270008;
-#[cfg(feature = "VK_EXT_host_image_copy")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SUBRESOURCE_HOST_MEMCPY_SIZE_EXT: VkStructureType = 1000270008;#[cfg(feature = "VK_EXT_host_image_copy")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkSubresourceHostMemcpySizeEXT {
     #[inline(always)]
@@ -14497,9 +13991,7 @@ pub struct VkHostImageCopyDevicePerformanceQueryEXT {
     pub identicalMemoryLayout: VkBool32,
 }
 #[cfg(feature = "VK_EXT_host_image_copy")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_HOST_IMAGE_COPY_DEVICE_PERFORMANCE_QUERY_EXT: VkStructureType = 1000270009;
-#[cfg(feature = "VK_EXT_host_image_copy")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_HOST_IMAGE_COPY_DEVICE_PERFORMANCE_QUERY_EXT: VkStructureType = 1000270009;#[cfg(feature = "VK_EXT_host_image_copy")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkHostImageCopyDevicePerformanceQueryEXT {
     #[inline(always)]
@@ -14528,9 +14020,7 @@ pub struct VkSubresourceLayout2EXT {
     pub subresourceLayout: VkSubresourceLayout,
 }
 #[cfg(feature = "VK_EXT_host_image_copy")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SURESOURCE_LAYOUT_2_EXT: VkStructureType = 1000338002;
-#[cfg(feature = "VK_EXT_host_image_copy")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SURESOURCE_LAYOUT_2_EXT: VkStructureType = 1000338002;#[cfg(feature = "VK_EXT_host_image_copy")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkSubresourceLayout2EXT {
     #[inline(always)]
@@ -14575,9 +14065,7 @@ pub struct VkImageSubresource2EXT {
     pub imageSubresource: VkImageSubresource,
 }
 #[cfg(feature = "VK_EXT_host_image_copy")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_EXT: VkStructureType = 1000338003;
-#[cfg(feature = "VK_EXT_host_image_copy")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_EXT: VkStructureType = 1000338003;#[cfg(feature = "VK_EXT_host_image_copy")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImageSubresource2EXT {
     #[inline(always)]
@@ -14647,9 +14135,7 @@ pub struct VkPhysicalDevicePipelineProtectedAccessFeaturesEXT {
     pub pipelineProtectedAccess: VkBool32,
 }
 #[cfg(feature = "VK_EXT_pipeline_protected_access")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_PROTECTED_ACCESS_FEATURES_EXT: VkStructureType = 1000466000;
-#[cfg(feature = "VK_EXT_pipeline_protected_access")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_PROTECTED_ACCESS_FEATURES_EXT: VkStructureType = 1000466000;#[cfg(feature = "VK_EXT_pipeline_protected_access")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDevicePipelineProtectedAccessFeaturesEXT {
     #[inline(always)]
@@ -14779,9 +14265,7 @@ pub struct VkPhysicalDevicePipelineRobustnessFeaturesEXT {
     pub pipelineRobustness: VkBool32,
 }
 #[cfg(feature = "VK_EXT_pipeline_robustness")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_ROBUSTNESS_FEATURES_EXT: VkStructureType = 1000068001;
-#[cfg(feature = "VK_EXT_pipeline_robustness")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_ROBUSTNESS_FEATURES_EXT: VkStructureType = 1000068001;#[cfg(feature = "VK_EXT_pipeline_robustness")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDevicePipelineRobustnessFeaturesEXT {
     #[inline(always)]
@@ -14829,9 +14313,7 @@ pub struct VkPhysicalDevicePipelineRobustnessPropertiesEXT {
     pub defaultRobustnessImage: VkPipelineRobustnessImageBehaviorEXT,
 }
 #[cfg(feature = "VK_EXT_pipeline_robustness")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_ROBUSTNESS_PROPERTIES_EXT: VkStructureType = 1000068002;
-#[cfg(feature = "VK_EXT_pipeline_robustness")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_ROBUSTNESS_PROPERTIES_EXT: VkStructureType = 1000068002;#[cfg(feature = "VK_EXT_pipeline_robustness")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDevicePipelineRobustnessPropertiesEXT {
     #[inline(always)]
@@ -14863,9 +14345,7 @@ pub struct VkPipelineRobustnessCreateInfoEXT {
     pub images: VkPipelineRobustnessImageBehaviorEXT,
 }
 #[cfg(feature = "VK_EXT_pipeline_robustness")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_ROBUSTNESS_CREATE_INFO_EXT: VkStructureType = 1000068000;
-#[cfg(feature = "VK_EXT_pipeline_robustness")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_ROBUSTNESS_CREATE_INFO_EXT: VkStructureType = 1000068000;#[cfg(feature = "VK_EXT_pipeline_robustness")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineRobustnessCreateInfoEXT {
     #[inline(always)]
@@ -15057,9 +14537,7 @@ pub struct VkPhysicalDeviceBlendOperationAdvanccedFeaturesEXT {
     pub advancedBlendCoherentOperations: VkBool32,
 }
 #[cfg(feature = "VK_EXT_blend_operation_advanced")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT: VkStructureType = 1000148000;
-#[cfg(feature = "VK_EXT_blend_operation_advanced")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT: VkStructureType = 1000148000;#[cfg(feature = "VK_EXT_blend_operation_advanced")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceBlendOperationAdvanccedFeaturesEXT {
     #[inline(always)]
@@ -15103,9 +14581,7 @@ pub struct VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT {
     pub advancedBlendAllOperations: VkBool32,
 }
 #[cfg(feature = "VK_EXT_blend_operation_advanced")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_EXT: VkStructureType = 1000148001;
-#[cfg(feature = "VK_EXT_blend_operation_advanced")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_EXT: VkStructureType = 1000148001;#[cfg(feature = "VK_EXT_blend_operation_advanced")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT {
     #[inline(always)]
@@ -15130,9 +14606,7 @@ pub struct VkPipelineColorBlendAdvancedStateCreateInfoEXT {
     pub blendOverlap: VkBlendOverlapEXT,
 }
 #[cfg(feature = "VK_EXT_blend_operation_advanced")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_ADVANCED_STATE_CREATE_INFO_EXT: VkStructureType = 1000148002;
-#[cfg(feature = "VK_EXT_blend_operation_advanced")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_ADVANCED_STATE_CREATE_INFO_EXT: VkStructureType = 1000148002;#[cfg(feature = "VK_EXT_blend_operation_advanced")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineColorBlendAdvancedStateCreateInfoEXT {
     #[inline(always)]
@@ -15201,9 +14675,7 @@ pub struct VkValidationCacheCreateInfoEXT {
     pub pInitialData: *const core::ffi::c_void,
 }
 #[cfg(feature = "VK_EXT_validation_cache")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_VALIDATION_CACHE_CREATE_INFO_EXT: VkStructureType = 1000160000;
-#[cfg(feature = "VK_EXT_validation_cache")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_VALIDATION_CACHE_CREATE_INFO_EXT: VkStructureType = 1000160000;#[cfg(feature = "VK_EXT_validation_cache")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkValidationCacheCreateInfoEXT {
     #[inline(always)]
@@ -15230,9 +14702,7 @@ pub struct VkShaderModuleValidationcacheCreateInfoEXT {
     pub validationCache: VkValidationCacheEXT,
 }
 #[cfg(feature = "VK_EXT_validation_cache")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SHADER_MODULE_VALIDATION_CACHE_CREATE_INFO_EXT: VkStructureType = 1000160001;
-#[cfg(feature = "VK_EXT_validation_cache")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SHADER_MODULE_VALIDATION_CACHE_CREATE_INFO_EXT: VkStructureType = 1000160001;#[cfg(feature = "VK_EXT_validation_cache")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkShaderModuleValidationcacheCreateInfoEXT {
     #[inline(always)]
@@ -15281,9 +14751,7 @@ pub struct VkValidationFlagsEXT {
     pub pDisabledValidationChecks: *mut VkValidationCheckEXT,
 }
 #[cfg(feature = "VK_EXT_validation_flags")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_VALIDATION_FLAGS_EXT: VkStructureType = 1000061000;
-#[cfg(feature = "VK_EXT_validation_flags")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_VALIDATION_FLAGS_EXT: VkStructureType = 1000061000;#[cfg(feature = "VK_EXT_validation_flags")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkValidationFlagsEXT {
     #[inline(always)]
@@ -15393,9 +14861,7 @@ pub struct VkLayerSettingsCreateInfoEXT {
     pub pSettings: *const VkLayerSettingEXT,
 }
 #[cfg(feature = "VK_EXT_layer_settings")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_LAYER_SETTINGS_CREATE_INFO_EXT: VkStructureType = 1000496000;
-#[cfg(feature = "VK_EXT_layer_settings")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_LAYER_SETTINGS_CREATE_INFO_EXT: VkStructureType = 1000496000;#[cfg(feature = "VK_EXT_layer_settings")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkLayerSettingsCreateInfoEXT {
     #[inline(always)]
@@ -15461,9 +14927,7 @@ pub struct VkPhysicalDeviceDescriptorBufferPropertiesEXT {
     pub descriptorBufferAddressSpaceSize: VkDeviceSize,
 }
 #[cfg(feature = "VK_EXT_descriptor_buffer")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_PROPERTIES_EXT: VkStructureType = 1000316000;
-#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_PROPERTIES_EXT: VkStructureType = 1000316000;#[cfg(feature = "VK_EXT_descriptor_buffer")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceDescriptorBufferPropertiesEXT {
     #[inline(always)]
@@ -15486,9 +14950,7 @@ pub struct VkPhysicalDeviceDescriptorBuferDensityMapPropertiesEXT {
     pub combinedImageSamplerDensityMapDescriptorSize: usize,
 }
 #[cfg(feature = "VK_EXT_descriptor_buffer")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_DENSITY_MAP_PROPERTIES_EXT: VkStructureType = 1000316001;
-#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_DENSITY_MAP_PROPERTIES_EXT: VkStructureType = 1000316001;#[cfg(feature = "VK_EXT_descriptor_buffer")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceDescriptorBuferDensityMapPropertiesEXT {
     #[inline(always)]
@@ -15514,9 +14976,7 @@ pub struct VkPhysicalDeviceDescriptorBufferFeaturesEXT {
     pub descriptorBufferPushDescriptors: VkBool32,
 }
 #[cfg(feature = "VK_EXT_descriptor_buffer")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_FEATURES_EXT: VkStructureType = 1000316002;
-#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_FEATURES_EXT: VkStructureType = 1000316002;#[cfg(feature = "VK_EXT_descriptor_buffer")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceDescriptorBufferFeaturesEXT {
     #[inline(always)]
@@ -15557,9 +15017,7 @@ pub struct VkDescriptorAddressInfoEXT {
     pub format: VkFormat,
 }
 #[cfg(feature = "VK_EXT_descriptor_buffer")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DESCRIPTOR_ADDRESS_INFO_EXT: VkStructureType = 1000316003;
-#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DESCRIPTOR_ADDRESS_INFO_EXT: VkStructureType = 1000316003;#[cfg(feature = "VK_EXT_descriptor_buffer")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkDescriptorAddressInfoEXT {
     #[inline(always)]
@@ -15583,9 +15041,7 @@ pub struct VkDescriptorBufferBindingInfoEXT {
     pub usage: VkBufferUsageFlags,
 }
 #[cfg(feature = "VK_EXT_descriptor_buffer")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DESCRIPTOR_BUFFER_BINDING_INFO_EXT: VkStructureType = 1000316011;
-#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DESCRIPTOR_BUFFER_BINDING_INFO_EXT: VkStructureType = 1000316011;#[cfg(feature = "VK_EXT_descriptor_buffer")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkDescriptorBufferBindingInfoEXT {
     #[inline(always)]
@@ -15608,9 +15064,7 @@ pub struct VkDescriptorBufferBindingPushDescriptorBufferHandleEXT {
     pub buffer: VkBuffer,
 }
 #[cfg(feature = "VK_EXT_descriptor_buffer")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DESCRIPTOR_BUFFER_BINDING_PUSH_DESCRIPTOR_BUFFER_HANDLE_EXT: VkStructureType = 1000316012;
-#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DESCRIPTOR_BUFFER_BINDING_PUSH_DESCRIPTOR_BUFFER_HANDLE_EXT: VkStructureType = 1000316012;#[cfg(feature = "VK_EXT_descriptor_buffer")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkDescriptorBufferBindingPushDescriptorBufferHandleEXT {
     #[inline(always)]
@@ -15651,9 +15105,7 @@ pub struct VkDescriptorGetInfoEXT {
     pub data: VkDescriptorDataEXT,
 }
 #[cfg(feature = "VK_EXT_descriptor_buffer")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DESCRIPTOR_GET_INFO_EXT: VkStructureType = 1000316004;
-#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DESCRIPTOR_GET_INFO_EXT: VkStructureType = 1000316004;#[cfg(feature = "VK_EXT_descriptor_buffer")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDescriptorGetInfoEXT {
     #[inline(always)]
@@ -15680,9 +15132,7 @@ pub struct VkBufferCaptureDescriptorDataInfoEXT {
     pub buffer: VkBuffer,
 }
 #[cfg(feature = "VK_EXT_descriptor_buffer")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_BUFFER_CAPTURE_DESCRIPTOR_DATA_INFO_EXT: VkStructureType = 1000316005;
-#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_BUFFER_CAPTURE_DESCRIPTOR_DATA_INFO_EXT: VkStructureType = 1000316005;#[cfg(feature = "VK_EXT_descriptor_buffer")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkBufferCaptureDescriptorDataInfoEXT {
     #[inline(always)]
@@ -15709,9 +15159,7 @@ pub struct VkImageCaptureDescriptorDataInfoEXT {
     pub image: VkImage,
 }
 #[cfg(feature = "VK_EXT_descriptor_buffer")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMAGE_CAPTURE_DESCRIPTOR_DATA_INFO_EXT: VkStructureType = 1000316006;
-#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMAGE_CAPTURE_DESCRIPTOR_DATA_INFO_EXT: VkStructureType = 1000316006;#[cfg(feature = "VK_EXT_descriptor_buffer")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImageCaptureDescriptorDataInfoEXT {
     #[inline(always)]
@@ -15738,9 +15186,7 @@ pub struct VkImageViewCaptureDescriptorDataInfoEXT {
     pub imageView: VkImageView,
 }
 #[cfg(feature = "VK_EXT_descriptor_buffer")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMAGE_VIEW_CAPTURE_DESCRIPTOR_DATA_INFO_EXT: VkStructureType = 1000316007;
-#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMAGE_VIEW_CAPTURE_DESCRIPTOR_DATA_INFO_EXT: VkStructureType = 1000316007;#[cfg(feature = "VK_EXT_descriptor_buffer")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImageViewCaptureDescriptorDataInfoEXT {
     #[inline(always)]
@@ -15767,9 +15213,7 @@ pub struct VkSamplerCaptureDescriptorDataInfoEXT {
     pub sampler: VkSampler,
 }
 #[cfg(feature = "VK_EXT_descriptor_buffer")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SAMPLER_CAPTURE_DESCRIPTOR_DATA_INFO_EXT: VkStructureType = 1000316008;
-#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SAMPLER_CAPTURE_DESCRIPTOR_DATA_INFO_EXT: VkStructureType = 1000316008;#[cfg(feature = "VK_EXT_descriptor_buffer")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkSamplerCaptureDescriptorDataInfoEXT {
     #[inline(always)]
@@ -15796,9 +15240,7 @@ pub struct VkOpaqueCaptureDescriptorDataCreateInfoEXT {
     pub opaqueCaptureDescriptorData: *const core::ffi::c_void,
 }
 #[cfg(feature = "VK_EXT_descriptor_buffer")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_OPAQUE_CAPTURE_DESCRIPTOR_DATA_CREATE_INFO_EXT: VkStructureType = 1000316010;
-#[cfg(feature = "VK_EXT_descriptor_buffer")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_OPAQUE_CAPTURE_DESCRIPTOR_DATA_CREATE_INFO_EXT: VkStructureType = 1000316010;#[cfg(feature = "VK_EXT_descriptor_buffer")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkOpaqueCaptureDescriptorDataCreateInfoEXT {
     #[inline(always)]
@@ -15852,9 +15294,7 @@ pub struct VkImportMemoryHostPointerInfoEXT {
     pub pHostPointer: *mut core::ffi::c_void,
 }
 #[cfg(feature = "VK_EXT_external_memory_host")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT: VkStructureType = 1000178000;
-#[cfg(feature = "VK_EXT_external_memory_host")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT: VkStructureType = 1000178000;#[cfg(feature = "VK_EXT_external_memory_host")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImportMemoryHostPointerInfoEXT {
     #[inline(always)]
@@ -15881,9 +15321,7 @@ pub struct VkMemoryHostPointerPropertiesEXT {
     pub memoryTypeBits: u32,
 }
 #[cfg(feature = "VK_EXT_external_memory_host")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT: VkStructureType = 1000178001;
-#[cfg(feature = "VK_EXT_external_memory_host")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT: VkStructureType = 1000178001;#[cfg(feature = "VK_EXT_external_memory_host")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkMemoryHostPointerPropertiesEXT {
     #[inline(always)]
@@ -15906,9 +15344,7 @@ pub struct VkPhysicalDeviceExternalMemoryHostPropertiesEXT {
     pub minImportedHostPointerAlignment: VkDeviceSize,
 }
 #[cfg(feature = "VK_EXT_external_memory_host")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT: VkStructureType = 1000178002;
-#[cfg(feature = "VK_EXT_external_memory_host")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT: VkStructureType = 1000178002;#[cfg(feature = "VK_EXT_external_memory_host")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceExternalMemoryHostPropertiesEXT {
     #[inline(always)]
@@ -15939,9 +15375,7 @@ pub struct VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT {
     pub maxVertexAttribDivisor: u32,
 }
 #[cfg(feature = "VK_EXT_vertex_attribute_divisor")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_EXT: VkStructureType = 1000190000;
-#[cfg(feature = "VK_EXT_vertex_attribute_divisor")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_EXT: VkStructureType = 1000190000;#[cfg(feature = "VK_EXT_vertex_attribute_divisor")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT {
     #[inline(always)]
@@ -15974,9 +15408,7 @@ pub struct VkPipelineVertexInputDivisorStateCreateInfoEXT {
     pub pVertexBindingDivisors: *const VkVertexInputBindingDivisorDescriptionEXT,
 }
 #[cfg(feature = "VK_EXT_vertex_attribute_divisor")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_EXT: VkStructureType = 1000190001;
-#[cfg(feature = "VK_EXT_vertex_attribute_divisor")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_EXT: VkStructureType = 1000190001;#[cfg(feature = "VK_EXT_vertex_attribute_divisor")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineVertexInputDivisorStateCreateInfoEXT {
     #[inline(always)]
@@ -16026,9 +15458,7 @@ pub struct VkSampleLocationsInfoEXT {
     pub pSampleLocations: *const VkSampleLocationEXT,
 }
 #[cfg(feature = "VK_EXT_sample_locations")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SAMPLE_LOCATIONS_INFO_EXT: VkStructureType = 1000143000;
-#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SAMPLE_LOCATIONS_INFO_EXT: VkStructureType = 1000143000;#[cfg(feature = "VK_EXT_sample_locations")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkSampleLocationsInfoEXT {
     #[inline(always)]
@@ -16076,9 +15506,7 @@ pub struct VkRenderPassSampleLocationsBeginInfoEXT {
     pub pPostSubpassSampleLocations: *const VkSubpassSampleLocationsEXT,
 }
 #[cfg(feature = "VK_EXT_sample_locations")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT: VkStructureType = 1000143001;
-#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT: VkStructureType = 1000143001;#[cfg(feature = "VK_EXT_sample_locations")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkRenderPassSampleLocationsBeginInfoEXT {
     #[inline(always)]
@@ -16106,9 +15534,7 @@ pub struct VkPipelineSampleLocationsStateCreateInfoEXT {
     pub sampleLocationsInfo: VkSampleLocationsInfoEXT,
 }
 #[cfg(feature = "VK_EXT_sample_locations")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_SAMPLE_LOCATIONS_STATE_CREATE_INFO_EXT: VkStructureType = 1000143002;
-#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_SAMPLE_LOCATIONS_STATE_CREATE_INFO_EXT: VkStructureType = 1000143002;#[cfg(feature = "VK_EXT_sample_locations")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineSampleLocationsStateCreateInfoEXT {
     #[inline(always)]
@@ -16139,9 +15565,7 @@ pub struct VkPhysicalDeviceSampleLocationsPropertiesEXT {
     pub variableSampleLocations: VkBool32,
 }
 #[cfg(feature = "VK_EXT_sample_locations")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT: VkStructureType = 1000143003;
-#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT: VkStructureType = 1000143003;#[cfg(feature = "VK_EXT_sample_locations")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceSampleLocationsPropertiesEXT {
     #[inline(always)]
@@ -16164,9 +15588,7 @@ pub struct VkMultisamplePropertiesEXT {
     pub maxSampleLocationGridSize: VkExtent2D,
 }
 #[cfg(feature = "VK_EXT_sample_locations")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_MULTISAMPLE_PROPERTIES_EXT: VkStructureType = 1000143004;
-#[cfg(feature = "VK_EXT_sample_locations")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_MULTISAMPLE_PROPERTIES_EXT: VkStructureType = 1000143004;#[cfg(feature = "VK_EXT_sample_locations")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkMultisamplePropertiesEXT {
     #[inline(always)]
@@ -16207,9 +15629,7 @@ pub struct VkPipelineCoverageToColorStateCreateInfoNV {
     pub coverageToColorLocation: u32,
 }
 #[cfg(feature = "VK_NV_fragment_coverage_to_color")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_TO_COLOR_STATE_CREATE_INFO_NV: VkStructureType = 1000149000;
-#[cfg(feature = "VK_NV_fragment_coverage_to_color")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_TO_COLOR_STATE_CREATE_INFO_NV: VkStructureType = 1000149000;#[cfg(feature = "VK_NV_fragment_coverage_to_color")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineCoverageToColorStateCreateInfoNV {
     #[inline(always)]
@@ -16270,9 +15690,7 @@ pub struct VkPipelineCoverageModulationStateCreateInfoNV {
     pub pCoverageModulationTable: *const core::ffi::c_float,
 }
 #[cfg(feature = "VK_NV_framebuffer_mixed_samples")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_MODULATION_STATE_CREATE_INFO_NV: VkStructureType = 1000152000;
-#[cfg(feature = "VK_NV_framebuffer_mixed_samples")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_MODULATION_STATE_CREATE_INFO_NV: VkStructureType = 1000152000;#[cfg(feature = "VK_NV_framebuffer_mixed_samples")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineCoverageModulationStateCreateInfoNV {
     #[inline(always)]
@@ -16322,9 +15740,7 @@ pub struct VkDeviceQueueGlobalPriorityCreateInfoEXT {
     pub globalPriority: VkQueueGlobalPriorityEXT,
 }
 #[cfg(feature = "VK_EXT_global_priority")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_EXT: VkStructureType = 1000174000;
-#[cfg(feature = "VK_EXT_global_priority")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_EXT: VkStructureType = 1000174000;#[cfg(feature = "VK_EXT_global_priority")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDeviceQueueGlobalPriorityCreateInfoEXT {
     #[inline(always)]
@@ -16405,9 +15821,7 @@ pub struct VkPipelineViewportSwizzleStateCreateInfoNV {
     pub pViewportSwizzles: *const VkViewportSwizzleNV,
 }
 #[cfg(feature = "VK_NV_viewport_swizzle")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_SWIZZLE_STATE_CREATE_INFO_NV: VkStructureType = 1000098000;
-#[cfg(feature = "VK_NV_viewport_swizzle")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_SWIZZLE_STATE_CREATE_INFO_NV: VkStructureType = 1000098000;#[cfg(feature = "VK_NV_viewport_swizzle")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineViewportSwizzleStateCreateInfoNV {
     #[inline(always)]
@@ -16457,9 +15871,7 @@ pub struct VkHdrMetadataEXT {
     pub maxFrameAverageLightLevel: core::ffi::c_float,
 }
 #[cfg(feature = "VK_EXT_hdr_metadata")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_HDR_METADATA_EXT: VkStructureType = 1000105000;
-#[cfg(feature = "VK_EXT_hdr_metadata")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_HDR_METADATA_EXT: VkStructureType = 1000105000;#[cfg(feature = "VK_EXT_hdr_metadata")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkHdrMetadataEXT {
     #[inline(always)]
@@ -16520,9 +15932,7 @@ pub struct VkDisplayPowerInfoEXT {
     pub powerState: VkDisplayPowerStateEXT,
 }
 #[cfg(feature = "VK_EXT_display_control")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DISPLAY_POWER_INFO_EXT: VkStructureType = 1000091000;
-#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DISPLAY_POWER_INFO_EXT: VkStructureType = 1000091000;#[cfg(feature = "VK_EXT_display_control")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDisplayPowerInfoEXT {
     #[inline(always)]
@@ -16549,9 +15959,7 @@ pub struct VkDeviceEventInfoEXT {
     pub deviceEvent: VkDeviceEventTypeEXT,
 }
 #[cfg(feature = "VK_EXT_display_control")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEVICE_EVENT_INFO_EXT: VkStructureType = 1000091001;
-#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEVICE_EVENT_INFO_EXT: VkStructureType = 1000091001;#[cfg(feature = "VK_EXT_display_control")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDeviceEventInfoEXT {
     #[inline(always)]
@@ -16578,9 +15986,7 @@ pub struct VkDisplayEventInfoEXT {
     pub displayEVent: VkDisplayEventTypeEXT,
 }
 #[cfg(feature = "VK_EXT_display_control")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DISPLAY_EVENT_INFO_EXT: VkStructureType = 1000091002;
-#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DISPLAY_EVENT_INFO_EXT: VkStructureType = 1000091002;#[cfg(feature = "VK_EXT_display_control")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDisplayEventInfoEXT {
     #[inline(always)]
@@ -16607,9 +16013,7 @@ pub struct VkSwapchainCounterCreateInfoEXT {
     pub surfaceCounters: VkSurfaceCounterFlagsEXT,
 }
 #[cfg(feature = "VK_EXT_display_control")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SWAPCHAIN_COUNTER_CREATE_INFO_EXT: VkStructureType = 1000091003;
-#[cfg(feature = "VK_EXT_display_control")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SWAPCHAIN_COUNTER_CREATE_INFO_EXT: VkStructureType = 1000091003;#[cfg(feature = "VK_EXT_display_control")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkSwapchainCounterCreateInfoEXT {
     #[inline(always)]
@@ -16677,9 +16081,7 @@ pub struct VkPresentTimesInfoGOOGLE {
     pub pTimes: *const VkPresentTimeGOOGLE,
 }
 #[cfg(feature = "VK_GOOGLE_display_timing")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PRESENT_TIMES_INFO_GOOGLE: VkStructureType = 1000092000;
-#[cfg(feature = "VK_GOOGLE_display_timing")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PRESENT_TIMES_INFO_GOOGLE: VkStructureType = 1000092000;#[cfg(feature = "VK_GOOGLE_display_timing")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPresentTimesInfoGOOGLE {
     #[inline(always)]
@@ -16719,9 +16121,7 @@ pub struct VkSharedPresentSurfaceCapabilitiesKHR {
     pub sharedPresentSupportedUsageFlags: VkImageUsageFlags,
 }
 #[cfg(feature = "VK_KHR_shared_presentable_image")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR: VkStructureType = 1000111000;
-#[cfg(feature = "VK_KHR_shared_presentable_image")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR: VkStructureType = 1000111000;#[cfg(feature = "VK_KHR_shared_presentable_image")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkSharedPresentSurfaceCapabilitiesKHR {
     #[inline(always)]
@@ -16762,9 +16162,7 @@ pub struct VkPipelineRasterizationStateRasterizationOrderAMD {
     pub rasterizationOrder: VkRasterizationOrderAMD,
 }
 #[cfg(feature = "VK_AMD_rasterization_order")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_RASTERIZATION_ORDER_AMD: VkStructureType = 1000018000;
-#[cfg(feature = "VK_AMD_rasterization_order")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_RASTERIZATION_ORDER_AMD: VkStructureType = 1000018000;#[cfg(feature = "VK_AMD_rasterization_order")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineRasterizationStateRasterizationOrderAMD {
     #[inline(always)]
@@ -16798,9 +16196,7 @@ pub struct VkTextureLODGatherFormatPropertiesAMD {
     pub supportsTextureGatherLODBiasAMD: VkBool32,
 }
 #[cfg(feature = "VK_AMD_texture_gather_bias_lod")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_TEXTURE_LOD_GATHER_FORMAT_PROPERTIES_AMD: VkStructureType = 1000041000;
-#[cfg(feature = "VK_AMD_texture_gather_bias_lod")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_TEXTURE_LOD_GATHER_FORMAT_PROPERTIES_AMD: VkStructureType = 1000041000;#[cfg(feature = "VK_AMD_texture_gather_bias_lod")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkTextureLODGatherFormatPropertiesAMD {
     #[inline(always)]
@@ -16838,9 +16234,7 @@ pub struct VkViSurfaceCreateInfoNN {
     pub window: *mut core::ffi::c_void,
 }
 #[cfg(feature = "VK_NN_vi_surface")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_VI_SURFACE_CREATE_INFO_NN: VkStructureType = 1000062000;
-#[cfg(feature = "VK_NN_vi_surface")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_VI_SURFACE_CREATE_INFO_NN: VkStructureType = 1000062000;#[cfg(feature = "VK_NN_vi_surface")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkViSurfaceCreateInfoNN {
     #[inline(always)]
@@ -16895,9 +16289,7 @@ pub struct VkSurfaceCapabilities2EXT {
     pub supportedSurfaceCounters: VkSurfaceCounterFlagsEXT,
 }
 #[cfg(feature = "VK_EXT_display_surface_counter")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES2_EXT: VkStructureType = 1000090000;
-#[cfg(feature = "VK_EXT_display_surface_counter")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES2_EXT: VkStructureType = 1000090000;#[cfg(feature = "VK_EXT_display_surface_counter")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkSurfaceCapabilities2EXT {
     #[inline(always)]
@@ -16930,9 +16322,7 @@ pub struct VkDebugMarkerObjectNameInfoEXT {
     pub pObjectName: *const core::ffi::c_char,
 }
 #[cfg(feature = "VK_EXT_debug_marker")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT: VkStructureType = 1000022000;
-#[cfg(feature = "VK_EXT_debug_marker")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT: VkStructureType = 1000022000;#[cfg(feature = "VK_EXT_debug_marker")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDebugMarkerObjectNameInfoEXT {
     #[inline(always)]
@@ -16963,9 +16353,7 @@ pub struct VkDebugMarkerObjectTagInfoEXT {
     pub pTag: *const core::ffi::c_void,
 }
 #[cfg(feature = "VK_EXT_debug_marker")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_TAG_INFO_EXT: VkStructureType = 1000022001;
-#[cfg(feature = "VK_EXT_debug_marker")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_TAG_INFO_EXT: VkStructureType = 1000022001;#[cfg(feature = "VK_EXT_debug_marker")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDebugMarkerObjectTagInfoEXT {
     #[inline(always)]
@@ -16993,9 +16381,7 @@ pub struct VkDebugMarkerMarkerInfoEXT {
     pub color: [core::ffi::c_float; 4],
 }
 #[cfg(feature = "VK_EXT_debug_marker")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT: VkStructureType = 1000022002;
-#[cfg(feature = "VK_EXT_debug_marker")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT: VkStructureType = 1000022002;#[cfg(feature = "VK_EXT_debug_marker")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDebugMarkerMarkerInfoEXT {
     #[inline(always)]
@@ -17162,9 +16548,7 @@ pub struct VkDeviceGeneratedCommandsFeaturesNVX {
     pub computeBindingPointSupport: VkBool32,
 }
 #[cfg(feature = "VK_NVX_device_generated_commands")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEVICE_GENERATED_COMMANDS_FEATURES_NVX: VkStructureType = 1000086005;
-#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEVICE_GENERATED_COMMANDS_FEATURES_NVX: VkStructureType = 1000086005;#[cfg(feature = "VK_NVX_device_generated_commands")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDeviceGeneratedCommandsFeaturesNVX {
     #[inline(always)]
@@ -17195,9 +16579,7 @@ pub struct VkDeviceGeneratedCommandsLimitsNVX {
     pub minCommandsTokenBufferOffsetAlignment: u32,
 }
 #[cfg(feature = "VK_NVX_device_generated_commands")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DEVICE_GENERATED_COMMANDS_LIMITS_NVX: VkStructureType = 1000086004;
-#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DEVICE_GENERATED_COMMANDS_LIMITS_NVX: VkStructureType = 1000086004;#[cfg(feature = "VK_NVX_device_generated_commands")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDeviceGeneratedCommandsLimitsNVX {
     #[inline(always)]
@@ -17248,9 +16630,7 @@ pub struct VkIndirectCommandsLayoutCreateInfoNVX {
     pub pTokens: *const VkIndirectCommandsLayoutTokenNVX,
 }
 #[cfg(feature = "VK_NVX_device_generated_commands")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_NVX: VkStructureType = 1000086001;
-#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_NVX: VkStructureType = 1000086001;#[cfg(feature = "VK_NVX_device_generated_commands")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkIndirectCommandsLayoutCreateInfoNVX {
     #[inline(always)]
@@ -17286,9 +16666,7 @@ pub struct VkCmdProcessCommandsInfoNVX {
     pub sequencesIndexOffset: VkDeviceSize,
 }
 #[cfg(feature = "VK_NVX_device_generated_commands")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_CMD_PROCESS_COMMANDS_INFO_NVX: VkStructureType = 1000086002;
-#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_CMD_PROCESS_COMMANDS_INFO_NVX: VkStructureType = 1000086002;#[cfg(feature = "VK_NVX_device_generated_commands")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkCmdProcessCommandsInfoNVX {
     #[inline(always)]
@@ -17317,9 +16695,7 @@ pub struct VkCmdReserveSpaceForCommandsInfoNVX {
     pub maxSequencesCount: u32,
 }
 #[cfg(feature = "VK_NVX_device_generated_commands")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_CMD_RESERVE_SPACE_FOR_COMMANDS_INFO_NVX: VkStructureType = 1000086003;
-#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_CMD_RESERVE_SPACE_FOR_COMMANDS_INFO_NVX: VkStructureType = 1000086003;#[cfg(feature = "VK_NVX_device_generated_commands")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkCmdReserveSpaceForCommandsInfoNVX {
     #[inline(always)]
@@ -17354,9 +16730,7 @@ pub struct VkObjectTableCreateInfoNVX {
     pub maxPipelineLayouts: u32,
 }
 #[cfg(feature = "VK_NVX_device_generated_commands")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_OBJECT_TABLE_CREATE_INFO_NVX: VkStructureType = 1000086000;
-#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_OBJECT_TABLE_CREATE_INFO_NVX: VkStructureType = 1000086000;#[cfg(feature = "VK_NVX_device_generated_commands")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkObjectTableCreateInfoNVX {
     #[inline(always)]
@@ -17481,9 +16855,7 @@ pub struct VkPresentRegionsKHR {
     pub pRegions: *const VkPresentRegionKHR,
 }
 #[cfg(feature = "VK_KHR_incremental_present")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PRESENT_REGIONS_KHR: VkStructureType = 1000084000;
-#[cfg(feature = "VK_KHR_incremental_present")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PRESENT_REGIONS_KHR: VkStructureType = 1000084000;#[cfg(feature = "VK_KHR_incremental_present")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPresentRegionsKHR {
     #[inline(always)]
@@ -17532,9 +16904,7 @@ pub struct VkPipelineViewportWScalingStateCreateInfoNV {
     pub pViewportWScalings: *const VkViewportWScalingNV,
 }
 #[cfg(feature = "VK_NV_clip_space_w_scaling")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_W_SCALING_STATE_CREATE_INFO_NV: VkStructureType = 1000087000;
-#[cfg(feature = "VK_NV_clip_space_w_scaling")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_W_SCALING_STATE_CREATE_INFO_NV: VkStructureType = 1000087000;#[cfg(feature = "VK_NV_clip_space_w_scaling")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineViewportWScalingStateCreateInfoNV {
     #[inline(always)]
@@ -17608,9 +16978,7 @@ pub struct VkPhysicalDeviceConservativeRasterizationPropertiesEXT {
     pub conservativeRasterizationPostDepthCoverage: VkBool32,
 }
 #[cfg(feature = "VK_EXT_conservative_rasterization")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT: VkStructureType = 1000101000;
-#[cfg(feature = "VK_EXT_conservative_rasterization")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT: VkStructureType = 1000101000;#[cfg(feature = "VK_EXT_conservative_rasterization")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceConservativeRasterizationPropertiesEXT {
     #[inline(always)]
@@ -17635,9 +17003,7 @@ pub struct VkPipelineRasterizationConservativeStateCreateInfoEXT {
     pub extraPrimitiveOverestimationSize: core::ffi::c_float,
 }
 #[cfg(feature = "VK_EXT_conservative_rasterization")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT: VkStructureType = 1000101001;
-#[cfg(feature = "VK_EXT_conservative_rasterization")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT: VkStructureType = 1000101001;#[cfg(feature = "VK_EXT_conservative_rasterization")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineRasterizationConservativeStateCreateInfoEXT {
     #[inline(always)]
@@ -17692,9 +17058,7 @@ pub struct VkPhysicalDeviceDiscardRectanglePropertiesEXT {
     pub maxDiscardRectangles: u32,
 }
 #[cfg(feature = "VK_EXT_discard_rectangles")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT: VkStructureType = 1000099000;
-#[cfg(feature = "VK_EXT_discard_rectangles")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT: VkStructureType = 1000099000;#[cfg(feature = "VK_EXT_discard_rectangles")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceDiscardRectanglePropertiesEXT {
     #[inline(always)]
@@ -17720,9 +17084,7 @@ pub struct VkPipelineDiscardRectangleStateCreateInfoEXT {
     pub pDiscardRectangles: *const VkRect2D,
 }
 #[cfg(feature = "VK_EXT_discard_rectangles")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PIPELINE_DISCARD_RECTANGLE_STATE_CREATE_INFO_EXT: VkStructureType = 1000099001;
-#[cfg(feature = "VK_EXT_discard_rectangles")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PIPELINE_DISCARD_RECTANGLE_STATE_CREATE_INFO_EXT: VkStructureType = 1000099001;#[cfg(feature = "VK_EXT_discard_rectangles")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPipelineDiscardRectangleStateCreateInfoEXT {
     #[inline(always)]
@@ -17785,9 +17147,7 @@ pub struct VkDrmFormatModifierPropertiesListEXT {
     pub pDrmFormatModifierProperties: *mut VkDrmFormatModifierPropertiesEXT,
 }
 #[cfg(feature = "VK_EXT_image_drm_format_modifier")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT: VkStructureType = 1000158000;
-#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT: VkStructureType = 1000158000;#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkDrmFormatModifierPropertiesListEXT {
     #[inline(always)]
@@ -17813,9 +17173,7 @@ pub struct VkPhysicalDeviceImageDrmFormatModifierInfoEXT {
     pub pQueueFamilyIndices: *const u32,
 }
 #[cfg(feature = "VK_EXT_image_drm_format_modifier")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT: VkStructureType = 1000158002;
-#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT: VkStructureType = 1000158002;#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceImageDrmFormatModifierInfoEXT {
     #[inline(always)]
@@ -17843,9 +17201,7 @@ pub struct VkImageDrmFormatModifierListCreateInfoEXT {
     pub pDrmFormatModifiers: *const u64,
 }
 #[cfg(feature = "VK_EXT_image_drm_format_modifier")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT: VkStructureType = 1000158003;
-#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT: VkStructureType = 1000158003;#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImageDrmFormatModifierListCreateInfoEXT {
     #[inline(always)]
@@ -17874,9 +17230,7 @@ pub struct VkImageDrmFormatModifierExplicitCreateInfoEXT {
     pub pPlaneLayouts: *const VkSubresourceLayout,
 }
 #[cfg(feature = "VK_EXT_image_drm_format_modifier")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO_EXT: VkStructureType = 1000158004;
-#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO_EXT: VkStructureType = 1000158004;#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkImageDrmFormatModifierExplicitCreateInfoEXT {
     #[inline(always)]
@@ -17903,9 +17257,7 @@ pub struct VkImageDrmFormatModifierPropertiesEXT {
     pub drmFormatModifier: u64,
 }
 #[cfg(feature = "VK_EXT_image_drm_format_modifier")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_PROPERTIES_EXT: VkStructureType = 1000158005;
-#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_PROPERTIES_EXT: VkStructureType = 1000158005;#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkImageDrmFormatModifierPropertiesEXT {
     #[inline(always)]
@@ -17941,10 +17293,7 @@ pub struct VkDrmFormatModifierPropertiesList2EXT {
     pub pDrmFormatModifierProperties: *mut VkDrmFormatModifierProperties2EXT,
 }
 #[cfg(feature = "VK_EXT_image_drm_format_modifier")]
-#[rustfmt::skip]
-#[cfg(feature = "VK_KHR_format_feature_flags2")]
-pub const VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_2_EXT: VkStructureType = 1000158006;
-#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_2_EXT: VkStructureType = 1000158006;#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
 #[rustfmt::skip]
 #[cfg(feature = "VK_KHR_format_feature_flags2")]
 unsafe impl crate::VulkanSinkStructure for VkDrmFormatModifierPropertiesList2EXT {
@@ -18002,9 +17351,7 @@ pub struct VkExportMetalObjectCreateInfoEXT {
     pub exportObjectType: VkExportMetalObjectTypeFlagBitsEXT,
 }
 #[cfg(feature = "VK_EXT_metal_objects")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_EXPORT_METAL_OBJECT_CREATE_INFO_EXT: VkStructureType = 1000311000;
-#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_EXPORT_METAL_OBJECT_CREATE_INFO_EXT: VkStructureType = 1000311000;#[cfg(feature = "VK_EXT_metal_objects")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkExportMetalObjectCreateInfoEXT {
     #[inline(always)]
@@ -18030,9 +17377,7 @@ pub struct VkExportMetalObjectsInfoEXT {
     pub pNext: *const core::ffi::c_void,
 }
 #[cfg(feature = "VK_EXT_metal_objects")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_EXPORT_METAL_OBJECTS_INFO_EXT: VkStructureType = 1000311001;
-#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_EXPORT_METAL_OBJECTS_INFO_EXT: VkStructureType = 1000311001;#[cfg(feature = "VK_EXT_metal_objects")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkExportMetalObjectsInfoEXT {
     #[inline(always)]
@@ -18059,9 +17404,7 @@ pub struct VkExportMetalDeviceInfoEXT {
     pub mtlDevice: *mut core::ffi::c_void,
 }
 #[cfg(feature = "VK_EXT_metal_objects")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_EXPORT_METAL_DEVICE_INFO_EXT: VkStructureType = 1000311002;
-#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_EXPORT_METAL_DEVICE_INFO_EXT: VkStructureType = 1000311002;#[cfg(feature = "VK_EXT_metal_objects")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkExportMetalDeviceInfoEXT {
     #[inline(always)]
@@ -18089,9 +17432,7 @@ pub struct VkExportMetalCommandQueueInfoEXT {
     pub mtlCommandQueue: *mut core::ffi::c_void,
 }
 #[cfg(feature = "VK_EXT_metal_objects")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_EXPORT_METAL_COMMAND_QUEUE_INFO_EXT: VkStructureType = 1000311003;
-#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_EXPORT_METAL_COMMAND_QUEUE_INFO_EXT: VkStructureType = 1000311003;#[cfg(feature = "VK_EXT_metal_objects")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkExportMetalCommandQueueInfoEXT {
     #[inline(always)]
@@ -18119,9 +17460,7 @@ pub struct VkExportMetalBufferInfoEXT {
     pub mtlBuffer: *mut core::ffi::c_void,
 }
 #[cfg(feature = "VK_EXT_metal_objects")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_EXPORT_METAL_BUFFER_INFO_EXT: VkStructureType = 1000311004;
-#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_EXPORT_METAL_BUFFER_INFO_EXT: VkStructureType = 1000311004;#[cfg(feature = "VK_EXT_metal_objects")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkExportMetalBufferInfoEXT {
     #[inline(always)]
@@ -18148,9 +17487,7 @@ pub struct VkImportMetalBufferInfoEXT {
     pub mtlBuffer: *mut core::ffi::c_void,
 }
 #[cfg(feature = "VK_EXT_metal_objects")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMPORT_METAL_BUFFER_INFO_EXT: VkStructureType = 1000311005;
-#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMPORT_METAL_BUFFER_INFO_EXT: VkStructureType = 1000311005;#[cfg(feature = "VK_EXT_metal_objects")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkImportMetalBufferInfoEXT {
     #[inline(always)]
@@ -18177,9 +17514,7 @@ pub struct VkExportMetalTextureInfoEXT {
     pub mtlTexture: *mut core::ffi::c_void,
 }
 #[cfg(feature = "VK_EXT_metal_objects")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_EXPORT_METAL_TEXTURE_INFO_EXT: VkStructureType = 1000311006;
-#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_EXPORT_METAL_TEXTURE_INFO_EXT: VkStructureType = 1000311006;#[cfg(feature = "VK_EXT_metal_objects")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkExportMetalTextureInfoEXT {
     #[inline(always)]
@@ -18207,9 +17542,7 @@ pub struct VkImportMetalTextureInfoEXT {
     pub mtlTexture: *mut core::ffi::c_void,
 }
 #[cfg(feature = "VK_EXT_metal_objects")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMPORT_METAL_TEXTURE_INFO_EXT: VkStructureType = 1000311007;
-#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMPORT_METAL_TEXTURE_INFO_EXT: VkStructureType = 1000311007;#[cfg(feature = "VK_EXT_metal_objects")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkImportMetalTextureInfoEXT {
     #[inline(always)]
@@ -18233,9 +17566,7 @@ pub struct VkExportMetalIOSurfaceInfoEXT {
     pub ioSurface: *mut core::ffi::c_void,
 }
 #[cfg(feature = "VK_EXT_metal_objects")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_EXPORT_METAL_IO_SURFACE_INFO_EXT: VkStructureType = 1000311008;
-#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_EXPORT_METAL_IO_SURFACE_INFO_EXT: VkStructureType = 1000311008;#[cfg(feature = "VK_EXT_metal_objects")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkExportMetalIOSurfaceInfoEXT {
     #[inline(always)]
@@ -18262,9 +17593,7 @@ pub struct VkImportMetalIOSurfaceInfoEXT {
     pub ioSurface: *mut core::ffi::c_void,
 }
 #[cfg(feature = "VK_EXT_metal_objects")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMPORT_METAL_IO_SURFACE_INFO_EXT: VkStructureType = 1000311009;
-#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMPORT_METAL_IO_SURFACE_INFO_EXT: VkStructureType = 1000311009;#[cfg(feature = "VK_EXT_metal_objects")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkImportMetalIOSurfaceInfoEXT {
     #[inline(always)]
@@ -18289,9 +17618,7 @@ pub struct VkExportMetalSharedEVentInfoEXT {
     pub mtlSharedEvent: *mut core::ffi::c_void,
 }
 #[cfg(feature = "VK_EXT_metal_objects")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_EXPORT_METAL_SHARED_EVENT_INFO_EXT: VkStructureType = 1000311010;
-#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_EXPORT_METAL_SHARED_EVENT_INFO_EXT: VkStructureType = 1000311010;#[cfg(feature = "VK_EXT_metal_objects")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkExportMetalSharedEVentInfoEXT {
     #[inline(always)]
@@ -18318,9 +17645,7 @@ pub struct VkImportMetalSharedEventInfoEXT {
     pub mtlSharedEvent: *mut core::ffi::c_void,
 }
 #[cfg(feature = "VK_EXT_metal_objects")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IMPORT_METAL_SHARED_EVENT_INFO_EXT: VkStructureType = 1000311011;
-#[cfg(feature = "VK_EXT_metal_objects")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IMPORT_METAL_SHARED_EVENT_INFO_EXT: VkStructureType = 1000311011;#[cfg(feature = "VK_EXT_metal_objects")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkImportMetalSharedEventInfoEXT {
     #[inline(always)]
@@ -18359,9 +17684,7 @@ pub struct VkMacOSSurfaceCreateInfoMVK {
     pub pView: *const core::ffi::c_void,
 }
 #[cfg(feature = "VK_MVK_macos_surface")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK: VkStructureType = 1000123000;
-#[cfg(feature = "VK_MVK_macos_surface")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK: VkStructureType = 1000123000;#[cfg(feature = "VK_MVK_macos_surface")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkMacOSSurfaceCreateInfoMVK {
     #[inline(always)]
@@ -18404,9 +17727,7 @@ pub struct VkIOSSurfaceCreateInfoMVK {
     pub pView: *const core::ffi::c_void,
 }
 #[cfg(feature = "VK_MVK_ios_surface")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK: VkStructureType = 1000122000;
-#[cfg(feature = "VK_MVK_ios_surface")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK: VkStructureType = 1000122000;#[cfg(feature = "VK_MVK_ios_surface")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkIOSSurfaceCreateInfoMVK {
     #[inline(always)]
@@ -18458,9 +17779,7 @@ pub struct VkDisplayPresentInfoKHR {
     pub persistent: VkBool32,
 }
 #[cfg(feature = "VK_KHR_display_swapchain")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_DISPLAY_PRESENT_INFO_KHR: VkStructureType = 1000003000;
-#[cfg(feature = "VK_KHR_display_swapchain")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_DISPLAY_PRESENT_INFO_KHR: VkStructureType = 1000003000;#[cfg(feature = "VK_KHR_display_swapchain")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkDisplayPresentInfoKHR {
     #[inline(always)]
@@ -18610,9 +17929,7 @@ pub struct VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX {
     pub perViewPositionAllComponents: VkBool32,
 }
 #[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_ATTRIBUTES_PROPERTIES_NVX: VkStructureType = 1000097000;
-#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_ATTRIBUTES_PROPERTIES_NVX: VkStructureType = 1000097000;#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX {
     #[inline(always)]
@@ -18738,9 +18055,7 @@ pub struct VkPhysicalDeviceMaintenance7FeaturesKHR {
     pub maintenance7: VkBool32,
 }
 #[cfg(feature = "VK_KHR_maintenance7")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_FEATURES_KHR: VkStructureType = 1000562000;
-#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_FEATURES_KHR: VkStructureType = 1000562000;#[cfg(feature = "VK_KHR_maintenance7")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceMaintenance7FeaturesKHR {
     #[inline(always)]
@@ -18786,9 +18101,7 @@ pub struct VkPhysicalDeviceMaintenance7PropertiesKHR {
     pub maxDescriptorSetUpdateAfterBindTotalBuffersDynamic: u32,
 }
 #[cfg(feature = "VK_KHR_maintenance7")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_PROPERTIES_KHR: VkStructureType = 1000562001;
-#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_PROPERTIES_KHR: VkStructureType = 1000562001;#[cfg(feature = "VK_KHR_maintenance7")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMaintenance7PropertiesKHR {
     #[inline(always)]
@@ -18812,9 +18125,7 @@ pub struct VkPhysicalDeviceLayeredApiPropertiesListKHR {
     pub pLayeredApis: *mut VkPhysicalDeviceLayeredApiPropertiesKHR,
 }
 #[cfg(feature = "VK_KHR_maintenance7")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_LIST_KHR: VkStructureType = 1000562002;
-#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_LIST_KHR: VkStructureType = 1000562002;#[cfg(feature = "VK_KHR_maintenance7")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceLayeredApiPropertiesListKHR {
     #[inline(always)]
@@ -18840,9 +18151,7 @@ pub struct VkPhysicalDeviceLayeredApiPropertiesKHR {
     pub deviceName: crate::FixedCStrBuffer<VK_MAX_PHYSICAL_DEVICE_NAME_SIZE>,
 }
 #[cfg(feature = "VK_KHR_maintenance7")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_KHR: VkStructureType = 1000562003;
-#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_KHR: VkStructureType = 1000562003;#[cfg(feature = "VK_KHR_maintenance7")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceLayeredApiPropertiesKHR {
     #[inline(always)]
@@ -18865,9 +18174,7 @@ pub struct VkPhysicalDeviceLayeredApiVulkanPropertiesKHR {
     pub properties: VkPhysicalDeviceProperties2,
 }
 #[cfg(feature = "VK_KHR_maintenance7")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_VULKAN_PROPERTIES_KHR: VkStructureType = 1000562004;
-#[cfg(feature = "VK_KHR_maintenance7")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_VULKAN_PROPERTIES_KHR: VkStructureType = 1000562004;#[cfg(feature = "VK_KHR_maintenance7")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceLayeredApiVulkanPropertiesKHR {
     #[inline(always)]
@@ -18911,9 +18218,7 @@ pub struct VkPhysicalDeviceMaintenance8FeaturesKHR {
     pub maintenance8: VkBool32,
 }
 #[cfg(feature = "VK_KHR_maintenance8")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_8_FEATURES_KHR: VkStructureType = 1000574000;
-#[cfg(feature = "VK_KHR_maintenance8")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_8_FEATURES_KHR: VkStructureType = 1000574000;#[cfg(feature = "VK_KHR_maintenance8")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceMaintenance8FeaturesKHR {
     #[inline(always)]
@@ -18953,9 +18258,7 @@ pub struct VkMemoryBarrierAccessFlags3KHR {
     pub dstAccessMask3: VkAccessFlags3KHR,
 }
 #[cfg(feature = "VK_KHR_maintenance8")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_MEMORY_BARRIER_ACCESS_FLAGS_3_KHR: VkStructureType = 1000574002;
-#[cfg(feature = "VK_KHR_maintenance8")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_MEMORY_BARRIER_ACCESS_FLAGS_3_KHR: VkStructureType = 1000574002;#[cfg(feature = "VK_KHR_maintenance8")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkMemoryBarrierAccessFlags3KHR {
     #[inline(always)]
@@ -19007,9 +18310,7 @@ pub struct VkPhysicalDeviceMaintenance9FeaturesKHR {
     pub maintenance9: VkBool32,
 }
 #[cfg(feature = "VK_KHR_maintenance9")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_9_FEATURES_KHR: VkStructureType = 1000584000;
-#[cfg(feature = "VK_KHR_maintenance9")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_9_FEATURES_KHR: VkStructureType = 1000584000;#[cfg(feature = "VK_KHR_maintenance9")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceMaintenance9FeaturesKHR {
     #[inline(always)]
@@ -19049,9 +18350,7 @@ pub struct VkPhysicalDeviceMaintenance9PropertiesKHR {
     pub defaultVertexAttributeValue: VkDefaultVertexAttributeValueKHR,
 }
 #[cfg(feature = "VK_KHR_maintenance9")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_9_PROPERTIES_KHR: VkStructureType = 1000584001;
-#[cfg(feature = "VK_KHR_maintenance9")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_9_PROPERTIES_KHR: VkStructureType = 1000584001;#[cfg(feature = "VK_KHR_maintenance9")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMaintenance9PropertiesKHR {
     #[inline(always)]
@@ -19074,9 +18373,7 @@ pub struct VkQueueFamilyOwnershipTransferPropertiesKHR {
     pub optimalImageTransferToQueueFamilies: u32,
 }
 #[cfg(feature = "VK_KHR_maintenance9")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_QUEUE_FAMILY_OWNERSHIP_TRANSFER_PROPERTIES_KHR: VkStructureType = 1000584002;
-#[cfg(feature = "VK_KHR_maintenance9")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_QUEUE_FAMILY_OWNERSHIP_TRANSFER_PROPERTIES_KHR: VkStructureType = 1000584002;#[cfg(feature = "VK_KHR_maintenance9")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkQueueFamilyOwnershipTransferPropertiesKHR {
     #[inline(always)]
@@ -19126,9 +18423,7 @@ pub struct VkSurfaceFullScreenExclusiveInfoEXT {
     pub fullScreenExclusive: VkFullScreenExclusiveEXT,
 }
 #[cfg(feature = "VK_EXT_full_screen_exclusive")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT: VkStructureType = 1000255000;
-#[cfg(feature = "VK_EXT_full_screen_exclusive")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT: VkStructureType = 1000255000;#[cfg(feature = "VK_EXT_full_screen_exclusive")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanStructure for VkSurfaceFullScreenExclusiveInfoEXT {
     #[inline(always)]
@@ -19167,9 +18462,7 @@ pub struct VkSurfaceCapabilitiesFullScreenExclusiveEXT {
     pub fullScreenExclusiveSupported: VkBool32,
 }
 #[cfg(feature = "VK_EXT_full_screen_exclusive")]
-#[rustfmt::skip]
-pub const VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT: VkStructureType = 1000255002;
-#[cfg(feature = "VK_EXT_full_screen_exclusive")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT: VkStructureType = 1000255002;#[cfg(feature = "VK_EXT_full_screen_exclusive")]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkSurfaceCapabilitiesFullScreenExclusiveEXT {
     #[inline(always)]
@@ -19196,10 +18489,7 @@ pub struct VkSurfaceFullScreenExclusiveWin32InfoEXT {
     pub hmonitor: windows::Win32::Graphics::Gdi::HMONITOR,
 }
 #[cfg(feature = "VK_EXT_full_screen_exclusive")]
-#[rustfmt::skip]
-#[cfg(feature = "VK_KHR_win32_surface")]
-pub const VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT: VkStructureType = 1000255001;
-#[cfg(feature = "VK_EXT_full_screen_exclusive")]
+#[rustfmt::skip] pub const VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT: VkStructureType = 1000255001;#[cfg(feature = "VK_EXT_full_screen_exclusive")]
 #[rustfmt::skip]
 #[cfg(feature = "VK_KHR_win32_surface")]
 unsafe impl crate::VulkanStructure for VkSurfaceFullScreenExclusiveWin32InfoEXT {
