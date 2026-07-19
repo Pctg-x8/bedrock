@@ -216,12 +216,7 @@ fn main() -> std::io::Result<()> {
         x.emit(&mut o)?;
     }
 
-    o.write_all(b"\n")?;
-    o.write_all(b"#[cfg(all(feature = \"Implements\", not(feature = \"DynamicLoaded\")))]\n")?;
-    o.write_all(b"#[cfg_attr(all(not(windows), not(target_os = \"macos\"), not(feature = \"DynamicLoaded\")), link(name = \"vulkan\"))]\n")?;
-    o.write_all(b"#[cfg_attr(all(windows, not(feature = \"DynamicLoaded\"), feature = \"Implements\"), link(name = \"vulkan-1\"))]\n")?;
-    o.write_all(b"#[rustfmt::skip]\n")?;
-    o.write_all(b"unsafe extern \"system\" {\n")?;
+    let mut static_callable_impls = HashMap::new();
     let mut fntable = HashMap::new();
     let commands = COMMANDS.iter().chain(
         extensions::ELEMENTS
@@ -236,6 +231,17 @@ fn main() -> std::io::Result<()> {
             }),
     );
     for c in commands {
+        c.emit_static_callable_impls(|e| match static_callable_impls.entry(e.fn_name.clone()) {
+            std::collections::hash_map::Entry::Vacant(v) => {
+                v.insert(e);
+            }
+            std::collections::hash_map::Entry::Occupied(mut o) => {
+                // try merge conditions
+                o.get_mut().compilation_condition =
+                    core::mem::replace(&mut o.get_mut().compilation_condition, CompilationCondition::Empty)
+                        .or(e.compilation_condition);
+            }
+        });
         c.static_function_stubs(|e| match fntable.entry(e.name.clone()) {
             std::collections::hash_map::Entry::Vacant(v) => {
                 v.insert(e);
@@ -248,6 +254,20 @@ fn main() -> std::io::Result<()> {
             }
         });
     }
+
+    let mut sorted = static_callable_impls.into_values().collect::<Vec<_>>();
+    sorted.sort_by(|a, b| a.fn_name.cmp(&b.fn_name));
+    for x in sorted {
+        x.emit(&mut o)?;
+        o.write_all(b"\n")?;
+    }
+
+    o.write_all(b"\n")?;
+    o.write_all(b"#[cfg(all(feature = \"Implements\", not(feature = \"DynamicLoaded\")))]\n")?;
+    o.write_all(b"#[cfg_attr(all(not(windows), not(target_os = \"macos\"), not(feature = \"DynamicLoaded\")), link(name = \"vulkan\"))]\n")?;
+    o.write_all(b"#[cfg_attr(all(windows, not(feature = \"DynamicLoaded\"), feature = \"Implements\"), link(name = \"vulkan-1\"))]\n")?;
+    o.write_all(b"#[rustfmt::skip]\n")?;
+    o.write_all(b"unsafe extern \"system\" {\n")?;
     let mut sorted = fntable.into_values().collect::<Vec<_>>();
     sorted.sort_by(|a, b| a.name.cmp(&b.name));
     for f in sorted {

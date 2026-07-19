@@ -1643,55 +1643,6 @@ impl Command {
         self.emit_feature_gate(w)?;
         Self::emit_from_ptr(w, &type_name)?;
 
-        if self.static_callable {
-            let mut cond = CompilationCondition::Empty;
-            if let Some((tag, name)) = self.extension_old {
-                cond = cond.and(CompilationCondition::Feature(FeatureName::VulkanExt { tag, name }));
-            }
-            if let Some(Extension { tag, name, .. }) = self.extension {
-                cond = cond.and(CompilationCondition::Feature(FeatureName::VulkanExt { tag, name }));
-            }
-            if let Some(v) = self.version_since {
-                cond = cond.and(CompilationCondition::Feature(FeatureName::AllowApiVersion(v)));
-            }
-            // if !self.available_condition.is_empty() {
-            //     cond = cond.and(CompilationCondition::Feature(FeatureName::Raw(
-            //         self.available_condition,
-            //     )));
-            // }
-
-            StaticCallableImpl {
-                compilation_condition: cond,
-                fn_name: if let Some(Extension { tag, .. }) = self.extension {
-                    if self.is_command_buffer_inst {
-                        FnSymbol::CmdSuffixed {
-                            stem: self.name,
-                            suffix: tag,
-                        }
-                    } else {
-                        FnSymbol::Suffixed {
-                            stem: self.name,
-                            suffix: tag,
-                        }
-                    }
-                } else {
-                    match (self.is_command_buffer_inst, self.extension_old) {
-                        (false, None) => FnSymbol::Raw(self.name),
-                        (true, None) => FnSymbol::Cmd(self.name),
-                        (false, Some((tag, _))) => FnSymbol::Suffixed {
-                            stem: self.name,
-                            suffix: tag,
-                        },
-                        (true, Some((tag, _))) => FnSymbol::CmdSuffixed {
-                            stem: self.name,
-                            suffix: tag,
-                        },
-                    }
-                },
-            }
-            .emit(w)?;
-        }
-
         if let Some(p) = self.promoted {
             let (type_name, org_fn_name);
             match self.is_command_buffer_inst {
@@ -1745,19 +1696,65 @@ impl Command {
                 writeln!(w, "#[cfg({})]", self.available_condition)?;
             }
             Self::emit_from_ptr(w, &type_name)?;
+        }
 
+        Ok(())
+    }
+
+    pub fn emit_static_callable_impls(&self, mut cb: impl FnMut(StaticCallableImpl<'static>)) {
+        if self.static_callable {
+            let mut cond = CompilationCondition::Empty;
+            if let Some((tag, name)) = self.extension_old {
+                cond = cond.and(CompilationCondition::Feature(FeatureName::VulkanExt { tag, name }));
+            }
+            if let Some(Extension { tag, name, .. }) = self.extension {
+                cond = cond.and(CompilationCondition::Feature(FeatureName::VulkanExt { tag, name }));
+            }
+            if let Some(v) = self.version_since {
+                cond = cond.and(CompilationCondition::Feature(FeatureName::AllowApiVersion(v)));
+            }
+
+            cb(StaticCallableImpl {
+                compilation_condition: cond,
+                fn_name: if let Some(Extension { tag, .. }) = self.extension {
+                    if self.is_command_buffer_inst {
+                        FnSymbol::CmdSuffixed {
+                            stem: self.name,
+                            suffix: tag,
+                        }
+                    } else {
+                        FnSymbol::Suffixed {
+                            stem: self.name,
+                            suffix: tag,
+                        }
+                    }
+                } else {
+                    match (self.is_command_buffer_inst, self.extension_old) {
+                        (false, None) => FnSymbol::Raw(self.name),
+                        (true, None) => FnSymbol::Cmd(self.name),
+                        (false, Some((tag, _))) => FnSymbol::Suffixed {
+                            stem: self.name,
+                            suffix: tag,
+                        },
+                        (true, Some((tag, _))) => FnSymbol::CmdSuffixed {
+                            stem: self.name,
+                            suffix: tag,
+                        },
+                    }
+                },
+            });
+        }
+
+        if let Some(p) = self.promoted {
             // promoted symbols always static callable
-            StaticCallableImpl {
+            cb(StaticCallableImpl {
                 compilation_condition: CompilationCondition::Feature(FeatureName::AllowApiVersion(p)),
                 fn_name: match self.is_command_buffer_inst {
                     false => FnSymbol::Raw(self.name),
                     true => FnSymbol::Cmd(self.name),
                 },
-            }
-            .emit(w)?;
+            });
         }
-
-        Ok(())
     }
 
     pub fn static_function_stubs(&self, mut cb: impl FnMut(FunctionStub<'static, FunctionStubArgsIterator<'static>>)) {
