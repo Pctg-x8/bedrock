@@ -393,8 +393,5 @@ workspace = true
 optional = true
 features = ["Win32_Foundation", "Win32_Graphics_Gdi"]
 
-[dev-dependencies]
-rusty-hook = "0.11.2"
-
 [lints.clippy]
 new_without_default = "allow"
