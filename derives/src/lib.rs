@@ -611,7 +611,8 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
         &format!("PFN_{}", input.base_define.sig.ident),
         input.base_define.sig.ident.span(),
     );
-    let pfn_ty = syn::TypeBareFn {
+    let pfn_ty = syn::TypeFnPtr {
+        attrs: Vec::new(),
         lifetimes: None,
         unsafety: Some(syn::Token![unsafe](Span::call_site())),
         abi: Some(syn::Abi {
@@ -627,7 +628,7 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
             .iter()
             .map(|a| match a {
                 syn::FnArg::Receiver(_) => unreachable!("vk command cannot have receivers"),
-                syn::FnArg::Typed(t) => syn::BareFnArg {
+                syn::FnArg::Typed(t) => syn::NamedArg {
                     attrs: t.attrs.clone(),
                     name: match *t.pat {
                         syn::Pat::Ident(ref x) => Some((x.ident.clone(), t.colon_token)),
@@ -637,7 +638,7 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
                 },
             })
             .collect(),
-        variadic: input.base_define.sig.variadic.as_ref().map(|v| syn::BareVariadic {
+        variadic: input.base_define.sig.variadic.as_ref().map(|v| syn::FnPtrVariadic {
             attrs: v.attrs.clone(),
             name: match v.pat {
                 Some((ref p, c)) => match &**p {

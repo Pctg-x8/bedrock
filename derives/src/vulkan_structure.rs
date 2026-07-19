@@ -150,8 +150,7 @@ pub fn derive_sink(tok: TokenStream) -> TokenStream {
     if !matches!(
         next_ptr_field.ty,
         syn::Type::Ptr(syn::TypePtr {
-            mutability: Some(_),
-            const_token: None,
+            mutability: syn::PointerMutability::Mut(_),
             ..
         })
     ) {
