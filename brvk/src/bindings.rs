@@ -3300,225 +3300,6 @@ pub type PFN_vkDebugReportCallbackEXT = extern "system" fn(flags: VkDebugReportF
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[rustfmt::skip]
 pub type PFN_vkDebugUtilsMessengerCallbackEXT = extern "system" fn(messageSeverity: VkDebugUtilsMessageSeverityFlagBitsEXT, messageTypes: VkDebugUtilsMessageTypeFlagsEXT, pCallbackData: *const VkDebugUtilsMessengerCallbackDataEXT, pUserData: *mut core::ffi::c_void) -> VkBool32;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #[cfg(any(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]#[rustfmt::skip]pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR:VkStructureType=1000071004;#[cfg(any(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]#[derive(Debug, Clone)] #[rustfmt::skip]#[repr(C)]pub struct VkPhysicalDeviceIDPropertiesKHR{pub sType:VkStructureType,pub pNext:*mut core::ffi::c_void,pub deviceUUID:[u8; VK_UUID_SIZE],pub driverUUID:[u8; VK_UUID_SIZE],pub deviceLUID:[u8; VK_LUID_SIZE_KHR],pub deviceNodeMask:u32,pub deviceLUIDValid:VkBool32,}
 #[cfg(any(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]#[rustfmt::skip]unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceIDPropertiesKHR{#[inline(always)]fn as_generic(&self)->&crate::GenericVulkanSinkStructure{unsafe{core::mem::transmute::<&Self,&crate::GenericVulkanSinkStructure>(self)}}#[inline(always)]fn as_generic_mut(&mut self)->&mut crate::GenericVulkanSinkStructure{unsafe{core::mem::transmute::<&mut Self, &mut crate::GenericVulkanSinkStructure>(self)}}}
 #[cfg(any(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]#[rustfmt::skip]impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceIDPropertiesKHR{const TYPE: VkStructureType=VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR;}#[cfg(feature = "Allow1_1APIs")]
@@ -4025,16 +3806,6 @@ pub const VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_KHR: VkDebugRepor
 #[rustfmt::skip]
 pub const VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION: VkDebugReportObjectTypeEXT = 1000156000;
 
-
-
-
-
-
-
-
-
-
-
 #[cfg(feature = "VK_KHR_buffer_device_address")]
 #[rustfmt::skip]
 pub const VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME: &str = "VK_KHR_buffer_device_address";
@@ -4075,14 +3846,6 @@ pub const VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT_KHR: VkMemoryAllo
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub const VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT: VkMemoryAllocateFlagBits = 0x00000004;
-
-
-
-
-
-
-
-
 
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
 #[rustfmt::skip]
@@ -4131,22 +3894,12 @@ pub const VK_SEMAPHORE_WAIT_ANY_BIT_KHR: VkSemaphoreWaitFlagBitsKHR = 0x00000001
 #[rustfmt::skip]
 pub const VK_SEMAPHORE_WAIT_ANY_BIT: VkSemaphoreWaitFlagBitsKHR = 0x00000001;
 
-
-
-
-
-
-
-
-
-
 #[cfg(feature = "VK_KHR_image_format_list")]
 #[rustfmt::skip]
 pub const VK_KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME: &str = "VK_KHR_image_format_list";
 #[cfg(feature = "VK_KHR_image_format_list")]
 #[rustfmt::skip]
 pub const VK_KHR_IMAGE_FORMAT_LIST_SPEC_VERSION: usize = 1;
-
 
 #[cfg(feature = "VK_EXT_sampler_filter_minmax")]
 #[rustfmt::skip]
@@ -4189,8 +3942,6 @@ pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_MINMAX_BIT_EXT: VkFormatFeature
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_MINMAX_BIT: VkFormatFeatureFlagBits = 0x00010000;
-
-
 
 #[cfg(feature = "VK_KHR_sampler_mirror_clamp_to_edge")]
 #[rustfmt::skip]
@@ -4238,7 +3989,6 @@ pub const VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_NONE_KHR: VkShaderFloatControlsI
 #[rustfmt::skip]
 pub const VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_NONE: VkShaderFloatControlsIndependenceKHR = 2;
 
-
 #[cfg(feature = "VK_EXT_shader_viewport_index_layer")]
 #[rustfmt::skip]
 pub const VK_EXT_SHADER_VIEWPORT_INDEX_LAYER_EXTENSION_NAME: &str = "VK_EXT_shader_viewport_index_layer";
@@ -4252,17 +4002,6 @@ pub const VK_KHR_CREATE_RENDERPASS2_EXTENSION_NAME: &str = "VK_KHR_create_render
 #[cfg(feature = "VK_KHR_create_renderpass2")]
 #[rustfmt::skip]
 pub const VK_KHR_CREATE_RENDERPASS2_SPEC_VERSION: usize = 1;
-
-
-
-
-
-
-
-
-
-
-
 
 #[cfg(feature = "VK_KHR_depth_stencil_resolve")]
 #[rustfmt::skip]
@@ -4307,8 +4046,6 @@ pub const VK_RESOLVE_MODE_MAX_BIT_KHR: VkResolveModeFlagBitsKHR = 0x00000008;
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub const VK_RESOLVE_MODE_MAX_BIT: VkResolveModeFlagBitsKHR = 0x00000008;
-
-
 
 #[cfg(feature = "VK_EXT_descriptor_indexing")]
 #[rustfmt::skip]
@@ -4375,11 +4112,6 @@ pub const VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT_EXT: VkDesc
 #[rustfmt::skip]
 pub const VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT: VkDescriptorSetLayoutCreateFlagBits = 0x00000002;
 
-
-
-
-
-
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
 pub const VK_PIPELINE_CACHE_CREATE_EXTERNALLY_SYNCHRONIZED_BIT: VkPipelineCacheCreateFlagBits = 0x00000001;
@@ -4390,13 +4122,6 @@ pub const VK_KHR_MAINTENANCE4_EXTENSION_NAME: &str = "VK_KHR_maintenance4";
 #[cfg(feature = "VK_KHR_maintenance4")]
 #[rustfmt::skip]
 pub const VK_KHR_MAINTENANCE4_SPEC_VERSION: usize = 2;
-
-
-
-
-
-
-
 
 #[cfg(feature = "VK_KHR_format_feature_flags2")]
 #[rustfmt::skip]
@@ -4499,30 +4224,12 @@ pub const VK_FORMAT_FEATURE_2_SAMPLED_IMAGE_DEPTH_COMPARISON_BIT: VkFormatFeatur
 #[rustfmt::skip]
 pub const VK_FORMAT_FEATURE_2_SAMPLED_IMAGE_FILTER_CUBIC_BIT: VkFormatFeatureFlagBits2KHR = 0x0000000000002000;
 
-
 #[cfg(feature = "VK_KHR_copy_commands2")]
 #[rustfmt::skip]
 pub const VK_KHR_COPY_COMMANDS2_EXTENSION_NAME: &str = "VK_KHR_copy_commands2";
 #[cfg(feature = "VK_KHR_copy_commands2")]
 #[rustfmt::skip]
 pub const VK_KHR_COPY_COMMANDS2_SPEC_VERSION: usize = 1;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #[cfg(feature = "VK_KHR_dynamic_rendering")]
 #[rustfmt::skip]
@@ -4564,13 +4271,6 @@ pub const VK_RENDERING_RESUMING_BIT: VkRenderingFlagBitsKHR = 0x00000004;
 
 #[rustfmt::skip]
 pub const VK_ATTACHMENT_STORE_OP_NONE: VkAttachmentStoreOp = 1000301000;
-
-
-
-
-
-
-
 
 #[cfg(feature = "VK_KHR_maintenance5")]
 #[rustfmt::skip]
@@ -4689,18 +4389,6 @@ pub const VK_PIPELINE_CREATE_2_DISPATCH_BASE_BIT_KHR: VkPipelineCreateFlagBits2K
 #[rustfmt::skip]
 pub const VK_PIPELINE_CREATE_2_DISPATCH_BASE_BIT: VkPipelineCreateFlagBits2KHR = 0x0000000000000010;
 
-
-
-
-
-
-
-
-
-
-
-
-
 #[cfg(feature = "VK_KHR_maintenance6")]
 #[rustfmt::skip]
 pub const VK_KHR_MAINTENANCE6_EXTENSION_NAME: &str = "VK_KHR_maintenance6";
@@ -4708,27 +4396,12 @@ pub const VK_KHR_MAINTENANCE6_EXTENSION_NAME: &str = "VK_KHR_maintenance6";
 #[rustfmt::skip]
 pub const VK_KHR_MAINTENANCE6_SPEC_VERSION: usize = 1;
 
-
-
-
-
-
-
-
-
-
-
-
 #[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
 #[rustfmt::skip]
 pub const VK_KHR_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME: &str = "VK_KHR_vertex_attribute_divisor";
 #[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
 #[rustfmt::skip]
 pub const VK_KHR_VERTEX_ATTRIBUTE_DIVISOR_SPEC_VERSION: usize = 1;
-
-
-
-
 
 #[cfg(feature = "VK_KHR_global_priority")]
 #[rustfmt::skip]
@@ -4779,9 +4452,6 @@ pub const VK_QUEUE_GLOBAL_PRIORITY_REALTIME_KHR: VkQueueGlobalPriorityKHR = 1024
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_REALTIME: VkQueueGlobalPriorityKHR = 1024;
 
-
-
-
 #[cfg(feature = "VK_KHR_load_store_op_none")]
 #[rustfmt::skip]
 pub const VK_KHR_LOAD_STORE_OP_NONE_EXTENSION_NAME: &str = "VK_KHR_load_store_op_none";
@@ -4812,14 +4482,12 @@ pub const VK_KHR_SHADER_EXPECT_ASSUME_EXTENSION_NAME: &str = "VK_KHR_shader_expe
 #[rustfmt::skip]
 pub const VK_KHR_SHADER_EXPECT_ASSUME_SPEC_VERSION: usize = 1;
 
-
 #[cfg(feature = "VK_KHR_shader_float_controls2")]
 #[rustfmt::skip]
 pub const VK_KHR_SHADER_FLOAT_CONTROLS2_EXTENSION_NAME: &str = "VK_KHR_shader_float_controls2";
 #[cfg(feature = "VK_KHR_shader_float_controls2")]
 #[rustfmt::skip]
 pub const VK_KHR_SHADER_FLOAT_CONTROLS2_SPEC_VERSION: usize = 1;
-
 
 #[cfg(feature = "VK_KHR_push_descriptor")]
 #[rustfmt::skip]
@@ -4835,8 +4503,6 @@ pub const VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR: VkDescriptorS
 #[rustfmt::skip]
 pub const VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT: VkDescriptorSetLayoutCreateFlagBits = 0x00000001;
 
-
-
 #[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[cfg(feature = "VK_KHR_push_descriptor")]
 #[rustfmt::skip]
@@ -4845,7 +4511,6 @@ pub const VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS_KHR: VkDescriptorU
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
 pub const VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS: VkDescriptorUpdateTemplateTypeKHR = 1;
-
 
 #[cfg(feature = "VK_KHR_dynamic_rendering_local_read")]
 #[rustfmt::skip]
@@ -4861,11 +4526,6 @@ pub const VK_IMAGE_LAYOUT_RENDERING_LOCAL_READ_KHR: VkImageLayout = 1000232000;
 #[rustfmt::skip]
 pub const VK_IMAGE_LAYOUT_RENDERING_LOCAL_READ: VkImageLayout = 1000232000;
 
-
-
-
-
-
 #[cfg(feature = "VK_KHR_index_type_uint8")]
 #[rustfmt::skip]
 pub const VK_KHR_INDEX_TYPE_UINT8_EXTENSION_NAME: &str = "VK_KHR_index_type_uint8";
@@ -4879,7 +4539,6 @@ pub const VK_INDEX_TYPE_UINT8_KHR: VkIndexType = 1000265000;
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
 pub const VK_INDEX_TYPE_UINT8: VkIndexType = 1000265000;
-
 
 #[cfg(feature = "VK_KHR_line_rasterization")]
 #[rustfmt::skip]
@@ -4923,10 +4582,6 @@ pub const VK_LINE_RASTERIZATION_MODE_RECTANGULAR_SMOOTH_KHR: VkLineRasterization
 #[rustfmt::skip]
 pub const VK_LINE_RASTERIZATION_MODE_RECTANGULAR_SMOOTH: VkLineRasterizationModeKHR = 3;
 
-
-
-
-
 #[cfg(feature = "VK_KHR_map_memory2")]
 #[rustfmt::skip]
 pub const VK_KHR_MAP_MEMORY2_EXTENSION_NAME: &str = "VK_KHR_map_memory2";
@@ -4953,10 +4608,6 @@ pub const VK_MEMORY_UNMAP_RESERVE_BIT_KHR: VkMemoryUnmapFlagBitsKHR = 0x00000001
 #[rustfmt::skip]
 pub const VK_MEMORY_UNMAP_RESERVE_BIT: VkMemoryUnmapFlagBitsKHR = 0x00000001;
 
-
-
-
-
 #[cfg(feature = "VK_KHR_shader_subgroup_rotate")]
 #[rustfmt::skip]
 pub const VK_KHR_SHADER_SUBGROUP_ROTATE_EXTENSION_NAME: &str = "VK_KHR_shader_subgroup_rotate";
@@ -4976,7 +4627,6 @@ pub const VK_SUBGROUP_FEATURE_ROTATE_CLUSTERED_BIT_KHR: VkSubgroupFeatureFlagBit
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
 pub const VK_SUBGROUP_FEATURE_ROTATE_CLUSTERED_BIT: VkSubgroupFeatureFlagBits = 0x00000400;
-
 
 #[cfg(feature = "VK_EXT_host_image_copy")]
 #[rustfmt::skip]
@@ -5018,23 +4668,6 @@ pub const VK_HOST_IMAGE_COPY_MEMCPY_BIT_EXT: VkHostImageCopyFlagBitsEXT = 0x0000
 #[rustfmt::skip]
 pub const VK_HOST_IMAGE_COPY_MEMCPY_BIT: VkHostImageCopyFlagBitsEXT = 0x00000001;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #[cfg(feature = "VK_EXT_pipeline_protected_access")]
 #[rustfmt::skip]
 pub const VK_EXT_PIPELINE_PROTECTED_ACCESS_EXTENSION_NAME: &str = "VK_EXT_pipeline_protected_access";
@@ -5054,7 +4687,6 @@ pub const VK_PIPELINE_CREATE_PROTECTED_ACCESS_ONLY_BIT_EXT: VkPipelineCreateFlag
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
 pub const VK_PIPELINE_CREATE_PROTECTED_ACCESS_ONLY_BIT: VkPipelineCreateFlagBits = 0x40000000;
-
 
 #[cfg(feature = "VK_EXT_pipeline_robustness")]
 #[rustfmt::skip]
@@ -5140,9 +4772,6 @@ pub const VK_PIPELINE_ROBUSTNESS_IMAGE_BEHAVIOR_ROBUST_IMAGE_ACCESS_2_EXT: VkPip
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
 pub const VK_PIPELINE_ROBUSTNESS_IMAGE_BEHAVIOR_ROBUST_IMAGE_ACCESS_2: VkPipelineRobustnessImageBehaviorEXT = 3;
-
-
-
 
 #[cfg(feature = "VK_EXT_blend_operation_advanced")]
 #[rustfmt::skip]
@@ -5303,9 +4932,6 @@ pub const VK_BLEND_OVERLAP_DISJOINT_EXT: VkBlendOverlapEXT = 1;
 #[rustfmt::skip]
 pub const VK_BLEND_OVERLAP_CONJOINT_EXT: VkBlendOverlapEXT = 2;
 
-
-
-
 #[cfg(feature = "VK_EXT_validation_cache")]
 #[rustfmt::skip]
 pub const VK_EXT_VALIDATION_CACHE_EXTENSION_NAME: &str = "VK_EXT_validation_cache";
@@ -5346,12 +4972,6 @@ pub type VkValidationCacheHeaderVersionEXT = i32;
 #[rustfmt::skip]
 pub const VK_VALIDATION_CACHE_HEADER_VERSION_ONE_EXT: VkValidationCacheHeaderVersionEXT = 1;
 
-
-
-
-
-
-
 #[cfg(feature = "VK_EXT_validation_flags")]
 #[rustfmt::skip]
 pub const VK_EXT_VALIDATION_FLAGS_EXTENSION_NAME: &str = "VK_EXT_validation_flags";
@@ -5369,15 +4989,12 @@ pub const VK_VALIDATION_CHECK_ALL_EXT: VkValidationCheckEXT = 0;
 #[rustfmt::skip]
 pub const VK_VALIDATION_CHECK_SHADERS_EXT: VkValidationCheckEXT = 1;
 
-
 #[cfg(feature = "VK_EXT_acquire_drm_display")]
 #[rustfmt::skip]
 pub const VK_EXT_ACQUIRE_DRM_DISPLAY_EXTENSION_NAME: &str = "VK_EXT_acquire_drm_display";
 #[cfg(feature = "VK_EXT_acquire_drm_display")]
 #[rustfmt::skip]
 pub const VK_EXT_ACQUIRE_DRM_DISPLAY_SPEC_VERSION: usize = 1;
-
-
 
 #[cfg(feature = "VK_EXT_acquire_xlib_display")]
 #[rustfmt::skip]
@@ -5386,8 +5003,6 @@ pub const VK_EXT_ACQUIRE_XLIB_DISPLAY_EXTENSION_NAME: &str = "VK_EXT_acquire_xli
 #[rustfmt::skip]
 pub const VK_EXT_ACQUIRE_XLIB_DISPLAY_SPEC_VERSION: usize = 1;
 
-
-
 #[cfg(feature = "VK_NV_acquire_winrt_display")]
 #[rustfmt::skip]
 pub const VK_NV_ACQUIRE_WINRT_DISPLAY_EXTENSION_NAME: &str = "VK_NV_acquire_winrt_display";
@@ -5395,15 +5010,12 @@ pub const VK_NV_ACQUIRE_WINRT_DISPLAY_EXTENSION_NAME: &str = "VK_NV_acquire_winr
 #[rustfmt::skip]
 pub const VK_NV_ACQUIRE_WINRT_DISPLAY_SPEC_VERSION: usize = 1;
 
-
-
 #[cfg(feature = "VK_AMD_buffer_marker")]
 #[rustfmt::skip]
 pub const VK_AMD_BUFFER_MARKER_EXTENSION_NAME: &str = "VK_AMD_buffer_marker";
 #[cfg(feature = "VK_AMD_buffer_marker")]
 #[rustfmt::skip]
 pub const VK_AMD_BUFFER_MARKER_SPEC_VERSION: usize = 1;
-
 
 #[cfg(feature = "VK_EXT_layer_settings")]
 #[rustfmt::skip]
@@ -5440,20 +5052,12 @@ pub const VK_LAYER_SETTING_TYPE_FLOAT64_EXT: VkLayerSettingTypeEXT = 6;
 #[rustfmt::skip]
 pub const VK_LAYER_SETTING_TYPE_STRING_EXT: VkLayerSettingTypeEXT = 7;
 
-
-
 #[cfg(feature = "VK_EXT_descriptor_buffer")]
 #[rustfmt::skip]
 pub const VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME: &str = "VK_EXT_descriptor_buffer";
 #[cfg(feature = "VK_EXT_descriptor_buffer")]
 #[rustfmt::skip]
 pub const VK_EXT_DESCRIPTOR_BUFFER_SPEC_VERSION: usize = 1;
-
-
-
-
-
-
 
 #[cfg(feature = "VK_EXT_descriptor_buffer")]
 #[derive(Clone, Copy)]
@@ -5472,22 +5076,6 @@ pub union VkDescriptorDataEXT {
     pub accelerationStructure: VkDeviceAddress,
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #[cfg(feature = "VK_EXT_external_memory_host")]
 #[rustfmt::skip]
 pub const VK_EXT_EXTERNAL_MEMORY_HOST_EXTENSION_NAME: &str = "VK_EXT_external_memory_host";
@@ -5504,19 +5092,12 @@ pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT: VkExternalMemo
 #[rustfmt::skip]
 pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT: VkExternalMemoryHandleTypeFlagBitsKHR = 0x00000100;
 
-
-
-
-
 #[cfg(feature = "VK_EXT_vertex_attribute_divisor")]
 #[rustfmt::skip]
 pub const VK_EXT_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME: &str = "VK_EXT_vertex_attribute_divisor";
 #[cfg(feature = "VK_EXT_vertex_attribute_divisor")]
 #[rustfmt::skip]
 pub const VK_EXT_VERTEX_ATTRIBUTE_DIVISOR_SPEC_VERSION: usize = 1;
-
-
-
 
 #[cfg(feature = "VK_EXT_sample_locations")]
 #[rustfmt::skip]
@@ -5528,16 +5109,6 @@ pub const VK_EXT_SAMPLE_LOCATIONS_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_EXT_sample_locations")]
 #[rustfmt::skip]
 pub const VK_IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT: VkImageCreateFlagBits = 0x00001000;
-
-
-
-
-
-
-
-
-
-
 
 #[cfg(feature = "VK_NV_fragment_coverage_to_color")]
 #[rustfmt::skip]
@@ -5552,7 +5123,6 @@ pub type VkPipelineCoverageToColorStateCreateFlagsNV = VkFlags;
 #[cfg(feature = "VK_NV_fragment_coverage_to_color")]
 #[rustfmt::skip]
 pub type VkPipelineCoverageToColorStateCreateFlagBitsNV = VkFlags;
-
 
 #[cfg(feature = "VK_NV_framebuffer_mixed_samples")]
 #[rustfmt::skip]
@@ -5584,7 +5154,6 @@ pub type VkPipelineCoverageModulationStateCreateFlagsNV = VkFlags;
 #[rustfmt::skip]
 pub type VkPipelineCoverageModulationStateCreateFlagBitsNV = VkFlags;
 
-
 #[cfg(feature = "VK_EXT_global_priority")]
 #[rustfmt::skip]
 pub const VK_EXT_GLOBAL_PRIORITY_EXTENSION_NAME: &str = "VK_EXT_global_priority";
@@ -5607,7 +5176,6 @@ pub const VK_QUEUE_GLOBAL_PRIORITY_HIGH_EXT: VkQueueGlobalPriorityEXT = 512;
 #[cfg(feature = "VK_EXT_global_priority")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_REALTIME_EXT: VkQueueGlobalPriorityEXT = 1024;
-
 
 #[cfg(feature = "VK_NV_viewport_swizzle")]
 #[rustfmt::skip]
@@ -5651,16 +5219,12 @@ pub type VkPipelineViewportSwizzleStateCreateFlagsNV = VkFlags;
 #[rustfmt::skip]
 pub type VkPipelineViewportSwizzleStateCreateFlagBitsNV = VkFlags;
 
-
-
 #[cfg(feature = "VK_EXT_hdr_metadata")]
 #[rustfmt::skip]
 pub const VK_EXT_HDR_METADATA_EXTENSION_NAME: &str = "VK_EXT_hdr_metadata";
 #[cfg(feature = "VK_EXT_hdr_metadata")]
 #[rustfmt::skip]
 pub const VK_EXT_HDR_METADATA_SPEC_VERSION: usize = 1;
-
-
 
 #[cfg(feature = "VK_EXT_display_control")]
 #[rustfmt::skip]
@@ -5696,26 +5260,12 @@ pub type VkDisplayEventTypeEXT = i32;
 #[rustfmt::skip]
 pub const VK_DISPLAY_EVENT_TYPE_FIRST_PIXEL_OUT_EXT: VkDisplayEventTypeEXT = 0;
 
-
-
-
-
-
-
-
-
 #[cfg(feature = "VK_GOOGLE_display_timing")]
 #[rustfmt::skip]
 pub const VK_GOOGLE_DISPLAY_TIMING_EXTENSION_NAME: &str = "VK_GOOGLE_display_timing";
 #[cfg(feature = "VK_GOOGLE_display_timing")]
 #[rustfmt::skip]
 pub const VK_GOOGLE_DISPLAY_TIMING_SPEC_VERSION: usize = 1;
-
-
-
-
-
-
 
 #[cfg(feature = "VK_KHR_shared_presentable_image")]
 #[rustfmt::skip]
@@ -5727,8 +5277,6 @@ pub const VK_KHR_SHARED_PRESENTABLE_IMAGE_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_KHR_shared_presentable_image")]
 #[rustfmt::skip]
 pub const VK_IMAGE_LAYOUT_SHARED_PRESENT_KHR: VkImageLayout = 1000111000;
-
-
 
 #[cfg(feature = "VK_AMD_rasterization_order")]
 #[rustfmt::skip]
@@ -5747,14 +5295,12 @@ pub const VK_RASTERIZATION_ORDER_STRICT_AMD: VkRasterizationOrderAMD = 0;
 #[rustfmt::skip]
 pub const VK_RASTERIZATION_ORDER_RELAXED_AMD: VkRasterizationOrderAMD = 1;
 
-
 #[cfg(feature = "VK_AMD_texture_gather_bias_lod")]
 #[rustfmt::skip]
 pub const VK_AMD_TEXTURE_GATHER_BIAS_LOD_EXTENSION_NAME: &str = "VK_AMD_texture_gather_bias_lod";
 #[cfg(feature = "VK_AMD_texture_gather_bias_lod")]
 #[rustfmt::skip]
 pub const VK_AMD_TEXTURE_GATHER_BIAS_LOD_SPEC_VERSION: usize = 1;
-
 
 #[cfg(feature = "VK_NN_vi_surface")]
 #[rustfmt::skip]
@@ -5769,8 +5315,6 @@ pub type VkViSurfaceCreateFlagsNN = VkFlags;
 #[cfg(feature = "VK_NN_vi_surface")]
 #[rustfmt::skip]
 pub type VkViSurfaceCreateFlagBitsNN = VkFlags;
-
-
 
 #[cfg(feature = "VK_EXT_display_surface_counter")]
 #[rustfmt::skip]
@@ -5789,22 +5333,12 @@ pub type VkSurfaceCounterFlagBitsEXT = VkFlags;
 #[rustfmt::skip]
 pub const VK_SURFACE_COUNTER_VBLANK_BIT_EXT: VkSurfaceCounterFlagBitsEXT = 0x00000001;
 
-
-
 #[cfg(feature = "VK_EXT_debug_marker")]
 #[rustfmt::skip]
 pub const VK_EXT_DEBUG_MARKER_EXTENSION_NAME: &str = "VK_EXT_debug_marker";
 #[cfg(feature = "VK_EXT_debug_marker")]
 #[rustfmt::skip]
 pub const VK_EXT_DEBUG_MARKER_SPEC_VERSION: usize = 4;
-
-
-
-
-
-
-
-
 
 #[cfg(feature = "VK_NVX_device_generated_commands")]
 #[rustfmt::skip]
@@ -5941,38 +5475,12 @@ pub const VK_ACCESS_COMMAND_PROCESS_READ_BIT_NVX: VkAccessFlagBits = 0x00020000;
 #[rustfmt::skip]
 pub const VK_ACCESS_COMMAND_PROCESS_WRITE_BIT_NVX: VkAccessFlagBits = 0x00040000;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #[cfg(feature = "VK_KHR_incremental_present")]
 #[rustfmt::skip]
 pub const VK_KHR_INCREMENTAL_PRESENT_EXTENSION_NAME: &str = "VK_KHR_incremental_present";
 #[cfg(feature = "VK_KHR_incremental_present")]
 #[rustfmt::skip]
 pub const VK_KHR_INCREMENTAL_PRESENT_SPEC_VERSION: usize = 1;
-
-
-
 
 #[cfg(feature = "VK_NV_clip_space_w_scaling")]
 #[rustfmt::skip]
@@ -5984,9 +5492,6 @@ pub const VK_NV_CLIP_SPACE_W_SCALING_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_NV_clip_space_w_scaling")]
 #[rustfmt::skip]
 pub const VK_DYNAMIC_STATE_VIEWPORT_W_SCALING_NV: VkDynamicState = 1000087000;
-
-
-
 
 #[cfg(feature = "VK_NV_fill_rectangle")]
 #[rustfmt::skip]
@@ -6026,8 +5531,6 @@ pub type VkPipelineRasterizationConservativeStateCreateFlagsEXT = VkFlags;
 #[rustfmt::skip]
 pub type VkPipelineRasterizationConservativeStateCreateFlagBitsEXT = VkFlags;
 
-
-
 #[cfg(feature = "VK_EXT_discard_rectangles")]
 #[rustfmt::skip]
 pub const VK_EXT_DISCARD_RECTANGLES_EXTENSION_NAME: &str = "VK_EXT_discard_rectangles";
@@ -6056,9 +5559,6 @@ pub type VkPipelineDiscardRectangleStateCreateFlagsEXT = VkFlags;
 #[rustfmt::skip]
 pub type VkPipelineDiscardRectangleStateCreateFlagBitsEXT = VkFlags;
 
-
-
-
 #[cfg(feature = "VK_EXT_image_drm_format_modifier")]
 #[rustfmt::skip]
 pub const VK_EXT_IMAGE_DRM_FORMAT_MODIFIER_EXTENSION_NAME: &str = "VK_EXT_image_drm_format_modifier";
@@ -6082,15 +5582,6 @@ pub const VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT: VkImageAspectFlagBits = 0x0000
 #[cfg(feature = "VK_EXT_image_drm_format_modifier")]
 #[rustfmt::skip]
 pub const VK_IMAGE_ASPECT_MEMORY_PLANE_3_BIT_EXT: VkImageAspectFlagBits = 0x00000400;
-
-
-
-
-
-
-
-
-
 
 #[cfg(feature = "VK_EXT_metal_objects")]
 #[rustfmt::skip]
@@ -6124,19 +5615,6 @@ pub const VK_EXPORT_METAL_OBJECT_TYPE_METAL_IOSURFACE_BIT: VkExportMetalObjectTy
 #[rustfmt::skip]
 pub const VK_EXPORT_METAL_OBJECT_TYPE_METAL_SHARED_EVENT_BIT: VkExportMetalObjectTypeFlagBitsEXT = 0x00000020;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 #[cfg(feature = "VK_MVK_macos_surface")]
 #[rustfmt::skip]
 pub const VK_MVK_MACOS_SURFACE_EXTENSION_NAME: &str = "VK_MVK_macos_surface";
@@ -6150,8 +5628,6 @@ pub type VkMacOSSurfaceCreateFlagsMVK = VkFlags;
 #[cfg(feature = "VK_MVK_macos_surface")]
 #[rustfmt::skip]
 pub type VkMacOSSurfaceCreateFlagBitsMVK = VkFlags;
-
-
 
 #[cfg(feature = "VK_MVK_ios_surface")]
 #[rustfmt::skip]
@@ -6167,8 +5643,6 @@ pub type VkIOSSurfaceCreateFlagsMVK = VkFlags;
 #[rustfmt::skip]
 pub type VkIOSSurfaceCreateFlagBitsMVK = VkFlags;
 
-
-
 #[cfg(feature = "VK_EXT_depth_range_unrestricted")]
 #[rustfmt::skip]
 pub const VK_EXT_DEPTH_RANGE_UNRESTRICTED_EXTENSION_NAME: &str = "VK_EXT_depth_range_unrestricted";
@@ -6183,15 +5657,12 @@ pub const VK_EXT_DIRECT_MODE_DISPLAY_EXTENSION_NAME: &str = "VK_EXT_direct_mode_
 #[rustfmt::skip]
 pub const VK_EXT_DIRECT_MODE_DISPLAY_SPEC_VERSION: usize = 1;
 
-
 #[cfg(feature = "VK_KHR_display_swapchain")]
 #[rustfmt::skip]
 pub const VK_KHR_DISPLAY_SWAPCHAIN_EXTENSION_NAME: &str = "VK_KHR_display_swapchain";
 #[cfg(feature = "VK_KHR_display_swapchain")]
 #[rustfmt::skip]
 pub const VK_KHR_DISPLAY_SWAPCHAIN_SPEC_VERSION: usize = 10;
-
-
 
 #[cfg(feature = "VK_AMD_draw_indirect_count")]
 #[rustfmt::skip]
@@ -6315,7 +5786,6 @@ pub const VK_SUBPASS_DESCRIPTION_PER_VIEW_ATTRIBUTES_BIT_NVX: VkSubpassDescripti
 #[rustfmt::skip]
 pub const VK_SUBPASS_DESCRIPTION_PER_VIEW_POSITION_X_ONLY_BIT_NVX: VkSubpassDescriptionFlagBits = 0x00000002;
 
-
 #[cfg(feature = "VK_AMD_negative_viewport_height")]
 #[rustfmt::skip]
 pub const VK_AMD_NEGATIVE_VIEWPORT_HEIGHT_EXTENSION_NAME: &str = "VK_AMD_negative_viewport_height";
@@ -6419,11 +5889,6 @@ pub const VK_PHYSICAL_DEVICE_LAYERED_API_OPENGL_KHR: VkPhysicalDeviceLayeredApiK
 #[rustfmt::skip]
 pub const VK_PHYSICAL_DEVICE_LAYERED_API_OPENGLES_KHR: VkPhysicalDeviceLayeredApiKHR = 4;
 
-
-
-
-
-
 #[cfg(feature = "VK_KHR_maintenance8")]
 #[rustfmt::skip]
 pub const VK_KHR_MAINTENANCE8_EXTENSION_NAME: &str = "VK_KHR_maintenance8";
@@ -6444,8 +5909,6 @@ pub const VK_ACCESS_3_NONE_BIT_KHR: VkAccessFlagBits3KHR = 0x00000001;
 #[cfg(feature = "VK_KHR_maintenance8")]
 #[rustfmt::skip]
 pub const VK_PIPELINE_CACHE_CREATE_INTERNALLY_SYNCHRONIZED_MERGE_BIT_KHR: VkPipelineCacheCreateFlagBits = 0x00000008;
-
-
 
 #[cfg(feature = "VK_KHR_maintenance9")]
 #[rustfmt::skip]
@@ -6471,9 +5934,6 @@ pub const VK_DEPENDENCY_ASYMMETRIC_EVENT_BIT_KHR: VkDependencyFlagBits = 0x00000
 #[cfg(feature = "VK_KHR_maintenance9")]
 #[rustfmt::skip]
 pub const VK_QUERY_POOL_CREATE_RESET_BIT_KHR: VkQueryPoolCreateFlagBits = 0x00000001;
-
-
-
 
 #[cfg(feature = "VK_EXT_full_screen_exclusive")]
 #[rustfmt::skip]
@@ -6502,13 +5962,6 @@ pub const VK_FULL_SCREEN_EXCLUSIVE_DISALLOWED_EXT: VkFullScreenExclusiveEXT = 2;
 #[rustfmt::skip]
 pub const VK_FULL_SCREEN_EXCLUSIVE_APPLICATION_CONTROLLED_EXT: VkFullScreenExclusiveEXT = 3;
 
-
-
-
-
-
-
-
 #[cfg(feature = "VK_AMD_shader_info")]
 #[rustfmt::skip]
 pub const VK_AMD_SHADER_INFO_EXTENSION_NAME: &str = "VK_AMD_shader_info";
@@ -6528,9 +5981,6 @@ pub const VK_SHADER_INFO_TYPE_BINARY_AMD: VkShaderInfoTypeAMD = 1;
 #[cfg(feature = "VK_AMD_shader_info")]
 #[rustfmt::skip]
 pub const VK_SHADER_INFO_TYPE_DISASSEMBLY_AMD: VkShaderInfoTypeAMD = 2;
-
-
-
 #[rustfmt::skip]pub const VK_STRUCTURE_TYPE_APPLICATION_INFO:VkStructureType=0;
 #[cfg(feature = "Allow1_2APIs")]#[rustfmt::skip]pub const VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2:VkStructureType=1000109000;
 #[cfg(feature = "Allow1_2APIs")]#[rustfmt::skip]pub const VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2:VkStructureType=1000109001;

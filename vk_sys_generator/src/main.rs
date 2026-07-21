@@ -142,8 +142,7 @@ fn main() -> std::io::Result<()> {
     }
 
     for s in STRUCTS {
-        o.write_all(b"\n")?;
-        s.emit(&mut generator, &mut o)?;
+        s.emit(&mut generator)?;
     }
 
     // chaotic requirement structure
@@ -191,27 +190,22 @@ fn main() -> std::io::Result<()> {
     }
 
     for x in v1_1::ELEMENTS {
-        o.write_all(b"\n")?;
         x.emit(&mut generator, &mut o)?;
     }
 
     for x in v1_2::ELEMENTS {
-        o.write_all(b"\n")?;
         x.emit(&mut generator, &mut o)?;
     }
 
     for x in v1_3::ELEMENTS {
-        o.write_all(b"\n")?;
         x.emit(&mut generator, &mut o)?;
     }
 
     for x in v1_4::ELEMENTS {
-        o.write_all(b"\n")?;
         x.emit(&mut generator, &mut o)?;
     }
 
     for x in extensions::ELEMENTS {
-        o.write_all(b"\n")?;
         x.emit(&mut generator, &mut o)?;
     }
 

@@ -1015,11 +1015,7 @@ impl Struct {
         emit_members
     }
 
-    pub fn emit(
-        &self,
-        emitter: &mut (impl RustCodeEmitter + ?Sized),
-        w: &mut impl std::io::Write,
-    ) -> std::io::Result<()> {
+    pub fn emit(&self, emitter: &mut (impl RustCodeEmitter + ?Sized)) -> std::io::Result<()> {
         if self.extensions_old.is_empty() && self.extensions.is_empty() {
             assert!(self.promoted.is_none());
             // no extensions: simple define
@@ -1726,14 +1722,35 @@ impl Element {
         w: &mut impl std::io::Write,
     ) -> std::io::Result<()> {
         match self {
-            Self::ExtensionHeaderConstants(x) => x.emit(w),
-            Self::ExtensionHeaderConstants2(x) => x.emit(w),
-            Self::Bitmask(x) => x.emit(w),
-            Self::Enum(x) => x.emit(w),
-            Self::FuncPointer(x) => x.emit(w),
-            Self::Object(x) => x.emit(w),
-            Self::Struct(x) => x.emit(emitter, w),
-            Self::Union(x) => x.emit(w),
+            Self::ExtensionHeaderConstants(x) => {
+                w.write_all(b"\n")?;
+                x.emit(w)
+            }
+            Self::ExtensionHeaderConstants2(x) => {
+                w.write_all(b"\n")?;
+                x.emit(w)
+            }
+            Self::Bitmask(x) => {
+                w.write_all(b"\n")?;
+                x.emit(w)
+            }
+            Self::Enum(x) => {
+                w.write_all(b"\n")?;
+                x.emit(w)
+            }
+            Self::FuncPointer(x) => {
+                w.write_all(b"\n")?;
+                x.emit(w)
+            }
+            Self::Object(x) => {
+                w.write_all(b"\n")?;
+                x.emit(w)
+            }
+            Self::Struct(x) => x.emit(emitter),
+            Self::Union(x) => {
+                w.write_all(b"\n")?;
+                x.emit(w)
+            }
             Self::Command(_) => Ok(()),
         }
     }
