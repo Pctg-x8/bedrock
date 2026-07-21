@@ -858,8 +858,9 @@ pub struct Struct {
     equatable: bool,
     hashable: bool,
     default_zero: bool,
-    extensions: &'static [(&'static str, &'static str)],
-    extensions2: &'static [&'static Extension<'static>],
+    extensions_old: &'static [(&'static str, &'static str)],
+    extensions: &'static [&'static Extension<'static>],
+    side_extensions: &'static [&'static Extension<'static>],
     promoted: Option<&'static str>,
     available_condition: Option<&'static str>,
     version_since: Option<&'static str>,
@@ -876,8 +877,9 @@ impl Struct {
             equatable: false,
             hashable: false,
             default_zero: false,
+            extensions_old: &[],
             extensions: &[],
-            extensions2: &[],
+            side_extensions: &[],
             promoted: None,
             available_condition: None,
             version_since: None,
@@ -937,12 +939,17 @@ impl Struct {
 
     #[deprecated = "use new extensions specifier"]
     pub const fn extensions_old(mut self, extensions: &'static [(&'static str, &'static str)]) -> Self {
-        self.extensions = extensions;
+        self.extensions_old = extensions;
         self
     }
 
     pub const fn extensions(mut self, extensions: &'static [&'static Extension<'static>]) -> Self {
-        self.extensions2 = extensions;
+        self.extensions = extensions;
+        self
+    }
+
+    pub const fn side_extensions(mut self, side_extensions: &'static [&'static Extension<'static>]) -> Self {
+        self.side_extensions = side_extensions;
         self
     }
 
@@ -1015,31 +1022,12 @@ impl Struct {
         emit_members
     }
 
-    fn emit_core(
-        emitter: &mut (impl RustCodeEmitter + ?Sized),
-        compilation_condition: CompilationCondition<'static>,
-        name: TypeSymbol<'static>,
-        members: &[StructMember],
-        usage: Option<StructUsage>,
-        derives: StructDerives,
-    ) {
-        emitter.emit_struct(crate::rs_item::Struct {
-            compilation_condition,
-            name,
-            derives,
-            members: Self::build_all_rs_members(members, usage),
-            typed_vulkan_structure_impl: None,
-            typed_vulkan_sink_structure_impl: None,
-            default: StructDefault::None,
-        });
-    }
-
     pub fn emit(
         &self,
         emitter: &mut (impl RustCodeEmitter + ?Sized),
         w: &mut impl std::io::Write,
     ) -> std::io::Result<()> {
-        if self.extensions.is_empty() && self.extensions2.is_empty() {
+        if self.extensions_old.is_empty() && self.extensions.is_empty() {
             assert!(self.promoted.is_none());
             // no extensions: simple define
             let mut cond = CompilationCondition::Empty;
@@ -1099,10 +1087,10 @@ impl Struct {
         }
 
         let mut extensions_suffixes = HashMap::new();
-        for &(tag, name) in self.extensions {
+        for &(tag, name) in self.extensions_old {
             extensions_suffixes.entry(tag).or_insert_with(Vec::new).push(name);
         }
-        for x in self.extensions2.iter() {
+        for x in self.extensions.iter() {
             extensions_suffixes.entry(x.tag).or_insert_with(Vec::new).push(x.name);
         }
 
@@ -1116,6 +1104,14 @@ impl Struct {
                         .map(|name| CompilationCondition::Feature(FeatureName::VulkanExt { tag, name })),
                 ),
             };
+            if !self.side_extensions.is_empty() {
+                cond = cond.and(CompilationCondition::all(self.side_extensions.iter().map(|x| {
+                    CompilationCondition::Feature(FeatureName::VulkanExt {
+                        tag: x.tag,
+                        name: x.name,
+                    })
+                })));
+            }
             if let Some(v) = self.version_since {
                 cond = cond.and(CompilationCondition::Feature(FeatureName::AllowApiVersion(v)));
             }
@@ -1198,7 +1194,7 @@ impl Struct {
 
     pub fn emit_extra_cfg(&self, w: &mut impl std::io::Write, cfg: &str) -> std::io::Result<()> {
         assert!(
-            self.extensions.is_empty() && self.extensions2.is_empty(),
+            self.extensions_old.is_empty() && self.extensions.is_empty(),
             "struct def has some extensions"
         );
         assert!(self.promoted.is_none());
@@ -1369,6 +1365,7 @@ pub struct Command {
     version_since: Option<&'static str>,
     extension_old: Option<(&'static str, &'static str)>,
     extension: Option<&'static Extension<'static>>,
+    side_extensions: &'static [&'static Extension<'static>],
     available_condition: &'static str,
     promoted: Option<&'static str>,
 }
@@ -1383,6 +1380,7 @@ impl Command {
             version_since: None,
             extension_old: None,
             extension: None,
+            side_extensions: &[],
             available_condition: "",
             promoted: None,
         }
@@ -1398,6 +1396,7 @@ impl Command {
             version_since: None,
             extension_old: None,
             extension: None,
+            side_extensions: &[],
             available_condition: "",
             promoted: None,
         }
@@ -1430,6 +1429,11 @@ impl Command {
 
     pub const fn extension(mut self, extension: &'static Extension<'static>) -> Self {
         self.extension = Some(extension);
+        self
+    }
+
+    pub const fn side_extensions(mut self, side_extensions: &'static [&'static Extension<'static>]) -> Self {
+        self.side_extensions = side_extensions;
         self
     }
 
@@ -1486,6 +1490,14 @@ impl Command {
         }
         if let Some(Extension { tag, name, .. }) = self.extension {
             cond = cond.and(CompilationCondition::Feature(FeatureName::VulkanExt { tag, name }));
+        }
+        if !self.side_extensions.is_empty() {
+            cond = cond.and(CompilationCondition::all(self.side_extensions.iter().map(|x| {
+                CompilationCondition::Feature(FeatureName::VulkanExt {
+                    tag: x.tag,
+                    name: x.name,
+                })
+            })));
         }
         if let Some(v) = self.version_since {
             cond = cond.and(CompilationCondition::Feature(FeatureName::AllowApiVersion(v)));

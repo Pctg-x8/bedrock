@@ -1,5 +1,6 @@
-use crate::{parts::*, vk_ext_enum};
+use crate::{parts::*, v1_1::VK_KHR_DEVICE_GROUP, vk_ext_enum};
 
+pub const VK_KHR_WIN32_SURFACE: &Extension = &Extension::khr("win32_surface", 6, 10);
 pub const VK_EXT_VALIDATION_CACHE: &Extension = &Extension::ext("validation_cache", 1, 161);
 pub const VK_EXT_VALIDATION_FLAGS: &Extension = &Extension::ext("validation_flags", 1, 62);
 pub const VK_EXT_DEBUG_REPORT: &Extension = &Extension::ext("debug_report", 10, 12);
@@ -2873,7 +2874,6 @@ pub const ELEMENTS: &[Element] = &[
     .failable()
     .extension(VK_EXT_FULL_SCREEN_EXCLUSIVE)
     .into_element(),
-    // VK_EXT_full_screen_exclusive - platform extender
     Struct::typed(
         "SurfaceFullScreenExclusiveWin32Info",
         "SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO",
@@ -2882,7 +2882,7 @@ pub const ELEMENTS: &[Element] = &[
         &[Struct::member("hmonitor", "windows::Win32::Graphics::Gdi::HMONITOR")],
     )
     .extensions(&[VK_EXT_FULL_SCREEN_EXCLUSIVE])
-    .available_condition("feature = \"VK_KHR_win32_surface\"")
+    .side_extensions(&[VK_KHR_WIN32_SURFACE])
     .into_element(),
     Command::new(
         "GetDeviceGroupSurfacePresentModes2",
@@ -2894,7 +2894,7 @@ pub const ELEMENTS: &[Element] = &[
     )
     .failable()
     .extension(VK_EXT_FULL_SCREEN_EXCLUSIVE)
-    .available_condition("feature = \"VK_KHR_device_group\"")
+    .side_extensions(&[VK_KHR_DEVICE_GROUP])
     .into_element(),
     // VK_AMD_shader_info
     VK_AMD_SHADER_INFO.header_constants().into_element(),
