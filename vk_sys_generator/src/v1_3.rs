@@ -5,8 +5,8 @@ use crate::{parts::*, vk_ext_enum};
 const VERSION: &str = "1_3";
 
 const VK_KHR_MAINTENANCE_4: &Extension = &Extension::khr("maintenance4", 2, 414);
-const VK_KHR_FORMAT_FEATURE_FLAGS2: &Extension = &Extension::khr("format_feature_flags2", 2, 361);
-pub const VK_KHR_COPY_COMMANDS2: &Extension = &Extension::khr("copy_commands2", 1, 338);
+pub const VK_KHR_FORMAT_FEATURE_FLAGS_2: &Extension = &Extension::khr("format_feature_flags2", 2, 361);
+pub const VK_KHR_COPY_COMMANDS_2: &Extension = &Extension::khr("copy_commands2", 1, 338);
 pub const VK_KHR_DYNAMIC_RENDERING: &Extension = &Extension::khr("dynamic_rendering", 1, 45);
 
 pub const ELEMENTS: &[Element] = &[
@@ -96,7 +96,7 @@ pub const ELEMENTS: &[Element] = &[
     .promoted(VERSION)
     .into_element(),
     // VK_KHR_format_feature_flags2
-    VK_KHR_FORMAT_FEATURE_FLAGS2.header_constants().into_element(),
+    VK_KHR_FORMAT_FEATURE_FLAGS_2.header_constants().into_element(),
     Element::Bitmask(
         Bitmask::new(
             "FormatFeatureFlags2",
@@ -136,14 +136,14 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .long()
-        .extension(VK_KHR_FORMAT_FEATURE_FLAGS2)
+        .extension(VK_KHR_FORMAT_FEATURE_FLAGS_2)
         .promoted(VERSION),
     ),
     Element::Struct(
         Struct::typed(
             "FormatProperties3",
             "FORMAT_PROPERTIES_3",
-            VK_KHR_FORMAT_FEATURE_FLAGS2.ext_enum(0) as _,
+            VK_KHR_FORMAT_FEATURE_FLAGS_2.ext_enum(0) as _,
             StructUsage::Sink,
             &[
                 Struct::member("linearTilingFeatures", "VkFormatFeatureFlags2KHR"),
@@ -151,15 +151,15 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("bufferFeatures", "VkFormatFeatureFlags2KHR"),
             ],
         )
-        .extensions(&[VK_KHR_FORMAT_FEATURE_FLAGS2])
+        .extensions(&[VK_KHR_FORMAT_FEATURE_FLAGS_2])
         .promoted(VERSION),
     ),
     // VK_KHR_copy_commands2
-    VK_KHR_COPY_COMMANDS2.header_constants().into_element(),
+    VK_KHR_COPY_COMMANDS_2.header_constants().into_element(),
     Struct::typed(
         "CopyBufferInfo2",
         "COPY_BUFFER_INFO_2",
-        VK_KHR_COPY_COMMANDS2.ext_enum(0) as _,
+        VK_KHR_COPY_COMMANDS_2.ext_enum(0) as _,
         StructUsage::Source,
         &[
             Struct::member("srcBuffer", "VkBuffer"),
@@ -168,13 +168,13 @@ pub const ELEMENTS: &[Element] = &[
             Struct::member("pRegions", "*const VkBufferCopy2KHR"),
         ],
     )
-    .extensions(&[VK_KHR_COPY_COMMANDS2])
+    .extensions(&[VK_KHR_COPY_COMMANDS_2])
     .promoted(VERSION)
     .into_element(),
     Struct::typed(
         "CopyImageInfo2",
         "COPY_IMAGE_INFO_2",
-        VK_KHR_COPY_COMMANDS2.ext_enum(1) as _,
+        VK_KHR_COPY_COMMANDS_2.ext_enum(1) as _,
         StructUsage::Source,
         &[
             Struct::member("srcImage", "VkImage"),
@@ -185,13 +185,13 @@ pub const ELEMENTS: &[Element] = &[
             Struct::member("pRegions", "*const VkImageCopy2KHR"),
         ],
     )
-    .extensions(&[VK_KHR_COPY_COMMANDS2])
+    .extensions(&[VK_KHR_COPY_COMMANDS_2])
     .promoted(VERSION)
     .into_element(),
     Struct::typed(
         "CopyBufferToImageInfo2",
         "COPY_BUFFER_TO_IMAGE_INFO_2",
-        VK_KHR_COPY_COMMANDS2.ext_enum(2) as _,
+        VK_KHR_COPY_COMMANDS_2.ext_enum(2) as _,
         StructUsage::Source,
         &[
             Struct::member("srcBuffer", "VkBuffer"),
@@ -201,13 +201,13 @@ pub const ELEMENTS: &[Element] = &[
             Struct::member("pRegions", "*const VkBufferImageCopy2KHR"),
         ],
     )
-    .extensions(&[VK_KHR_COPY_COMMANDS2])
+    .extensions(&[VK_KHR_COPY_COMMANDS_2])
     .promoted(VERSION)
     .into_element(),
     Struct::typed(
         "CopyImageToBufferInfo2",
         "COPY_IMAGE_TO_BUFFER_INFO_2",
-        VK_KHR_COPY_COMMANDS2.ext_enum(3) as _,
+        VK_KHR_COPY_COMMANDS_2.ext_enum(3) as _,
         StructUsage::Source,
         &[
             Struct::member("srcImage", "VkImage"),
@@ -217,13 +217,13 @@ pub const ELEMENTS: &[Element] = &[
             Struct::member("pRegions", "*const VkBufferImageCopy2KHR"),
         ],
     )
-    .extensions(&[VK_KHR_COPY_COMMANDS2])
+    .extensions(&[VK_KHR_COPY_COMMANDS_2])
     .promoted(VERSION)
     .into_element(),
     Struct::typed(
         "BlitImageInfo2",
         "BLIT_IMAGE_INFO_2",
-        VK_KHR_COPY_COMMANDS2.ext_enum(4) as _,
+        VK_KHR_COPY_COMMANDS_2.ext_enum(4) as _,
         StructUsage::Source,
         &[
             Struct::member("srcImage", "VkImage"),
@@ -235,13 +235,13 @@ pub const ELEMENTS: &[Element] = &[
             Struct::member("filter", "VkFilter"),
         ],
     )
-    .extensions(&[VK_KHR_COPY_COMMANDS2])
+    .extensions(&[VK_KHR_COPY_COMMANDS_2])
     .promoted(VERSION)
     .into_element(),
     Struct::typed(
         "ResolveImageInfo2",
         "RESOLVE_IMAGE_INFO_2",
-        VK_KHR_COPY_COMMANDS2.ext_enum(5) as _,
+        VK_KHR_COPY_COMMANDS_2.ext_enum(5) as _,
         StructUsage::Source,
         &[
             Struct::member("srcImage", "VkImage"),
@@ -252,13 +252,13 @@ pub const ELEMENTS: &[Element] = &[
             Struct::member("pRegions", "*const VkImageResolve2KHR"),
         ],
     )
-    .extensions(&[VK_KHR_COPY_COMMANDS2])
+    .extensions(&[VK_KHR_COPY_COMMANDS_2])
     .promoted(VERSION)
     .into_element(),
     Struct::typed(
         "BufferCopy2",
         "BUFFER_COPY_2",
-        VK_KHR_COPY_COMMANDS2.ext_enum(6) as _,
+        VK_KHR_COPY_COMMANDS_2.ext_enum(6) as _,
         StructUsage::Source,
         &[
             Struct::member("srcOffset", "VkDeviceSize"),
@@ -266,13 +266,13 @@ pub const ELEMENTS: &[Element] = &[
             Struct::member("size", "VkDeviceSize"),
         ],
     )
-    .extensions(&[VK_KHR_COPY_COMMANDS2])
+    .extensions(&[VK_KHR_COPY_COMMANDS_2])
     .promoted(VERSION)
     .into_element(),
     Struct::typed(
         "ImageCopy2",
         "IMAGE_COPY_2",
-        VK_KHR_COPY_COMMANDS2.ext_enum(7) as _,
+        VK_KHR_COPY_COMMANDS_2.ext_enum(7) as _,
         StructUsage::Source,
         &[
             Struct::member("srcSubresource", "VkImageSubresourceLayers"),
@@ -282,13 +282,13 @@ pub const ELEMENTS: &[Element] = &[
             Struct::member("extent", "VkExtent3D"),
         ],
     )
-    .extensions(&[VK_KHR_COPY_COMMANDS2])
+    .extensions(&[VK_KHR_COPY_COMMANDS_2])
     .promoted(VERSION)
     .into_element(),
     Struct::typed(
         "ImageBlit2",
         "IMAGE_BLIT_2",
-        VK_KHR_COPY_COMMANDS2.ext_enum(8) as _,
+        VK_KHR_COPY_COMMANDS_2.ext_enum(8) as _,
         StructUsage::Source,
         &[
             Struct::member("srcSubresources", "VkImageSubresourceLayers"),
@@ -297,13 +297,13 @@ pub const ELEMENTS: &[Element] = &[
             Struct::member("dstOffset", "[VkOffset3D; 2]"),
         ],
     )
-    .extensions(&[VK_KHR_COPY_COMMANDS2])
+    .extensions(&[VK_KHR_COPY_COMMANDS_2])
     .promoted(VERSION)
     .into_element(),
     Struct::typed(
         "BufferImageCopy2",
         "BUFFER_IMAGE_COPY_2",
-        VK_KHR_COPY_COMMANDS2.ext_enum(9) as _,
+        VK_KHR_COPY_COMMANDS_2.ext_enum(9) as _,
         StructUsage::Source,
         &[
             Struct::member("bufferOffset", "VkDeviceSize"),
@@ -314,13 +314,13 @@ pub const ELEMENTS: &[Element] = &[
             Struct::member("imageExtent", "VkExtent3D"),
         ],
     )
-    .extensions(&[VK_KHR_COPY_COMMANDS2])
+    .extensions(&[VK_KHR_COPY_COMMANDS_2])
     .promoted(VERSION)
     .into_element(),
     Struct::typed(
         "ImageResolve2",
         "IMAGE_RESOLVE_2",
-        VK_KHR_COPY_COMMANDS2.ext_enum(10) as _,
+        VK_KHR_COPY_COMMANDS_2.ext_enum(10) as _,
         StructUsage::Source,
         &[
             Struct::member("srcSubresource", "VkImageSubresourceLayers"),
@@ -330,40 +330,40 @@ pub const ELEMENTS: &[Element] = &[
             Struct::member("extent", "VkExtent3D"),
         ],
     )
-    .extensions(&[VK_KHR_COPY_COMMANDS2])
+    .extensions(&[VK_KHR_COPY_COMMANDS_2])
     .promoted(VERSION)
     .into_element(),
     Command::inst("CopyBuffer2", &[("pCopyBufferInfo", "*const VkCopyBufferInfo2KHR")])
-        .extension(VK_KHR_COPY_COMMANDS2)
+        .extension(VK_KHR_COPY_COMMANDS_2)
         .promoted(VERSION)
         .into_element(),
     Command::inst("CopyImage2", &[("pCopyImageInfo", "*const VkCopyImageInfo2KHR")])
-        .extension(VK_KHR_COPY_COMMANDS2)
+        .extension(VK_KHR_COPY_COMMANDS_2)
         .promoted(VERSION)
         .into_element(),
     Command::inst(
         "CopyBufferToImage2",
         &[("pCopyBufferToImageInfo", "*const VkCopyBufferToImageInfo2KHR")],
     )
-    .extension(VK_KHR_COPY_COMMANDS2)
+    .extension(VK_KHR_COPY_COMMANDS_2)
     .promoted(VERSION)
     .into_element(),
     Command::inst(
         "CopyImageToBuffer2",
         &[("pCopyImageToBufferInfo", "*const VkCopyImageToBufferInfo2KHR")],
     )
-    .extension(VK_KHR_COPY_COMMANDS2)
+    .extension(VK_KHR_COPY_COMMANDS_2)
     .promoted(VERSION)
     .into_element(),
     Command::inst("BlitImage2", &[("pBlitImageInfo", "*const VkBlitImageInfo2KHR")])
-        .extension(VK_KHR_COPY_COMMANDS2)
+        .extension(VK_KHR_COPY_COMMANDS_2)
         .promoted(VERSION)
         .into_element(),
     Command::inst(
         "ResolveImage2",
         &[("pResolveImageInfo", "*const VkResolveImageInfo2KHR")],
     )
-    .extension(VK_KHR_COPY_COMMANDS2)
+    .extension(VK_KHR_COPY_COMMANDS_2)
     .promoted(VERSION)
     .into_element(),
     // VK_KHR_dynamic_rendering

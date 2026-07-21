@@ -1,4 +1,4 @@
-use crate::{parts::*, v1_1::VK_KHR_DEVICE_GROUP, vk_ext_enum};
+use crate::{parts::*, v1_1::VK_KHR_DEVICE_GROUP, v1_3::VK_KHR_FORMAT_FEATURE_FLAGS_2, vk_ext_enum};
 
 pub const VK_KHR_WIN32_SURFACE: &Extension = &Extension::khr("win32_surface", 6, 10);
 pub const VK_EXT_VALIDATION_CACHE: &Extension = &Extension::ext("validation_cache", 1, 161);
@@ -2216,7 +2216,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .extensions(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER])
-        .available_condition("feature = \"VK_KHR_format_feature_flags2\""),
+        .side_extensions(&[VK_KHR_FORMAT_FEATURE_FLAGS_2]),
     ),
     Element::Struct(
         Struct::typed(
@@ -2230,7 +2230,7 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .extensions(&[VK_EXT_IMAGE_DRM_FORMAT_MODIFIER])
-        .available_condition("feature = \"VK_KHR_format_feature_flags2\""),
+        .side_extensions(&[VK_KHR_FORMAT_FEATURE_FLAGS_2]),
     ),
     Element::Command(
         Command::new(

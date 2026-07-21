@@ -862,7 +862,6 @@ pub struct Struct {
     extensions: &'static [&'static Extension<'static>],
     side_extensions: &'static [&'static Extension<'static>],
     promoted: Option<&'static str>,
-    available_condition: Option<&'static str>,
     version_since: Option<&'static str>,
 }
 impl Struct {
@@ -881,7 +880,6 @@ impl Struct {
             extensions: &[],
             side_extensions: &[],
             promoted: None,
-            available_condition: None,
             version_since: None,
         }
     }
@@ -924,11 +922,6 @@ impl Struct {
 
     pub const fn hashable(mut self) -> Self {
         self.hashable = true;
-        self
-    }
-
-    pub const fn available_condition(mut self, condition: &'static str) -> Self {
-        self.available_condition = Some(condition);
         self
     }
 
