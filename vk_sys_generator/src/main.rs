@@ -162,6 +162,7 @@ fn main() -> std::io::Result<()> {
         },
     )
     .emit_extra_cfg(&mut o, "any(feature = \"VK_KHR_external_fence_capabilities\", feature = \"VK_KHR_external_memory_capabilities\", feature = \"VK_KHR_external_semaphore_capabilities\")")?;
+    o.write_all(b"\n")?;
     o.write_all(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
     o.write_all(b"#[rustfmt::skip]\n")?;
     o.write_all(b"pub type VkPhysicalDeviceIDProperties = VkPhysicalDeviceIDPropertiesKHR;\n")?;
