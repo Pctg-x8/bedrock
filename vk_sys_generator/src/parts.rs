@@ -1201,6 +1201,8 @@ impl Struct {
                 value: ConstantValue::Unsigned(v as _),
             }
             .emit(w)?;
+            w.write_all(b"\n")?;
+
             if u.is_source() {
                 derives |= StructDerives::VULKAN_STRUCTURE;
                 typed_vulkan_structure_impl = Some(StructTypedVulkanStructureImpl {
