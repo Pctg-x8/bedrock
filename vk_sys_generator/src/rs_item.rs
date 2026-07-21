@@ -466,23 +466,33 @@ impl Struct<'_> {
         write!(w, "}}")?;
 
         if self.derives.contains(StructDerives::VULKAN_STRUCTURE) {
+            w.write_all(b"\n")?;
             self.emit_vulkan_structure_impl(w)?;
         }
         if self.derives.contains(StructDerives::VULKAN_SINK_STRUCTURE) {
+            w.write_all(b"\n")?;
             self.emit_vulkan_sink_structure_impl(w)?;
         }
 
         if let Some(ref x) = self.typed_vulkan_structure_impl {
+            w.write_all(b"\n")?;
             x.emit(self, w)?;
         }
         if let Some(ref x) = self.typed_vulkan_sink_structure_impl {
+            w.write_all(b"\n")?;
             x.emit(self, w)?;
         }
 
         match self.default {
             StructDefault::None => (),
-            StructDefault::Zero => self.emit_default_zero(w)?,
-            StructDefault::ZeroTyped(ref sty) => self.emit_default_zero_typed(sty, w)?,
+            StructDefault::Zero => {
+                w.write_all(b"\n")?;
+                self.emit_default_zero(w)?;
+            }
+            StructDefault::ZeroTyped(ref sty) => {
+                w.write_all(b"\n")?;
+                self.emit_default_zero_typed(sty, w)?;
+            }
         }
 
         Ok(())
