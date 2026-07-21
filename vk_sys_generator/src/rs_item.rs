@@ -29,7 +29,7 @@ pub enum CompilationCondition<'s> {
     Any(BTreeSet<CompilationCondition<'s>>),
 }
 impl CompilationCondition<'_> {
-    fn emit_content(self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
+    fn emit_content(&self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
         match self {
             Self::Empty => Ok(()),
             Self::Raw(s) => w.write_all(s.as_bytes()),
@@ -63,13 +63,13 @@ impl CompilationCondition<'_> {
         }
     }
 
-    pub fn emit_attr_content(self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
+    pub fn emit_attr_content(&self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
         w.write_all(b"cfg(")?;
         self.emit_content(w)?;
         w.write_all(b")")
     }
 
-    pub fn emit_single_attr(self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
+    pub fn emit_single_attr(&self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
         if matches!(self, Self::Empty) {
             // no emit for empty
             return Ok(());
@@ -165,35 +165,24 @@ pub enum FixedArrayLength<'s> {
 
 pub enum Type<'s> {
     Raw(&'s str),
+    Defined(TypeSymbol<'s>),
     ConstPtr(Box<Type<'s>>),
     MutPtr(Box<Type<'s>>),
     FixedArray(Box<Type<'s>>, FixedArrayLength<'s>),
 }
-impl Type<'_> {
-    pub fn emit(self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
+impl core::fmt::Display for Type<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Raw(r) => w.write_all(r.as_bytes()),
-            Self::ConstPtr(t) => {
-                w.write_all(b"*const ")?;
-                t.emit(w)
-            }
-            Self::MutPtr(t) => {
-                w.write_all(b"*mut ")?;
-                t.emit(w)
-            }
-            Self::FixedArray(t, FixedArrayLength::Imm(n)) => {
-                w.write_all(b"[")?;
-                t.emit(w)?;
-                write!(w, "; {n}]")
-            }
-            Self::FixedArray(t, FixedArrayLength::Named(n)) => {
-                w.write_all(b"[")?;
-                t.emit(w)?;
-                write!(w, "; {n}]")
-            }
+            Self::Raw(r) => f.write_str(r),
+            Self::Defined(t) => t.fmt(f),
+            Self::ConstPtr(t) => write!(f, "*const {t}"),
+            Self::MutPtr(t) => write!(f, "*mut {t}"),
+            Self::FixedArray(t, FixedArrayLength::Imm(n)) => write!(f, "[{t}; {n}]"),
+            Self::FixedArray(t, FixedArrayLength::Named(n)) => write!(f, "[{t}; {n}]"),
         }
     }
-
+}
+impl Type<'_> {
     pub fn const_ptr(self) -> Self {
         Self::ConstPtr(Box::new(self))
     }
@@ -235,18 +224,15 @@ impl<'s, Args: Iterator<Item = (&'s str, Type<'s>)>> FunctionStub<'s, Args> {
         let mut first = true;
         for a in self.args {
             if !first {
-                w.write_all(b", ")?;
+                w.write_all(b",")?;
             }
 
-            w.write_all(a.0.as_bytes())?;
-            w.write_all(b": ")?;
-            a.1.emit(w)?;
+            write!(w, "{}:{}", a.0, a.1)?;
             first = false;
         }
         w.write_all(b")")?;
         if let Some(r) = self.return_type {
-            w.write_all(b" -> ")?;
-            r.emit(w)?;
+            write!(w, "->{r}")?;
         }
         w.write_all(b";")?;
 
@@ -322,18 +308,15 @@ impl<'s, Args: Iterator<Item = (&'s str, Type<'s>)>> FunctionPtrNewtype<'s, Args
         let mut first = true;
         for x in self.args {
             if !first {
-                w.write_all(b", ")?;
+                w.write_all(b",")?;
             }
 
-            w.write_all(x.0.as_bytes())?;
-            w.write_all(b": ")?;
-            x.1.emit(w)?;
+            write!(w, "{}:{}", x.0, x.1)?;
             first = false;
         }
         w.write_all(b")")?;
         if let Some(r) = self.return_type {
-            w.write_all(b" -> ")?;
-            r.emit(w)?;
+            write!(w, "->{r}")?;
         }
         w.write_all(b");")?;
 
@@ -380,20 +363,16 @@ pub struct Constant<'s> {
 impl Constant<'_> {
     pub fn emit(self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
         self.compilation_condition.emit_single_attr(w)?;
-        write!(w, "#[rustfmt::skip] pub const {}: ", self.name)?;
-        self.ty.emit(w)?;
-        write!(w, " = {};", self.value)?;
-
-        Ok(())
+        write!(w, "#[rustfmt::skip]pub const {}:{}={};", self.name, self.ty, self.value)
     }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct StructSymbol<'s> {
+pub struct TypeSymbol<'s> {
     pub stem: &'s str,
     pub suffix: Option<&'s str>,
 }
-impl core::fmt::Display for StructSymbol<'_> {
+impl core::fmt::Display for TypeSymbol<'_> {
     #[inline]
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "Vk{}", self.stem)?;
@@ -411,6 +390,8 @@ bitflags! {
         const COPY = 0x04;
         const EQ = 0x08;
         const HASH = 0x10;
+        const VULKAN_STRUCTURE = 0x20;
+        const VULKAN_SINK_STRUCTURE = 0x40;
     }
 }
 
@@ -419,14 +400,24 @@ pub struct StructMember<'s> {
     pub ty: Type<'s>,
 }
 
+#[derive(Debug)]
+pub enum StructDefault<'s> {
+    None,
+    Zero,
+    ZeroTyped(ConstantSymbol<'s>),
+}
+
 pub struct Struct<'s> {
     pub compilation_condition: CompilationCondition<'s>,
-    pub name: StructSymbol<'s>,
+    pub name: TypeSymbol<'s>,
     pub derives: StructDerives,
     pub members: Vec<StructMember<'s>>,
+    pub typed_vulkan_structure_impl: Option<StructTypedVulkanStructureImpl<'s>>,
+    pub typed_vulkan_sink_structure_impl: Option<StructTypedVulkanSinkStructureImpl<'s>>,
+    pub default: StructDefault<'s>,
 }
 impl Struct<'_> {
-    pub fn emit(self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
+    pub fn emit(&self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
         self.compilation_condition.emit_single_attr(w)?;
         if !self.derives.is_empty() {
             write!(w, "#[derive(")?;
@@ -469,18 +460,125 @@ impl Struct<'_> {
             write!(w, ")] ")?;
         }
         write!(w, "#[rustfmt::skip]#[repr(C)]pub struct {}{{", self.name)?;
-        for member in self.members {
-            write!(w, "pub {}: ", member.name)?;
-            member.ty.emit(w)?;
-            w.write_all(b",")?;
+        for member in self.members.iter() {
+            write!(w, "pub {}:{},", member.name, member.ty)?;
         }
         write!(w, "}}")?;
 
+        if self.derives.contains(StructDerives::VULKAN_STRUCTURE) {
+            self.emit_vulkan_structure_impl(w)?;
+        }
+        if self.derives.contains(StructDerives::VULKAN_SINK_STRUCTURE) {
+            self.emit_vulkan_sink_structure_impl(w)?;
+        }
+
+        if let Some(ref x) = self.typed_vulkan_structure_impl {
+            x.emit(self, w)?;
+        }
+        if let Some(ref x) = self.typed_vulkan_sink_structure_impl {
+            x.emit(self, w)?;
+        }
+
+        match self.default {
+            StructDefault::None => (),
+            StructDefault::Zero => self.emit_default_zero(w)?,
+            StructDefault::ZeroTyped(ref sty) => self.emit_default_zero_typed(sty, w)?,
+        }
+
         Ok(())
+    }
+
+    fn emit_vulkan_structure_impl(&self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
+        self.compilation_condition.emit_single_attr(w)?;
+        write!(
+            w,
+            "#[rustfmt::skip]unsafe impl crate::VulkanStructure for {}{{#[inline(always)]fn as_generic(&self)->&crate::GenericVulkanStructure{{unsafe{{core::mem::transmute::<&Self,&crate::GenericVulkanStructure>(self)}}}}#[inline(always)]fn as_generic_mut(&mut self)->&mut crate::GenericVulkanStructure{{unsafe{{core::mem::transmute::<&mut Self, &mut crate::GenericVulkanStructure>(self)}}}}}}",
+            self.name
+        )?;
+
+        Ok(())
+    }
+
+    fn emit_vulkan_sink_structure_impl(&self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
+        self.compilation_condition.emit_single_attr(w)?;
+        write!(
+            w,
+            "#[rustfmt::skip]unsafe impl crate::VulkanSinkStructure for {}{{#[inline(always)]fn as_generic(&self)->&crate::GenericVulkanSinkStructure{{unsafe{{core::mem::transmute::<&Self,&crate::GenericVulkanSinkStructure>(self)}}}}#[inline(always)]fn as_generic_mut(&mut self)->&mut crate::GenericVulkanSinkStructure{{unsafe{{core::mem::transmute::<&mut Self, &mut crate::GenericVulkanSinkStructure>(self)}}}}}}",
+            self.name
+        )?;
+
+        Ok(())
+    }
+
+    fn emit_default_zero(&self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
+        self.compilation_condition.emit_single_attr(w)?;
+        write!(
+            w,
+            "#[rustfmt::skip]impl Default for {}{{#[inline(always)]fn default()->Self{{unsafe{{core::mem::MaybeUninit::zeroed().assume_init()}}}}}}",
+            self.name
+        )?;
+
+        Ok(())
+    }
+
+    fn emit_default_zero_typed(
+        &self,
+        sty: &ConstantSymbol<'_>,
+        w: &mut (impl std::io::Write + ?Sized),
+    ) -> std::io::Result<()> {
+        self.compilation_condition.emit_single_attr(w)?;
+        write!(
+            w,
+            "#[rustfmt::skip]impl Default for {}{{#[inline(always)]fn default()->Self{{let mut p=core::mem::MaybeUninit::<Self>::zeroed();unsafe{{core::ptr::addr_of_mut!((*p.as_mut_ptr()).sType).write({sty});p.assume_init()}}}}}}",
+            self.name
+        )?;
+
+        Ok(())
+    }
+}
+
+pub struct StructTypedVulkanStructureImpl<'s> {
+    pub const_name: ConstantSymbol<'s>,
+}
+impl StructTypedVulkanStructureImpl<'_> {
+    fn emit(&self, source_ty: &Struct<'_>, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
+        source_ty.compilation_condition.emit_single_attr(w)?;
+        write!(
+            w,
+            "#[rustfmt::skip]impl crate::TypedVulkanStructure for {}{{const TYPE: VkStructureType={};}}",
+            source_ty.name, self.const_name
+        )
+    }
+}
+
+pub struct StructTypedVulkanSinkStructureImpl<'s> {
+    pub const_name: ConstantSymbol<'s>,
+}
+impl StructTypedVulkanSinkStructureImpl<'_> {
+    fn emit(&self, source_ty: &Struct<'_>, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
+        source_ty.compilation_condition.emit_single_attr(w)?;
+        write!(
+            w,
+            "#[rustfmt::skip]impl crate::TypedVulkanSinkStructure for {}{{const TYPE: VkStructureType={};}}",
+            source_ty.name, self.const_name
+        )
+    }
+}
+
+pub struct TypeAlias<'s> {
+    pub compilation_condition: CompilationCondition<'s>,
+    pub target_name: TypeSymbol<'s>,
+    pub source_name: Type<'s>,
+}
+impl TypeAlias<'_> {
+    pub fn emit(&self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
+        self.compilation_condition.emit_single_attr(w)?;
+        write!(w, "#[rustfmt::skip]pub type {}={};", self.target_name, self.source_name)
     }
 }
 
 pub trait RustCodeEmitter {
     fn emit_const(&mut self, e: Constant<'static>);
     fn emit_struct(&mut self, e: Struct<'static>);
+    fn emit_type_alias(&mut self, e: TypeAlias<'static>);
 }

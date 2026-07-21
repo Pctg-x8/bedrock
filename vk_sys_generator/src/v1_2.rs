@@ -15,56 +15,54 @@ pub const VK_KHR_DEPTH_STENCIL_RESOLVE: &Extension = &Extension::khr("depth_sten
 pub const VK_EXT_DESCRIPTOR_INDEXING: &Extension = &Extension::ext("descriptor_indexing", 2, 162);
 
 pub const ELEMENTS: &[Element] = &[
-    Element::Struct(
-        Struct::typed(
-            "PhysicalDeviceVulkan11Features",
-            "PHYSICAL_DEVICE_VULKAN_1_1_FEATURES",
-            49,
-            StructUsage::Both,
-            &[
-                Struct::member("storageBuffer16BitAccess", "VkBool32"),
-                Struct::member("uniformAndStorageBuffer16BitAccess", "VkBool32"),
-                Struct::member("storagePushConstant16", "VkBool32"),
-                Struct::member("storageInputOutput16", "VkBool32"),
-                Struct::member("multiview", "VkBool32"),
-                Struct::member("multiviewGeometryShader", "VkBool32"),
-                Struct::member("multiviewTessellationShader", "VkBool32"),
-                Struct::member("variablePointersStorageBuffer", "VkBool32"),
-                Struct::member("variablePointers", "VkBool32"),
-                Struct::member("protectedMemory", "VkBool32"),
-                Struct::member("samplerYcbcrConversion", "VkBool32"),
-                Struct::member("shaderDrawParameters", "VkBool32"),
-            ],
-        )
-        .available_condition("feature = \"Allow1_2APIs\"")
-        .default_zero(),
-    ),
-    Element::Struct(
-        Struct::typed(
-            "PhysicalDeviceVulkan11Properties",
-            "PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES",
-            50,
-            StructUsage::Sink,
-            &[
-                Struct::member("deviceUUID", "[u8; VK_UUID_SIZE]"),
-                Struct::member("driverUUID", "[u8; VK_UUID_SIZE]"),
-                Struct::member("deviceLUID", "[u8; VK_LUID_SIZE]"),
-                Struct::member("deviceNodeMask", "u32"),
-                Struct::member("deviceLUIDValid", "VkBool32"),
-                Struct::member("subgroupSize", "u32"),
-                Struct::member("subgroupSupportedStages", "VkShaderStageFlags"),
-                Struct::member("subgroupSupportedOperations", "VkSubgroupFeatureFlags"),
-                Struct::member("subgroupQuadOperationsInAllStages", "VkBool32"),
-                Struct::member("pointClippingBehavior", "VkPointClippingBehavior"),
-                Struct::member("maxMultiviewViewCount", "u32"),
-                Struct::member("maxMultiviewInstanceIndex", "u32"),
-                Struct::member("protectedNoFault", "VkBool32"),
-                Struct::member("maxPerSetDescriptors", "u32"),
-                Struct::member("maxMemoryAllocationSize", "VkDeviceSize"),
-            ],
-        )
-        .available_condition("feature = \"Allow1_2APIs\""),
-    ),
+    Struct::typed(
+        "PhysicalDeviceVulkan11Features",
+        "PHYSICAL_DEVICE_VULKAN_1_1_FEATURES",
+        49,
+        StructUsage::Both,
+        &[
+            Struct::member("storageBuffer16BitAccess", "VkBool32"),
+            Struct::member("uniformAndStorageBuffer16BitAccess", "VkBool32"),
+            Struct::member("storagePushConstant16", "VkBool32"),
+            Struct::member("storageInputOutput16", "VkBool32"),
+            Struct::member("multiview", "VkBool32"),
+            Struct::member("multiviewGeometryShader", "VkBool32"),
+            Struct::member("multiviewTessellationShader", "VkBool32"),
+            Struct::member("variablePointersStorageBuffer", "VkBool32"),
+            Struct::member("variablePointers", "VkBool32"),
+            Struct::member("protectedMemory", "VkBool32"),
+            Struct::member("samplerYcbcrConversion", "VkBool32"),
+            Struct::member("shaderDrawParameters", "VkBool32"),
+        ],
+    )
+    .version_since(VERSION)
+    .default_zero()
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceVulkan11Properties",
+        "PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES",
+        50,
+        StructUsage::Sink,
+        &[
+            Struct::member("deviceUUID", "[u8; VK_UUID_SIZE]"),
+            Struct::member("driverUUID", "[u8; VK_UUID_SIZE]"),
+            Struct::member("deviceLUID", "[u8; VK_LUID_SIZE]"),
+            Struct::member("deviceNodeMask", "u32"),
+            Struct::member("deviceLUIDValid", "VkBool32"),
+            Struct::member("subgroupSize", "u32"),
+            Struct::member("subgroupSupportedStages", "VkShaderStageFlags"),
+            Struct::member("subgroupSupportedOperations", "VkSubgroupFeatureFlags"),
+            Struct::member("subgroupQuadOperationsInAllStages", "VkBool32"),
+            Struct::member("pointClippingBehavior", "VkPointClippingBehavior"),
+            Struct::member("maxMultiviewViewCount", "u32"),
+            Struct::member("maxMultiviewInstanceIndex", "u32"),
+            Struct::member("protectedNoFault", "VkBool32"),
+            Struct::member("maxPerSetDescriptors", "u32"),
+            Struct::member("maxMemoryAllocationSize", "VkDeviceSize"),
+        ],
+    )
+    .version_since(VERSION)
+    .into_element(),
     // VK_KHR_buffer_device_address
     Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_KHR_BUFFER_DEVICE_ADDRESS)),
     Element::Enum(Enum::extending_error(&[Enum::member(

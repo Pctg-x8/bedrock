@@ -6,7 +6,7 @@ use parts::{
 };
 
 use crate::{
-    rs_item::{CompilationCondition, Constant, ConstantSymbol, RustCodeEmitter, StructSymbol},
+    rs_item::{CompilationCondition, Constant, ConstantSymbol, RustCodeEmitter, TypeSymbol},
     v1_4::VK_KHR_MAINTENANCE_5,
 };
 
@@ -337,15 +337,36 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 
+enum TypeDef<'s> {
+    Struct(rs_item::Struct<'s>),
+    Alias(rs_item::TypeAlias<'s>),
+}
+impl TypeDef<'_> {
+    const fn define_name(&self) -> &TypeSymbol<'_> {
+        match self {
+            Self::Struct(x) => &x.name,
+            Self::Alias(x) => &x.target_name,
+        }
+    }
+
+    #[inline(always)]
+    fn emit(&self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
+        match self {
+            Self::Struct(x) => x.emit(w),
+            Self::Alias(x) => x.emit(w),
+        }
+    }
+}
+
 struct CodeGenerator {
     consts: HashMap<ConstantSymbol<'static>, Constant<'static>>,
-    structs: HashMap<StructSymbol<'static>, rs_item::Struct<'static>>,
+    types: HashMap<TypeSymbol<'static>, TypeDef<'static>>,
 }
 impl CodeGenerator {
     pub fn new() -> Self {
         Self {
             consts: HashMap::new(),
-            structs: HashMap::new(),
+            types: HashMap::new(),
         }
     }
 
@@ -357,8 +378,8 @@ impl CodeGenerator {
             w.write_all(b"\n")?;
         }
 
-        let mut sorted = self.structs.into_values().collect::<Vec<_>>();
-        sorted.sort_by(|a, b| a.name.cmp(&b.name));
+        let mut sorted = self.types.into_values().collect::<Vec<_>>();
+        sorted.sort_by(|a, b| a.define_name().cmp(b.define_name()));
         for c in sorted {
             c.emit(w)?;
             w.write_all(b"\n")?;
@@ -382,15 +403,35 @@ impl RustCodeEmitter for CodeGenerator {
     }
 
     fn emit_struct(&mut self, e: rs_item::Struct<'static>) {
-        match self.structs.entry(e.name.clone()) {
+        match self.types.entry(e.name.clone()) {
             std::collections::hash_map::Entry::Vacant(v) => {
-                v.insert(e);
+                v.insert(TypeDef::Struct(e));
             }
-            std::collections::hash_map::Entry::Occupied(mut o) => {
-                o.get_mut().compilation_condition =
-                    core::mem::replace(&mut o.get_mut().compilation_condition, CompilationCondition::Empty)
-                        .or(e.compilation_condition);
+            std::collections::hash_map::Entry::Occupied(mut o) => match o.get_mut() {
+                TypeDef::Struct(o) => {
+                    o.compilation_condition =
+                        core::mem::replace(&mut o.compilation_condition, CompilationCondition::Empty)
+                            .or(e.compilation_condition);
+                }
+                _ => panic!("different kind of type item defined by same name"),
+            },
+        }
+    }
+
+    fn emit_type_alias(&mut self, e: rs_item::TypeAlias<'static>) {
+        match self.types.entry(e.target_name.clone()) {
+            std::collections::hash_map::Entry::Vacant(v) => {
+                v.insert(TypeDef::Alias(e));
             }
+            std::collections::hash_map::Entry::Occupied(mut o) => match o.get_mut() {
+                TypeDef::Alias(o) => {
+                    // TODO: source_nameの型が同型かみたほうがいいかも
+                    o.compilation_condition =
+                        core::mem::replace(&mut o.compilation_condition, CompilationCondition::Empty)
+                            .or(e.compilation_condition);
+                }
+                _ => panic!("different kind of type item defined by same name"),
+            },
         }
     }
 }

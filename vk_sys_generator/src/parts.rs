@@ -2,7 +2,8 @@ use std::collections::{HashMap, HashSet};
 
 use crate::rs_item::{
     CompilationCondition, Constant, ConstantSymbol, ConstantValue, FeatureName, FnSymbol, FromPtrImpl,
-    FunctionPtrNewtype, FunctionStub, PFNImpl, RustCodeEmitter, StaticCallableImpl, StructDerives, StructSymbol, Type,
+    FunctionPtrNewtype, FunctionStub, PFNImpl, RustCodeEmitter, StaticCallableImpl, StructDefault, StructDerives,
+    StructTypedVulkanSinkStructureImpl, StructTypedVulkanStructureImpl, Type, TypeSymbol,
 };
 
 pub const TY_VK_BOOL: &str = "VkBool32";
@@ -861,6 +862,7 @@ pub struct Struct {
     extensions2: &'static [&'static Extension<'static>],
     promoted: Option<&'static str>,
     available_condition: Option<&'static str>,
+    version_since: Option<&'static str>,
 }
 impl Struct {
     pub const fn new(name: &'static str, members: &'static [StructMember]) -> Self {
@@ -878,6 +880,7 @@ impl Struct {
             extensions2: &[],
             promoted: None,
             available_condition: None,
+            version_since: None,
         }
     }
 
@@ -948,6 +951,11 @@ impl Struct {
         self
     }
 
+    pub const fn version_since(mut self, version: &'static str) -> Self {
+        self.version_since = Some(version);
+        self
+    }
+
     pub const fn member(name: &'static str, r#type: &'static str) -> StructMember {
         StructMember::new(name, r#type)
     }
@@ -1010,7 +1018,7 @@ impl Struct {
     fn emit_core(
         emitter: &mut (impl RustCodeEmitter + ?Sized),
         compilation_condition: CompilationCondition<'static>,
-        name: StructSymbol<'static>,
+        name: TypeSymbol<'static>,
         members: &[StructMember],
         usage: Option<StructUsage>,
         derives: StructDerives,
@@ -1020,121 +1028,10 @@ impl Struct {
             name,
             derives,
             members: Self::build_all_rs_members(members, usage),
+            typed_vulkan_structure_impl: None,
+            typed_vulkan_sink_structure_impl: None,
+            default: StructDefault::None,
         });
-    }
-
-    fn emit_vulkan_structure_impl(
-        w: &mut impl std::io::Write,
-        type_name: &str,
-        available_condition: Option<&'static str>,
-    ) -> std::io::Result<()> {
-        writeln!(w, "#[rustfmt::skip]")?;
-        if let Some(a) = available_condition {
-            writeln!(w, "#[cfg({a})]")?;
-        }
-        writeln!(w, "unsafe impl crate::VulkanStructure for {type_name} {{")?;
-        writeln!(w, "    #[inline(always)]")?;
-        writeln!(w, "    fn as_generic(&self) -> &crate::GenericVulkanStructure {{")?;
-        writeln!(w, "        unsafe {{ core::mem::transmute(self) }}")?;
-        writeln!(w, "    }}")?;
-        writeln!(w)?;
-        writeln!(w, "    #[inline(always)]")?;
-        writeln!(
-            w,
-            "    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {{"
-        )?;
-        writeln!(w, "        unsafe {{ core::mem::transmute(self) }}")?;
-        writeln!(w, "    }}")?;
-        writeln!(w, "}}")?;
-
-        Ok(())
-    }
-
-    fn emit_vulkan_sink_structure_impl(
-        w: &mut impl std::io::Write,
-        type_name: &str,
-        available_condition: Option<&'static str>,
-    ) -> std::io::Result<()> {
-        writeln!(w, "#[rustfmt::skip]")?;
-        if let Some(a) = available_condition {
-            writeln!(w, "#[cfg({a})]")?;
-        }
-        writeln!(w, "unsafe impl crate::VulkanSinkStructure for {type_name} {{")?;
-        writeln!(w, "    #[inline(always)]")?;
-        writeln!(
-            w,
-            "    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {{ unsafe {{ core::mem::transmute(self) }} }}"
-        )?;
-        writeln!(w)?;
-        writeln!(w, "    #[inline(always)]")?;
-        writeln!(
-            w,
-            "    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {{ unsafe {{ core::mem::transmute(self) }} }}"
-        )?;
-        writeln!(w, "}}")?;
-
-        Ok(())
-    }
-
-    fn emit_typed_vulkan_structure_impl(
-        w: &mut impl std::io::Write,
-        type_name: &str,
-        structure_type_name: &str,
-        available_condition: Option<&'static str>,
-    ) -> std::io::Result<()> {
-        writeln!(w, "#[rustfmt::skip]")?;
-        if let Some(a) = available_condition {
-            writeln!(w, "#[cfg({a})]")?;
-        }
-        writeln!(
-            w,
-            "impl crate::TypedVulkanStructure for {type_name} {{ const TYPE: VkStructureType = VK_STRUCTURE_TYPE_{structure_type_name}; }}"
-        )
-    }
-
-    fn emit_typed_vulkan_sink_structure_impl(
-        w: &mut impl std::io::Write,
-        type_name: &str,
-        structure_type_name: &str,
-        available_condition: Option<&'static str>,
-    ) -> std::io::Result<()> {
-        writeln!(w, "#[rustfmt::skip]")?;
-        if let Some(a) = available_condition {
-            writeln!(w, "#[cfg({a})]")?;
-        }
-        writeln!(
-            w,
-            "impl crate::TypedVulkanSinkStructure for {type_name} {{ const TYPE: VkStructureType = VK_STRUCTURE_TYPE_{structure_type_name}; }}"
-        )
-    }
-
-    fn emit_default_zero(
-        w: &mut impl std::io::Write,
-        type_name: &str,
-        structure_type_name: Option<&str>,
-        available_condition: Option<&'static str>,
-    ) -> std::io::Result<()> {
-        writeln!(w, "#[rustfmt::skip]")?;
-        if let Some(a) = available_condition {
-            writeln!(w, "#[cfg({a})]")?;
-        }
-        writeln!(w, "impl Default for {type_name} {{")?;
-        writeln!(w, "    #[inline(always)]")?;
-        writeln!(w, "    fn default() -> Self {{")?;
-        if let Some(structure_type_name) = structure_type_name {
-            // typed
-            writeln!(w, "        let mut p = core::mem::MaybeUninit::<Self>::zeroed();")?;
-            writeln!(
-                w,
-                "        unsafe {{ core::ptr::addr_of_mut!((*p.as_mut_ptr()).sType).write(VK_STRUCTURE_TYPE_{structure_type_name}); }}"
-            )?;
-            writeln!(w, "        unsafe {{ p.assume_init() }}")?;
-        } else {
-            // untyped
-            writeln!(w, "        unsafe {{ core::mem::MaybeUninit::zeroed().assume_init() }}")?;
-        }
-        writeln!(w, "    }}")?;
-        writeln!(w, "}}")
     }
 
     pub fn emit(
@@ -1145,38 +1042,58 @@ impl Struct {
         if self.extensions.is_empty() && self.extensions2.is_empty() {
             assert!(self.promoted.is_none());
             // no extensions: simple define
-            let type_name = format!("Vk{}", self.name);
+            let mut cond = CompilationCondition::Empty;
+            if let Some(v) = self.version_since {
+                cond = cond.and(CompilationCondition::Feature(FeatureName::AllowApiVersion(v)));
+            }
 
-            Self::emit_core(
-                emitter,
-                CompilationCondition::Empty,
-                StructSymbol {
-                    stem: self.name,
-                    suffix: None,
-                },
-                self.members,
-                self.stype.map(|(_, _, u)| u),
-                self.derives(),
-            );
+            let mut derives = self.derives();
+            let mut typed_vulkan_structure_impl = None;
+            let mut typed_vulkan_sink_structure_impl = None;
+            let mut default = StructDefault::None;
             if let Some((up, v, u)) = self.stype {
+                let st_const_sym = ConstantSymbol::StructureType(up);
                 emitter.emit_const(Constant {
-                    compilation_condition: CompilationCondition::Empty,
-                    name: ConstantSymbol::StructureType(up),
+                    compilation_condition: cond.clone(),
+                    name: st_const_sym.clone(),
                     ty: Type::Raw("VkStructureType"),
                     value: ConstantValue::Unsigned(v as _),
                 });
+
                 if u.is_source() {
-                    Self::emit_vulkan_structure_impl(w, &type_name, self.available_condition)?;
-                    Self::emit_typed_vulkan_structure_impl(w, &type_name, up, self.available_condition)?;
+                    derives |= StructDerives::VULKAN_STRUCTURE;
+                    typed_vulkan_structure_impl = Some(StructTypedVulkanStructureImpl {
+                        const_name: st_const_sym.clone(),
+                    });
                 }
                 if u.is_sink() {
-                    Self::emit_vulkan_sink_structure_impl(w, &type_name, self.available_condition)?;
-                    Self::emit_typed_vulkan_sink_structure_impl(w, &type_name, up, self.available_condition)?;
+                    derives |= StructDerives::VULKAN_SINK_STRUCTURE;
+                    typed_vulkan_sink_structure_impl = Some(StructTypedVulkanSinkStructureImpl {
+                        const_name: st_const_sym.clone(),
+                    });
+                }
+
+                if self.default_zero {
+                    default = StructDefault::ZeroTyped(st_const_sym.clone())
+                }
+            } else {
+                if self.default_zero {
+                    default = StructDefault::Zero;
                 }
             }
-            if self.default_zero {
-                Self::emit_default_zero(w, &type_name, self.stype.map(|t| t.0), self.available_condition)?;
-            }
+
+            emitter.emit_struct(crate::rs_item::Struct {
+                compilation_condition: cond.clone(),
+                name: TypeSymbol {
+                    stem: self.name,
+                    suffix: None,
+                },
+                derives,
+                members: Self::build_all_rs_members(self.members, self.stype.map(|(_, _, u)| u)),
+                typed_vulkan_structure_impl,
+                typed_vulkan_sink_structure_impl,
+                default,
+            });
 
             return Ok(());
         }
@@ -1192,87 +1109,77 @@ impl Struct {
         if extensions_suffixes.len() == 1 {
             // single extension with probably promoted
             let (tag, names) = unsafe { extensions_suffixes.drain().next().unwrap_unchecked() };
-            let type_name = format!("Vk{}{tag}", self.name);
-            let feature_gate = match &names[..] {
-                &[name] => format!("#[cfg(feature = \"VK_{tag}_{name}\")]"),
-                xs => format!(
-                    "#[cfg(all({}))]",
-                    xs.iter()
-                        .map(|name| format!("feature = \"VK_{tag}_{name}\""))
-                        .collect::<Vec<_>>()
-                        .join(", ")
-                ),
-            };
-            let cond = match &names[..] {
+            let mut cond = match &names[..] {
                 &[name] => CompilationCondition::Feature(FeatureName::VulkanExt { tag, name }),
                 xs => CompilationCondition::all(
                     xs.iter()
                         .map(|name| CompilationCondition::Feature(FeatureName::VulkanExt { tag, name })),
                 ),
             };
+            if let Some(v) = self.version_since {
+                cond = cond.and(CompilationCondition::Feature(FeatureName::AllowApiVersion(v)));
+            }
 
-            Self::emit_core(
-                emitter,
-                cond.clone(),
-                StructSymbol {
-                    stem: self.name,
-                    suffix: Some(tag),
-                },
-                self.members,
-                self.stype.map(|(_, _, u)| u),
-                self.derives(),
-            );
+            let mut derives = self.derives();
+            let mut typed_vulkan_structure_impl = None;
+            let mut typed_vulkan_sink_structure_impl = None;
+            let mut default = StructDefault::None;
             if let Some((up, v, u)) = self.stype {
-                let structure_type_name = format!("{up}_{tag}");
-
+                let st_const_sym = ConstantSymbol::StructureTypeSuffixed { stem: up, suffix: tag };
                 emitter.emit_const(Constant {
-                    compilation_condition: cond,
-                    name: ConstantSymbol::StructureTypeSuffixed { stem: up, suffix: tag },
+                    compilation_condition: cond.clone(),
+                    name: st_const_sym.clone(),
                     ty: Type::Raw("VkStructureType"),
                     value: ConstantValue::Unsigned(v as _),
                 });
+
                 if u.is_source() {
-                    writeln!(w, "{feature_gate}")?;
-                    Self::emit_vulkan_structure_impl(w, &type_name, self.available_condition)?;
-                    writeln!(w, "{feature_gate}")?;
-                    Self::emit_typed_vulkan_structure_impl(
-                        w,
-                        &type_name,
-                        &structure_type_name,
-                        self.available_condition,
-                    )?;
+                    derives |= StructDerives::VULKAN_STRUCTURE;
+                    typed_vulkan_structure_impl = Some(StructTypedVulkanStructureImpl {
+                        const_name: st_const_sym.clone(),
+                    });
                 }
                 if u.is_sink() {
-                    writeln!(w, "{feature_gate}")?;
-                    Self::emit_vulkan_sink_structure_impl(w, &type_name, self.available_condition)?;
-                    writeln!(w, "{feature_gate}")?;
-                    Self::emit_typed_vulkan_sink_structure_impl(
-                        w,
-                        &type_name,
-                        &structure_type_name,
-                        self.available_condition,
-                    )?;
+                    derives |= StructDerives::VULKAN_SINK_STRUCTURE;
+                    typed_vulkan_sink_structure_impl = Some(StructTypedVulkanSinkStructureImpl {
+                        const_name: st_const_sym.clone(),
+                    });
+                }
+
+                if self.default_zero {
+                    default = StructDefault::ZeroTyped(st_const_sym.clone());
+                }
+            } else {
+                if self.default_zero {
+                    default = StructDefault::Zero;
                 }
             }
-            if self.default_zero {
-                Self::emit_default_zero(
-                    w,
-                    &type_name,
-                    self.stype.map(|t| format!("{}_{tag}", t.0)).as_deref(),
-                    self.available_condition,
-                )?;
-            }
+
+            emitter.emit_struct(crate::rs_item::Struct {
+                compilation_condition: cond.clone(),
+                name: TypeSymbol {
+                    stem: self.name,
+                    suffix: Some(tag),
+                },
+                derives,
+                members: Self::build_all_rs_members(self.members, self.stype.map(|(_, _, u)| u)),
+                typed_vulkan_structure_impl,
+                typed_vulkan_sink_structure_impl,
+                default,
+            });
 
             if let Some(pv) = self.promoted {
-                let promoted_type_name = format!("Vk{}", self.name);
-
-                writeln!(w, "#[cfg(feature = \"Allow{pv}APIs\")]")?;
-                writeln!(w, "#[rustfmt::skip]")?;
-                if let Some(a) = self.available_condition {
-                    writeln!(w, "#[cfg({a})]")?;
-                }
-                writeln!(w, "pub type {promoted_type_name} = {type_name};")?;
-
+                emitter.emit_type_alias(crate::rs_item::TypeAlias {
+                    compilation_condition: CompilationCondition::Feature(FeatureName::AllowApiVersion(pv)),
+                    target_name: TypeSymbol {
+                        stem: self.name,
+                        suffix: None,
+                    },
+                    source_name: Type::Defined(TypeSymbol {
+                        stem: self.name,
+                        suffix: Some(tag),
+                    }),
+                });
                 if let Some((up, v, _)) = self.stype {
                     emitter.emit_const(Constant {
                         compilation_condition: CompilationCondition::Feature(FeatureName::AllowApiVersion(pv)),
@@ -1296,39 +1203,46 @@ impl Struct {
         );
         assert!(self.promoted.is_none());
         // no extensions: simple define
-        let type_name = format!("Vk{}", self.name);
-
-        crate::rs_item::Struct {
-            compilation_condition: CompilationCondition::Raw(cfg),
-            name: StructSymbol {
-                stem: self.name,
-                suffix: None,
-            },
-            members: Self::build_all_rs_members(self.members, self.stype.map(|(_, _, u)| u)),
-            derives: self.derives(),
-        }
-        .emit(w)?;
+        let mut derives = self.derives();
+        let mut typed_vulkan_structure_impl = None;
+        let mut typed_vulkan_sink_structure_impl = None;
         if let Some((up, v, u)) = self.stype {
+            let st_const_sym = ConstantSymbol::StructureType(up);
+
             Constant {
                 compilation_condition: CompilationCondition::Raw(cfg),
-                name: ConstantSymbol::StructureType(up),
+                name: st_const_sym.clone(),
                 ty: Type::Raw("VkStructureType"),
                 value: ConstantValue::Unsigned(v as _),
             }
             .emit(w)?;
             if u.is_source() {
-                writeln!(w, "#[cfg({cfg})]")?;
-                Self::emit_vulkan_structure_impl(w, &type_name, self.available_condition)?;
-                writeln!(w, "#[cfg({cfg})]")?;
-                Self::emit_typed_vulkan_structure_impl(w, &type_name, up, self.available_condition)?;
+                derives |= StructDerives::VULKAN_STRUCTURE;
+                typed_vulkan_structure_impl = Some(StructTypedVulkanStructureImpl {
+                    const_name: st_const_sym.clone(),
+                });
             }
             if u.is_sink() {
-                writeln!(w, "#[cfg({cfg})]")?;
-                Self::emit_vulkan_sink_structure_impl(w, &type_name, self.available_condition)?;
-                writeln!(w, "#[cfg({cfg})]")?;
-                Self::emit_typed_vulkan_sink_structure_impl(w, &type_name, up, self.available_condition)?;
+                derives |= StructDerives::VULKAN_SINK_STRUCTURE;
+                typed_vulkan_sink_structure_impl = Some(StructTypedVulkanSinkStructureImpl {
+                    const_name: st_const_sym.clone(),
+                });
             }
         }
+
+        crate::rs_item::Struct {
+            compilation_condition: CompilationCondition::Raw(cfg),
+            name: TypeSymbol {
+                stem: self.name,
+                suffix: None,
+            },
+            members: Self::build_all_rs_members(self.members, self.stype.map(|(_, _, u)| u)),
+            derives,
+            typed_vulkan_structure_impl,
+            typed_vulkan_sink_structure_impl,
+            default: StructDefault::None,
+        }
+        .emit(w)?;
 
         Ok(())
     }
