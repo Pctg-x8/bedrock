@@ -632,6 +632,12 @@ impl Bitmask {
                         })
                     })),
             );
+            let ty = Type::Defined(bits_sym.clone());
+            let value = if self.long {
+                ConstantValue::Bits64(1u64 << e.bitpos)
+            } else {
+                ConstantValue::Bits32(1u32 << e.bitpos)
+            };
 
             emitter.emit_const(Constant {
                 compilation_condition: cond,
@@ -640,12 +646,8 @@ impl Bitmask {
                     stem: e.name,
                     suffix: e.extension.map(|x| x.tag).or(e.extension_old.map(|(tag, _)| tag)),
                 },
-                ty: Type::Defined(bits_sym.clone()),
-                value: if self.long {
-                    ConstantValue::Bits64(1u64 << e.bitpos)
-                } else {
-                    ConstantValue::Bits32(1u32 << e.bitpos)
-                },
+                ty: ty.clone(),
+                value: value.clone(),
             });
 
             if let Some(p) = e.promoted {
@@ -673,12 +675,8 @@ impl Bitmask {
                         stem: e.name,
                         suffix: None,
                     },
-                    ty: Type::Defined(bits_sym.clone()),
-                    value: if self.long {
-                        ConstantValue::Bits64(1u64 << e.bitpos)
-                    } else {
-                        ConstantValue::Bits32(1u32 << e.bitpos)
-                    },
+                    ty,
+                    value,
                 });
             }
         }
