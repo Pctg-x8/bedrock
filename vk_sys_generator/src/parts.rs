@@ -239,6 +239,9 @@ impl Enum {
                 stem: "Result",
                 suffix: None,
             };
+        let ty_promoted = self
+            .promoted
+            .or(self.extension.map(|x| x.promoted_since).filter(|x| !x.is_empty()));
 
         if !self.extending {
             // not extending(first seen in this definition)
@@ -260,7 +263,7 @@ impl Enum {
                 target_name: type_sym.clone(),
                 source_name: Type::Raw("i32"),
             });
-            if let Some(v) = self.promoted {
+            if let Some(v) = ty_promoted {
                 emitter.emit_type_alias(crate::rs_item::TypeAlias {
                     compilation_condition: CompilationCondition::Feature(FeatureName::AllowApiVersion(v)),
                     target_name: TypeSymbol {
@@ -273,6 +276,10 @@ impl Enum {
         }
 
         for member in self.members {
+            let m_promoted = member
+                .promoted
+                .or(member.extension.map(|x| x.promoted_since).filter(|x| !x.is_empty()));
+
             let ty = Type::Defined(type_sym.clone());
             let value = if is_newtyped {
                 ConstantValue::SignedNewtyped {
@@ -338,7 +345,7 @@ impl Enum {
                 });
             }
 
-            if let Some(v) = member.promoted {
+            if let Some(v) = m_promoted {
                 emitter.emit_const(Constant {
                     compilation_condition: CompilationCondition::all(
                         [

@@ -8,7 +8,7 @@ const VK_KHR_TIMELINE_SEMAPHORE: &Extension = &Extension::khr("timeline_semaphor
 const VK_KHR_IMAGE_FORMAT_LIST: &Extension = &Extension::khr("image_format_list", 1, 148);
 const VK_EXT_SAMPLER_FILTER_MINMAX: &Extension = &Extension::ext("sampler_filter_minmax", 1, 131);
 const VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE: &Extension = &Extension::khr("sampler_mirror_clamp_to_edge", 3, 15);
-const VK_KHR_SHADER_FLOAT_CONTROLS: &Extension = &Extension::khr("shader_float_controls", 4, 198);
+const VK_KHR_SHADER_FLOAT_CONTROLS: &Extension = &Extension::khr("shader_float_controls", 4, 198).promoted(VERSION);
 const VK_EXT_SHADER_VIEWPORT_INDEX_LAYER: &Extension = &Extension::ext("shader_viewport_index_layer", 1, 163);
 pub const VK_KHR_CREATE_RENDERPASS_2: &Extension = &Extension::khr("create_renderpass2", 1, 110);
 pub const VK_KHR_DEPTH_STENCIL_RESOLVE: &Extension = &Extension::khr("depth_stencil_resolve", 1, 200);
@@ -415,25 +415,24 @@ pub const ELEMENTS: &[Element] = &[
             .promoted(VERSION)],
     )),
     // VK_KHR_shader_float_controls
-    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_KHR_SHADER_FLOAT_CONTROLS)),
-    Element::Enum(
-        Enum::new(
-            "ShaderFloatControlsIndependence",
-            "SHADER_FLOAT_CONTROLS_INDEPENDENCE",
-            &[
-                Enum::member("32_BIT_ONLY", 0)
-                    .extension(VK_KHR_SHADER_FLOAT_CONTROLS)
-                    .promoted(VERSION),
-                Enum::member("ALL", 1)
-                    .extension(VK_KHR_SHADER_FLOAT_CONTROLS)
-                    .promoted(VERSION),
-                Enum::member("NONE", 2)
-                    .extension(VK_KHR_SHADER_FLOAT_CONTROLS)
-                    .promoted(VERSION),
-            ],
-        )
-        .extension(VK_KHR_SHADER_FLOAT_CONTROLS),
-    ),
+    VK_KHR_SHADER_FLOAT_CONTROLS.header_constants().into_element(),
+    Enum::new(
+        "ShaderFloatControlsIndependence",
+        "SHADER_FLOAT_CONTROLS_INDEPENDENCE",
+        &[
+            Enum::member("32_BIT_ONLY", 0)
+                .extension(VK_KHR_SHADER_FLOAT_CONTROLS)
+                .promoted(VERSION),
+            Enum::member("ALL", 1)
+                .extension(VK_KHR_SHADER_FLOAT_CONTROLS)
+                .promoted(VERSION),
+            Enum::member("NONE", 2)
+                .extension(VK_KHR_SHADER_FLOAT_CONTROLS)
+                .promoted(VERSION),
+        ],
+    )
+    .extension(VK_KHR_SHADER_FLOAT_CONTROLS)
+    .into_element(),
     Element::Struct(
         Struct::typed(
             "PhysicalDeviceFloatControlsProperties",

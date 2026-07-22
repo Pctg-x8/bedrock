@@ -5216,6 +5216,7 @@ pub const VK_AMD_SHADER_INFO_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_KHR_timeline_semaphore")]#[derive(Debug, Clone)] #[rustfmt::skip]#[repr(C)]pub struct VkSemaphoreWaitInfoKHR{pub sType:VkStructureType,pub pNext:*const core::ffi::c_void,pub flags:VkSemaphoreWaitFlagsKHR,pub semaphoreCount:u32,pub pSemaphores:*const VkSemaphore,pub pValues:*const u64,}
 #[cfg(feature = "VK_KHR_timeline_semaphore")]#[rustfmt::skip]unsafe impl crate::VulkanStructure for VkSemaphoreWaitInfoKHR{#[inline(always)]fn as_generic(&self)->&crate::GenericVulkanStructure{unsafe{core::mem::transmute::<&Self,&crate::GenericVulkanStructure>(self)}}#[inline(always)]fn as_generic_mut(&mut self)->&mut crate::GenericVulkanStructure{unsafe{core::mem::transmute::<&mut Self, &mut crate::GenericVulkanStructure>(self)}}}
 #[cfg(feature = "VK_KHR_timeline_semaphore")]#[rustfmt::skip]impl crate::TypedVulkanStructure for VkSemaphoreWaitInfoKHR{const TYPE: VkStructureType=VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO_KHR;}
+#[cfg(feature = "Allow1_2APIs")]#[rustfmt::skip]pub type VkShaderFloatControlsIndependence=i32;
 #[cfg(feature = "VK_KHR_shader_float_controls")]#[rustfmt::skip]pub type VkShaderFloatControlsIndependenceKHR=i32;
 #[cfg(feature = "VK_AMD_shader_info")]#[rustfmt::skip]pub type VkShaderInfoTypeAMD=i32;
 #[rustfmt::skip]pub type VkShaderModuleCreateFlagBits=VkFlags;
