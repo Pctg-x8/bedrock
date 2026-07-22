@@ -633,7 +633,7 @@ impl Bitmask {
                 compilation_condition: cond,
                 name: ConstantSymbol::Bitmask {
                     prefix: self.prefix,
-                    stem: self.name,
+                    stem: e.name,
                     suffix: e.extension.map(|x| x.tag).or(e.extension_old.map(|(tag, _)| tag)),
                 },
                 ty: Type::Defined(bits_sym.clone()),
@@ -666,7 +666,7 @@ impl Bitmask {
                     ),
                     name: ConstantSymbol::Bitmask {
                         prefix: self.prefix,
-                        stem: self.name,
+                        stem: e.name,
                         suffix: None,
                     },
                     ty: Type::Defined(TypeSymbol {
