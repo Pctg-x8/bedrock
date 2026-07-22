@@ -1,4 +1,9 @@
-use crate::{parts::*, v1_1::VK_KHR_DEVICE_GROUP, v1_3::VK_KHR_FORMAT_FEATURE_FLAGS_2, vk_ext_enum};
+use crate::{
+    parts::*,
+    v1_1::{VK_KHR_DEVICE_GROUP, VK_KHR_EXTERNAL_MEMORY},
+    v1_3::VK_KHR_FORMAT_FEATURE_FLAGS_2,
+    vk_ext_enum,
+};
 
 pub const VK_KHR_SURFACE: &Extension = &Extension::khr("surface", 25, 1);
 pub const VK_KHR_WIN32_SURFACE: &Extension = &Extension::khr("win32_surface", 6, 10);
@@ -1073,17 +1078,16 @@ pub const ELEMENTS: &[Element] = &[
     .into_element(),
     // VK_EXT_external_memory_host
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_external_memory_host", 1)),
-    Element::Bitmask(
-        Bitmask::extending(
-            "ExternalMemoryHandleTypeFlagBits",
-            "EXTERNAL_MEMORY_HANDLE_TYPE",
-            &[
-                Bitmask::entry("HOST_ALLOCATION", 7).extension_old("EXT", "external_memory_host"),
-                Bitmask::entry("HOST_MAPPED_FOREIGN_MEMORY", 8).extension_old("EXT", "external_memory_host"),
-            ],
-        )
-        .extension_old("KHR", "external_memory"),
-    ),
+    Bitmask::extending(
+        "ExternalMemoryHandleTypeFlagBits",
+        "EXTERNAL_MEMORY_HANDLE_TYPE",
+        &[
+            Bitmask::entry("HOST_ALLOCATION", 7).extension_old("EXT", "external_memory_host"),
+            Bitmask::entry("HOST_MAPPED_FOREIGN_MEMORY", 8).extension_old("EXT", "external_memory_host"),
+        ],
+    )
+    .extension(VK_KHR_EXTERNAL_MEMORY)
+    .into_element(),
     Element::Struct(
         Struct::typed(
             "ImportMemoryHostPointerInfo",
