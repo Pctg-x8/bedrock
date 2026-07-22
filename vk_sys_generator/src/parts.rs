@@ -367,10 +367,7 @@ impl Enum {
                         stem: member.name,
                         suffix: None,
                     },
-                    ty: Type::Defined(TypeSymbol {
-                        stem: self.name,
-                        suffix: None,
-                    }),
+                    ty: Type::Defined(type_sym.clone()),
                     value,
                 });
             }
@@ -676,10 +673,7 @@ impl Bitmask {
                         stem: e.name,
                         suffix: None,
                     },
-                    ty: Type::Defined(TypeSymbol {
-                        stem: self.bits_name,
-                        suffix: None,
-                    }),
+                    ty: Type::Defined(bits_sym.clone()),
                     value: if self.long {
                         ConstantValue::Bits64(1u64 << e.bitpos)
                     } else {
