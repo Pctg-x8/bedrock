@@ -1271,27 +1271,6 @@ pub const VK_KHR_GET_SURFACE_CAPABILITIES2_EXTENSION_NAME: &str = "VK_KHR_get_su
 #[rustfmt::skip]
 pub const VK_KHR_GET_SURFACE_CAPABILITIES2_SPEC_VERSION: usize = 1;
 
-#[cfg(feature = "VK_EXT_debug_report")]
-#[rustfmt::skip]
-pub const VK_EXT_DEBUG_REPORT_EXTENSION_NAME: &str = "VK_EXT_debug_report";
-#[cfg(feature = "VK_EXT_debug_report")]
-#[rustfmt::skip]
-pub const VK_EXT_DEBUG_REPORT_SPEC_VERSION: usize = 8;
-
-#[cfg(feature = "VK_EXT_debug_utils")]
-#[rustfmt::skip]
-pub const VK_EXT_DEBUG_UTILS_EXTENSION_NAME: &str = "VK_EXT_debug_utils";
-#[cfg(feature = "VK_EXT_debug_utils")]
-#[rustfmt::skip]
-pub const VK_EXT_DEBUG_UTILS_SPEC_VERSION: usize = 2;
-
-#[cfg(feature = "VK_KHR_device_group")]
-#[rustfmt::skip]
-pub const VK_KHR_DEVICE_GROUP_EXTENSION_NAME: &str = "VK_KHR_device_group";
-#[cfg(feature = "VK_KHR_device_group")]
-#[rustfmt::skip]
-pub const VK_KHR_DEVICE_GROUP_SPEC_VERSION: usize = 4;
-
 #[cfg(feature = "VK_KHR_device_group_creation")]
 #[rustfmt::skip]
 pub const VK_KHR_DEVICE_GROUP_CREATION_EXTENSION_NAME: &str = "VK_KHR_device_group_creation";
@@ -1306,13 +1285,6 @@ pub const VK_KHR_MULTIVIEW_EXTENSION_NAME: &str = "VK_KHR_multiview";
 #[rustfmt::skip]
 pub const VK_KHR_MULTIVIEW_SPEC_VERSION: usize = 1;
 
-#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-#[rustfmt::skip]
-pub const VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES2_EXTENSION_NAME: &str = "VK_KHR_get_physical_device_properties2";
-#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-#[rustfmt::skip]
-pub const VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES2_SPEC_VERSION: usize = 1;
-
 #[cfg(feature = "VK_KHR_shader_draw_parameters")]
 #[rustfmt::skip]
 pub const VK_KHR_SHADER_DRAW_PARAMETERS_EXTENSION_NAME: &str = "VK_KHR_shader_draw_parameters";
@@ -1326,13 +1298,6 @@ pub const VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME: &str = "VK_KHR_portabil
 #[cfg(feature = "VK_KHR_portability_enumeration")]
 #[rustfmt::skip]
 pub const VK_KHR_PORTABILITY_ENUMERATION_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_get_memory_requirements2")]
-#[rustfmt::skip]
-pub const VK_KHR_GET_MEMORY_REQUIREMENTS2_EXTENSION_NAME: &str = "VK_KHR_get_memory_requirements2";
-#[cfg(feature = "VK_KHR_get_memory_requirements2")]
-#[rustfmt::skip]
-pub const VK_KHR_GET_MEMORY_REQUIREMENTS2_SPEC_VERSION: usize = 1;
 
 #[cfg(feature = "VK_KHR_relaxed_block_layout")]
 #[rustfmt::skip]
@@ -1354,13 +1319,6 @@ pub const VK_KHR_VARIABLE_POINTERS_EXTENSION_NAME: &str = "VK_KHR_variable_point
 #[cfg(feature = "VK_KHR_variable_pointers")]
 #[rustfmt::skip]
 pub const VK_KHR_VARIABLE_POINTERS_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_dedicated_allocation")]
-#[rustfmt::skip]
-pub const VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME: &str = "VK_KHR_dedicated_allocation";
-#[cfg(feature = "VK_KHR_dedicated_allocation")]
-#[rustfmt::skip]
-pub const VK_KHR_DEDICATED_ALLOCATION_SPEC_VERSION: usize = 3;
 
 #[cfg(feature = "VK_KHR_16bit_storage")]
 #[rustfmt::skip]
