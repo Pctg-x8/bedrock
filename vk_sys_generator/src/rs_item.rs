@@ -158,11 +158,13 @@ impl CompilationCondition<'_> {
     }
 }
 
+#[derive(Clone)]
 pub enum FixedArrayLength<'s> {
     Imm(usize),
     Named(&'s str),
 }
 
+#[derive(Clone)]
 pub enum Type<'s> {
     Raw(&'s str),
     Defined(TypeSymbol<'s>),
@@ -211,18 +213,18 @@ impl core::fmt::Display for FnSymbol<'_> {
     }
 }
 
-pub struct FunctionStub<'s, Args> {
+pub struct FunctionStub<'s> {
     pub compilation_condition: CompilationCondition<'s>,
     pub name: FnSymbol<'s>,
-    pub args: Args,
+    pub args: Vec<(&'s str, Type<'s>)>,
     pub return_type: Option<Type<'s>>,
 }
-impl<'s, Args: Iterator<Item = (&'s str, Type<'s>)>> FunctionStub<'s, Args> {
+impl FunctionStub<'_> {
     pub fn emit(self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
         self.compilation_condition.emit_single_attr(w)?;
         write!(w, "pub fn {}(", self.name)?;
         let mut first = true;
-        for a in self.args {
+        for a in &self.args {
             if !first {
                 w.write_all(b",")?;
             }
@@ -240,73 +242,32 @@ impl<'s, Args: Iterator<Item = (&'s str, Type<'s>)>> FunctionStub<'s, Args> {
     }
 }
 
-pub struct StaticCallableImpl<'s> {
-    pub compilation_condition: CompilationCondition<'s>,
-    pub fn_name: FnSymbol<'s>,
-}
-impl StaticCallableImpl<'_> {
-    pub fn emit(self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
-        self.compilation_condition.emit_single_attr(w)?;
-        write!(
-            w,
-            "#[cfg(all(feature = \"Implements\", not(feature = \"DynamicLoaded\")))] #[rustfmt::skip] impl crate::StaticCallable for PFN_{n} {{ const STATIC: Self = Self({n}); }}",
-            n = self.fn_name
-        )?;
-
-        Ok(())
+bitflags! {
+    #[derive(Debug, Clone, Copy)]
+    pub struct FunctionPtrNewtypeDerives : u8 {
+        const FROM_PTR = 0x01;
+        const PFN = 0x02;
+        const STATIC_CALLABLE = 0x04;
     }
 }
 
-pub struct FromPtrImpl<'s> {
-    pub compilation_condition: CompilationCondition<'s>,
-    pub fn_name: FnSymbol<'s>,
-}
-impl FromPtrImpl<'_> {
-    pub fn emit(self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
-        self.compilation_condition.emit_single_attr(w)?;
-        write!(
-            w,
-            "#[rustfmt::skip] unsafe impl crate::FromPtr for PFN_{n} {{ #[inline(always)] unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {{ unsafe {{ core::mem::transmute::<*const core::ffi::c_void, Self>(p) }} }} }}",
-            n = self.fn_name
-        )?;
-
-        Ok(())
-    }
-}
-
-pub struct PFNImpl<'s> {
-    pub compilation_condition: CompilationCondition<'s>,
-    pub fn_name: FnSymbol<'s>,
-}
-impl PFNImpl<'_> {
-    pub fn emit(self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
-        self.compilation_condition.emit_single_attr(w)?;
-        write!(
-            w,
-            "#[rustfmt::skip] unsafe impl crate::PFN for PFN_{n} {{ const NAME_CSTR: &'static core::ffi::CStr = c\"{n}\"; #[inline(always)] unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {{ unsafe {{ core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }} }} }}",
-            n = self.fn_name
-        )?;
-
-        Ok(())
-    }
-}
-
-pub struct FunctionPtrNewtype<'s, Args> {
+pub struct FunctionPtrNewtype<'s> {
     pub compilation_condition: CompilationCondition<'s>,
     pub name: FnSymbol<'s>,
-    pub args: Args,
+    pub args: Vec<(&'s str, Type<'s>)>,
     pub return_type: Option<Type<'s>>,
+    pub derives: FunctionPtrNewtypeDerives,
 }
-impl<'s, Args: Iterator<Item = (&'s str, Type<'s>)>> FunctionPtrNewtype<'s, Args> {
-    pub fn emit(self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
+impl FunctionPtrNewtype<'_> {
+    pub fn emit(&self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
         self.compilation_condition.emit_single_attr(w)?;
         write!(
             w,
-            "#[repr(transparent)] #[derive(Debug, Clone, Copy)] #[rustfmt::skip] pub struct PFN_{}(pub unsafe extern \"system\" fn(",
+            "#[repr(transparent)]#[derive(Debug, Clone, Copy)]#[rustfmt::skip]pub struct PFN_{}(pub unsafe extern \"system\" fn(",
             self.name
         )?;
         let mut first = true;
-        for x in self.args {
+        for x in &self.args {
             if !first {
                 w.write_all(b",")?;
             }
@@ -315,10 +276,52 @@ impl<'s, Args: Iterator<Item = (&'s str, Type<'s>)>> FunctionPtrNewtype<'s, Args
             first = false;
         }
         w.write_all(b")")?;
-        if let Some(r) = self.return_type {
+        if let Some(ref r) = self.return_type {
             write!(w, "->{r}")?;
         }
         w.write_all(b");")?;
+
+        if self.derives.contains(FunctionPtrNewtypeDerives::FROM_PTR) {
+            w.write_all(b"\n")?;
+            self.emit_from_ptr(w)?;
+        }
+        if self.derives.contains(FunctionPtrNewtypeDerives::PFN) {
+            w.write_all(b"\n")?;
+            self.emit_pfn(w)?;
+        }
+        if self.derives.contains(FunctionPtrNewtypeDerives::STATIC_CALLABLE) {
+            w.write_all(b"\n")?;
+            self.emit_static_callable(w)?;
+        }
+
+        Ok(())
+    }
+
+    fn emit_from_ptr(&self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
+        self.compilation_condition.emit_single_attr(w)?;
+        write!(
+            w,
+            "#[rustfmt::skip]unsafe impl crate::FromPtr for PFN_{n}{{#[inline(always)]unsafe fn from_ptr(p:*const core::ffi::c_void)->Self{{unsafe{{core::mem::transmute::<*const core::ffi::c_void,Self>(p)}}}}}}",
+            n = self.name
+        )
+    }
+
+    fn emit_pfn(&self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
+        self.compilation_condition.emit_single_attr(w)?;
+        write!(
+            w,
+            "#[rustfmt::skip]unsafe impl crate::PFN for PFN_{n}{{const NAME_CSTR:&'static core::ffi::CStr=c\"{n}\";#[inline(always)]unsafe fn from_void_fn(p:PFN_vkVoidFunction)->Self{{unsafe{{core::mem::transmute::<PFN_vkVoidFunction,Self>(p)}}}}}}",
+            n = self.name
+        )
+    }
+
+    fn emit_static_callable(&self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
+        self.compilation_condition.emit_single_attr(w)?;
+        write!(
+            w,
+            "#[cfg(all(feature=\"Implements\",not(feature=\"DynamicLoaded\")))]#[rustfmt::skip]impl crate::StaticCallable for PFN_{n}{{const STATIC:Self=Self({n});}}",
+            n = self.name
+        )?;
 
         Ok(())
     }
@@ -591,4 +594,6 @@ pub trait RustCodeEmitter {
     fn emit_const(&mut self, e: Constant<'static>);
     fn emit_struct(&mut self, e: Struct<'static>);
     fn emit_type_alias(&mut self, e: TypeAlias<'static>);
+    fn emit_function_ptr_newtype(&mut self, e: FunctionPtrNewtype<'static>);
+    fn emit_function_stub(&mut self, e: FunctionStub<'static>);
 }

@@ -6,7 +6,10 @@ use parts::{
 };
 
 use crate::{
-    rs_item::{CompilationCondition, Constant, ConstantSymbol, RustCodeEmitter, TypeSymbol},
+    rs_item::{
+        CompilationCondition, Constant, ConstantSymbol, FnSymbol, FunctionPtrNewtype, FunctionStub, RustCodeEmitter,
+        TypeSymbol,
+    },
     v1_4::VK_KHR_MAINTENANCE_5,
 };
 
@@ -142,7 +145,7 @@ fn main() -> std::io::Result<()> {
     }
 
     for s in STRUCTS {
-        s.emit(&mut generator)?;
+        s.emit(&mut generator);
     }
 
     // chaotic requirement structure
@@ -210,124 +213,7 @@ fn main() -> std::io::Result<()> {
         x.emit(&mut generator, &mut o)?;
     }
 
-    let mut function_ptr_newtype_impls = HashMap::new();
-    let mut pfn_impls = HashMap::new();
-    let mut from_ptr_impls = HashMap::new();
-    let mut static_callable_impls = HashMap::new();
-    let mut fntable = HashMap::new();
-    let commands = COMMANDS.iter().chain(
-        extensions::ELEMENTS
-            .iter()
-            .chain(v1_1::ELEMENTS)
-            .chain(v1_2::ELEMENTS)
-            .chain(v1_3::ELEMENTS)
-            .chain(v1_4::ELEMENTS)
-            .filter_map(|x| match x {
-                Element::Command(x) => Some(x),
-                _ => None,
-            }),
-    );
-    for c in commands {
-        c.emit_pfn_impls(
-            |e| match function_ptr_newtype_impls.entry(e.name.clone()) {
-                std::collections::hash_map::Entry::Vacant(v) => {
-                    v.insert(e);
-                }
-                std::collections::hash_map::Entry::Occupied(mut o) => {
-                    // try merge conditions
-                    o.get_mut().compilation_condition =
-                        core::mem::replace(&mut o.get_mut().compilation_condition, CompilationCondition::Empty)
-                            .or(e.compilation_condition);
-                }
-            },
-            |e| match pfn_impls.entry(e.fn_name.clone()) {
-                std::collections::hash_map::Entry::Vacant(v) => {
-                    v.insert(e);
-                }
-                std::collections::hash_map::Entry::Occupied(mut o) => {
-                    // try merge conditions
-                    o.get_mut().compilation_condition =
-                        core::mem::replace(&mut o.get_mut().compilation_condition, CompilationCondition::Empty)
-                            .or(e.compilation_condition);
-                }
-            },
-            |e| match from_ptr_impls.entry(e.fn_name.clone()) {
-                std::collections::hash_map::Entry::Vacant(v) => {
-                    v.insert(e);
-                }
-                std::collections::hash_map::Entry::Occupied(mut o) => {
-                    // try merge conditions
-                    o.get_mut().compilation_condition =
-                        core::mem::replace(&mut o.get_mut().compilation_condition, CompilationCondition::Empty)
-                            .or(e.compilation_condition);
-                }
-            },
-            |e| match static_callable_impls.entry(e.fn_name.clone()) {
-                std::collections::hash_map::Entry::Vacant(v) => {
-                    v.insert(e);
-                }
-                std::collections::hash_map::Entry::Occupied(mut o) => {
-                    // try merge conditions
-                    o.get_mut().compilation_condition =
-                        core::mem::replace(&mut o.get_mut().compilation_condition, CompilationCondition::Empty)
-                            .or(e.compilation_condition);
-                }
-            },
-        );
-        c.static_function_stubs(|e| match fntable.entry(e.name.clone()) {
-            std::collections::hash_map::Entry::Vacant(v) => {
-                v.insert(e);
-            }
-            std::collections::hash_map::Entry::Occupied(mut o) => {
-                // try merge conditions
-                o.get_mut().compilation_condition =
-                    core::mem::replace(&mut o.get_mut().compilation_condition, CompilationCondition::Empty)
-                        .or(e.compilation_condition);
-            }
-        });
-    }
-
     generator.generate(&mut o)?;
-
-    let mut sorted = function_ptr_newtype_impls.into_values().collect::<Vec<_>>();
-    sorted.sort_by(|a, b| a.name.cmp(&b.name));
-    for x in sorted {
-        x.emit(&mut o)?;
-        o.write_all(b"\n")?;
-    }
-    let mut sorted = pfn_impls.into_values().collect::<Vec<_>>();
-    sorted.sort_by(|a, b| a.fn_name.cmp(&b.fn_name));
-    for x in sorted {
-        x.emit(&mut o)?;
-        o.write_all(b"\n")?;
-    }
-    let mut sorted = from_ptr_impls.into_values().collect::<Vec<_>>();
-    sorted.sort_by(|a, b| a.fn_name.cmp(&b.fn_name));
-    for x in sorted {
-        x.emit(&mut o)?;
-        o.write_all(b"\n")?;
-    }
-    let mut sorted = static_callable_impls.into_values().collect::<Vec<_>>();
-    sorted.sort_by(|a, b| a.fn_name.cmp(&b.fn_name));
-    for x in sorted {
-        x.emit(&mut o)?;
-        o.write_all(b"\n")?;
-    }
-
-    o.write_all(b"\n")?;
-    o.write_all(b"#[cfg(all(feature = \"Implements\", not(feature = \"DynamicLoaded\")))]\n")?;
-    o.write_all(b"#[cfg_attr(all(not(windows), not(target_os = \"macos\"), not(feature = \"DynamicLoaded\")), link(name = \"vulkan\"))]\n")?;
-    o.write_all(b"#[cfg_attr(all(windows, not(feature = \"DynamicLoaded\"), feature = \"Implements\"), link(name = \"vulkan-1\"))]\n")?;
-    o.write_all(b"#[rustfmt::skip]\n")?;
-    o.write_all(b"unsafe extern \"system\" {\n")?;
-    let mut sorted = fntable.into_values().collect::<Vec<_>>();
-    sorted.sort_by(|a, b| a.name.cmp(&b.name));
-    for f in sorted {
-        o.write_all(b"    ")?;
-        f.emit(&mut o)?;
-        o.write_all(b"\n")?;
-    }
-    o.write_all(b"}\n")?;
 
     Ok(())
 }
@@ -354,12 +240,16 @@ impl TypeDef<'_> {
 }
 
 struct CodeGenerator {
+    fntable: HashMap<FnSymbol<'static>, FunctionStub<'static>>,
+    function_ptr_newtypes: HashMap<FnSymbol<'static>, FunctionPtrNewtype<'static>>,
     consts: HashMap<ConstantSymbol<'static>, Constant<'static>>,
     types: HashMap<TypeSymbol<'static>, TypeDef<'static>>,
 }
 impl CodeGenerator {
     pub fn new() -> Self {
         Self {
+            fntable: HashMap::new(),
+            function_ptr_newtypes: HashMap::new(),
             consts: HashMap::new(),
             types: HashMap::new(),
         }
@@ -379,6 +269,28 @@ impl CodeGenerator {
             c.emit(w)?;
             w.write_all(b"\n")?;
         }
+
+        let mut sorted = self.function_ptr_newtypes.into_values().collect::<Vec<_>>();
+        sorted.sort_by(|a, b| a.name.cmp(&b.name));
+        for x in sorted {
+            x.emit(w)?;
+            w.write_all(b"\n")?;
+        }
+
+        w.write_all(b"\n")?;
+        w.write_all(b"#[cfg(all(feature = \"Implements\", not(feature = \"DynamicLoaded\")))]\n")?;
+        w.write_all(b"#[cfg_attr(all(not(windows), not(target_os = \"macos\"), not(feature = \"DynamicLoaded\")), link(name = \"vulkan\"))]\n")?;
+        w.write_all(b"#[cfg_attr(all(windows, not(feature = \"DynamicLoaded\"), feature = \"Implements\"), link(name = \"vulkan-1\"))]\n")?;
+        w.write_all(b"#[rustfmt::skip]\n")?;
+        w.write_all(b"unsafe extern \"system\" {\n")?;
+        let mut sorted = self.fntable.into_values().collect::<Vec<_>>();
+        sorted.sort_by(|a, b| a.name.cmp(&b.name));
+        for f in sorted {
+            w.write_all(b"    ")?;
+            f.emit(w)?;
+            w.write_all(b"\n")?;
+        }
+        w.write_all(b"}\n")?;
 
         Ok(())
     }
@@ -427,6 +339,32 @@ impl RustCodeEmitter for CodeGenerator {
                 }
                 _ => panic!("different kind of type item defined by same name"),
             },
+        }
+    }
+
+    fn emit_function_ptr_newtype(&mut self, e: rs_item::FunctionPtrNewtype<'static>) {
+        match self.function_ptr_newtypes.entry(e.name.clone()) {
+            std::collections::hash_map::Entry::Vacant(v) => {
+                v.insert(e);
+            }
+            std::collections::hash_map::Entry::Occupied(mut o) => {
+                o.get_mut().compilation_condition =
+                    core::mem::replace(&mut o.get_mut().compilation_condition, CompilationCondition::Empty)
+                        .or(e.compilation_condition);
+            }
+        }
+    }
+
+    fn emit_function_stub(&mut self, e: rs_item::FunctionStub<'static>) {
+        match self.fntable.entry(e.name.clone()) {
+            std::collections::hash_map::Entry::Vacant(v) => {
+                v.insert(e);
+            }
+            std::collections::hash_map::Entry::Occupied(mut o) => {
+                o.get_mut().compilation_condition =
+                    core::mem::replace(&mut o.get_mut().compilation_condition, CompilationCondition::Empty)
+                        .or(e.compilation_condition);
+            }
         }
     }
 }
