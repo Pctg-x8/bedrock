@@ -560,7 +560,7 @@ impl Bitmask {
                 source_name: source_ty.clone(),
             });
 
-            if let Some(p) = self.promoted {
+            if let Some(p) = self.promoted.or_else(|| self.extension?.promoted_since()) {
                 let cond = CompilationCondition::Feature(FeatureName::AllowApiVersion(p)).and(
                     CompilationCondition::all(self.side_extensions.iter().map(|x| {
                         CompilationCondition::Feature(FeatureName::VulkanExt {
@@ -590,48 +590,6 @@ impl Bitmask {
         }
 
         for e in self.entries {
-            let cond = CompilationCondition::all(
-                self.version_since
-                    .map(|v| CompilationCondition::Feature(FeatureName::AllowApiVersion(v)))
-                    .into_iter()
-                    .chain(
-                        e.version_since
-                            .map(|v| CompilationCondition::Feature(FeatureName::AllowApiVersion(v))),
-                    )
-                    .chain(
-                        e.extension_old
-                            .map(|(tag, name)| CompilationCondition::Feature(FeatureName::VulkanExt { tag, name })),
-                    )
-                    .chain(e.extension.map(|x| {
-                        CompilationCondition::Feature(FeatureName::VulkanExt {
-                            tag: x.tag,
-                            name: x.name,
-                        })
-                    }))
-                    .chain(e.side_extensions.iter().map(|x| {
-                        CompilationCondition::Feature(FeatureName::VulkanExt {
-                            tag: x.tag,
-                            name: x.name,
-                        })
-                    }))
-                    // guard by typedef's extension(because define uses the type)
-                    .chain(
-                        self.extension_old
-                            .map(|(tag, name)| CompilationCondition::Feature(FeatureName::VulkanExt { tag, name })),
-                    )
-                    .chain(self.extension.map(|x| {
-                        CompilationCondition::Feature(FeatureName::VulkanExt {
-                            tag: x.tag,
-                            name: x.name,
-                        })
-                    }))
-                    .chain(self.side_extensions.iter().map(|x| {
-                        CompilationCondition::Feature(FeatureName::VulkanExt {
-                            tag: x.tag,
-                            name: x.name,
-                        })
-                    })),
-            );
             let ty = Type::Defined(bits_sym.clone());
             let value = if self.long {
                 ConstantValue::Bits64(1u64 << e.bitpos)
@@ -640,7 +598,48 @@ impl Bitmask {
             };
 
             emitter.emit_const(Constant {
-                compilation_condition: cond,
+                compilation_condition: CompilationCondition::all(
+                    self.version_since
+                        .map(|v| CompilationCondition::Feature(FeatureName::AllowApiVersion(v)))
+                        .into_iter()
+                        .chain(
+                            e.version_since
+                                .map(|v| CompilationCondition::Feature(FeatureName::AllowApiVersion(v))),
+                        )
+                        .chain(
+                            e.extension_old
+                                .map(|(tag, name)| CompilationCondition::Feature(FeatureName::VulkanExt { tag, name })),
+                        )
+                        .chain(e.extension.map(|x| {
+                            CompilationCondition::Feature(FeatureName::VulkanExt {
+                                tag: x.tag,
+                                name: x.name,
+                            })
+                        }))
+                        .chain(e.side_extensions.iter().map(|x| {
+                            CompilationCondition::Feature(FeatureName::VulkanExt {
+                                tag: x.tag,
+                                name: x.name,
+                            })
+                        }))
+                        // guard by typedef's extension(because define uses the type)
+                        .chain(
+                            self.extension_old
+                                .map(|(tag, name)| CompilationCondition::Feature(FeatureName::VulkanExt { tag, name })),
+                        )
+                        .chain(self.extension.map(|x| {
+                            CompilationCondition::Feature(FeatureName::VulkanExt {
+                                tag: x.tag,
+                                name: x.name,
+                            })
+                        }))
+                        .chain(self.side_extensions.iter().map(|x| {
+                            CompilationCondition::Feature(FeatureName::VulkanExt {
+                                tag: x.tag,
+                                name: x.name,
+                            })
+                        })),
+                ),
                 name: ConstantSymbol::Bitmask {
                     prefix: self.prefix,
                     stem: e.name,
@@ -650,7 +649,7 @@ impl Bitmask {
                 value: value.clone(),
             });
 
-            if let Some(p) = e.promoted {
+            if let Some(p) = e.promoted.or_else(|| e.extension?.promoted_since()) {
                 emitter.emit_const(Constant {
                     compilation_condition: CompilationCondition::Feature(FeatureName::AllowApiVersion(p)).and(
                         CompilationCondition::all(
@@ -1506,7 +1505,7 @@ impl Command {
             derives,
         });
 
-        if let Some(p) = self.promoted {
+        if let Some(p) = self.promoted.or_else(|| self.extension?.promoted_since()) {
             // promoted symbols always static callable
             let cond = CompilationCondition::Feature(FeatureName::AllowApiVersion(p));
             let name = match self.is_command_buffer_inst {
@@ -1707,5 +1706,13 @@ impl<'s> Extension<'s> {
 
     pub const fn header_constants<'e>(&'e self) -> ExtensionHeaderConstants2<'e, 's> {
         ExtensionHeaderConstants2(self)
+    }
+
+    const fn promoted_since(&self) -> Option<&'s str> {
+        if self.promoted_since.is_empty() {
+            None
+        } else {
+            Some(self.promoted_since)
+        }
     }
 }
