@@ -501,7 +501,6 @@ pub const ELEMENTS: &[Element] = &[
         "ATTACHMENT_STORE_OP",
         &[Enum::member("NONE", vk_ext_enum(302, 0) as _)
             .extension(VK_KHR_LOAD_STORE_OP_NONE)
-            .extra_requirements("not(feature = \"VK_KHR_dynamic_rendering\")") // conflicting definition
             .promoted(VERSION)],
     )),
     // VK_KHR_shader_expect_assume

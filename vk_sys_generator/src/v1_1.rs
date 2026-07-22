@@ -7,6 +7,7 @@ const VK_KHR_SAMPLER_YCBCR_CONVERSION: &Extension = &Extension::khr("sampler_ycb
 const VK_EXT_SHADER_SUBGROUP_VOTE: &Extension = &Extension::ext("shader_subgroup_vote", 1, 66);
 pub const VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE: &Extension = &Extension::khr("descriptor_update_template", 1, 86);
 pub const VK_KHR_DEVICE_GROUP: &Extension = &Extension::khr("device_group", 4, 61);
+pub const VK_KHR_BIND_MEMORY_2: &Extension = &Extension::khr("bind_memory2", 1, 158);
 
 pub const ELEMENTS: &[Element] = &[
     Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_EXT_SHADER_SUBGROUP_VOTE)),

@@ -127,30 +127,24 @@ impl FuncPointer {
 pub struct EnumMember {
     name: &'static str,
     value: isize,
-    extension: Option<(&'static str, &'static str)>,
-    extension2: Option<&'static Extension<'static>>,
+    extension_old: Option<(&'static str, &'static str)>,
+    extension: Option<&'static Extension<'static>>,
     promoted: Option<&'static str>,
-    extra_requirements: Option<&'static str>,
 }
 impl EnumMember {
     #[deprecated = "use new extension specifier"]
     pub const fn extension_old(mut self, suffix: &'static str, name: &'static str) -> Self {
-        self.extension = Some((name, suffix));
+        self.extension_old = Some((name, suffix));
         self
     }
 
     pub const fn extension(mut self, ext: &'static Extension<'static>) -> Self {
-        self.extension2 = Some(ext);
+        self.extension = Some(ext);
         self
     }
 
     pub const fn promoted(mut self, version: &'static str) -> Self {
         self.promoted = Some(version);
-        self
-    }
-
-    pub const fn extra_requirements(mut self, req: &'static str) -> Self {
-        self.extra_requirements = Some(req);
         self
     }
 }
@@ -213,10 +207,9 @@ impl Enum {
         EnumMember {
             name,
             value,
+            extension_old: None,
             extension: None,
-            extension2: None,
             promoted: None,
-            extra_requirements: None,
         }
     }
 
@@ -224,228 +217,157 @@ impl Enum {
         Element::Enum(self)
     }
 
-    pub fn emit(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
-        let type_name = if let Some(x) = self.extension {
-            format!("Vk{}{}", self.name, x.tag)
+    pub fn emit(&self, emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+        let type_sym = if let Some(x) = self.extension {
+            TypeSymbol {
+                stem: self.name,
+                suffix: Some(x.tag),
+            }
         } else if let Some((_, s)) = self.extension_old {
-            format!("Vk{}{s}", self.name)
+            TypeSymbol {
+                stem: self.name,
+                suffix: Some(s),
+            }
         } else {
-            format!("Vk{}", self.name)
+            TypeSymbol {
+                stem: self.name,
+                suffix: None,
+            }
         };
-        let is_newtyped = type_name == "VkResult";
+        let is_newtyped = type_sym
+            == TypeSymbol {
+                stem: "Result",
+                suffix: None,
+            };
 
         if !self.extending {
-            if let Some(x) = self.extension {
-                writeln!(w, "#[cfg(feature = \"VK_{}_{}\")]", x.tag, x.name)?;
-            } else if let Some((name, suffix)) = self.extension_old {
-                writeln!(w, "#[cfg(feature = \"VK_{suffix}_{name}\")]")?;
-            }
-            emit_c_enum_type(w, &type_name)?;
+            // not extending(first seen in this definition)
+            emitter.emit_type_alias(crate::rs_item::TypeAlias {
+                compilation_condition: CompilationCondition::all(
+                    [
+                        self.extension.map(|x| {
+                            CompilationCondition::Feature(FeatureName::VulkanExt {
+                                tag: x.tag,
+                                name: x.name,
+                            })
+                        }),
+                        self.extension_old
+                            .map(|(name, tag)| CompilationCondition::Feature(FeatureName::VulkanExt { tag, name })),
+                    ]
+                    .into_iter()
+                    .flatten(),
+                ),
+                target_name: type_sym.clone(),
+                source_name: Type::Raw("i32"),
+            });
             if let Some(v) = self.promoted {
-                writeln!(w, "#[cfg(feature = \"Allow{v}APIs\")]")?;
-                emit_c_enum_type(w, &format!("Vk{}", self.name))?;
+                emitter.emit_type_alias(crate::rs_item::TypeAlias {
+                    compilation_condition: CompilationCondition::Feature(FeatureName::AllowApiVersion(v)),
+                    target_name: TypeSymbol {
+                        stem: self.name,
+                        suffix: None,
+                    },
+                    source_name: Type::Raw("i32"),
+                });
             }
         }
 
         for member in self.members {
-            if let Some(r) = member.extra_requirements {
-                writeln!(w, "#[cfg({r})]")?;
-            }
-            if self.extension.is_some() || member.extension2.is_some() {
-                match (self.extension, member.extension2) {
-                    (None, None) => {
-                        writeln!(w, "#[rustfmt::skip]")?;
-                        writeln!(
-                            w,
-                            "pub const VK_{}_{}: {type_name} = {};",
-                            self.prefix, member.name, member.value
-                        )?;
-                    }
-                    (Some(x), None) | (None, Some(x)) => {
-                        writeln!(w, "#[cfg(feature = \"VK_{}_{}\")]", x.tag, x.name)?;
-                        writeln!(w, "#[rustfmt::skip]")?;
-                        if is_newtyped {
-                            writeln!(
-                                w,
-                                "pub const VK_{}_{}_{}: {type_name} = {type_name}({});",
-                                self.prefix, member.name, x.tag, member.value
-                            )?;
-                        } else {
-                            writeln!(
-                                w,
-                                "pub const VK_{}_{}_{}: {type_name} = {};",
-                                self.prefix, member.name, x.tag, member.value
-                            )?;
-                        }
-                    }
-                    (Some(a), Some(b)) if a.tag == b.tag && a.name == b.name => {
-                        writeln!(w, "#[cfg(feature = \"VK_{}_{}\")]", a.tag, a.name)?;
-                        writeln!(w, "#[rustfmt::skip]")?;
-                        if is_newtyped {
-                            writeln!(
-                                w,
-                                "pub const VK_{}_{}_{}: {type_name} = {type_name}({});",
-                                self.prefix, member.name, a.tag, member.value
-                            )?;
-                        } else {
-                            writeln!(
-                                w,
-                                "pub const VK_{}_{}_{}: {type_name} = {};",
-                                self.prefix, member.name, a.tag, member.value
-                            )?;
-                        }
-                    }
-                    (Some(a), Some(b)) if a.tag == b.tag => {
-                        writeln!(w, "#[cfg(feature = \"VK_{}_{}\")]", a.tag, a.name)?;
-                        writeln!(w, "#[cfg(feature = \"VK_{}_{}\")]", b.tag, b.name)?;
-                        writeln!(w, "#[rustfmt::skip]")?;
-                        if is_newtyped {
-                            writeln!(
-                                w,
-                                "pub const VK_{}_{}_{}: {type_name} = {type_name}({});",
-                                self.prefix, member.name, a.tag, member.value
-                            )?;
-                        } else {
-                            writeln!(
-                                w,
-                                "pub const VK_{}_{}_{}: {type_name} = {};",
-                                self.prefix, member.name, a.tag, member.value
-                            )?;
-                        }
-                    }
-                    (Some(a), Some(b)) => {
-                        // both extension required, using member extension's suffix
-                        writeln!(w, "#[cfg(feature = \"VK_{}_{}\")]", a.tag, a.name)?;
-                        writeln!(w, "#[cfg(feature = \"VK_{}_{}\")]", b.tag, b.name)?;
-                        writeln!(w, "#[rustfmt::skip]")?;
-                        if is_newtyped {
-                            writeln!(
-                                w,
-                                "pub const VK_{}_{}_{}: {type_name} = {type_name}({});",
-                                self.prefix, member.name, b.tag, member.value
-                            )?;
-                        } else {
-                            writeln!(
-                                w,
-                                "pub const VK_{}_{}_{}: {type_name} = {};",
-                                self.prefix, member.name, b.tag, member.value
-                            )?;
-                        }
-                    }
+            let ty = Type::Defined(type_sym.clone());
+            let value = if is_newtyped {
+                ConstantValue::SignedNewtyped {
+                    ctor: type_sym.clone(),
+                    value: member.value,
                 }
             } else {
-                match (self.extension_old, member.extension) {
-                    (None, None) => {
-                        writeln!(w, "#[rustfmt::skip]")?;
-                        writeln!(
-                            w,
-                            "pub const VK_{}_{}: {type_name} = {};",
-                            self.prefix, member.name, member.value
-                        )?;
-                    }
-                    (Some((x, s)), None) | (None, Some((x, s))) => {
-                        writeln!(w, "#[cfg(feature = \"VK_{s}_{x}\")]")?;
-                        writeln!(w, "#[rustfmt::skip]")?;
-                        if is_newtyped {
-                            writeln!(
-                                w,
-                                "pub const VK_{}_{}_{s}: {type_name} = {type_name}({});",
-                                self.prefix, member.name, member.value
-                            )?;
-                        } else {
-                            writeln!(
-                                w,
-                                "pub const VK_{}_{}_{s}: {type_name} = {};",
-                                self.prefix, member.name, member.value
-                            )?;
-                        }
-                    }
-                    (Some(a), Some(b)) if a == b => {
-                        writeln!(w, "#[cfg(feature = \"VK_{}_{}\")]", a.1, a.0)?;
-                        writeln!(w, "#[rustfmt::skip]")?;
-                        if is_newtyped {
-                            writeln!(
-                                w,
-                                "pub const VK_{}_{}_{}: {type_name} = {type_name}({});",
-                                self.prefix, member.name, a.1, member.value
-                            )?;
-                        } else {
-                            writeln!(
-                                w,
-                                "pub const VK_{}_{}_{}: {type_name} = {};",
-                                self.prefix, member.name, a.1, member.value
-                            )?;
-                        }
-                    }
-                    (Some(a), Some(b)) if a.1 == b.1 => {
-                        writeln!(w, "#[cfg(feature = \"VK_{}_{}\")]", a.1, a.0)?;
-                        writeln!(w, "#[cfg(feature = \"VK_{}_{}\")]", b.1, b.0)?;
-                        writeln!(w, "#[rustfmt::skip]")?;
-                        if is_newtyped {
-                            writeln!(
-                                w,
-                                "pub const VK_{}_{}_{}: {type_name} = {type_name}({});",
-                                self.prefix, member.name, a.1, member.value
-                            )?;
-                        } else {
-                            writeln!(
-                                w,
-                                "pub const VK_{}_{}_{}: {type_name} = {};",
-                                self.prefix, member.name, a.1, member.value
-                            )?;
-                        }
-                    }
-                    (Some(a), Some(b)) => {
-                        // both extension required, using member extension's suffix
-                        writeln!(w, "#[cfg(feature = \"VK_{}_{}\")]", a.1, a.0)?;
-                        writeln!(w, "#[cfg(feature = \"VK_{}_{}\")]", b.1, b.0)?;
-                        writeln!(w, "#[rustfmt::skip]")?;
-                        if is_newtyped {
-                            writeln!(
-                                w,
-                                "pub const VK_{}_{}_{}: {type_name} = {type_name}({});",
-                                self.prefix, member.name, b.1, member.value
-                            )?;
-                        } else {
-                            writeln!(
-                                w,
-                                "pub const VK_{}_{}_{}: {type_name} = {};",
-                                self.prefix, member.name, b.1, member.value
-                            )?;
-                        }
-                    }
-                }
+                ConstantValue::Signed(member.value)
+            };
+
+            if self.extension.is_some() || member.extension.is_some() {
+                // use ext2
+                emitter.emit_const(Constant {
+                    compilation_condition: CompilationCondition::all(
+                        [
+                            self.extension.map(|x| {
+                                CompilationCondition::Feature(FeatureName::VulkanExt {
+                                    tag: x.tag,
+                                    name: x.name,
+                                })
+                            }),
+                            member.extension.map(|x| {
+                                CompilationCondition::Feature(FeatureName::VulkanExt {
+                                    tag: x.tag,
+                                    name: x.name,
+                                })
+                            }),
+                        ]
+                        .into_iter()
+                        .flatten(),
+                    ),
+                    name: ConstantSymbol::Enum {
+                        prefix: self.prefix,
+                        stem: member.name,
+                        // prefer member's extension tag(overriding)
+                        suffix: member.extension.map(|x| x.tag).or(self.extension.map(|x| x.tag)),
+                    },
+                    ty: ty.clone(),
+                    value: value.clone(),
+                });
+            } else {
+                // use old(deprecated) extension specifier
+                emitter.emit_const(Constant {
+                    compilation_condition: CompilationCondition::all(
+                        [
+                            self.extension_old
+                                .map(|(name, tag)| CompilationCondition::Feature(FeatureName::VulkanExt { tag, name })),
+                            member
+                                .extension_old
+                                .map(|(name, tag)| CompilationCondition::Feature(FeatureName::VulkanExt { tag, name })),
+                        ]
+                        .into_iter()
+                        .flatten(),
+                    ),
+                    name: ConstantSymbol::Enum {
+                        prefix: self.prefix,
+                        stem: member.name,
+                        // prefer member's extension tag(overriding)
+                        suffix: member.extension_old.map(|x| x.1).or(self.extension_old.map(|x| x.1)),
+                    },
+                    ty: ty.clone(),
+                    value: value.clone(),
+                });
             }
 
             if let Some(v) = member.promoted {
-                if let Some(r) = member.extra_requirements {
-                    writeln!(w, "#[cfg({r})]")?;
-                }
-                if let Some((x, s)) = self.extension_old {
-                    writeln!(w, "#[cfg(feature = \"VK_{s}_{x}\")]")?;
-                }
-                if let Some(Extension { tag, name, .. }) = self.extension {
-                    writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
-                }
-                writeln!(w, "#[cfg(feature = \"Allow{v}APIs\")]")?;
-                writeln!(w, "#[rustfmt::skip]")?;
-                if is_newtyped {
-                    writeln!(
-                        w,
-                        "pub const VK_{}_{}: {type_name} = {type_name}({});",
-                        self.prefix, member.name, member.value
-                    )?;
-                } else {
-                    writeln!(
-                        w,
-                        "pub const VK_{}_{}: {type_name} = {};",
-                        self.prefix, member.name, member.value
-                    )?;
-                }
+                emitter.emit_const(Constant {
+                    compilation_condition: CompilationCondition::all(
+                        [
+                            self.extension_old
+                                .map(|(name, tag)| CompilationCondition::Feature(FeatureName::VulkanExt { name, tag })),
+                            self.extension.map(|x| {
+                                CompilationCondition::Feature(FeatureName::VulkanExt {
+                                    tag: x.tag,
+                                    name: x.name,
+                                })
+                            }),
+                            Some(CompilationCondition::Feature(FeatureName::AllowApiVersion(v))),
+                        ]
+                        .into_iter()
+                        .flatten(),
+                    ),
+                    name: ConstantSymbol::Enum {
+                        prefix: self.prefix,
+                        stem: member.name,
+                        suffix: None,
+                    },
+                    ty: Type::Defined(TypeSymbol {
+                        stem: self.name,
+                        suffix: None,
+                    }),
+                    value,
+                });
             }
         }
-
-        Ok(())
     }
 }
 
@@ -454,7 +376,7 @@ pub struct BitmaskEntry {
     bitpos: usize,
     extension_old: Option<(&'static str, &'static str)>,
     extension: Option<&'static Extension<'static>>,
-    extra_requirements: &'static [&'static str],
+    side_extensions: &'static [&'static Extension<'static>],
     promoted: Option<&'static str>,
     version_since: Option<&'static str>,
 }
@@ -470,13 +392,13 @@ impl BitmaskEntry {
         self
     }
 
-    pub const fn promoted(mut self, name: &'static str) -> Self {
-        self.promoted = Some(name);
+    pub const fn side_extensions(mut self, exts: &'static [&'static Extension<'static>]) -> Self {
+        self.side_extensions = exts;
         self
     }
 
-    pub const fn extra_requirements(mut self, requirements: &'static [&'static str]) -> Self {
-        self.extra_requirements = requirements;
+    pub const fn promoted(mut self, name: &'static str) -> Self {
+        self.promoted = Some(name);
         self
     }
 
@@ -495,7 +417,7 @@ pub struct Bitmask {
     version_since: Option<&'static str>,
     extension_old: Option<(&'static str, &'static str)>,
     extension: Option<&'static Extension<'static>>,
-    extra_requirements: &'static [&'static str],
+    side_extensions: &'static [&'static Extension<'static>],
     promoted: Option<&'static str>,
     long: bool,
 }
@@ -515,7 +437,7 @@ impl Bitmask {
             version_since: None,
             extension_old: None,
             extension: None,
-            extra_requirements: &[],
+            side_extensions: &[],
             promoted: None,
             long: false,
         }
@@ -531,7 +453,7 @@ impl Bitmask {
             version_since: None,
             extension_old: None,
             extension: None,
-            extra_requirements: &[],
+            side_extensions: &[],
             promoted: None,
             long: false,
         }
@@ -558,8 +480,8 @@ impl Bitmask {
         self
     }
 
-    pub const fn extra_requirements(mut self, requirements: &'static [&'static str]) -> Self {
-        self.extra_requirements = requirements;
+    pub const fn side_extensions(mut self, exts: &'static [&'static Extension<'static>]) -> Self {
+        self.side_extensions = exts;
         self
     }
 
@@ -574,7 +496,7 @@ impl Bitmask {
             bitpos,
             extension_old: None,
             extension: None,
-            extra_requirements: &[],
+            side_extensions: &[],
             promoted: None,
             version_since: None,
         }
@@ -584,128 +506,181 @@ impl Bitmask {
         Element::Bitmask(self)
     }
 
-    pub fn emit(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
-        let (type_name, bits_name);
-        if let Some(x) = self.extension {
-            type_name = format!("Vk{}{}", self.name, x.tag);
-            bits_name = format!("Vk{}{}", self.bits_name, x.tag);
-        } else if let Some((tag, _)) = self.extension_old {
-            type_name = format!("Vk{}{tag}", self.name);
-            bits_name = format!("Vk{}{tag}", self.bits_name);
-        } else {
-            type_name = format!("Vk{}", self.name);
-            bits_name = format!("Vk{}", self.bits_name);
-        }
+    pub fn emit(&self, emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+        let bits_sym = TypeSymbol {
+            stem: self.bits_name,
+            suffix: self.extension.map(|x| x.tag).or(self.extension_old.map(|(tag, _)| tag)),
+        };
 
         if !self.extending {
-            if let Some(x) = self.version_since {
-                writeln!(w, "#[cfg(feature = \"Allow{x}APIs\")]")?;
-            }
-            if let Some((tag, name)) = self.extension_old {
-                writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
-            }
-            if let Some(Extension { tag, name, .. }) = self.extension {
-                writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
-            }
-            for x in self.extra_requirements {
-                writeln!(w, "#[cfg(feature = \"{x}\")]")?;
-            }
-            emit_type_alias(w, &type_name, if self.long { "VkFlags64" } else { "VkFlags" })?;
+            // not extending(first seen in this definition)
+            let cond = CompilationCondition::all(
+                [
+                    self.version_since
+                        .map(|v| CompilationCondition::Feature(FeatureName::AllowApiVersion(v))),
+                    self.extension_old
+                        .map(|(tag, name)| CompilationCondition::Feature(FeatureName::VulkanExt { tag, name })),
+                    self.extension.map(|x| {
+                        CompilationCondition::Feature(FeatureName::VulkanExt {
+                            tag: x.tag,
+                            name: x.name,
+                        })
+                    }),
+                ]
+                .into_iter()
+                .flatten()
+                .chain(self.side_extensions.iter().map(|x| {
+                    CompilationCondition::Feature(FeatureName::VulkanExt {
+                        tag: x.tag,
+                        name: x.name,
+                    })
+                })),
+            );
+            let source_ty = if self.long {
+                Type::Raw("VkFlags64")
+            } else {
+                Type::Raw("VkFlags")
+            };
+
+            emitter.emit_type_alias(crate::rs_item::TypeAlias {
+                compilation_condition: cond.clone(),
+                target_name: TypeSymbol {
+                    stem: self.name,
+                    suffix: self.extension.map(|x| x.tag).or(self.extension_old.map(|(tag, _)| tag)),
+                },
+                source_name: source_ty.clone(),
+            });
+            emitter.emit_type_alias(crate::rs_item::TypeAlias {
+                compilation_condition: cond,
+                target_name: bits_sym.clone(),
+                source_name: source_ty.clone(),
+            });
 
             if let Some(p) = self.promoted {
-                writeln!(w, "#[cfg(feature = \"Allow{p}APIs\")]")?;
-                emit_type_alias(w, &format!("Vk{}", self.name), &type_name)?;
-            }
-            if let Some(x) = self.version_since {
-                writeln!(w, "#[cfg(feature = \"Allow{x}APIs\")]")?;
-            }
-            if let Some((tag, name)) = self.extension_old {
-                writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
-            }
-            if let Some(Extension { tag, name, .. }) = self.extension {
-                writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
-            }
-            for x in self.extra_requirements {
-                writeln!(w, "#[cfg(feature = \"{x}\")]")?;
-            }
-            emit_type_alias(w, &bits_name, if self.long { "VkFlags64" } else { "VkFlags" })?;
+                let cond = CompilationCondition::Feature(FeatureName::AllowApiVersion(p)).and(
+                    CompilationCondition::all(self.side_extensions.iter().map(|x| {
+                        CompilationCondition::Feature(FeatureName::VulkanExt {
+                            tag: x.tag,
+                            name: x.name,
+                        })
+                    })),
+                );
 
-            if let Some(p) = self.promoted {
-                writeln!(w, "#[cfg(feature = \"Allow{p}APIs\")]")?;
-                emit_type_alias(w, &format!("Vk{}", self.bits_name), &bits_name)?;
+                emitter.emit_type_alias(crate::rs_item::TypeAlias {
+                    compilation_condition: cond.clone(),
+                    target_name: TypeSymbol {
+                        stem: self.name,
+                        suffix: None,
+                    },
+                    source_name: source_ty.clone(),
+                });
+                emitter.emit_type_alias(crate::rs_item::TypeAlias {
+                    compilation_condition: cond,
+                    target_name: TypeSymbol {
+                        stem: self.bits_name,
+                        suffix: None,
+                    },
+                    source_name: source_ty,
+                });
             }
         }
 
         for e in self.entries {
-            let mut feature_requirements = HashSet::<String>::new();
-            feature_requirements.extend(self.version_since.map(|v| format!("Allow{v}APIs")));
-            feature_requirements.extend(e.version_since.map(|v| format!("Allow{v}APIs")));
-            // guard by typedef's extension because define uses the type
-            feature_requirements.extend(self.extension_old.map(|(tag, name)| format!("VK_{tag}_{name}")));
-            feature_requirements.extend(e.extension_old.map(|(tag, name)| format!("VK_{tag}_{name}")));
-            // guard by typedef's extension because define uses the type
-            feature_requirements.extend(
-                self.extension
-                    .map(|Extension { tag, name, .. }| format!("VK_{tag}_{name}")),
+            let cond = CompilationCondition::all(
+                self.version_since
+                    .map(|v| CompilationCondition::Feature(FeatureName::AllowApiVersion(v)))
+                    .into_iter()
+                    .chain(
+                        e.version_since
+                            .map(|v| CompilationCondition::Feature(FeatureName::AllowApiVersion(v))),
+                    )
+                    .chain(
+                        e.extension_old
+                            .map(|(tag, name)| CompilationCondition::Feature(FeatureName::VulkanExt { tag, name })),
+                    )
+                    .chain(e.extension.map(|x| {
+                        CompilationCondition::Feature(FeatureName::VulkanExt {
+                            tag: x.tag,
+                            name: x.name,
+                        })
+                    }))
+                    .chain(e.side_extensions.iter().map(|x| {
+                        CompilationCondition::Feature(FeatureName::VulkanExt {
+                            tag: x.tag,
+                            name: x.name,
+                        })
+                    }))
+                    // guard by typedef's extension(because define uses the type)
+                    .chain(
+                        self.extension_old
+                            .map(|(tag, name)| CompilationCondition::Feature(FeatureName::VulkanExt { tag, name })),
+                    )
+                    .chain(self.extension.map(|x| {
+                        CompilationCondition::Feature(FeatureName::VulkanExt {
+                            tag: x.tag,
+                            name: x.name,
+                        })
+                    }))
+                    .chain(self.side_extensions.iter().map(|x| {
+                        CompilationCondition::Feature(FeatureName::VulkanExt {
+                            tag: x.tag,
+                            name: x.name,
+                        })
+                    })),
             );
-            feature_requirements.extend(
-                e.extension
-                    .map(|Extension { tag, name, .. }| format!("VK_{tag}_{name}")),
-            );
-            feature_requirements.extend(self.extra_requirements.iter().copied().map(String::from));
-            feature_requirements.extend(e.extra_requirements.iter().copied().map(String::from));
 
-            // sort for less diff
-            let mut feature_requirements = feature_requirements.into_iter().collect::<Vec<_>>();
-            feature_requirements.sort();
-            for x in feature_requirements {
-                writeln!(w, "#[cfg(feature = \"{x}\")]")?;
-            }
-
-            if e.extension_old.is_none() {
-                match e.extension {
-                    Some(Extension { tag, .. }) => {
-                        writeln!(w, "#[rustfmt::skip]")?;
-                        write!(w, "pub const VK_{}_{}_BIT_{tag}: {bits_name} = 0x", self.prefix, e.name)?;
-                    }
-                    None => {
-                        writeln!(w, "#[rustfmt::skip]")?;
-                        write!(w, "pub const VK_{}_{}_BIT: {bits_name} = 0x", self.prefix, e.name)?;
-                    }
-                }
-            } else {
-                match e.extension_old {
-                    Some((tag, _)) => {
-                        writeln!(w, "#[rustfmt::skip]")?;
-                        write!(w, "pub const VK_{}_{}_BIT_{tag}: {bits_name} = 0x", self.prefix, e.name)?;
-                    }
-                    None => {
-                        writeln!(w, "#[rustfmt::skip]")?;
-                        write!(w, "pub const VK_{}_{}_BIT: {bits_name} = 0x", self.prefix, e.name)?;
-                    }
-                }
-            }
-
-            if self.long {
-                writeln!(w, "{:016x};", 1u64 << e.bitpos)?;
-            } else {
-                writeln!(w, "{:08x};", 1u32 << e.bitpos)?;
-            }
-
-            if let Some(promoted) = e.promoted {
-                writeln!(w, "#[cfg(feature = \"Allow{promoted}APIs\")]")?;
-                writeln!(w, "#[rustfmt::skip]")?;
-                write!(w, "pub const VK_{}_{}_BIT: {bits_name} = 0x", self.prefix, e.name)?;
-
-                if self.long {
-                    writeln!(w, "{:016x};", 1u64 << e.bitpos)?;
+            emitter.emit_const(Constant {
+                compilation_condition: cond,
+                name: ConstantSymbol::Bitmask {
+                    prefix: self.prefix,
+                    stem: self.name,
+                    suffix: e.extension.map(|x| x.tag).or(e.extension_old.map(|(tag, _)| tag)),
+                },
+                ty: Type::Defined(bits_sym.clone()),
+                value: if self.long {
+                    ConstantValue::Bits64(1u64 << e.bitpos)
                 } else {
-                    writeln!(w, "{:08x};", 1u32 << e.bitpos)?;
-                }
+                    ConstantValue::Bits32(1u32 << e.bitpos)
+                },
+            });
+
+            if let Some(p) = e.promoted {
+                emitter.emit_const(Constant {
+                    compilation_condition: CompilationCondition::Feature(FeatureName::AllowApiVersion(p)).and(
+                        CompilationCondition::all(
+                            e.side_extensions
+                                .iter()
+                                .map(|x| {
+                                    CompilationCondition::Feature(FeatureName::VulkanExt {
+                                        tag: x.tag,
+                                        name: x.name,
+                                    })
+                                })
+                                .chain(self.side_extensions.iter().map(|x| {
+                                    CompilationCondition::Feature(FeatureName::VulkanExt {
+                                        tag: x.tag,
+                                        name: x.name,
+                                    })
+                                })),
+                        ),
+                    ),
+                    name: ConstantSymbol::Bitmask {
+                        prefix: self.prefix,
+                        stem: self.name,
+                        suffix: None,
+                    },
+                    ty: Type::Defined(TypeSymbol {
+                        stem: self.bits_name,
+                        suffix: None,
+                    }),
+                    value: if self.long {
+                        ConstantValue::Bits64(1u64 << e.bitpos)
+                    } else {
+                        ConstantValue::Bits32(1u32 << e.bitpos)
+                    },
+                });
             }
         }
-
-        Ok(())
     }
 }
 
@@ -1029,12 +1004,16 @@ impl Struct {
             let mut typed_vulkan_sink_structure_impl = None;
             let mut default = StructDefault::None;
             if let Some((up, v, u)) = self.stype {
-                let st_const_sym = ConstantSymbol::StructureType(up);
+                let st_const_sym = ConstantSymbol::Enum {
+                    prefix: "STRUCTURE_TYPE",
+                    stem: up,
+                    suffix: None,
+                };
                 emitter.emit_const(Constant {
                     compilation_condition: cond.clone(),
                     name: st_const_sym.clone(),
                     ty: Type::Raw("VkStructureType"),
-                    value: ConstantValue::Unsigned(v as _),
+                    value: ConstantValue::UnsignedLong(v as _),
                 });
 
                 if u.is_source() {
@@ -1053,10 +1032,8 @@ impl Struct {
                 if self.default_zero {
                     default = StructDefault::ZeroTyped(st_const_sym.clone())
                 }
-            } else {
-                if self.default_zero {
-                    default = StructDefault::Zero;
-                }
+            } else if self.default_zero {
+                default = StructDefault::Zero;
             }
 
             emitter.emit_struct(crate::rs_item::Struct {
@@ -1110,12 +1087,16 @@ impl Struct {
             let mut typed_vulkan_sink_structure_impl = None;
             let mut default = StructDefault::None;
             if let Some((up, v, u)) = self.stype {
-                let st_const_sym = ConstantSymbol::StructureTypeSuffixed { stem: up, suffix: tag };
+                let st_const_sym = ConstantSymbol::Enum {
+                    prefix: "STRUCTURE_TYPE",
+                    stem: up,
+                    suffix: Some(tag),
+                };
                 emitter.emit_const(Constant {
                     compilation_condition: cond.clone(),
                     name: st_const_sym.clone(),
                     ty: Type::Raw("VkStructureType"),
-                    value: ConstantValue::Unsigned(v as _),
+                    value: ConstantValue::UnsignedLong(v as _),
                 });
 
                 if u.is_source() {
@@ -1134,10 +1115,8 @@ impl Struct {
                 if self.default_zero {
                     default = StructDefault::ZeroTyped(st_const_sym.clone());
                 }
-            } else {
-                if self.default_zero {
-                    default = StructDefault::Zero;
-                }
+            } else if self.default_zero {
+                default = StructDefault::Zero;
             }
 
             emitter.emit_struct(crate::rs_item::Struct {
@@ -1168,9 +1147,13 @@ impl Struct {
                 if let Some((up, v, _)) = self.stype {
                     emitter.emit_const(Constant {
                         compilation_condition: CompilationCondition::Feature(FeatureName::AllowApiVersion(pv)),
-                        name: ConstantSymbol::StructureType(up),
+                        name: ConstantSymbol::Enum {
+                            prefix: "STRUCTURE_TYPE",
+                            stem: up,
+                            suffix: None,
+                        },
                         ty: Type::Raw("VkStructureType"),
-                        value: ConstantValue::Unsigned(v as _),
+                        value: ConstantValue::UnsignedLong(v as _),
                     });
                 }
             }
@@ -1192,13 +1175,17 @@ impl Struct {
         let mut typed_vulkan_structure_impl = None;
         let mut typed_vulkan_sink_structure_impl = None;
         if let Some((up, v, u)) = self.stype {
-            let st_const_sym = ConstantSymbol::StructureType(up);
+            let st_const_sym = ConstantSymbol::Enum {
+                prefix: "STRUCTURE_TYPE",
+                stem: up,
+                suffix: None,
+            };
 
             Constant {
                 compilation_condition: CompilationCondition::Raw(cfg),
                 name: st_const_sym.clone(),
                 ty: Type::Raw("VkStructureType"),
-                value: ConstantValue::Unsigned(v as _),
+                value: ConstantValue::UnsignedLong(v as _),
             }
             .emit(w)?;
             w.write_all(b"\n")?;
@@ -1652,12 +1639,12 @@ impl Element {
                 x.emit(w)
             }
             Self::Bitmask(x) => {
-                w.write_all(b"\n")?;
-                x.emit(w)
+                x.emit(emitter);
+                Ok(())
             }
             Self::Enum(x) => {
-                w.write_all(b"\n")?;
-                x.emit(w)
+                x.emit(emitter);
+                Ok(())
             }
             Self::FuncPointer(x) => {
                 w.write_all(b"\n")?;

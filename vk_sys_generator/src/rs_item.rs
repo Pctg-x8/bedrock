@@ -329,30 +329,65 @@ impl FunctionPtrNewtype<'_> {
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub enum ConstantSymbol<'s> {
-    StructureType(&'s str),
-    StructureTypeSuffixed { stem: &'s str, suffix: &'s str },
+    Enum {
+        prefix: &'s str,
+        stem: &'s str,
+        suffix: Option<&'s str>,
+    },
+    Bitmask {
+        prefix: &'s str,
+        stem: &'s str,
+        suffix: Option<&'s str>,
+    },
 }
 impl core::fmt::Display for ConstantSymbol<'_> {
     #[inline]
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::StructureType(s) => write!(f, "VK_STRUCTURE_TYPE_{s}"),
-            Self::StructureTypeSuffixed { stem, suffix } => write!(f, "VK_STRUCTURE_TYPE_{stem}_{suffix}"),
+            Self::Enum {
+                prefix,
+                stem,
+                suffix: None,
+            } => write!(f, "VK_{prefix}_{stem}"),
+            Self::Enum {
+                prefix,
+                stem,
+                suffix: Some(suffix),
+            } => write!(f, "VK_{prefix}_{stem}_{suffix}"),
+            Self::Bitmask {
+                prefix,
+                stem,
+                suffix: None,
+            } => write!(f, "VK_{prefix}_{stem}_BIT"),
+            Self::Bitmask {
+                prefix,
+                stem,
+                suffix: Some(suffix),
+            } => write!(f, "VK_{prefix}_{stem}_BIT_{suffix}"),
         }
     }
 }
 
-#[derive(Debug, Clone, Copy)]
-pub enum ConstantValue {
-    Signed(i64),
-    Unsigned(u64),
+#[derive(Debug, Clone)]
+pub enum ConstantValue<'s> {
+    SignedLong(i64),
+    UnsignedLong(u64),
+    Signed(isize),
+    SignedNewtyped { ctor: TypeSymbol<'s>, value: isize },
+    Bits64(u64),
+    Bits32(u32),
 }
-impl core::fmt::Display for ConstantValue {
+impl core::fmt::Display for ConstantValue<'_> {
     #[inline]
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            Self::SignedLong(v) => write!(f, "{v}"),
+            Self::UnsignedLong(v) => write!(f, "{v}"),
             Self::Signed(v) => write!(f, "{v}"),
-            Self::Unsigned(v) => write!(f, "{v}"),
+            Self::SignedNewtyped { ctor, value } => write!(f, "{ctor}({value})"),
+            // +2 for heading "0x"
+            Self::Bits64(v) => write!(f, "{v:#018x}"),
+            Self::Bits32(v) => write!(f, "{v:#010x}"),
         }
     }
 }
@@ -361,10 +396,10 @@ pub struct Constant<'s> {
     pub compilation_condition: CompilationCondition<'s>,
     pub name: ConstantSymbol<'s>,
     pub ty: Type<'s>,
-    pub value: ConstantValue,
+    pub value: ConstantValue<'s>,
 }
 impl Constant<'_> {
-    pub fn emit(self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
+    pub fn emit(&self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
         self.compilation_condition.emit_single_attr(w)?;
         write!(w, "#[rustfmt::skip]pub const {}:{}={};", self.name, self.ty, self.value)
     }

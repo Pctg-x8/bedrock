@@ -13,7 +13,7 @@ pub const ELEMENTS: &[Element] = &[
     Bitmask::extending(
         "PipelineCacheCreateFlagBits",
         "PIPELINE_CACHE_CREATE",
-        &[Bitmask::entry("EXTERNALLY_SYNCHRONIZED", 0).extra_requirements(&["Allow1_3APIs"])],
+        &[Bitmask::entry("EXTERNALLY_SYNCHRONIZED", 0).version_since(VERSION)],
     )
     .into_element(),
     // VK_KHR_maintenace4
@@ -390,7 +390,9 @@ pub const ELEMENTS: &[Element] = &[
     Enum::extending(
         "AttachmentStoreOp",
         "ATTACHMENT_STORE_OP",
-        &[Enum::member("NONE", vk_ext_enum(302, 0) as _)],
+        &[Enum::member("NONE", vk_ext_enum(302, 0) as _)
+            .extension(VK_KHR_DYNAMIC_RENDERING)
+            .promoted(VERSION)],
     )
     .into_element(),
     Struct::typed(

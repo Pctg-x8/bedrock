@@ -1,15 +1,17 @@
 use std::{collections::HashMap, io::Write};
 
 use parts::{
-    Bitmask, Command, Element, Enum, ExtensionHeaderConstants, FuncPointer, Object, Struct, StructUsage, TypeAlias,
-    Union, emit_c_enum_type, emit_const, emit_result_const, emit_result_err_const,
+    Bitmask, Command, Enum, ExtensionHeaderConstants, FuncPointer, Object, Struct, StructUsage, TypeAlias, Union,
+    emit_c_enum_type, emit_const, emit_result_const, emit_result_err_const,
 };
 
 use crate::{
+    extensions::VK_KHR_SURFACE,
     rs_item::{
         CompilationCondition, Constant, ConstantSymbol, FnSymbol, FunctionPtrNewtype, FunctionStub, RustCodeEmitter,
         TypeSymbol,
     },
+    v1_1::{VK_KHR_BIND_MEMORY_2, VK_KHR_DEVICE_GROUP},
     v1_4::VK_KHR_MAINTENANCE_5,
 };
 
@@ -45,8 +47,7 @@ fn main() -> std::io::Result<()> {
     }
 
     for f in FLAGS {
-        o.write_all(b"\n")?;
-        f.emit(&mut o)?;
+        f.emit(&mut generator);
     }
 
     // flags extra constants
@@ -132,8 +133,7 @@ fn main() -> std::io::Result<()> {
     emit_c_enum_type(&mut o, "VkObjectType")?;
 
     for e in ENUMS {
-        o.write_all(b"\n")?;
-        e.emit(&mut o)?;
+        e.emit(&mut generator);
     }
 
     o.write_all(b"\n")?;
@@ -1215,8 +1215,9 @@ const FLAGS: &[Bitmask] = &[
         "DEVICE_GROUP_PRESENT_MODE",
         &[],
     )
-    .extension_old("KHR", "device_group")
-    .extra_requirements(&["VK_KHR_surface"]),
+    .extension(VK_KHR_DEVICE_GROUP)
+    .promoted("1_1")
+    .side_extensions(&[VK_KHR_SURFACE]),
     Bitmask::new(
         "DeviceQueueCreateFlags",
         "DeviceQueueCreateFlagBits",
@@ -1471,8 +1472,8 @@ const FLAGS: &[Bitmask] = &[
                 .extension_old("KHR", "maintenance1")
                 .promoted("1_1"),
             Bitmask::entry("SPLIT_INSTANCE_BIND_REGIONS", 6)
-                .extension_old("KHR", "device_group")
-                .extra_requirements(&["VK_KHR_bind_memory2"])
+                .extension(VK_KHR_DEVICE_GROUP)
+                .side_extensions(&[VK_KHR_BIND_MEMORY_2])
                 .promoted("1_1"),
             Bitmask::entry("BLOCK_TEXEL_VIEW_COMPATIBLE", 7)
                 .extension_old("KHR", "maintenance2")

@@ -1,5 +1,6 @@
 use crate::{parts::*, v1_1::VK_KHR_DEVICE_GROUP, v1_3::VK_KHR_FORMAT_FEATURE_FLAGS_2, vk_ext_enum};
 
+pub const VK_KHR_SURFACE: &Extension = &Extension::khr("surface", 25, 1);
 pub const VK_KHR_WIN32_SURFACE: &Extension = &Extension::khr("win32_surface", 6, 10);
 pub const VK_EXT_VALIDATION_CACHE: &Extension = &Extension::ext("validation_cache", 1, 161);
 pub const VK_EXT_VALIDATION_FLAGS: &Extension = &Extension::ext("validation_flags", 1, 62);
