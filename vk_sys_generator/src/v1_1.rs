@@ -7,14 +7,195 @@ use crate::{
 };
 
 const VERSION: &str = "1_1";
+pub const VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2: &Extension =
+    &Extension::khr("get_physical_device_properties2", 2, 60).promoted(VERSION);
+pub const VK_KHR_DEVICE_GROUP: &Extension = &Extension::khr("device_group", 4, 61).promoted(VERSION);
+const VK_EXT_SHADER_SUBGROUP_VOTE: &Extension = &Extension::ext("shader_subgroup_vote", 1, 66).promoted(VERSION);
+pub const VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE: &Extension =
+    &Extension::khr("descriptor_update_template", 1, 86).promoted(VERSION);
+pub const VK_KHR_DEDICATED_ALLOCATION: &Extension = &Extension::khr("dedicated_allocation", 1, 128).promoted(VERSION);
+pub const VK_KHR_GET_MEMORY_REQUIREMENTS_2: &Extension =
+    &Extension::khr("get_memory_requirements2", 1, 147).promoted(VERSION);
 const VK_KHR_SAMPLER_YCBCR_CONVERSION: &Extension =
     &Extension::khr("sampler_ycbcr_conversion", 14, 157).promoted(VERSION);
-const VK_EXT_SHADER_SUBGROUP_VOTE: &Extension = &Extension::ext("shader_subgroup_vote", 1, 66);
-pub const VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE: &Extension = &Extension::khr("descriptor_update_template", 1, 86);
-pub const VK_KHR_DEVICE_GROUP: &Extension = &Extension::khr("device_group", 4, 61);
-pub const VK_KHR_BIND_MEMORY_2: &Extension = &Extension::khr("bind_memory2", 1, 158);
+pub const VK_KHR_BIND_MEMORY_2: &Extension = &Extension::khr("bind_memory2", 1, 158).promoted(VERSION);
 
 pub const ELEMENTS: &[Element] = &[
+    // VK_KHR_get_physical_device_properties2
+    VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2
+        .header_constants()
+        .into_element(),
+    Struct::typed(
+        "PhysicalDeviceFeatures2",
+        "PHYSICAL_DEVICE_FEATURES_2",
+        VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2.ext_enum(0) as _,
+        StructUsage::Both,
+        &[Struct::member("features", "VkPhysicalDeviceFeatures")],
+    )
+    .extensions(&[VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceProperties2",
+        "PHYSICAL_DEVICE_PROPERTIES_2",
+        VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2.ext_enum(1) as _,
+        StructUsage::Sink,
+        &[Struct::member("properties", "VkPhysicalDeviceProperties")],
+    )
+    .extensions(&[VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "FormatProperties2",
+        "FORMAT_PROPERTIES_2",
+        VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2.ext_enum(2) as _,
+        StructUsage::Sink,
+        &[Struct::member("formatProperties", "VkFormatProperties")],
+    )
+    .extensions(&[VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "ImageFormatProperties2",
+        "IMAGE_FORMAT_PROPERTIES_2",
+        VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2.ext_enum(3) as _,
+        StructUsage::Sink,
+        &[Struct::member("imageFormatProperties", "VkImageFormatProperties")],
+    )
+    .extensions(&[VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceImageFormatInfo2",
+        "PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2",
+        VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2.ext_enum(4) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("format", "VkFormat"),
+            Struct::member("r#type", "VkImageType"),
+            Struct::member("tiling", "VkImageTiling"),
+            Struct::member("usage", "VkImageUsageFlags"),
+            Struct::member("flags", "VkImageCreateFlags"),
+        ],
+    )
+    .extensions(&[VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "QueueFamilyProperties2",
+        "QUEUE_FAMILY_PROPERTIES_2",
+        VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2.ext_enum(5) as _,
+        StructUsage::Sink,
+        &[Struct::member("queueFamilyProperties", "VkQueueFamilyProperties")],
+    )
+    .extensions(&[VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceMemoryProperties2",
+        "PHYSICAL_DEVICE_MEMORY_PROPERTIES_2",
+        VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2.ext_enum(6) as _,
+        StructUsage::Sink,
+        &[Struct::member("memoryProperties", "VkPhysicalDeviceMemoryProperties")],
+    )
+    .extensions(&[VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "SparseImageFormatProperties2",
+        "SPARSE_IMAGE_FORMAT_PROPERTIES_2",
+        VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2.ext_enum(7) as _,
+        StructUsage::Sink,
+        &[Struct::member("properties", "VkSparseImageFormatProperties")],
+    )
+    .extensions(&[VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceSparseImageFormatInfo2",
+        "PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2",
+        VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2.ext_enum(8) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("format", "VkFormat"),
+            Struct::member("r#type", "VkImageType"),
+            Struct::member("samples", "VkSampleCountFlagBits"),
+            Struct::member("usage", "VkImageUsageFlags"),
+            Struct::member("tiling", "VkImageTiling"),
+        ],
+    )
+    .extensions(&[VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2])
+    .promoted(VERSION)
+    .into_element(),
+    Command::new(
+        "GetPhysicalDeviceFeatures2",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("pFeatures", "*mut VkPhysicalDeviceFeatures2KHR"),
+        ],
+    )
+    .extension(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2)
+    .into_element(),
+    Command::new(
+        "GetPhysicalDeviceProperties2",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("pProperties", "*mut VkPhysicalDeviceProperties2KHR"),
+        ],
+    )
+    .extension(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2)
+    .into_element(),
+    Command::new(
+        "GetPhysicalDeviceFormatProperties2",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("format", "VkFormat"),
+            ("pFormatProperties", "*mut VkFormatProperties2KHR"),
+        ],
+    )
+    .extension(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2)
+    .into_element(),
+    Command::new(
+        "GetPhysicalDeviceImageFormatProperties2",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("pImageFormatInfo", "*const VkPhysicalDeviceImageFormatInfo2KHR"),
+            ("pImageFormatProperties", "*mut VkImageFormatProperties2KHR"),
+        ],
+    )
+    .failable()
+    .extension(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2)
+    .into_element(),
+    Command::new(
+        "GetPhysicalDeviceQueueFamilyProperties2",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("pQueueFamilyPropertyCount", "*mut u32"),
+            ("pQueueFamilyProperties", "*mut VkQueueFamilyProperties2KHR"),
+        ],
+    )
+    .extension(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2)
+    .into_element(),
+    Command::new(
+        "GetPhysicalDeviceMemoryProperties2",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("pMemoryProperties", "*mut VkPhysicalDeviceMemoryProperties2KHR"),
+        ],
+    )
+    .extension(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2)
+    .into_element(),
+    Command::new(
+        "GetPhysicalDeviceSparseImageFormatProperties2",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("pFormatInfo", "*const VkPhysicalDeviceSparseImageFormatInfo2KHR"),
+            ("pPropertyCount", "*mut u32"),
+            ("pProperties", "*mut VkSparseImageFormatProperties2KHR"),
+        ],
+    )
+    .extension(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2)
+    .into_element(),
     // VK_KHR_device_group
     VK_KHR_DEVICE_GROUP.header_constants().into_element(),
     Bitmask::extending(
@@ -320,6 +501,211 @@ pub const ELEMENTS: &[Element] = &[
     .into_element(),
     // VK_EXT_shader_subgroup_vote
     VK_EXT_SHADER_SUBGROUP_VOTE.header_constants().into_element(),
+    // VK_KHR_descriptor_update_template
+    VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE.header_constants().into_element(),
+    Bitmask::new(
+        "DescriptorUpdateTemplateCreateFlags",
+        "DescriptorUpdateTemplateCreateFlagBits",
+        "DESCRIPTOR_UPDATE_TEMPLATE_CREATE",
+        &[],
+    )
+    .extension(VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE)
+    .into_element(),
+    Enum::extending(
+        "DebugReportObjectType",
+        "DEBUG_REPORT_OBJECT_TYPE",
+        &[Enum::member(
+            "DESCRIPTOR_UPDATE_TEMPLATE",
+            VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE.ext_enum(0) as _,
+        )
+        .extension(VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE)],
+    )
+    .extension(VK_EXT_DEBUG_REPORT)
+    .into_element(),
+    Enum::new(
+        "DescriptorUpdateTemplateType",
+        "DESCRIPTOR_UPDATE_TEMPLATE_TYPE",
+        &[Enum::member("DESCRIPTOR_SET", 0).extension(VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE)],
+    )
+    .extension(VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE)
+    .into_element(),
+    Struct::typed(
+        "DescriptorUpdateTemplateCreateInfo",
+        "DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO",
+        VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE.ext_enum(0) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("flags", "VkDescriptorUpdateTemplateCreateFlagsKHR"),
+            Struct::member("descriptorUpdateEntryCount", "u32"),
+            Struct::member("pDescriptorUpdateEntries", "*const VkDescriptorUpdateTemplateEntryKHR"),
+            Struct::member("templateType", "VkDescriptorUpdateTemplateTypeKHR"),
+            Struct::member("descriptorSetLayout", "VkDescriptorSetLayout"),
+            Struct::member("pipelineBindPoint", "VkPipelineBindPoint"),
+            Struct::member("pipelineLayout", "VkPipelineLayout"),
+            Struct::member("set", "u32"),
+        ],
+    )
+    .extensions(&[VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::new(
+        "DescriptorUpdateTemplateEntry",
+        &[
+            Struct::member("dstBinding", "u32"),
+            Struct::member("dstArrayElement", "u32"),
+            Struct::member("descriptorCount", "u32"),
+            Struct::member("descriptorType", "VkDescriptorType"),
+            Struct::member("offset", "usize"),
+            Struct::member("stride", "usize"),
+        ],
+    )
+    .extensions(&[VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE])
+    .promoted(VERSION)
+    .into_element(),
+    Command::new(
+        "CreateDescriptorUpdateTemplate",
+        &[
+            ("device", "VkDevice"),
+            ("pCreateInfo", "*const VkDescriptorUpdateTemplateCreateInfoKHR"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+            ("pDescriptorUpdateTemplate", "*mut VkDescriptorUpdateTemplateKHR"),
+        ],
+    )
+    .failable()
+    .extension(VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE)
+    .into_element(),
+    Command::new(
+        "DestroyDescriptorUpdateTemplate",
+        &[
+            ("device", "VkDevice"),
+            ("descriptorUpdateTemplate", "VkDescriptorUpdateTemplateKHR"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+        ],
+    )
+    .extension(VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE)
+    .into_element(),
+    Command::new(
+        "UpdateDescriptorSetWithTemplate",
+        &[
+            ("device", "VkDevice"),
+            ("descriptorSet", "VkDescriptorSet"),
+            ("descriptorUpdateTemplate", "VkDescriptorUpdateTemplateKHR"),
+            ("pData", "*const core::ffi::c_void"),
+        ],
+    )
+    .extension(VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE)
+    .into_element(),
+    // VK_KHR_dedicated_allocation
+    VK_KHR_DEDICATED_ALLOCATION.header_constants().into_element(),
+    Struct::typed(
+        "MemoryDedicatedRequirements",
+        "MEMORY_DEDICATED_REQUIREMENTS",
+        VK_KHR_DEDICATED_ALLOCATION.ext_enum(0) as _,
+        StructUsage::Sink,
+        &[
+            Struct::member("prefersDedicatedAllocation", "VkBool32"),
+            Struct::member("requiresDedicatedAllocation", "VkBool32"),
+        ],
+    )
+    .extensions(&[VK_KHR_DEDICATED_ALLOCATION])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "MemoryDedicatedAllocateInfo",
+        "MEMORY_DEDICATED_ALLOCATE_INFO",
+        VK_KHR_DEDICATED_ALLOCATION.ext_enum(1) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("image", "Option<VkImage>"),
+            Struct::member("buffer", "Option<VkBuffer>"),
+        ],
+    )
+    .extensions(&[VK_KHR_DEDICATED_ALLOCATION])
+    .promoted(VERSION)
+    .into_element(),
+    // VK_KHR_get_memory_requirements2
+    VK_KHR_GET_MEMORY_REQUIREMENTS_2.header_constants().into_element(),
+    Struct::typed(
+        "BufferMemoryRequirementsInfo2",
+        "BUFFER_MEMORY_REQUIREMENTS_INFO_2",
+        VK_KHR_GET_MEMORY_REQUIREMENTS_2.ext_enum(0) as _,
+        StructUsage::Source,
+        &[Struct::member("buffer", "VkBuffer")],
+    )
+    .extensions(&[VK_KHR_GET_MEMORY_REQUIREMENTS_2])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "ImageMemoryRequirementsInfo2",
+        "IMAGE_MEMORY_REQUIREMENTS_INFO_2",
+        VK_KHR_GET_MEMORY_REQUIREMENTS_2.ext_enum(1) as _,
+        StructUsage::Source,
+        &[Struct::member("image", "VkImage")],
+    )
+    .extensions(&[VK_KHR_GET_MEMORY_REQUIREMENTS_2])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "ImageSparseMemoryRequirementsInfo2",
+        "IMAGE_SPARSE_MEMORY_REQUIREMENTS_INFO_2",
+        VK_KHR_GET_MEMORY_REQUIREMENTS_2.ext_enum(2) as _,
+        StructUsage::Source,
+        &[Struct::member("image", "VkImage")],
+    )
+    .extensions(&[VK_KHR_GET_MEMORY_REQUIREMENTS_2])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "MemoryRequirements2",
+        "MEMORY_REQUIREMENTS_2",
+        VK_KHR_GET_MEMORY_REQUIREMENTS_2.ext_enum(3) as _,
+        StructUsage::Sink,
+        &[Struct::member("memoryRequirements", "VkMemoryRequirements")],
+    )
+    .extensions(&[VK_KHR_GET_MEMORY_REQUIREMENTS_2])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "SparseImageMemoryRequirements2",
+        "SPARSE_IMAGE_MEMORY_REQUIREMENTS_2",
+        VK_KHR_GET_MEMORY_REQUIREMENTS_2.ext_enum(4) as _,
+        StructUsage::Sink,
+        &[Struct::member("memoryRequirements", "VkSparseImageMemoryRequirements")],
+    )
+    .extensions(&[VK_KHR_GET_MEMORY_REQUIREMENTS_2])
+    .promoted(VERSION)
+    .into_element(),
+    Command::new(
+        "GetImageMemoryRequirements2",
+        &[
+            ("device", "VkDevice"),
+            ("pInfo", "*const VkImageMemoryRequirementsInfo2KHR"),
+            ("pMemoryRequirements", "*mut VkMemoryRequirements2KHR"),
+        ],
+    )
+    .extension(VK_KHR_GET_MEMORY_REQUIREMENTS_2)
+    .into_element(),
+    Command::new(
+        "GetBufferMemoryRequirements2",
+        &[
+            ("device", "VkDevice"),
+            ("pInfo", "*const VkBufferMemoryRequirementsInfo2KHR"),
+            ("pMemoryRequirements", "*mut VkMemoryRequirements2KHR"),
+        ],
+    )
+    .extension(VK_KHR_GET_MEMORY_REQUIREMENTS_2)
+    .into_element(),
+    Command::new(
+        "GetImageSparseMemoryRequirements2",
+        &[
+            ("device", "VkDevice"),
+            ("pInfo", "*const VkImageSparseMemoryRequirementsInfo2KHR"),
+            ("pSparseMemoryRequirementCount", "*mut u32"),
+            ("pSparseMemoryRequirements", "*mut VkSparseImageMemoryRequirements2KHR"),
+        ],
+    )
+    .extension(VK_KHR_GET_MEMORY_REQUIREMENTS_2)
+    .into_element(),
     // VK_KHR_sampler_ycbcr_conversion
     VK_KHR_SAMPLER_YCBCR_CONVERSION.header_constants().into_element(),
     Object::new(

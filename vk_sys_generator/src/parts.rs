@@ -77,7 +77,8 @@ pub struct FuncPointer {
     name: &'static str,
     args: &'static [(&'static str, &'static str)],
     return_ty: Option<&'static str>,
-    extension: Option<(&'static str, &'static str)>,
+    extension_old: Option<(&'static str, &'static str)>,
+    extension: Option<&'static Extension<'static>>,
 }
 impl FuncPointer {
     pub const fn new(name: &'static str, args: &'static [(&'static str, &'static str)]) -> Self {
@@ -85,6 +86,7 @@ impl FuncPointer {
             name,
             args,
             return_ty: None,
+            extension_old: None,
             extension: None,
         }
     }
@@ -94,13 +96,27 @@ impl FuncPointer {
         self
     }
 
-    pub const fn extension(mut self, tag: &'static str, name: &'static str) -> Self {
-        self.extension = Some((tag, name));
+    #[deprecated]
+    pub const fn extension_old(mut self, tag: &'static str, name: &'static str) -> Self {
+        self.extension_old = Some((tag, name));
         self
     }
 
+    pub const fn extension(mut self, ext: &'static Extension<'static>) -> Self {
+        self.extension = Some(ext);
+        self
+    }
+
+    pub const fn into_element(self) -> Element {
+        Element::FuncPointer(self)
+    }
+
     pub fn emit(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
-        if let Some((tag, name)) = self.extension {
+        if let Some(Extension { tag, name, .. }) = self.extension {
+            writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
+            writeln!(w, "#[rustfmt::skip]")?;
+            write!(w, "pub type PFN_vk{}{tag} = extern \"system\" fn(", self.name)?;
+        } else if let Some((tag, name)) = self.extension_old {
             writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
             writeln!(w, "#[rustfmt::skip]")?;
             write!(w, "pub type PFN_vk{}{tag} = extern \"system\" fn(", self.name)?;

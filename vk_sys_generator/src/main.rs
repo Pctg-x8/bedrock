@@ -588,50 +588,6 @@ const ENUMS: &[Enum] = &[
         ],
     ),
     Enum::new(
-        "DebugReportObjectType",
-        "DEBUG_REPORT_OBJECT_TYPE",
-        &[
-            Enum::member("UNKNOWN", 0),
-            Enum::member("INSTANCE", 1),
-            Enum::member("PHYSICAL_DEVICE", 2),
-            Enum::member("DEVICE", 3),
-            Enum::member("QUEUE", 4),
-            Enum::member("SEMAPHORE", 5),
-            Enum::member("COMMAND_BUFFER", 6),
-            Enum::member("FENCE", 7),
-            Enum::member("DEVICE_MEMORY", 8),
-            Enum::member("BUFFER", 9),
-            Enum::member("IMAGE", 10),
-            Enum::member("EVENT", 11),
-            Enum::member("QUERY_POOL", 12),
-            Enum::member("BUFFER_VIEW", 13),
-            Enum::member("IMAGE_VIEW", 14),
-            Enum::member("SHADER_MODULE", 15),
-            Enum::member("PIPELINE_CACHE", 16),
-            Enum::member("PIPELINE_LAYOUT", 17),
-            Enum::member("RENDER_PASS", 18),
-            Enum::member("PIPELINE", 19),
-            Enum::member("DESCRIPTOR_SET_LAYOUT", 20),
-            Enum::member("SAMPLER", 21),
-            Enum::member("DESCRIPTOR_POOL", 22),
-            Enum::member("DESCRIPTOR_SET", 23),
-            Enum::member("FRAMEBUFFER", 24),
-            Enum::member("COMMAND_POOL", 25),
-            Enum::member("SURFACE_KHR", 26),
-            Enum::member("SWAPCHAIN_KHR", 27),
-            Enum::member("DEBUG_REPORT_CALLBACK_EXT", 28),
-            Enum::member("DISPLAY_KHR", 29),
-            Enum::member("DISPLAY_MODE_KHR", 30),
-            Enum::member("OBJECT_TABLE_NVX", 31),
-            Enum::member("INDIRECT_COMMANDS_LAYOUT_NVX", 32),
-            Enum::member("VALIDATION_CACHE_EXT", 33),
-            Enum::member("DESCRIPTOR_UPDATE_TEMPLATE", vk_ext_enum(86, 0) as _)
-                .extension_old("KHR", "descriptor_update_template")
-                .promoted("1_1"),
-        ],
-    )
-    .extension_old("EXT", "debug_report"),
-    Enum::new(
         "DescriptorType",
         "DESCRIPTOR_TYPE",
         &[
@@ -648,15 +604,6 @@ const ENUMS: &[Enum] = &[
             Enum::member("INPUT_ATTACHMENT", 10),
         ],
     ),
-    Enum::new(
-        "DescriptorUpdateTemplateType",
-        "DESCRIPTOR_UPDATE_TEMPLATE_TYPE",
-        &[Enum::member("DESCRIPTOR_SET", 0)
-            .extension_old("KHR", "descriptor_update_template")
-            .promoted("1_1")],
-    )
-    .extension_old("KHR", "descriptor_update_template")
-    .promoted("1_1"),
     Enum::new(
         "DynamicState",
         "DYNAMIC_STATE",
@@ -1118,56 +1065,6 @@ const FLAGS: &[Bitmask] = &[
         &[Bitmask::entry("FRONT", 0), Bitmask::entry("BACK", 1)],
     ),
     Bitmask::new(
-        "DebugReportFlags",
-        "DebugReportFlagBits",
-        "DEBUG_REPORT",
-        &[
-            Bitmask::entry("INFORMATION", 0).extension_old("EXT", "debug_report"),
-            Bitmask::entry("WARNING", 1).extension_old("EXT", "debug_report"),
-            Bitmask::entry("PERFORMANCE_WARNING", 2).extension_old("EXT", "debug_report"),
-            Bitmask::entry("ERROR", 3).extension_old("EXT", "debug_report"),
-            Bitmask::entry("DEBUG", 4).extension_old("EXT", "debug_report"),
-        ],
-    )
-    .extension_old("EXT", "debug_report"),
-    Bitmask::new(
-        "DebugUtilsMessageSeverityFlags",
-        "DebugUtilsMessageSeverityFlagBits",
-        "DEBUG_UTILS_MESSAGE_SEVERITY",
-        &[
-            Bitmask::entry("VERBOSE", 0).extension_old("EXT", "debug_utils"),
-            Bitmask::entry("INFO", 4).extension_old("EXT", "debug_utils"),
-            Bitmask::entry("WARNING", 8).extension_old("EXT", "debug_utils"),
-            Bitmask::entry("ERROR", 12).extension_old("EXT", "debug_utils"),
-        ],
-    )
-    .extension_old("EXT", "debug_utils"),
-    Bitmask::new(
-        "DebugUtilsMessageTypeFlags",
-        "DebugUtilsMessageTypeFlagBits",
-        "DEBUG_UTILS_MESSAGE_TYPE",
-        &[
-            Bitmask::entry("GENERAL", 0).extension_old("EXT", "debug_utils"),
-            Bitmask::entry("VALIDATION", 1).extension_old("EXT", "debug_utils"),
-            Bitmask::entry("PERFORMANCE", 2).extension_old("EXT", "debug_utils"),
-        ],
-    )
-    .extension_old("EXT", "debug_utils"),
-    Bitmask::new(
-        "DebugUtilsMessengerCallbackDataFlags",
-        "DebugUtilsMessengerCallbackDataFlagBits",
-        "DEBUG_UTILS_MESSENGER_CALLBACK_DATA",
-        &[],
-    )
-    .extension_old("EXT", "debug_utils"),
-    Bitmask::new(
-        "DebugUtilsMessengerCreateFlags",
-        "DebugUtilsMessengerCreateFlagBits",
-        "DEBUG_UTILS_MESSENGER_CREATE",
-        &[],
-    )
-    .extension_old("EXT", "debug_utils"),
-    Bitmask::new(
         "DependencyFlags",
         "DependencyFlagBits",
         "DEPENDENCY",
@@ -1196,14 +1093,6 @@ const FLAGS: &[Bitmask] = &[
         "DESCRIPTOR_SET_LAYOUT_CREATE",
         &[],
     ),
-    Bitmask::new(
-        "DescriptorUpdateTemplateCreateFlags",
-        "DescriptorUpdateTemplateCreateFlagBits",
-        "DESCRIPTOR_UPDATE_TEMPLATE_CREATE",
-        &[],
-    )
-    .extension_old("KHR", "descriptor_update_template")
-    .promoted("1_1"),
     Bitmask::new("DeviceCreateFlags", "DeviceCreateFlagBits", "DEVICE_CREATE", &[]),
     Bitmask::new(
         "DeviceGroupPresentModeFlags",
@@ -1969,32 +1858,6 @@ const FUNC_POINTERS: &[FuncPointer] = &[
         ],
     ),
     FuncPointer::new("VoidFunction", &[]),
-    FuncPointer::new(
-        "DebugReportCallback",
-        &[
-            ("flags", "VkDebugReportFlagsEXT"),
-            ("objectType", "VkDebugReportObjectTypeEXT"),
-            ("object", "u64"),
-            ("location", "usize"),
-            ("messageCode", "i32"),
-            ("pLayerPrefix", "*const core::ffi::c_char"),
-            ("pMessage", "*const core::ffi::c_char"),
-            ("pUserData", "*mut core::ffi::c_void"),
-        ],
-    )
-    .returns("VkBool32")
-    .extension("EXT", "debug_report"),
-    FuncPointer::new(
-        "DebugUtilsMessengerCallback",
-        &[
-            ("messageSeverity", "VkDebugUtilsMessageSeverityFlagBitsEXT"),
-            ("messageTypes", "VkDebugUtilsMessageTypeFlagsEXT"),
-            ("pCallbackData", "*const VkDebugUtilsMessengerCallbackDataEXT"),
-            ("pUserData", "*mut core::ffi::c_void"),
-        ],
-    )
-    .returns("VkBool32")
-    .extension("EXT", "debug_utils"),
 ];
 
 const STRUCTS: &[Struct] = &[
@@ -2115,15 +1978,6 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .stype("BUFFER_MEMORY_BARRIER", 44, StructUsage::Source),
-    Struct::typed(
-        "BufferMemoryRequirementsInfo2",
-        "BUFFER_MEMORY_REQUIREMENTS_INFO_2",
-        vk_ext_enum(147, 0) as _,
-        StructUsage::Source,
-        &[Struct::member("buffer", "VkBuffer")],
-    )
-    .extensions_old(&[("KHR", "get_memory_requirements2")])
-    .promoted("1_1"),
     Struct::new(
         "BufferViewCreateInfo",
         &[
@@ -2243,96 +2097,6 @@ const STRUCTS: &[Struct] = &[
     .stype("D3D12_FENCE_SUBMIT_INFO", vk_ext_enum(79, 2) as _, StructUsage::Source)
     .extensions_old(&[("KHR", "external_semaphore_win32")]),
     Struct::new(
-        "DebugReportCallbackCreateInfo",
-        &[
-            Struct::member("flags", "VkDebugReportFlagsEXT"),
-            Struct::member("pfnCallback", "PFN_vkDebugReportCallbackEXT"),
-            Struct::member("pUserData", "*mut core::ffi::c_void"),
-        ],
-    )
-    .stype(
-        "DEBUG_REPORT_CALLBACK_CREATE_INFO",
-        vk_ext_enum(12, 0) as _,
-        StructUsage::Source,
-    )
-    .extensions_old(&[("EXT", "debug_report")]),
-    Struct::new(
-        "DebugUtilsLabel",
-        &[
-            Struct::member("pLabelName", "*const core::ffi::c_char"),
-            Struct::member("pColor", "[core::ffi::c_float; 4]"),
-        ],
-    )
-    .stype("DEBUG_UTILS_LABEL", vk_ext_enum(129, 2) as _, StructUsage::Source)
-    .extensions_old(&[("EXT", "debug_utils")]),
-    Struct::new(
-        "DebugUtilsMessengerCallbackData",
-        &[
-            Struct::member("flags", "VkDebugUtilsMessengerCallbackDataFlagsEXT"),
-            Struct::member("pMessageIdName", "*const core::ffi::c_char"),
-            Struct::member("messageIdNumber", "i32"),
-            Struct::member("pMessage", "*const core::ffi::c_char"),
-            Struct::member("queueLabelCount", "u32"),
-            Struct::member("pQueueLabels", "*const VkDebugUtilsLabelEXT"),
-            Struct::member("cmdBufLabelCount", "u32"),
-            Struct::member("pCmdBufLabels", "*const VkDebugUtilsLabelEXT"),
-            Struct::member("objectCount", "u32"),
-            Struct::member("pObjects", "*const VkDebugUtilsObjectNameInfoEXT"),
-        ],
-    )
-    .stype(
-        "DEBUG_UTILS_MESSENGER_CALLBACK_DATA",
-        vk_ext_enum(129, 3) as _,
-        StructUsage::Source,
-    )
-    .extensions_old(&[("EXT", "debug_utils")]),
-    Struct::new(
-        "DebugUtilsMessengerCreateInfo",
-        &[
-            Struct::member("flags", "VkDebugUtilsMessengerCreateFlagsEXT"),
-            Struct::member("messageSeverity", "VkDebugUtilsMessageSeverityFlagsEXT"),
-            Struct::member("messageType", "VkDebugUtilsMessageTypeFlagsEXT"),
-            Struct::member("pfnUserCallback", "PFN_vkDebugUtilsMessengerCallbackEXT"),
-            Struct::member("pUserData", "*mut core::ffi::c_void"),
-        ],
-    )
-    .stype(
-        "DEBUG_UTILS_MESSENGER_CREATE_INFO",
-        vk_ext_enum(129, 4) as _,
-        StructUsage::Source,
-    )
-    .extensions_old(&[("EXT", "debug_utils")]),
-    Struct::new(
-        "DebugUtilsObjectNameInfo",
-        &[
-            Struct::member("objectType", "VkObjectType"),
-            Struct::member("objectHandle", "u64"),
-            Struct::member("pObjectName", "*const core::ffi::c_char"),
-        ],
-    )
-    .stype(
-        "DEBUG_UTILS_OBJECT_NAME_INFO",
-        vk_ext_enum(129, 0) as _,
-        StructUsage::Source,
-    )
-    .extensions_old(&[("EXT", "debug_utils")]),
-    Struct::new(
-        "DebugUtilsObjectTagInfo",
-        &[
-            Struct::member("objectType", "VkObjectType"),
-            Struct::member("objectHandle", "u64"),
-            Struct::member("tagName", "u64"),
-            Struct::member("tagSize", "u64"),
-            Struct::member("pTag", "*const core::ffi::c_void"),
-        ],
-    )
-    .stype(
-        "DEBUG_UTILS_OBJECT_TAG_INFO",
-        vk_ext_enum(129, 1) as _,
-        StructUsage::Source,
-    )
-    .extensions_old(&[("EXT", "debug_utils")]),
-    Struct::new(
         "DescriptorBufferInfo",
         &[
             Struct::member("buffer", "VkBuffer"),
@@ -2401,37 +2165,6 @@ const STRUCTS: &[Struct] = &[
         &[Struct::member("supported", "VkBool32")],
     )
     .extensions_old(&[("KHR", "maintenance3")])
-    .promoted("1_1"),
-    Struct::typed(
-        "DescriptorUpdateTemplateCreateInfo",
-        "DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO",
-        vk_ext_enum(86, 0) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("flags", "VkDescriptorUpdateTemplateCreateFlagsKHR"),
-            Struct::member("descriptorUpdateEntryCount", "u32"),
-            Struct::member("pDescriptorUpdateEntries", "*const VkDescriptorUpdateTemplateEntryKHR"),
-            Struct::member("templateType", "VkDescriptorUpdateTemplateTypeKHR"),
-            Struct::member("descriptorSetLayout", "VkDescriptorSetLayout"),
-            Struct::member("pipelineBindPoint", "VkPipelineBindPoint"),
-            Struct::member("pipelineLayout", "VkPipelineLayout"),
-            Struct::member("set", "u32"),
-        ],
-    )
-    .extensions_old(&[("KHR", "descriptor_update_template")])
-    .promoted("1_1"),
-    Struct::new(
-        "DescriptorUpdateTemplateEntry",
-        &[
-            Struct::member("dstBinding", "u32"),
-            Struct::member("dstArrayElement", "u32"),
-            Struct::member("descriptorCount", "u32"),
-            Struct::member("descriptorType", "VkDescriptorType"),
-            Struct::member("offset", "usize"),
-            Struct::member("stride", "usize"),
-        ],
-    )
-    .extensions_old(&[("KHR", "descriptor_update_template")])
     .promoted("1_1"),
     Struct::new(
         "DeviceCreateInfo",
@@ -2793,15 +2526,6 @@ const STRUCTS: &[Struct] = &[
             Struct::member("bufferFeatures", "VkFormatFeatureFlags"),
         ],
     ),
-    Struct::typed(
-        "FormatProperties2",
-        "FORMAT_PROPERTIES_2",
-        vk_ext_enum(60, 2) as _,
-        StructUsage::Sink,
-        &[Struct::member("formatProperties", "VkFormatProperties")],
-    )
-    .extensions_old(&[("KHR", "get_physical_device_properties2")])
-    .promoted("1_1"),
     Struct::new(
         "FramebufferCreateInfo",
         &[
@@ -2887,15 +2611,6 @@ const STRUCTS: &[Struct] = &[
         ],
     ),
     Struct::typed(
-        "ImageFormatProperties2",
-        "IMAGE_FORMAT_PROPERTIES_2",
-        vk_ext_enum(60, 3) as _,
-        StructUsage::Sink,
-        &[Struct::member("imageFormatProperties", "VkImageFormatProperties")],
-    )
-    .extensions_old(&[("KHR", "get_physical_device_properties2")])
-    .promoted("1_1"),
-    Struct::typed(
         "ImageMemoryBarrier",
         "IMAGE_MEMORY_BARRIER",
         45,
@@ -2911,15 +2626,6 @@ const STRUCTS: &[Struct] = &[
             Struct::member("subresourceRange", "VkImageSubresourceRange"),
         ],
     ),
-    Struct::typed(
-        "ImageMemoryRequirementsInfo2",
-        "IMAGE_MEMORY_REQUIREMENTS_INFO_2",
-        vk_ext_enum(147, 1) as _,
-        StructUsage::Source,
-        &[Struct::member("image", "VkImage")],
-    )
-    .extensions_old(&[("KHR", "get_memory_requirements2")])
-    .promoted("1_1"),
     Struct::new(
         "ImageResolve",
         &[
@@ -2930,15 +2636,6 @@ const STRUCTS: &[Struct] = &[
             Struct::member("extent", "VkExtent3D"),
         ],
     ),
-    Struct::typed(
-        "ImageSparseMemoryRequirementsInfo2",
-        "IMAGE_SPARSE_MEMORY_REQUIREMENTS_INFO_2",
-        vk_ext_enum(147, 2) as _,
-        StructUsage::Source,
-        &[Struct::member("image", "VkImage")],
-    )
-    .extensions_old(&[("KHR", "get_memory_requirements2")])
-    .promoted("1_1"),
     Struct::new(
         "ImageSubresource",
         &[
@@ -3123,30 +2820,6 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .stype("MEMORY_BARRIER", 46, StructUsage::Source),
-    Struct::typed(
-        "MemoryDedicatedAllocateInfo",
-        "MEMORY_DEDICATED_ALLOCATE_INFO",
-        vk_ext_enum(128, 1) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("image", "Option<VkImage>"),
-            Struct::member("buffer", "Option<VkBuffer>"),
-        ],
-    )
-    .extensions_old(&[("KHR", "dedicated_allocation")])
-    .promoted("1_1"),
-    Struct::typed(
-        "MemoryDedicatedRequirements",
-        "MEMORY_DEDICATED_REQUIREMENTS",
-        vk_ext_enum(128, 0) as _,
-        StructUsage::Sink,
-        &[
-            Struct::member("prefersDedicatedAllocation", "VkBool32"),
-            Struct::member("requiresDedicatedAllocation", "VkBool32"),
-        ],
-    )
-    .extensions_old(&[("KHR", "dedicated_allocation")])
-    .promoted("1_1"),
     Struct::new("MemoryFdProperties", &[Struct::member("memoryTypeBits", "u32")])
         .stype("MEMORY_FD_PROPERTIES", vk_ext_enum(75, 1) as _, StructUsage::Sink)
         .extensions_old(&[("KHR", "external_memory_fd")]),
@@ -3180,15 +2853,6 @@ const STRUCTS: &[Struct] = &[
             Struct::member("memoryTypeBits", "u32"),
         ],
     ),
-    Struct::typed(
-        "MemoryRequirements2",
-        "MEMORY_REQUIREMENTS_2",
-        vk_ext_enum(147, 3) as _,
-        StructUsage::Sink,
-        &[Struct::member("memoryRequirements", "VkMemoryRequirements")],
-    )
-    .extensions_old(&[("KHR", "get_memory_requirements2")])
-    .promoted("1_1"),
     Struct::new(
         "MemoryType",
         &[
@@ -3363,15 +3027,6 @@ const STRUCTS: &[Struct] = &[
     )
     .default_zero(),
     Struct::typed(
-        "PhysicalDeviceFeatures2",
-        "PHYSICAL_DEVICE_FEATURES_2",
-        vk_ext_enum(60, 0) as _,
-        StructUsage::Both,
-        &[Struct::member("features", "VkPhysicalDeviceFeatures")],
-    )
-    .extensions_old(&[("KHR", "get_physical_device_properties2")])
-    .promoted("1_1"),
-    Struct::typed(
         "PhysicalDeviceGroupProperties",
         "PHYSICAL_DEVICE_GROUP_PROPERTIES",
         vk_ext_enum(71, 0) as _,
@@ -3383,21 +3038,6 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .extensions_old(&[("KHR", "device_group_creation")])
-    .promoted("1_1"),
-    Struct::typed(
-        "PhysicalDeviceImageFormatInfo2",
-        "PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2",
-        vk_ext_enum(60, 4) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("format", "VkFormat"),
-            Struct::member("r#type", "VkImageType"),
-            Struct::member("tiling", "VkImageTiling"),
-            Struct::member("usage", "VkImageUsageFlags"),
-            Struct::member("flags", "VkImageCreateFlags"),
-        ],
-    )
-    .extensions_old(&[("KHR", "get_physical_device_properties2")])
     .promoted("1_1"),
     Struct::new(
         "PhysicalDeviceLimits",
@@ -3532,15 +3172,6 @@ const STRUCTS: &[Struct] = &[
         ],
     ),
     Struct::typed(
-        "PhysicalDeviceMemoryProperties2",
-        "PHYSICAL_DEVICE_MEMORY_PROPERTIES_2",
-        vk_ext_enum(60, 6) as _,
-        StructUsage::Sink,
-        &[Struct::member("memoryProperties", "VkPhysicalDeviceMemoryProperties")],
-    )
-    .extensions_old(&[("KHR", "get_physical_device_properties2")])
-    .promoted("1_1"),
-    Struct::typed(
         "PhysicalDeviceMultiviewFeatures",
         "PHYSICAL_DEVICE_MULTIVIEW_FEATURES",
         vk_ext_enum(54, 1) as _,
@@ -3588,30 +3219,6 @@ const STRUCTS: &[Struct] = &[
             Struct::member("sparseProperties", "VkPhysicalDeviceSparseProperties"),
         ],
     ),
-    Struct::typed(
-        "PhysicalDeviceProperties2",
-        "PHYSICAL_DEVICE_PROPERTIES_2",
-        vk_ext_enum(60, 1) as _,
-        StructUsage::Sink,
-        &[Struct::member("properties", "VkPhysicalDeviceProperties")],
-    )
-    .extensions_old(&[("KHR", "get_physical_device_properties2")])
-    .promoted("1_1"),
-    Struct::typed(
-        "PhysicalDeviceSparseImageFormatInfo2",
-        "PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2",
-        vk_ext_enum(60, 8) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("format", "VkFormat"),
-            Struct::member("r#type", "VkImageType"),
-            Struct::member("samples", "VkSampleCountFlagBits"),
-            Struct::member("usage", "VkImageUsageFlags"),
-            Struct::member("tiling", "VkImageTiling"),
-        ],
-    )
-    .extensions_old(&[("KHR", "get_physical_device_properties2")])
-    .promoted("1_1"),
     Struct::new(
         "PhysicalDeviceSparseProperties",
         &[
@@ -3846,15 +3453,6 @@ const STRUCTS: &[Struct] = &[
             Struct::member("minImageTransferGranularity", "VkExtent3D"),
         ],
     ),
-    Struct::typed(
-        "QueueFamilyProperties2",
-        "QUEUE_FAMILY_PROPERTIES_2",
-        vk_ext_enum(60, 5) as _,
-        StructUsage::Sink,
-        &[Struct::member("queueFamilyProperties", "VkQueueFamilyProperties")],
-    )
-    .extensions_old(&[("KHR", "get_physical_device_properties2")])
-    .promoted("1_1"),
     Struct::new(
         "Rect2D",
         &[
@@ -3991,15 +3589,6 @@ const STRUCTS: &[Struct] = &[
             Struct::member("flags", "VkSparseImageFormatFlags"),
         ],
     ),
-    Struct::typed(
-        "SparseImageFormatProperties2",
-        "SPARSE_IMAGE_FORMAT_PROPERTIES_2",
-        vk_ext_enum(60, 7) as _,
-        StructUsage::Sink,
-        &[Struct::member("properties", "VkSparseImageFormatProperties")],
-    )
-    .extensions_old(&[("KHR", "get_physical_device_properties2")])
-    .promoted("1_1"),
     Struct::new(
         "SparseImageMemoryBind",
         &[
@@ -4029,15 +3618,6 @@ const STRUCTS: &[Struct] = &[
             Struct::member("imageMipTailStride", DEVICE_SIZE_TYPE),
         ],
     ),
-    Struct::typed(
-        "SparseImageMemoryRequirements2",
-        "SPARSE_IMAGE_MEMORY_REQUIREMENTS_2",
-        vk_ext_enum(147, 4) as _,
-        StructUsage::Sink,
-        &[Struct::member("memoryRequirements", "VkSparseImageMemoryRequirements")],
-    )
-    .extensions_old(&[("KHR", "get_memory_requirements2")])
-    .promoted("1_1"),
     Struct::new(
         "SparseImageOpaqueMemoryBindInfo",
         &[
@@ -5783,99 +5363,6 @@ const COMMANDS: &[Command] = &[
     .failable()
     .extension_old("KHR", "get_surface_capabilities2"),
     Command::new(
-        "CreateDebugReportCallback",
-        &[
-            ("instance", "VkInstance"),
-            ("pCreateInfo", "*const VkDebugReportCallbackCreateInfoEXT"),
-            ("pAllocator", "*const VkAllocationCallbacks"),
-            ("pCallback", "*mut VkDebugReportCallbackEXT"),
-        ],
-    )
-    .failable()
-    .extension_old("EXT", "debug_report"),
-    Command::new(
-        "DestroyDebugReportCallback",
-        &[
-            ("instance", "VkInstance"),
-            ("callback", "VkDebugReportCallbackEXT"),
-            ("pAllocator", "*const VkAllocationCallbacks"),
-        ],
-    )
-    .extension_old("EXT", "debug_report"),
-    Command::new(
-        "DebugReportMessage",
-        &[
-            ("instance", "VkInstance"),
-            ("flags", "VkDebugReportFlagsEXT"),
-            ("objectType", "VkDebugReportObjectTypeEXT"),
-            ("object", "u64"),
-            ("location", "usize"),
-            ("messageCode", "i32"),
-            ("pLayerPrefix", "*const core::ffi::c_char"),
-            ("pMessage", "*const core::ffi::c_char"),
-        ],
-    )
-    .extension_old("EXT", "debug_report"),
-    Command::new(
-        "SetDebugUtilsObjectName",
-        &[
-            ("device", "VkDevice"),
-            ("pNameInfo", "*const VkDebugUtilsObjectNameInfoEXT"),
-        ],
-    )
-    .failable()
-    .extension_old("EXT", "debug_utils"),
-    Command::new(
-        "SetDebugUtilsObjectTag",
-        &[
-            ("device", "VkDevice"),
-            ("pTagInfo", "*const VkDebugUtilsObjectTagInfoEXT"),
-        ],
-    )
-    .failable()
-    .extension_old("EXT", "debug_utils"),
-    Command::new(
-        "QueueBeginDebugUtilsLabel",
-        &[("queue", "VkQueue"), ("pLabelInfo", "*const VkDebugUtilsLabelEXT")],
-    )
-    .extension_old("EXT", "debug_utils"),
-    Command::new("QueueEndDebugUtilsLabel", &[("queue", "VkQueue")]).extension_old("EXT", "debug_utils"),
-    Command::new(
-        "QueueInsertDebugUtilsLabel",
-        &[("queue", "VkQueue"), ("pLabelInfo", "*const VkDebugUtilsLabelEXT")],
-    )
-    .extension_old("EXT", "debug_utils"),
-    Command::new(
-        "CreateDebugUtilsMessenger",
-        &[
-            ("instance", "VkInstance"),
-            ("pCreateInfo", "*const VkDebugUtilsMessengerCreateInfoEXT"),
-            ("pAllocator", "*const VkAllocationCallbacks"),
-            ("pDebugUtilsMessenger", "*mut VkDebugUtilsMessengerEXT"),
-        ],
-    )
-    .failable()
-    .extension_old("EXT", "debug_utils"),
-    Command::new(
-        "DestroyDebugUtilsMessenger",
-        &[
-            ("instance", "VkInstance"),
-            ("debugUtilsMessenger", "VkDebugUtilsMessengerEXT"),
-            ("pAllocator", "*const VkAllocationCallbacks"),
-        ],
-    )
-    .extension_old("EXT", "debug_utils"),
-    Command::new(
-        "SubmitDebugUtilsMessage",
-        &[
-            ("instance", "VkInstance"),
-            ("messageSeverity", "VkDebugUtilsMessageSeverityFlagBitsEXT"),
-            ("messageTypes", "VkDebugUtilsMessageTypeFlagsEXT"),
-            ("pCallbackData", "*const VkDebugUtilsMessengerCallbackDataEXT"),
-        ],
-    )
-    .extension_old("EXT", "debug_utils"),
-    Command::new(
         "GetPhysicalDeviceExternalBufferProperties",
         &[
             ("physicalDevice", "VkPhysicalDevice"),
@@ -5909,75 +5396,6 @@ const COMMANDS: &[Command] = &[
     .extension_old("KHR", "external_fence_capabilities")
     .promoted("1_1"),
     Command::new(
-        "GetPhysicalDeviceFeatures2",
-        &[
-            ("physicalDevice", "VkPhysicalDevice"),
-            ("pFeatures", "*mut VkPhysicalDeviceFeatures2KHR"),
-        ],
-    )
-    .extension_old("KHR", "get_physical_device_properties2")
-    .promoted("1_1"),
-    Command::new(
-        "GetPhysicalDeviceProperties2",
-        &[
-            ("physicalDevice", "VkPhysicalDevice"),
-            ("pProperties", "*mut VkPhysicalDeviceProperties2KHR"),
-        ],
-    )
-    .extension_old("KHR", "get_physical_device_properties2")
-    .promoted("1_1"),
-    Command::new(
-        "GetPhysicalDeviceFormatProperties2",
-        &[
-            ("physicalDevice", "VkPhysicalDevice"),
-            ("format", "VkFormat"),
-            ("pFormatProperties", "*mut VkFormatProperties2KHR"),
-        ],
-    )
-    .extension_old("KHR", "get_physical_device_properties2")
-    .promoted("1_1"),
-    Command::new(
-        "GetPhysicalDeviceImageFormatProperties2",
-        &[
-            ("physicalDevice", "VkPhysicalDevice"),
-            ("pImageFormatInfo", "*const VkPhysicalDeviceImageFormatInfo2KHR"),
-            ("pImageFormatProperties", "*mut VkImageFormatProperties2KHR"),
-        ],
-    )
-    .failable()
-    .extension_old("KHR", "get_physical_device_properties2")
-    .promoted("1_1"),
-    Command::new(
-        "GetPhysicalDeviceQueueFamilyProperties2",
-        &[
-            ("physicalDevice", "VkPhysicalDevice"),
-            ("pQueueFamilyPropertyCount", "*mut u32"),
-            ("pQueueFamilyProperties", "*mut VkQueueFamilyProperties2KHR"),
-        ],
-    )
-    .extension_old("KHR", "get_physical_device_properties2")
-    .promoted("1_1"),
-    Command::new(
-        "GetPhysicalDeviceMemoryProperties2",
-        &[
-            ("physicalDevice", "VkPhysicalDevice"),
-            ("pMemoryProperties", "*mut VkPhysicalDeviceMemoryProperties2KHR"),
-        ],
-    )
-    .extension_old("KHR", "get_physical_device_properties2")
-    .promoted("1_1"),
-    Command::new(
-        "GetPhysicalDeviceSparseImageFormatProperties2",
-        &[
-            ("physicalDevice", "VkPhysicalDevice"),
-            ("pFormatInfo", "*const VkPhysicalDeviceSparseImageFormatInfo2KHR"),
-            ("pPropertyCount", "*mut u32"),
-            ("pProperties", "*mut VkSparseImageFormatProperties2KHR"),
-        ],
-    )
-    .extension_old("KHR", "get_physical_device_properties2")
-    .promoted("1_1"),
-    Command::new(
         "EnumeratePhysicalDeviceGroup",
         &[
             ("instance", "VkInstance"),
@@ -5990,70 +5408,6 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .extension_old("KHR", "device_group_creation")
-    .promoted("1_1"),
-    Command::new(
-        "GetImageMemoryRequirements2",
-        &[
-            ("device", "VkDevice"),
-            ("pInfo", "*const VkImageMemoryRequirementsInfo2KHR"),
-            ("pMemoryRequirements", "*mut VkMemoryRequirements2KHR"),
-        ],
-    )
-    .extension_old("KHR", "get_memory_requirements2")
-    .promoted("1_1"),
-    Command::new(
-        "GetBufferMemoryRequirements2",
-        &[
-            ("device", "VkDevice"),
-            ("pInfo", "*const VkBufferMemoryRequirementsInfo2KHR"),
-            ("pMemoryRequirements", "*mut VkMemoryRequirements2KHR"),
-        ],
-    )
-    .extension_old("KHR", "get_memory_requirements2")
-    .promoted("1_1"),
-    Command::new(
-        "GetImageSparseMemoryRequirements2",
-        &[
-            ("device", "VkDevice"),
-            ("pInfo", "*const VkImageSparseMemoryRequirementsInfo2KHR"),
-            ("pSparseMemoryRequirementCount", "*mut u32"),
-            ("pSparseMemoryRequirements", "*mut VkSparseImageMemoryRequirements2KHR"),
-        ],
-    )
-    .extension_old("KHR", "get_memory_requirements2")
-    .promoted("1_1"),
-    Command::new(
-        "CreateDescriptorUpdateTemplate",
-        &[
-            ("device", "VkDevice"),
-            ("pCreateInfo", "*const VkDescriptorUpdateTemplateCreateInfoKHR"),
-            ("pAllocator", "*const VkAllocationCallbacks"),
-            ("pDescriptorUpdateTemplate", "*mut VkDescriptorUpdateTemplateKHR"),
-        ],
-    )
-    .failable()
-    .extension_old("KHR", "descriptor_update_template")
-    .promoted("1_1"),
-    Command::new(
-        "DestroyDescriptorUpdateTemplate",
-        &[
-            ("device", "VkDevice"),
-            ("descriptorUpdateTemplate", "VkDescriptorUpdateTemplateKHR"),
-            ("pAllocator", "*const VkAllocationCallbacks"),
-        ],
-    )
-    .extension_old("KHR", "descriptor_update_template")
-    .promoted("1_1"),
-    Command::new(
-        "UpdateDescriptorSetWithTemplate",
-        &[
-            ("device", "VkDevice"),
-            ("descriptorSet", "VkDescriptorSet"),
-            ("descriptorUpdateTemplate", "VkDescriptorUpdateTemplateKHR"),
-            ("pData", "*const core::ffi::c_void"),
-        ],
-    )
-    .extension_old("KHR", "descriptor_update_template")
     .promoted("1_1"),
     Command::new(
         "TrimCommandPool",
@@ -6460,14 +5814,6 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .static_callable(),
-    Command::inst("BeginDebugUtilsLabel", &[("pLabelInfo", "*const VkDebugUtilsLabelEXT")])
-        .extension_old("EXT", "debug_utils"),
-    Command::inst("EndDebugUtilsLabel", &[]).extension_old("EXT", "debug_utils"),
-    Command::inst(
-        "InsertDebugUtilsLabel",
-        &[("pLabelInfo", "*const VkDebugUtilsLabelEXT")],
-    )
-    .extension_old("EXT", "debug_utils"),
     Command::inst(
         "SetEvent2",
         &[("event", "VkEvent"), ("pDependencyInfo", "*const VkDependencyInfoKHR")],

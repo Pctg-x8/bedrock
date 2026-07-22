@@ -6,6 +6,7 @@ pub const VK_KHR_SWAPCHAIN: &Extension = &Extension::khr("swapchain", 70, 2);
 pub const VK_EXT_VALIDATION_CACHE: &Extension = &Extension::ext("validation_cache", 1, 161);
 pub const VK_EXT_VALIDATION_FLAGS: &Extension = &Extension::ext("validation_flags", 1, 62);
 pub const VK_EXT_DEBUG_REPORT: &Extension = &Extension::ext("debug_report", 10, 12);
+pub const VK_EXT_DEBUG_UTILS: &Extension = &Extension::ext("debug_utils", 2, 129);
 pub const VK_EXT_BLEND_OPERATION_ADVANCED: &Extension = &Extension::ext("blend_operation_advanced", 2, 149);
 const VK_EXT_ACQUIRE_DRM_DISPLAY: &Extension = &Extension::ext("acquire_drm_display", 1, 286);
 const VK_EXT_ACQUIRE_XLIB_DISPLAY: &Extension = &Extension::ext("acquire_xlib_display", 1, 90);
@@ -50,6 +51,340 @@ const VK_EXT_FULL_SCREEN_EXCLUSIVE: &Extension = &Extension::ext("full_screen_ex
 const VK_AMD_SHADER_INFO: &Extension = &Extension::new("AMD", "shader_info", 1, 43);
 
 pub const ELEMENTS: &[Element] = &[
+    // VK_EXT_debug_report
+    VK_EXT_DEBUG_REPORT.header_constants().into_element(),
+    Bitmask::new(
+        "DebugReportFlags",
+        "DebugReportFlagBits",
+        "DEBUG_REPORT",
+        &[
+            Bitmask::entry("INFORMATION", 0).extension(VK_EXT_DEBUG_REPORT),
+            Bitmask::entry("WARNING", 1).extension(VK_EXT_DEBUG_REPORT),
+            Bitmask::entry("PERFORMANCE_WARNING", 2).extension(VK_EXT_DEBUG_REPORT),
+            Bitmask::entry("ERROR", 3).extension(VK_EXT_DEBUG_REPORT),
+            Bitmask::entry("DEBUG", 4).extension(VK_EXT_DEBUG_REPORT),
+        ],
+    )
+    .extension(VK_EXT_DEBUG_REPORT)
+    .into_element(),
+    Enum::new(
+        "DebugReportObjectType",
+        "DEBUG_REPORT_OBJECT_TYPE",
+        &[
+            Enum::member("UNKNOWN", 0).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("INSTANCE", 1).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("PHYSICAL_DEVICE", 2).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("DEVICE", 3).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("QUEUE", 4).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("SEMAPHORE", 5).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("COMMAND_BUFFER", 6).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("FENCE", 7).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("DEVICE_MEMORY", 8).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("BUFFER", 9).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("IMAGE", 10).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("EVENT", 11).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("QUERY_POOL", 12).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("BUFFER_VIEW", 13).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("IMAGE_VIEW", 14).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("SHADER_MODULE", 15).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("PIPELINE_CACHE", 16).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("PIPELINE_LAYOUT", 17).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("RENDER_PASS", 18).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("PIPELINE", 19).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("DESCRIPTOR_SET_LAYOUT", 20).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("SAMPLER", 21).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("DESCRIPTOR_POOL", 22).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("DESCRIPTOR_SET", 23).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("FRAMEBUFFER", 24).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("COMMAND_POOL", 25).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("SURFACE_KHR", 26).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("SWAPCHAIN_KHR", 27).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("DEBUG_REPORT_CALLBACK_EXT", 28).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("DISPLAY_KHR", 29).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("DISPLAY_MODE_KHR", 30).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("OBJECT_TABLE_NVX", 31).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("INDIRECT_COMMANDS_LAYOUT_NVX", 32).extension(VK_EXT_DEBUG_REPORT),
+            Enum::member("VALIDATION_CACHE_EXT", 33).extension(VK_EXT_DEBUG_REPORT),
+        ],
+    )
+    .extension(VK_EXT_DEBUG_REPORT)
+    .into_element(),
+    Struct::typed(
+        "DebugReportCallbackCreateInfo",
+        "DEBUG_REPORT_CALLBACK_CREATE_INFO",
+        VK_EXT_DEBUG_REPORT.ext_enum(0) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("flags", "VkDebugReportFlagsEXT"),
+            Struct::member("pfnCallback", "PFN_vkDebugReportCallbackEXT"),
+            Struct::member("pUserData", "*mut core::ffi::c_void"),
+        ],
+    )
+    .extensions(&[VK_EXT_DEBUG_REPORT])
+    .into_element(),
+    FuncPointer::new(
+        "DebugReportCallback",
+        &[
+            ("flags", "VkDebugReportFlagsEXT"),
+            ("objectType", "VkDebugReportObjectTypeEXT"),
+            ("object", "u64"),
+            ("location", "usize"),
+            ("messageCode", "i32"),
+            ("pLayerPrefix", "*const core::ffi::c_char"),
+            ("pMessage", "*const core::ffi::c_char"),
+            ("pUserData", "*mut core::ffi::c_void"),
+        ],
+    )
+    .returns("VkBool32")
+    .extension(VK_EXT_DEBUG_REPORT)
+    .into_element(),
+    Command::new(
+        "CreateDebugReportCallback",
+        &[
+            ("instance", "VkInstance"),
+            ("pCreateInfo", "*const VkDebugReportCallbackCreateInfoEXT"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+            ("pCallback", "*mut VkDebugReportCallbackEXT"),
+        ],
+    )
+    .failable()
+    .extension(VK_EXT_DEBUG_REPORT)
+    .into_element(),
+    Command::new(
+        "DestroyDebugReportCallback",
+        &[
+            ("instance", "VkInstance"),
+            ("callback", "VkDebugReportCallbackEXT"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+        ],
+    )
+    .extension(VK_EXT_DEBUG_REPORT)
+    .into_element(),
+    Command::new(
+        "DebugReportMessage",
+        &[
+            ("instance", "VkInstance"),
+            ("flags", "VkDebugReportFlagsEXT"),
+            ("objectType", "VkDebugReportObjectTypeEXT"),
+            ("object", "u64"),
+            ("location", "usize"),
+            ("messageCode", "i32"),
+            ("pLayerPrefix", "*const core::ffi::c_char"),
+            ("pMessage", "*const core::ffi::c_char"),
+        ],
+    )
+    .extension(VK_EXT_DEBUG_REPORT)
+    .into_element(),
+    // VK_EXT_debug_utils
+    VK_EXT_DEBUG_UTILS.header_constants().into_element(),
+    Bitmask::new(
+        "DebugUtilsMessageSeverityFlags",
+        "DebugUtilsMessageSeverityFlagBits",
+        "DEBUG_UTILS_MESSAGE_SEVERITY",
+        &[
+            Bitmask::entry("VERBOSE", 0).extension(VK_EXT_DEBUG_UTILS),
+            Bitmask::entry("INFO", 4).extension(VK_EXT_DEBUG_UTILS),
+            Bitmask::entry("WARNING", 8).extension(VK_EXT_DEBUG_UTILS),
+            Bitmask::entry("ERROR", 12).extension(VK_EXT_DEBUG_UTILS),
+        ],
+    )
+    .extension(VK_EXT_DEBUG_UTILS)
+    .into_element(),
+    Bitmask::new(
+        "DebugUtilsMessageTypeFlags",
+        "DebugUtilsMessageTypeFlagBits",
+        "DEBUG_UTILS_MESSAGE_TYPE",
+        &[
+            Bitmask::entry("GENERAL", 0).extension(VK_EXT_DEBUG_UTILS),
+            Bitmask::entry("VALIDATION", 1).extension(VK_EXT_DEBUG_UTILS),
+            Bitmask::entry("PERFORMANCE", 2).extension(VK_EXT_DEBUG_UTILS),
+        ],
+    )
+    .extension(VK_EXT_DEBUG_UTILS)
+    .into_element(),
+    Bitmask::new(
+        "DebugUtilsMessengerCallbackDataFlags",
+        "DebugUtilsMessengerCallbackDataFlagBits",
+        "DEBUG_UTILS_MESSENGER_CALLBACK_DATA",
+        &[],
+    )
+    .extension(VK_EXT_DEBUG_UTILS)
+    .into_element(),
+    Bitmask::new(
+        "DebugUtilsMessengerCreateFlags",
+        "DebugUtilsMessengerCreateFlagBits",
+        "DEBUG_UTILS_MESSENGER_CREATE",
+        &[],
+    )
+    .extension(VK_EXT_DEBUG_UTILS)
+    .into_element(),
+    Struct::typed(
+        "DebugUtilsObjectNameInfo",
+        "DEBUG_UTILS_OBJECT_NAME_INFO",
+        VK_EXT_DEBUG_UTILS.ext_enum(0) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("objectType", "VkObjectType"),
+            Struct::member("objectHandle", "u64"),
+            Struct::member("pObjectName", "*const core::ffi::c_char"),
+        ],
+    )
+    .extensions(&[VK_EXT_DEBUG_UTILS])
+    .into_element(),
+    Struct::typed(
+        "DebugUtilsObjectTagInfo",
+        "DEBUG_UTILS_OBJECT_TAG_INFO",
+        VK_EXT_DEBUG_UTILS.ext_enum(1) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("objectType", "VkObjectType"),
+            Struct::member("objectHandle", "u64"),
+            Struct::member("tagName", "u64"),
+            Struct::member("tagSize", "u64"),
+            Struct::member("pTag", "*const core::ffi::c_void"),
+        ],
+    )
+    .extensions(&[VK_EXT_DEBUG_UTILS])
+    .into_element(),
+    Struct::typed(
+        "DebugUtilsLabel",
+        "DEBUG_UTILS_LABEL",
+        VK_EXT_DEBUG_UTILS.ext_enum(2) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("pLabelName", "*const core::ffi::c_char"),
+            Struct::member("pColor", "[core::ffi::c_float; 4]"),
+        ],
+    )
+    .extensions(&[VK_EXT_DEBUG_UTILS])
+    .into_element(),
+    Struct::typed(
+        "DebugUtilsMessengerCallbackData",
+        "DEBUG_UTILS_MESSENGER_CALLBACK_DATA",
+        VK_EXT_DEBUG_UTILS.ext_enum(3) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("flags", "VkDebugUtilsMessengerCallbackDataFlagsEXT"),
+            Struct::member("pMessageIdName", "*const core::ffi::c_char"),
+            Struct::member("messageIdNumber", "i32"),
+            Struct::member("pMessage", "*const core::ffi::c_char"),
+            Struct::member("queueLabelCount", "u32"),
+            Struct::member("pQueueLabels", "*const VkDebugUtilsLabelEXT"),
+            Struct::member("cmdBufLabelCount", "u32"),
+            Struct::member("pCmdBufLabels", "*const VkDebugUtilsLabelEXT"),
+            Struct::member("objectCount", "u32"),
+            Struct::member("pObjects", "*const VkDebugUtilsObjectNameInfoEXT"),
+        ],
+    )
+    .extensions(&[VK_EXT_DEBUG_UTILS])
+    .into_element(),
+    Struct::typed(
+        "DebugUtilsMessengerCreateInfo",
+        "DEBUG_UTILS_MESSENGER_CREATE_INFO",
+        VK_EXT_DEBUG_UTILS.ext_enum(4) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("flags", "VkDebugUtilsMessengerCreateFlagsEXT"),
+            Struct::member("messageSeverity", "VkDebugUtilsMessageSeverityFlagsEXT"),
+            Struct::member("messageType", "VkDebugUtilsMessageTypeFlagsEXT"),
+            Struct::member("pfnUserCallback", "PFN_vkDebugUtilsMessengerCallbackEXT"),
+            Struct::member("pUserData", "*mut core::ffi::c_void"),
+        ],
+    )
+    .extensions(&[VK_EXT_DEBUG_UTILS])
+    .into_element(),
+    FuncPointer::new(
+        "DebugUtilsMessengerCallback",
+        &[
+            ("messageSeverity", "VkDebugUtilsMessageSeverityFlagBitsEXT"),
+            ("messageTypes", "VkDebugUtilsMessageTypeFlagsEXT"),
+            ("pCallbackData", "*const VkDebugUtilsMessengerCallbackDataEXT"),
+            ("pUserData", "*mut core::ffi::c_void"),
+        ],
+    )
+    .returns("VkBool32")
+    .extension(VK_EXT_DEBUG_UTILS)
+    .into_element(),
+    Command::new(
+        "SetDebugUtilsObjectTag",
+        &[
+            ("device", "VkDevice"),
+            ("pTagInfo", "*const VkDebugUtilsObjectTagInfoEXT"),
+        ],
+    )
+    .failable()
+    .extension(VK_EXT_DEBUG_UTILS)
+    .into_element(),
+    Command::new(
+        "QueueBeginDebugUtilsLabel",
+        &[("queue", "VkQueue"), ("pLabelInfo", "*const VkDebugUtilsLabelEXT")],
+    )
+    .extension(VK_EXT_DEBUG_UTILS)
+    .into_element(),
+    Command::new("QueueEndDebugUtilsLabel", &[("queue", "VkQueue")])
+        .extension(VK_EXT_DEBUG_UTILS)
+        .into_element(),
+    Command::new(
+        "QueueInsertDebugUtilsLabel",
+        &[("queue", "VkQueue"), ("pLabelInfo", "*const VkDebugUtilsLabelEXT")],
+    )
+    .extension(VK_EXT_DEBUG_UTILS)
+    .into_element(),
+    Command::new(
+        "CreateDebugUtilsMessenger",
+        &[
+            ("instance", "VkInstance"),
+            ("pCreateInfo", "*const VkDebugUtilsMessengerCreateInfoEXT"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+            ("pDebugUtilsMessenger", "*mut VkDebugUtilsMessengerEXT"),
+        ],
+    )
+    .failable()
+    .extension(VK_EXT_DEBUG_UTILS)
+    .into_element(),
+    Command::new(
+        "DestroyDebugUtilsMessenger",
+        &[
+            ("instance", "VkInstance"),
+            ("debugUtilsMessenger", "VkDebugUtilsMessengerEXT"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+        ],
+    )
+    .extension(VK_EXT_DEBUG_UTILS)
+    .into_element(),
+    Command::new(
+        "SubmitDebugUtilsMessage",
+        &[
+            ("instance", "VkInstance"),
+            ("messageSeverity", "VkDebugUtilsMessageSeverityFlagBitsEXT"),
+            ("messageTypes", "VkDebugUtilsMessageTypeFlagsEXT"),
+            ("pCallbackData", "*const VkDebugUtilsMessengerCallbackDataEXT"),
+        ],
+    )
+    .extension(VK_EXT_DEBUG_UTILS)
+    .into_element(),
+    Command::new(
+        "SetDebugUtilsObjectName",
+        &[
+            ("device", "VkDevice"),
+            ("pNameInfo", "*const VkDebugUtilsObjectNameInfoEXT"),
+        ],
+    )
+    .failable()
+    .extension(VK_EXT_DEBUG_UTILS)
+    .into_element(),
+    Command::inst("BeginDebugUtilsLabel", &[("pLabelInfo", "*const VkDebugUtilsLabelEXT")])
+        .extension(VK_EXT_DEBUG_UTILS)
+        .into_element(),
+    Command::inst("EndDebugUtilsLabel", &[])
+        .extension(VK_EXT_DEBUG_UTILS)
+        .into_element(),
+    Command::inst(
+        "InsertDebugUtilsLabel",
+        &[("pLabelInfo", "*const VkDebugUtilsLabelEXT")],
+    )
+    .extension(VK_EXT_DEBUG_UTILS)
+    .into_element(),
     // VK_EXT_blend_operation_advanced
     VK_EXT_BLEND_OPERATION_ADVANCED.header_constants().into_element(),
     Enum::extending(

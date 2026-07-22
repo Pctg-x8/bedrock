@@ -1097,14 +1097,6 @@ pub type PFN_vkFreeFunction = extern "system" fn(pUserData: *mut core::ffi::c_vo
 
 #[rustfmt::skip]
 pub type PFN_vkVoidFunction = extern "system" fn();
-
-#[cfg(feature = "VK_EXT_debug_report")]
-#[rustfmt::skip]
-pub type PFN_vkDebugReportCallbackEXT = extern "system" fn(flags: VkDebugReportFlagsEXT, objectType: VkDebugReportObjectTypeEXT, object: u64, location: usize, messageCode: i32, pLayerPrefix: *const core::ffi::c_char, pMessage: *const core::ffi::c_char, pUserData: *mut core::ffi::c_void) -> VkBool32;
-
-#[cfg(feature = "VK_EXT_debug_utils")]
-#[rustfmt::skip]
-pub type PFN_vkDebugUtilsMessengerCallbackEXT = extern "system" fn(messageSeverity: VkDebugUtilsMessageSeverityFlagBitsEXT, messageTypes: VkDebugUtilsMessageTypeFlagsEXT, pCallbackData: *const VkDebugUtilsMessengerCallbackDataEXT, pUserData: *mut core::ffi::c_void) -> VkBool32;
 #[cfg(any(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]#[rustfmt::skip]pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR:VkStructureType=1000071004;
 #[cfg(any(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]#[derive(Debug, Clone)] #[rustfmt::skip]#[repr(C)]pub struct VkPhysicalDeviceIDPropertiesKHR{pub sType:VkStructureType,pub pNext:*mut core::ffi::c_void,pub deviceUUID:[u8; VK_UUID_SIZE],pub driverUUID:[u8; VK_UUID_SIZE],pub deviceLUID:[u8; VK_LUID_SIZE_KHR],pub deviceNodeMask:u32,pub deviceLUIDValid:VkBool32,}
 #[cfg(any(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]#[rustfmt::skip]unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceIDPropertiesKHR{#[inline(always)]fn as_generic(&self)->&crate::GenericVulkanSinkStructure{unsafe{core::mem::transmute::<&Self,&crate::GenericVulkanSinkStructure>(self)}}#[inline(always)]fn as_generic_mut(&mut self)->&mut crate::GenericVulkanSinkStructure{unsafe{core::mem::transmute::<&mut Self, &mut crate::GenericVulkanSinkStructure>(self)}}}
@@ -1405,6 +1397,13 @@ pub const VK_KHR_SYNCHRONIZATION2_EXTENSION_NAME: &str = "VK_KHR_synchronization
 #[rustfmt::skip]
 pub const VK_KHR_SYNCHRONIZATION2_SPEC_VERSION: usize = 1;
 
+#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+#[rustfmt::skip]
+pub const VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES2_EXTENSION_NAME: &str = "VK_KHR_get_physical_device_properties2";
+#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+#[rustfmt::skip]
+pub const VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES2_SPEC_VERSION: usize = 2;
+
 #[cfg(feature = "VK_KHR_device_group")]
 #[rustfmt::skip]
 pub const VK_KHR_DEVICE_GROUP_EXTENSION_NAME: &str = "VK_KHR_device_group";
@@ -1418,6 +1417,27 @@ pub const VK_EXT_SHADER_SUBGROUP_VOTE_EXTENSION_NAME: &str = "VK_EXT_shader_subg
 #[cfg(feature = "VK_EXT_shader_subgroup_vote")]
 #[rustfmt::skip]
 pub const VK_EXT_SHADER_SUBGROUP_VOTE_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_descriptor_update_template")]
+#[rustfmt::skip]
+pub const VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE_EXTENSION_NAME: &str = "VK_KHR_descriptor_update_template";
+#[cfg(feature = "VK_KHR_descriptor_update_template")]
+#[rustfmt::skip]
+pub const VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_dedicated_allocation")]
+#[rustfmt::skip]
+pub const VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME: &str = "VK_KHR_dedicated_allocation";
+#[cfg(feature = "VK_KHR_dedicated_allocation")]
+#[rustfmt::skip]
+pub const VK_KHR_DEDICATED_ALLOCATION_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_get_memory_requirements2")]
+#[rustfmt::skip]
+pub const VK_KHR_GET_MEMORY_REQUIREMENTS2_EXTENSION_NAME: &str = "VK_KHR_get_memory_requirements2";
+#[cfg(feature = "VK_KHR_get_memory_requirements2")]
+#[rustfmt::skip]
+pub const VK_KHR_GET_MEMORY_REQUIREMENTS2_SPEC_VERSION: usize = 1;
 
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
@@ -1667,6 +1687,28 @@ pub const VK_EXT_PIPELINE_ROBUSTNESS_EXTENSION_NAME: &str = "VK_EXT_pipeline_rob
 #[cfg(feature = "VK_EXT_pipeline_robustness")]
 #[rustfmt::skip]
 pub const VK_EXT_PIPELINE_ROBUSTNESS_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_EXT_debug_report")]
+#[rustfmt::skip]
+pub const VK_EXT_DEBUG_REPORT_EXTENSION_NAME: &str = "VK_EXT_debug_report";
+#[cfg(feature = "VK_EXT_debug_report")]
+#[rustfmt::skip]
+pub const VK_EXT_DEBUG_REPORT_SPEC_VERSION: usize = 10;
+
+#[cfg(feature = "VK_EXT_debug_report")]
+#[rustfmt::skip]
+pub type PFN_vkDebugReportCallbackEXT = extern "system" fn(flags: VkDebugReportFlagsEXT, objectType: VkDebugReportObjectTypeEXT, object: u64, location: usize, messageCode: i32, pLayerPrefix: *const core::ffi::c_char, pMessage: *const core::ffi::c_char, pUserData: *mut core::ffi::c_void) -> VkBool32;
+
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[rustfmt::skip]
+pub const VK_EXT_DEBUG_UTILS_EXTENSION_NAME: &str = "VK_EXT_debug_utils";
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[rustfmt::skip]
+pub const VK_EXT_DEBUG_UTILS_SPEC_VERSION: usize = 2;
+
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[rustfmt::skip]
+pub type PFN_vkDebugUtilsMessengerCallbackEXT = extern "system" fn(messageSeverity: VkDebugUtilsMessageSeverityFlagBitsEXT, messageTypes: VkDebugUtilsMessageTypeFlagsEXT, pCallbackData: *const VkDebugUtilsMessengerCallbackDataEXT, pUserData: *mut core::ffi::c_void) -> VkBool32;
 
 #[cfg(feature = "VK_EXT_blend_operation_advanced")]
 #[rustfmt::skip]
@@ -3284,6 +3326,7 @@ pub const VK_AMD_SHADER_INFO_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_EXT_debug_utils")]#[rustfmt::skip]pub const VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT:VkDebugUtilsMessageTypeFlagBitsEXT=0x00000002;
 #[cfg(feature = "VK_KHR_maintenance9")]#[rustfmt::skip]pub const VK_DEPENDENCY_ASYMMETRIC_EVENT_BIT_KHR:VkDependencyFlagBits=0x00000040;
 #[rustfmt::skip]pub const VK_DEPENDENCY_BY_REGION_BIT:VkDependencyFlagBits=0x00000001;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_DEPENDENCY_DEVICE_GROUP_BIT:VkDependencyFlagBits=0x00000004;
 #[cfg(feature = "VK_KHR_device_group")]#[rustfmt::skip]pub const VK_DEPENDENCY_DEVICE_GROUP_BIT_KHR:VkDependencyFlagBits=0x00000004;
 #[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_DEPENDENCY_VIEW_LOCAL_BIT:VkDependencyFlagBits=0x00000002;
 #[cfg(feature = "VK_KHR_multiview")]#[rustfmt::skip]pub const VK_DEPENDENCY_VIEW_LOCAL_BIT_KHR:VkDependencyFlagBits=0x00000002;
@@ -3447,6 +3490,7 @@ pub const VK_AMD_SHADER_INFO_SPEC_VERSION: usize = 1;
 #[rustfmt::skip]pub const VK_IMAGE_ASPECT_STENCIL_BIT:VkImageAspectFlagBits=0x00000004;
 #[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT:VkImageCreateFlagBits=0x00000020;
 #[cfg(feature = "VK_KHR_maintenance1")]#[rustfmt::skip]pub const VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT_KHR:VkImageCreateFlagBits=0x00000020;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_IMAGE_CREATE_ALIAS_BIT:VkImageCreateFlagBits=0x00000400;
 #[cfg(feature = "VK_KHR_bind_memory2")]#[rustfmt::skip]pub const VK_IMAGE_CREATE_ALIAS_BIT_KHR:VkImageCreateFlagBits=0x00000400;
 #[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT:VkImageCreateFlagBits=0x00000080;
 #[cfg(feature = "VK_KHR_maintenance2")]#[rustfmt::skip]pub const VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT_KHR:VkImageCreateFlagBits=0x00000080;
@@ -3483,6 +3527,7 @@ pub const VK_AMD_SHADER_INFO_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_KHR_buffer_device_address")]#[rustfmt::skip]pub const VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT_KHR:VkMemoryAllocateFlagBits=0x00000002;
 #[cfg(feature = "Allow1_2APIs")]#[rustfmt::skip]pub const VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT:VkMemoryAllocateFlagBits=0x00000004;
 #[cfg(feature = "VK_KHR_buffer_device_address")]#[rustfmt::skip]pub const VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT_KHR:VkMemoryAllocateFlagBits=0x00000004;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT:VkMemoryAllocateFlagBitsKHR=0x00000001;
 #[cfg(feature = "VK_KHR_device_group")]#[rustfmt::skip]pub const VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT_KHR:VkMemoryAllocateFlagBitsKHR=0x00000001;
 #[rustfmt::skip]pub const VK_MEMORY_HEAP_DEVICE_LOCAL_BIT:VkMemoryHeapFlagBits=0x00000001;
 #[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_MEMORY_HEAP_MULTI_INSTANCE_BIT:VkMemoryHeapFlagBits=0x00000002;
@@ -3496,20 +3541,26 @@ pub const VK_AMD_SHADER_INFO_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_KHR_map_memory2")]#[rustfmt::skip]pub const VK_MEMORY_UNMAP_RESERVE_BIT_KHR:VkMemoryUnmapFlagBitsKHR=0x00000001;
 #[cfg(feature = "VK_NVX_device_generated_commands")]#[rustfmt::skip]pub const VK_OBJECT_ENTRY_USAGE_COMPUTE_BIT_NVX:VkObjectEntryUsageFlagBitsNVX=0x00000002;
 #[cfg(feature = "VK_NVX_device_generated_commands")]#[rustfmt::skip]pub const VK_OBJECT_ENTRY_USAGE_GRAPHICS_BIT_NVX:VkObjectEntryUsageFlagBitsNVX=0x00000001;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_PEER_MEMORY_FEATURE_COPY_DST_BIT:VkPeerMemoryFeatureFlagBitsKHR=0x00000002;
 #[cfg(feature = "VK_KHR_device_group")]#[rustfmt::skip]pub const VK_PEER_MEMORY_FEATURE_COPY_DST_BIT_KHR:VkPeerMemoryFeatureFlagBitsKHR=0x00000002;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_PEER_MEMORY_FEATURE_COPY_SRC_BIT:VkPeerMemoryFeatureFlagBitsKHR=0x00000001;
 #[cfg(feature = "VK_KHR_device_group")]#[rustfmt::skip]pub const VK_PEER_MEMORY_FEATURE_COPY_SRC_BIT_KHR:VkPeerMemoryFeatureFlagBitsKHR=0x00000001;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_PEER_MEMORY_FEATURE_GENERIC_DST_BIT:VkPeerMemoryFeatureFlagBitsKHR=0x00000008;
 #[cfg(feature = "VK_KHR_device_group")]#[rustfmt::skip]pub const VK_PEER_MEMORY_FEATURE_GENERIC_DST_BIT_KHR:VkPeerMemoryFeatureFlagBitsKHR=0x00000008;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_PEER_MEMORY_FEATURE_GENERIC_SRC_BIT:VkPeerMemoryFeatureFlagBitsKHR=0x00000004;
 #[cfg(feature = "VK_KHR_device_group")]#[rustfmt::skip]pub const VK_PEER_MEMORY_FEATURE_GENERIC_SRC_BIT_KHR:VkPeerMemoryFeatureFlagBitsKHR=0x00000004;
 #[cfg(feature = "Allow1_3APIs")]#[rustfmt::skip]pub const VK_PIPELINE_CACHE_CREATE_EXTERNALLY_SYNCHRONIZED_BIT:VkPipelineCacheCreateFlagBits=0x00000001;
 #[cfg(feature = "VK_KHR_maintenance8")]#[rustfmt::skip]pub const VK_PIPELINE_CACHE_CREATE_INTERNALLY_SYNCHRONIZED_MERGE_BIT_KHR:VkPipelineCacheCreateFlagBits=0x00000008;
 #[rustfmt::skip]pub const VK_PIPELINE_CREATE_ALLOW_DERIVATIVES_BIT:VkPipelineCreateFlagBits=0x00000002;
 #[rustfmt::skip]pub const VK_PIPELINE_CREATE_DERIVATIVE_BIT:VkPipelineCreateFlagBits=0x00000004;
 #[rustfmt::skip]pub const VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT:VkPipelineCreateFlagBits=0x00000001;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_PIPELINE_CREATE_DISPATCH_BASE_BIT:VkPipelineCreateFlagBits=0x00000010;
 #[cfg(feature = "VK_KHR_device_group")]#[rustfmt::skip]pub const VK_PIPELINE_CREATE_DISPATCH_BASE_BIT_KHR:VkPipelineCreateFlagBits=0x00000010;
 #[cfg(feature = "Allow1_4APIs")]#[rustfmt::skip]pub const VK_PIPELINE_CREATE_NO_PROTECTED_ACCESS_BIT:VkPipelineCreateFlagBits=0x08000000;
 #[cfg(feature = "VK_EXT_pipeline_protected_access")]#[rustfmt::skip]pub const VK_PIPELINE_CREATE_NO_PROTECTED_ACCESS_BIT_EXT:VkPipelineCreateFlagBits=0x08000000;
 #[cfg(feature = "Allow1_4APIs")]#[rustfmt::skip]pub const VK_PIPELINE_CREATE_PROTECTED_ACCESS_ONLY_BIT:VkPipelineCreateFlagBits=0x40000000;
 #[cfg(feature = "VK_EXT_pipeline_protected_access")]#[rustfmt::skip]pub const VK_PIPELINE_CREATE_PROTECTED_ACCESS_ONLY_BIT_EXT:VkPipelineCreateFlagBits=0x40000000;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT:VkPipelineCreateFlagBits=0x00000008;
 #[cfg(feature = "VK_KHR_device_group")]#[rustfmt::skip]pub const VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT_KHR:VkPipelineCreateFlagBits=0x00000008;
 #[cfg(feature = "Allow1_4APIs")]#[rustfmt::skip]pub const VK_PIPELINE_CREATE_2_ALLOW_DERIVATIVES_BIT:VkPipelineCreateFlagBits2KHR=0x0000000000000002;
 #[cfg(feature = "VK_KHR_maintenance5")]#[rustfmt::skip]pub const VK_PIPELINE_CREATE_2_ALLOW_DERIVATIVES_BIT_KHR:VkPipelineCreateFlagBits2KHR=0x0000000000000002;
@@ -3672,6 +3723,7 @@ pub const VK_AMD_SHADER_INFO_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_KHR_surface")]#[rustfmt::skip]pub const VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR:VkSurfaceTransformFlagBitsKHR=0x00000004;
 #[cfg(feature = "VK_KHR_surface")]#[rustfmt::skip]pub const VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR:VkSurfaceTransformFlagBitsKHR=0x00000008;
 #[cfg(feature = "VK_KHR_surface")]#[rustfmt::skip]pub const VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR:VkSurfaceTransformFlagBitsKHR=0x00000002;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_SWAPCHAIN_CREATE_SPLIT_INSTNACE_BIND_REGIONS_BIT:VkSwapchainCreateFlagBitsKHR=0x00000001;
 #[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]#[rustfmt::skip]pub const VK_SWAPCHAIN_CREATE_SPLIT_INSTNACE_BIND_REGIONS_BIT_KHR:VkSwapchainCreateFlagBitsKHR=0x00000001;
 #[rustfmt::skip]pub type VkAccessFlagBits=VkFlags;
 #[cfg(feature = "Allow1_3APIs")]#[rustfmt::skip]pub type VkAccessFlagBits2=VkFlags64;
@@ -4453,7 +4505,9 @@ pub const VK_AMD_SHADER_INFO_SPEC_VERSION: usize = 1;
 #[derive(Debug, Clone)] #[rustfmt::skip]#[repr(C)]pub struct VkMappedMemoryRange{pub sType:VkStructureType,pub pNext:*const core::ffi::c_void,pub memory:VkDeviceMemory,pub offset:VkDeviceSize,pub size:VkDeviceSize,}
 #[rustfmt::skip]unsafe impl crate::VulkanStructure for VkMappedMemoryRange{#[inline(always)]fn as_generic(&self)->&crate::GenericVulkanStructure{unsafe{core::mem::transmute::<&Self,&crate::GenericVulkanStructure>(self)}}#[inline(always)]fn as_generic_mut(&mut self)->&mut crate::GenericVulkanStructure{unsafe{core::mem::transmute::<&mut Self, &mut crate::GenericVulkanStructure>(self)}}}
 #[rustfmt::skip]impl crate::TypedVulkanStructure for VkMappedMemoryRange{const TYPE: VkStructureType=VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;}
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub type VkMemoryAllocateFlagBits=VkFlags;
 #[cfg(feature = "VK_KHR_device_group")]#[rustfmt::skip]pub type VkMemoryAllocateFlagBitsKHR=VkFlags;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub type VkMemoryAllocateFlags=VkFlags;
 #[cfg(feature = "VK_KHR_device_group")]#[rustfmt::skip]pub type VkMemoryAllocateFlagsKHR=VkFlags;
 #[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub type VkMemoryAllocateFlagsInfo=VkMemoryAllocateFlagsInfoKHR;
 #[cfg(feature = "VK_KHR_device_group")]#[derive(Debug, Clone)] #[rustfmt::skip]#[repr(C)]pub struct VkMemoryAllocateFlagsInfoKHR{pub sType:VkStructureType,pub pNext:*const core::ffi::c_void,pub flags:VkMemoryAllocateFlags,pub deviceMask:u32,}
@@ -4554,7 +4608,9 @@ pub const VK_AMD_SHADER_INFO_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_EXT_descriptor_buffer")]#[rustfmt::skip]unsafe impl crate::VulkanStructure for VkOpaqueCaptureDescriptorDataCreateInfoEXT{#[inline(always)]fn as_generic(&self)->&crate::GenericVulkanStructure{unsafe{core::mem::transmute::<&Self,&crate::GenericVulkanStructure>(self)}}#[inline(always)]fn as_generic_mut(&mut self)->&mut crate::GenericVulkanStructure{unsafe{core::mem::transmute::<&mut Self, &mut crate::GenericVulkanStructure>(self)}}}
 #[cfg(feature = "VK_EXT_descriptor_buffer")]#[rustfmt::skip]impl crate::TypedVulkanStructure for VkOpaqueCaptureDescriptorDataCreateInfoEXT{const TYPE: VkStructureType=VK_STRUCTURE_TYPE_OPAQUE_CAPTURE_DESCRIPTOR_DATA_CREATE_INFO_EXT;}
 #[cfg(feature = "VK_GOOGLE_display_timing")]#[derive(Debug, Clone)] #[rustfmt::skip]#[repr(C)]pub struct VkPastPresentationTimingGOOGLE{pub presentID:u32,pub desiredPresentTime:u64,pub actualPresentTime:u64,pub earliestPresentTime:u64,pub presentMargin:u64,}
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub type VkPeerMemoryFeatureFlagBits=VkFlags;
 #[cfg(feature = "VK_KHR_device_group")]#[rustfmt::skip]pub type VkPeerMemoryFeatureFlagBitsKHR=VkFlags;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub type VkPeerMemoryFeatureFlags=VkFlags;
 #[cfg(feature = "VK_KHR_device_group")]#[rustfmt::skip]pub type VkPeerMemoryFeatureFlagsKHR=VkFlags;
 #[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub type VkPhysicalDevice16BitStorageFeatures=VkPhysicalDevice16BitStorageFeaturesKHR;
 #[cfg(feature = "VK_KHR_16bit_storage")]#[derive(Debug, Clone)] #[rustfmt::skip]#[repr(C)]pub struct VkPhysicalDevice16BitStorageFeaturesKHR{pub sType:VkStructureType,pub pNext:*mut core::ffi::c_void,pub storageBuffer16BitAccess:VkBool32,pub uniformAndStorageBuffer16BitAccess:VkBool32,pub storagePushConstant16:VkBool32,pub storageInputOutput16:VkBool32,}
@@ -5419,6 +5475,10 @@ pub const VK_AMD_SHADER_INFO_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_KHR_xlib_surface")]#[derive(Debug, Clone)] #[rustfmt::skip]#[repr(C)]pub struct VkXlibSurfaceCreateInfoKHR{pub sType:VkStructureType,pub pNext:*const core::ffi::c_void,pub flags:VkXlibSurfaceCreateFlagsKHR,pub dpy:*mut x11::xlib::Display,pub window:x11::xlib::Window,}
 #[cfg(feature = "VK_KHR_xlib_surface")]#[rustfmt::skip]unsafe impl crate::VulkanStructure for VkXlibSurfaceCreateInfoKHR{#[inline(always)]fn as_generic(&self)->&crate::GenericVulkanStructure{unsafe{core::mem::transmute::<&Self,&crate::GenericVulkanStructure>(self)}}#[inline(always)]fn as_generic_mut(&mut self)->&mut crate::GenericVulkanStructure{unsafe{core::mem::transmute::<&mut Self, &mut crate::GenericVulkanStructure>(self)}}}
 #[cfg(feature = "VK_KHR_xlib_surface")]#[rustfmt::skip]impl crate::TypedVulkanStructure for VkXlibSurfaceCreateInfoKHR{const TYPE: VkStructureType=VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;}
+#[cfg(feature = "Allow1_1APIs")]#[repr(transparent)]#[derive(Debug, Clone, Copy)]#[rustfmt::skip]pub struct PFN_vkAcquireNextImage2(pub unsafe extern "system" fn(device:VkDevice,pAcquireInfo:*const VkAcquireNextImageInfoKHR,pImageIndex:*mut u32)->VkResult);
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]unsafe impl crate::FromPtr for PFN_vkAcquireNextImage2{#[inline(always)]unsafe fn from_ptr(p:*const core::ffi::c_void)->Self{unsafe{core::mem::transmute::<*const core::ffi::c_void,Self>(p)}}}
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]unsafe impl crate::PFN for PFN_vkAcquireNextImage2{const NAME_CSTR:&'static core::ffi::CStr=c"vkAcquireNextImage2";#[inline(always)]unsafe fn from_void_fn(p:PFN_vkVoidFunction)->Self{unsafe{core::mem::transmute::<PFN_vkVoidFunction,Self>(p)}}}
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature="Implements",not(feature="DynamicLoaded")))]#[rustfmt::skip]impl crate::StaticCallable for PFN_vkAcquireNextImage2{const STATIC:Self=Self(vkAcquireNextImage2);}
 #[repr(transparent)]#[derive(Debug, Clone, Copy)]#[rustfmt::skip]pub struct PFN_vkAllocateCommandBuffers(pub unsafe extern "system" fn(device:VkDevice,pAllocateInfo:*const VkCommandBufferAllocateInfo,pCommandBuffers:*mut VkCommandBuffer)->VkResult);
 #[rustfmt::skip]unsafe impl crate::FromPtr for PFN_vkAllocateCommandBuffers{#[inline(always)]unsafe fn from_ptr(p:*const core::ffi::c_void)->Self{unsafe{core::mem::transmute::<*const core::ffi::c_void,Self>(p)}}}
 #[rustfmt::skip]unsafe impl crate::PFN for PFN_vkAllocateCommandBuffers{const NAME_CSTR:&'static core::ffi::CStr=c"vkAllocateCommandBuffers";#[inline(always)]unsafe fn from_void_fn(p:PFN_vkVoidFunction)->Self{unsafe{core::mem::transmute::<PFN_vkVoidFunction,Self>(p)}}}
@@ -5439,10 +5499,18 @@ pub const VK_AMD_SHADER_INFO_SPEC_VERSION: usize = 1;
 #[rustfmt::skip]unsafe impl crate::FromPtr for PFN_vkBindBufferMemory{#[inline(always)]unsafe fn from_ptr(p:*const core::ffi::c_void)->Self{unsafe{core::mem::transmute::<*const core::ffi::c_void,Self>(p)}}}
 #[rustfmt::skip]unsafe impl crate::PFN for PFN_vkBindBufferMemory{const NAME_CSTR:&'static core::ffi::CStr=c"vkBindBufferMemory";#[inline(always)]unsafe fn from_void_fn(p:PFN_vkVoidFunction)->Self{unsafe{core::mem::transmute::<PFN_vkVoidFunction,Self>(p)}}}
 #[cfg(all(feature="Implements",not(feature="DynamicLoaded")))]#[rustfmt::skip]impl crate::StaticCallable for PFN_vkBindBufferMemory{const STATIC:Self=Self(vkBindBufferMemory);}
+#[cfg(feature = "Allow1_1APIs")]#[repr(transparent)]#[derive(Debug, Clone, Copy)]#[rustfmt::skip]pub struct PFN_vkBindBufferMemory2(pub unsafe extern "system" fn(device:VkDevice,bindInfoCount:u32,pBindInfos:*const VkBindBufferMemoryInfoKHR)->VkResult);
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]unsafe impl crate::FromPtr for PFN_vkBindBufferMemory2{#[inline(always)]unsafe fn from_ptr(p:*const core::ffi::c_void)->Self{unsafe{core::mem::transmute::<*const core::ffi::c_void,Self>(p)}}}
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]unsafe impl crate::PFN for PFN_vkBindBufferMemory2{const NAME_CSTR:&'static core::ffi::CStr=c"vkBindBufferMemory2";#[inline(always)]unsafe fn from_void_fn(p:PFN_vkVoidFunction)->Self{unsafe{core::mem::transmute::<PFN_vkVoidFunction,Self>(p)}}}
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature="Implements",not(feature="DynamicLoaded")))]#[rustfmt::skip]impl crate::StaticCallable for PFN_vkBindBufferMemory2{const STATIC:Self=Self(vkBindBufferMemory2);}
 #[repr(transparent)]#[derive(Debug, Clone, Copy)]#[rustfmt::skip]pub struct PFN_vkBindImageMemory(pub unsafe extern "system" fn(device:VkDevice,image:VkImage,memory:VkDeviceMemory,memoryOffset:VkDeviceSize)->VkResult);
 #[rustfmt::skip]unsafe impl crate::FromPtr for PFN_vkBindImageMemory{#[inline(always)]unsafe fn from_ptr(p:*const core::ffi::c_void)->Self{unsafe{core::mem::transmute::<*const core::ffi::c_void,Self>(p)}}}
 #[rustfmt::skip]unsafe impl crate::PFN for PFN_vkBindImageMemory{const NAME_CSTR:&'static core::ffi::CStr=c"vkBindImageMemory";#[inline(always)]unsafe fn from_void_fn(p:PFN_vkVoidFunction)->Self{unsafe{core::mem::transmute::<PFN_vkVoidFunction,Self>(p)}}}
 #[cfg(all(feature="Implements",not(feature="DynamicLoaded")))]#[rustfmt::skip]impl crate::StaticCallable for PFN_vkBindImageMemory{const STATIC:Self=Self(vkBindImageMemory);}
+#[cfg(feature = "Allow1_1APIs")]#[repr(transparent)]#[derive(Debug, Clone, Copy)]#[rustfmt::skip]pub struct PFN_vkBindImageMemory2(pub unsafe extern "system" fn(device:VkDevice,bindInfoCount:u32,pBindInfos:*const VkBindImageMemoryInfoKHR)->VkResult);
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]unsafe impl crate::FromPtr for PFN_vkBindImageMemory2{#[inline(always)]unsafe fn from_ptr(p:*const core::ffi::c_void)->Self{unsafe{core::mem::transmute::<*const core::ffi::c_void,Self>(p)}}}
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]unsafe impl crate::PFN for PFN_vkBindImageMemory2{const NAME_CSTR:&'static core::ffi::CStr=c"vkBindImageMemory2";#[inline(always)]unsafe fn from_void_fn(p:PFN_vkVoidFunction)->Self{unsafe{core::mem::transmute::<PFN_vkVoidFunction,Self>(p)}}}
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature="Implements",not(feature="DynamicLoaded")))]#[rustfmt::skip]impl crate::StaticCallable for PFN_vkBindImageMemory2{const STATIC:Self=Self(vkBindImageMemory2);}
 #[cfg(feature = "Allow1_4APIs")]#[repr(transparent)]#[derive(Debug, Clone, Copy)]#[rustfmt::skip]pub struct PFN_vkCopyImageToImage(pub unsafe extern "system" fn(device:VkDevice,pCopyImageToImageInfo:*const VkCopyImageToImageInfoEXT)->VkResult);
 #[cfg(feature = "Allow1_4APIs")]#[rustfmt::skip]unsafe impl crate::FromPtr for PFN_vkCopyImageToImage{#[inline(always)]unsafe fn from_ptr(p:*const core::ffi::c_void)->Self{unsafe{core::mem::transmute::<*const core::ffi::c_void,Self>(p)}}}
 #[cfg(feature = "Allow1_4APIs")]#[rustfmt::skip]unsafe impl crate::PFN for PFN_vkCopyImageToImage{const NAME_CSTR:&'static core::ffi::CStr=c"vkCopyImageToImage";#[inline(always)]unsafe fn from_void_fn(p:PFN_vkVoidFunction)->Self{unsafe{core::mem::transmute::<PFN_vkVoidFunction,Self>(p)}}}
@@ -5715,6 +5783,18 @@ pub const VK_AMD_SHADER_INFO_SPEC_VERSION: usize = 1;
 #[cfg(feature = "Allow1_3APIs")]#[rustfmt::skip]unsafe impl crate::FromPtr for PFN_vkGetDeviceBufferMemoryRequirements{#[inline(always)]unsafe fn from_ptr(p:*const core::ffi::c_void)->Self{unsafe{core::mem::transmute::<*const core::ffi::c_void,Self>(p)}}}
 #[cfg(feature = "Allow1_3APIs")]#[rustfmt::skip]unsafe impl crate::PFN for PFN_vkGetDeviceBufferMemoryRequirements{const NAME_CSTR:&'static core::ffi::CStr=c"vkGetDeviceBufferMemoryRequirements";#[inline(always)]unsafe fn from_void_fn(p:PFN_vkVoidFunction)->Self{unsafe{core::mem::transmute::<PFN_vkVoidFunction,Self>(p)}}}
 #[cfg(feature = "Allow1_3APIs")]#[cfg(all(feature="Implements",not(feature="DynamicLoaded")))]#[rustfmt::skip]impl crate::StaticCallable for PFN_vkGetDeviceBufferMemoryRequirements{const STATIC:Self=Self(vkGetDeviceBufferMemoryRequirements);}
+#[cfg(feature = "Allow1_1APIs")]#[repr(transparent)]#[derive(Debug, Clone, Copy)]#[rustfmt::skip]pub struct PFN_vkGetDeviceGroupPeerMemoryFeatures(pub unsafe extern "system" fn(device:VkDevice,heapIndex:u32,localDeviceIndex:u32,remoteDeviceIndex:u32,pPeerMemoryFeatures:*mut VkPeerMemoryFeatureFlags));
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]unsafe impl crate::FromPtr for PFN_vkGetDeviceGroupPeerMemoryFeatures{#[inline(always)]unsafe fn from_ptr(p:*const core::ffi::c_void)->Self{unsafe{core::mem::transmute::<*const core::ffi::c_void,Self>(p)}}}
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]unsafe impl crate::PFN for PFN_vkGetDeviceGroupPeerMemoryFeatures{const NAME_CSTR:&'static core::ffi::CStr=c"vkGetDeviceGroupPeerMemoryFeatures";#[inline(always)]unsafe fn from_void_fn(p:PFN_vkVoidFunction)->Self{unsafe{core::mem::transmute::<PFN_vkVoidFunction,Self>(p)}}}
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature="Implements",not(feature="DynamicLoaded")))]#[rustfmt::skip]impl crate::StaticCallable for PFN_vkGetDeviceGroupPeerMemoryFeatures{const STATIC:Self=Self(vkGetDeviceGroupPeerMemoryFeatures);}
+#[cfg(feature = "Allow1_1APIs")]#[repr(transparent)]#[derive(Debug, Clone, Copy)]#[rustfmt::skip]pub struct PFN_vkGetDeviceGroupPresentCapabilities(pub unsafe extern "system" fn(device:VkDevice,pDeviceGroupPresentCapabilities:*mut VkDeviceGroupPresentCapabilitiesKHR)->VkResult);
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]unsafe impl crate::FromPtr for PFN_vkGetDeviceGroupPresentCapabilities{#[inline(always)]unsafe fn from_ptr(p:*const core::ffi::c_void)->Self{unsafe{core::mem::transmute::<*const core::ffi::c_void,Self>(p)}}}
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]unsafe impl crate::PFN for PFN_vkGetDeviceGroupPresentCapabilities{const NAME_CSTR:&'static core::ffi::CStr=c"vkGetDeviceGroupPresentCapabilities";#[inline(always)]unsafe fn from_void_fn(p:PFN_vkVoidFunction)->Self{unsafe{core::mem::transmute::<PFN_vkVoidFunction,Self>(p)}}}
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature="Implements",not(feature="DynamicLoaded")))]#[rustfmt::skip]impl crate::StaticCallable for PFN_vkGetDeviceGroupPresentCapabilities{const STATIC:Self=Self(vkGetDeviceGroupPresentCapabilities);}
+#[cfg(feature = "Allow1_1APIs")]#[repr(transparent)]#[derive(Debug, Clone, Copy)]#[rustfmt::skip]pub struct PFN_vkGetDeviceGroupSurfacePresentModes(pub unsafe extern "system" fn(device:VkDevice,surface:VkSurfaceKHR,pModes:*mut VkDeviceGroupPresentModeFlagsKHR)->VkResult);
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]unsafe impl crate::FromPtr for PFN_vkGetDeviceGroupSurfacePresentModes{#[inline(always)]unsafe fn from_ptr(p:*const core::ffi::c_void)->Self{unsafe{core::mem::transmute::<*const core::ffi::c_void,Self>(p)}}}
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]unsafe impl crate::PFN for PFN_vkGetDeviceGroupSurfacePresentModes{const NAME_CSTR:&'static core::ffi::CStr=c"vkGetDeviceGroupSurfacePresentModes";#[inline(always)]unsafe fn from_void_fn(p:PFN_vkVoidFunction)->Self{unsafe{core::mem::transmute::<PFN_vkVoidFunction,Self>(p)}}}
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature="Implements",not(feature="DynamicLoaded")))]#[rustfmt::skip]impl crate::StaticCallable for PFN_vkGetDeviceGroupSurfacePresentModes{const STATIC:Self=Self(vkGetDeviceGroupSurfacePresentModes);}
 #[cfg(feature = "Allow1_3APIs")]#[repr(transparent)]#[derive(Debug, Clone, Copy)]#[rustfmt::skip]pub struct PFN_vkGetDeviceImageMemoryREquirements(pub unsafe extern "system" fn(device:VkDevice,pInfo:*const VkDeviceImageMemoryRequirementsKHR,pMemoryRequirements:*mut VkMemoryRequirements2KHR));
 #[cfg(feature = "Allow1_3APIs")]#[rustfmt::skip]unsafe impl crate::FromPtr for PFN_vkGetDeviceImageMemoryREquirements{#[inline(always)]unsafe fn from_ptr(p:*const core::ffi::c_void)->Self{unsafe{core::mem::transmute::<*const core::ffi::c_void,Self>(p)}}}
 #[cfg(feature = "Allow1_3APIs")]#[rustfmt::skip]unsafe impl crate::PFN for PFN_vkGetDeviceImageMemoryREquirements{const NAME_CSTR:&'static core::ffi::CStr=c"vkGetDeviceImageMemoryREquirements";#[inline(always)]unsafe fn from_void_fn(p:PFN_vkVoidFunction)->Self{unsafe{core::mem::transmute::<PFN_vkVoidFunction,Self>(p)}}}
@@ -5823,6 +5903,10 @@ pub const VK_AMD_SHADER_INFO_SPEC_VERSION: usize = 1;
 #[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceMemoryProperties2{#[inline(always)]unsafe fn from_ptr(p:*const core::ffi::c_void)->Self{unsafe{core::mem::transmute::<*const core::ffi::c_void,Self>(p)}}}
 #[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceMemoryProperties2{const NAME_CSTR:&'static core::ffi::CStr=c"vkGetPhysicalDeviceMemoryProperties2";#[inline(always)]unsafe fn from_void_fn(p:PFN_vkVoidFunction)->Self{unsafe{core::mem::transmute::<PFN_vkVoidFunction,Self>(p)}}}
 #[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature="Implements",not(feature="DynamicLoaded")))]#[rustfmt::skip]impl crate::StaticCallable for PFN_vkGetPhysicalDeviceMemoryProperties2{const STATIC:Self=Self(vkGetPhysicalDeviceMemoryProperties2);}
+#[cfg(feature = "Allow1_1APIs")]#[repr(transparent)]#[derive(Debug, Clone, Copy)]#[rustfmt::skip]pub struct PFN_vkGetPhysicalDevicePresentRectangles(pub unsafe extern "system" fn(physicalDevice:VkPhysicalDevice,surface:VkSurfaceKHR,pRectCount:*mut u32,pRects:*mut VkRect2D)->VkResult);
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]unsafe impl crate::FromPtr for PFN_vkGetPhysicalDevicePresentRectangles{#[inline(always)]unsafe fn from_ptr(p:*const core::ffi::c_void)->Self{unsafe{core::mem::transmute::<*const core::ffi::c_void,Self>(p)}}}
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]unsafe impl crate::PFN for PFN_vkGetPhysicalDevicePresentRectangles{const NAME_CSTR:&'static core::ffi::CStr=c"vkGetPhysicalDevicePresentRectangles";#[inline(always)]unsafe fn from_void_fn(p:PFN_vkVoidFunction)->Self{unsafe{core::mem::transmute::<PFN_vkVoidFunction,Self>(p)}}}
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature="Implements",not(feature="DynamicLoaded")))]#[rustfmt::skip]impl crate::StaticCallable for PFN_vkGetPhysicalDevicePresentRectangles{const STATIC:Self=Self(vkGetPhysicalDevicePresentRectangles);}
 #[repr(transparent)]#[derive(Debug, Clone, Copy)]#[rustfmt::skip]pub struct PFN_vkGetPhysicalDeviceProperties(pub unsafe extern "system" fn(physicalDevice:VkPhysicalDevice,pProperties:*mut VkPhysicalDeviceProperties));
 #[rustfmt::skip]unsafe impl crate::FromPtr for PFN_vkGetPhysicalDeviceProperties{#[inline(always)]unsafe fn from_ptr(p:*const core::ffi::c_void)->Self{unsafe{core::mem::transmute::<*const core::ffi::c_void,Self>(p)}}}
 #[rustfmt::skip]unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceProperties{const NAME_CSTR:&'static core::ffi::CStr=c"vkGetPhysicalDeviceProperties";#[inline(always)]unsafe fn from_void_fn(p:PFN_vkVoidFunction)->Self{unsafe{core::mem::transmute::<PFN_vkVoidFunction,Self>(p)}}}
@@ -6536,6 +6620,10 @@ pub const VK_AMD_SHADER_INFO_SPEC_VERSION: usize = 1;
 #[rustfmt::skip]unsafe impl crate::FromPtr for PFN_vkCmdDispatch{#[inline(always)]unsafe fn from_ptr(p:*const core::ffi::c_void)->Self{unsafe{core::mem::transmute::<*const core::ffi::c_void,Self>(p)}}}
 #[rustfmt::skip]unsafe impl crate::PFN for PFN_vkCmdDispatch{const NAME_CSTR:&'static core::ffi::CStr=c"vkCmdDispatch";#[inline(always)]unsafe fn from_void_fn(p:PFN_vkVoidFunction)->Self{unsafe{core::mem::transmute::<PFN_vkVoidFunction,Self>(p)}}}
 #[cfg(all(feature="Implements",not(feature="DynamicLoaded")))]#[rustfmt::skip]impl crate::StaticCallable for PFN_vkCmdDispatch{const STATIC:Self=Self(vkCmdDispatch);}
+#[cfg(feature = "Allow1_1APIs")]#[repr(transparent)]#[derive(Debug, Clone, Copy)]#[rustfmt::skip]pub struct PFN_vkCmdDispatchBase(pub unsafe extern "system" fn(commandBuffer:VkCommandBuffer,baseGroupX:u32,baseGroupY:u32,baseGroupZ:u32,groupCountX:u32,groupCountY:u32,groupCountZ:u32));
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]unsafe impl crate::FromPtr for PFN_vkCmdDispatchBase{#[inline(always)]unsafe fn from_ptr(p:*const core::ffi::c_void)->Self{unsafe{core::mem::transmute::<*const core::ffi::c_void,Self>(p)}}}
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]unsafe impl crate::PFN for PFN_vkCmdDispatchBase{const NAME_CSTR:&'static core::ffi::CStr=c"vkCmdDispatchBase";#[inline(always)]unsafe fn from_void_fn(p:PFN_vkVoidFunction)->Self{unsafe{core::mem::transmute::<PFN_vkVoidFunction,Self>(p)}}}
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature="Implements",not(feature="DynamicLoaded")))]#[rustfmt::skip]impl crate::StaticCallable for PFN_vkCmdDispatchBase{const STATIC:Self=Self(vkCmdDispatchBase);}
 #[repr(transparent)]#[derive(Debug, Clone, Copy)]#[rustfmt::skip]pub struct PFN_vkCmdDispatchIndirect(pub unsafe extern "system" fn(commandBuffer:VkCommandBuffer,buffer:VkBuffer,offset:VkDeviceSize));
 #[rustfmt::skip]unsafe impl crate::FromPtr for PFN_vkCmdDispatchIndirect{#[inline(always)]unsafe fn from_ptr(p:*const core::ffi::c_void)->Self{unsafe{core::mem::transmute::<*const core::ffi::c_void,Self>(p)}}}
 #[rustfmt::skip]unsafe impl crate::PFN for PFN_vkCmdDispatchIndirect{const NAME_CSTR:&'static core::ffi::CStr=c"vkCmdDispatchIndirect";#[inline(always)]unsafe fn from_void_fn(p:PFN_vkVoidFunction)->Self{unsafe{core::mem::transmute::<PFN_vkVoidFunction,Self>(p)}}}
@@ -6652,6 +6740,10 @@ pub const VK_AMD_SHADER_INFO_SPEC_VERSION: usize = 1;
 #[rustfmt::skip]unsafe impl crate::FromPtr for PFN_vkCmdSetDepthBounds{#[inline(always)]unsafe fn from_ptr(p:*const core::ffi::c_void)->Self{unsafe{core::mem::transmute::<*const core::ffi::c_void,Self>(p)}}}
 #[rustfmt::skip]unsafe impl crate::PFN for PFN_vkCmdSetDepthBounds{const NAME_CSTR:&'static core::ffi::CStr=c"vkCmdSetDepthBounds";#[inline(always)]unsafe fn from_void_fn(p:PFN_vkVoidFunction)->Self{unsafe{core::mem::transmute::<PFN_vkVoidFunction,Self>(p)}}}
 #[cfg(all(feature="Implements",not(feature="DynamicLoaded")))]#[rustfmt::skip]impl crate::StaticCallable for PFN_vkCmdSetDepthBounds{const STATIC:Self=Self(vkCmdSetDepthBounds);}
+#[cfg(feature = "Allow1_1APIs")]#[repr(transparent)]#[derive(Debug, Clone, Copy)]#[rustfmt::skip]pub struct PFN_vkCmdSetDeviceMask(pub unsafe extern "system" fn(commandBuffer:VkCommandBuffer,deviceMask:u32));
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]unsafe impl crate::FromPtr for PFN_vkCmdSetDeviceMask{#[inline(always)]unsafe fn from_ptr(p:*const core::ffi::c_void)->Self{unsafe{core::mem::transmute::<*const core::ffi::c_void,Self>(p)}}}
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]unsafe impl crate::PFN for PFN_vkCmdSetDeviceMask{const NAME_CSTR:&'static core::ffi::CStr=c"vkCmdSetDeviceMask";#[inline(always)]unsafe fn from_void_fn(p:PFN_vkVoidFunction)->Self{unsafe{core::mem::transmute::<PFN_vkVoidFunction,Self>(p)}}}
+#[cfg(feature = "Allow1_1APIs")]#[cfg(all(feature="Implements",not(feature="DynamicLoaded")))]#[rustfmt::skip]impl crate::StaticCallable for PFN_vkCmdSetDeviceMask{const STATIC:Self=Self(vkCmdSetDeviceMask);}
 #[repr(transparent)]#[derive(Debug, Clone, Copy)]#[rustfmt::skip]pub struct PFN_vkCmdSetEvent(pub unsafe extern "system" fn(commandBuffer:VkCommandBuffer,event:VkEvent,stageMask:VkPipelineStageFlags));
 #[rustfmt::skip]unsafe impl crate::FromPtr for PFN_vkCmdSetEvent{#[inline(always)]unsafe fn from_ptr(p:*const core::ffi::c_void)->Self{unsafe{core::mem::transmute::<*const core::ffi::c_void,Self>(p)}}}
 #[rustfmt::skip]unsafe impl crate::PFN for PFN_vkCmdSetEvent{const NAME_CSTR:&'static core::ffi::CStr=c"vkCmdSetEvent";#[inline(always)]unsafe fn from_void_fn(p:PFN_vkVoidFunction)->Self{unsafe{core::mem::transmute::<PFN_vkVoidFunction,Self>(p)}}}
@@ -6851,12 +6943,15 @@ pub const VK_AMD_SHADER_INFO_SPEC_VERSION: usize = 1;
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]
 #[rustfmt::skip]
 unsafe extern "system" {
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkAcquireNextImage2(device:VkDevice,pAcquireInfo:*const VkAcquireNextImageInfoKHR,pImageIndex:*mut u32)->VkResult;
     pub fn vkAllocateCommandBuffers(device:VkDevice,pAllocateInfo:*const VkCommandBufferAllocateInfo,pCommandBuffers:*mut VkCommandBuffer)->VkResult;
     pub fn vkAllocateDescriptorSets(device:VkDevice,pAllocateInfo:*const VkDescriptorSetAllocateInfo,pDescriptorSets:*mut VkDescriptorSet)->VkResult;
     pub fn vkAllocateMemory(device:VkDevice,pAllocateInfo:*const VkMemoryAllocateInfo,pAllocator:*const VkAllocationCallbacks,pMemory:*mut VkDeviceMemory)->VkResult;
     pub fn vkBeginCommandBuffer(commandBuffer:VkCommandBuffer,pBeginInfo:*const VkCommandBufferBeginInfo)->VkResult;
     pub fn vkBindBufferMemory(device:VkDevice,buffer:VkBuffer,memory:VkDeviceMemory,memoryOffset:VkDeviceSize)->VkResult;
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkBindBufferMemory2(device:VkDevice,bindInfoCount:u32,pBindInfos:*const VkBindBufferMemoryInfoKHR)->VkResult;
     pub fn vkBindImageMemory(device:VkDevice,image:VkImage,memory:VkDeviceMemory,memoryOffset:VkDeviceSize)->VkResult;
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkBindImageMemory2(device:VkDevice,bindInfoCount:u32,pBindInfos:*const VkBindImageMemoryInfoKHR)->VkResult;
     #[cfg(feature = "Allow1_4APIs")]pub fn vkCopyImageToImage(device:VkDevice,pCopyImageToImageInfo:*const VkCopyImageToImageInfoEXT)->VkResult;
     #[cfg(feature = "Allow1_4APIs")]pub fn vkCopyImageToMemory(device:VkDevice,pCopyImageToMemoryInfo:*const VkCopyImageToMemoryInfoEXT)->VkResult;
     #[cfg(feature = "Allow1_4APIs")]pub fn vkCopyMemoryToImage(device:VkDevice,pCopyMemoryToImageInfo:*const VkCopyMemoryToImageInfoEXT)->VkResult;
@@ -6925,6 +7020,9 @@ unsafe extern "system" {
     #[cfg(feature = "Allow1_2APIs")]pub fn vkGetBufferOpaqueCaptureAddress(device:VkDevice,pInfo:*const VkBufferDeviceAddressInfoKHR)->u64;
     #[cfg(feature = "Allow1_1APIs")]pub fn vkGetDescriptorSetLayoutSupport(device:VkDevice,pCreateInfo:*const VkDescriptorSetLayoutCreateInfo,pSupport:*mut VkDescriptorSetLayoutSupport);
     #[cfg(feature = "Allow1_3APIs")]pub fn vkGetDeviceBufferMemoryRequirements(device:VkDevice,pInfo:*const VkDeviceBufferMemoryRequirementsKHR,pMemoryRequirements:*mut VkMemoryRequirements2KHR);
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkGetDeviceGroupPeerMemoryFeatures(device:VkDevice,heapIndex:u32,localDeviceIndex:u32,remoteDeviceIndex:u32,pPeerMemoryFeatures:*mut VkPeerMemoryFeatureFlags);
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkGetDeviceGroupPresentCapabilities(device:VkDevice,pDeviceGroupPresentCapabilities:*mut VkDeviceGroupPresentCapabilitiesKHR)->VkResult;
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkGetDeviceGroupSurfacePresentModes(device:VkDevice,surface:VkSurfaceKHR,pModes:*mut VkDeviceGroupPresentModeFlagsKHR)->VkResult;
     #[cfg(feature = "Allow1_3APIs")]pub fn vkGetDeviceImageMemoryREquirements(device:VkDevice,pInfo:*const VkDeviceImageMemoryRequirementsKHR,pMemoryRequirements:*mut VkMemoryRequirements2KHR);
     #[cfg(feature = "Allow1_3APIs")]pub fn vkGetDeviceImageSparseMemoryRequirements(device:VkDevice,pInfo:*const VkDeviceImageMemoryRequirementsKHR,pSparseMemoryRequirementsCount:*mut u32,pSparseMemoryRequirements:*mut VkSparseImageMemoryRequirements2KHR);
     #[cfg(feature = "Allow1_4APIs")]pub fn vkGetDeviceImageSubresourceLayout(device:VkDevice,pInfo:*const VkDeviceImageSubresourceInfoKHR,pLayout:*mut VkSubresourceLayout2KHR);
@@ -6952,6 +7050,7 @@ unsafe extern "system" {
     #[cfg(feature = "Allow1_1APIs")]pub fn vkGetPhysicalDeviceImageFormatProperties2(physicalDevice:VkPhysicalDevice,pImageFormatInfo:*const VkPhysicalDeviceImageFormatInfo2KHR,pImageFormatProperties:*mut VkImageFormatProperties2KHR)->VkResult;
     pub fn vkGetPhysicalDeviceMemoryProperties(physicalDevice:VkPhysicalDevice,pMemoryProperties:*mut VkPhysicalDeviceMemoryProperties);
     #[cfg(feature = "Allow1_1APIs")]pub fn vkGetPhysicalDeviceMemoryProperties2(physicalDevice:VkPhysicalDevice,pMemoryProperties:*mut VkPhysicalDeviceMemoryProperties2KHR);
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkGetPhysicalDevicePresentRectangles(physicalDevice:VkPhysicalDevice,surface:VkSurfaceKHR,pRectCount:*mut u32,pRects:*mut VkRect2D)->VkResult;
     pub fn vkGetPhysicalDeviceProperties(physicalDevice:VkPhysicalDevice,pProperties:*mut VkPhysicalDeviceProperties);
     #[cfg(feature = "Allow1_1APIs")]pub fn vkGetPhysicalDeviceProperties2(physicalDevice:VkPhysicalDevice,pProperties:*mut VkPhysicalDeviceProperties2KHR);
     pub fn vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice:VkPhysicalDevice,pQueueFamilyPropertyCount:*mut u32,pQueueFamilyProperties:*mut VkQueueFamilyProperties);
@@ -7041,6 +7140,7 @@ unsafe extern "system" {
     #[cfg(feature = "Allow1_3APIs")]pub fn vkCmdCopyImageToBuffer2(commandBuffer:VkCommandBuffer,pCopyImageToBufferInfo:*const VkCopyImageToBufferInfo2KHR);
     pub fn vkCmdCopyQueryPoolResults(commandBuffer:VkCommandBuffer,queryPool:VkQueryPool,firstQuery:u32,queryCount:u32,dstBuffer:VkBuffer,dstOffset:VkDeviceSize,stride:VkDeviceSize,flags:VkQueryResultFlags);
     pub fn vkCmdDispatch(commandBuffer:VkCommandBuffer,groupCountX:u32,groupCountY:u32,groupCountZ:u32);
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkCmdDispatchBase(commandBuffer:VkCommandBuffer,baseGroupX:u32,baseGroupY:u32,baseGroupZ:u32,groupCountX:u32,groupCountY:u32,groupCountZ:u32);
     pub fn vkCmdDispatchIndirect(commandBuffer:VkCommandBuffer,buffer:VkBuffer,offset:VkDeviceSize);
     pub fn vkCmdDraw(commandBuffer:VkCommandBuffer,vertexCount:u32,instanceCount:u32,firstVertex:u32,firstInstance:u32);
     pub fn vkCmdDrawIndexed(commandBuffer:VkCommandBuffer,indexCount:u32,instanceCount:u32,firstIndex:u32,vertexOffset:i32,firstInstance:u32);
@@ -7070,6 +7170,7 @@ unsafe extern "system" {
     pub fn vkCmdSetBlendConstants(commandBuffer:VkCommandBuffer,blendConstants:*const core::ffi::c_float);
     pub fn vkCmdSetDepthBias(commandBuffer:VkCommandBuffer,depthBiasConstantFactor:core::ffi::c_float,depthBiasClamp:core::ffi::c_float,depthBiasSlopeFactor:core::ffi::c_float);
     pub fn vkCmdSetDepthBounds(commandBuffer:VkCommandBuffer,minDepthBounds:core::ffi::c_float,maxDepthBounds:core::ffi::c_float);
+    #[cfg(feature = "Allow1_1APIs")]pub fn vkCmdSetDeviceMask(commandBuffer:VkCommandBuffer,deviceMask:u32);
     pub fn vkCmdSetEvent(commandBuffer:VkCommandBuffer,event:VkEvent,stageMask:VkPipelineStageFlags);
     #[cfg(feature = "Allow1_3APIs")]pub fn vkCmdSetEvent2(commandBuffer:VkCommandBuffer,event:VkEvent,pDependencyInfo:*const VkDependencyInfoKHR);
     #[cfg(feature = "Allow1_4APIs")]pub fn vkCmdSetLineStipple(commandBuffer:VkCommandBuffer,lineStippleFactor:u32,lineStipplePattern:u16);
