@@ -167,7 +167,7 @@ pub fn instance_extension_properties_str_alloc(
 type InstanceResolvedFn<F> = brvk::ResolvedFnCell<F, InstanceResolverImpl>;
 #[implements]
 #[repr(transparent)]
-struct InstanceResolverImpl(brvk::VkInstance);
+pub struct InstanceResolverImpl(pub brvk::VkInstance);
 #[implements]
 impl brvk::ResolverInterface for InstanceResolverImpl {
     #[tracing::instrument(
