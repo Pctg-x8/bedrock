@@ -99,9 +99,9 @@ pub const ELEMENTS: &[Element] = &[
         VK_KHR_BUFFER_DEVICE_ADDRESS.ext_enum(0) as _,
         StructUsage::Both,
         &[
-            Struct::member("bufferDeviceAddress", "VkBool32"),
-            Struct::member("bufferDeviceAddressCaptureReplay", "VkBool32"),
-            Struct::member("bufferDeviceAddressMultiDevice", "VkBool32"),
+            Struct::member("bufferDeviceAddress", TY_VK_BOOL),
+            Struct::member("bufferDeviceAddressCaptureReplay", TY_VK_BOOL),
+            Struct::member("bufferDeviceAddressMultiDevice", TY_VK_BOOL),
         ],
     )
     .extensions(&[VK_KHR_BUFFER_DEVICE_ADDRESS])

@@ -2,6 +2,7 @@ use crate::{parts::*, v1_1::VK_KHR_DEVICE_GROUP, v1_3::VK_KHR_FORMAT_FEATURE_FLA
 
 pub const VK_KHR_SURFACE: &Extension = &Extension::khr("surface", 25, 1);
 pub const VK_KHR_WIN32_SURFACE: &Extension = &Extension::khr("win32_surface", 6, 10);
+pub const VK_KHR_SWAPCHAIN: &Extension = &Extension::khr("swapchain", 70, 2);
 pub const VK_EXT_VALIDATION_CACHE: &Extension = &Extension::ext("validation_cache", 1, 161);
 pub const VK_EXT_VALIDATION_FLAGS: &Extension = &Extension::ext("validation_flags", 1, 62);
 pub const VK_EXT_DEBUG_REPORT: &Extension = &Extension::ext("debug_report", 10, 12);

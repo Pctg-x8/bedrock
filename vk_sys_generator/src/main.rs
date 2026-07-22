@@ -415,7 +415,6 @@ const EXTENSION_HEADER_CONSTANTS: &[ExtensionHeaderConstants] = &[
     ExtensionHeaderConstants::new("VK_KHR_get_memory_requirements2", 1),
     ExtensionHeaderConstants::new("VK_KHR_relaxed_block_layout", 1),
     ExtensionHeaderConstants::new("VK_KHR_storage_buffer_storage_class", 1),
-    ExtensionHeaderConstants::new("VK_KHR_bind_memory2", 1),
     ExtensionHeaderConstants::new("VK_KHR_variable_pointers", 1),
     ExtensionHeaderConstants::new("VK_KHR_dedicated_allocation", 3),
     ExtensionHeaderConstants::new("VK_KHR_16bit_storage", 1),
@@ -1177,9 +1176,6 @@ const FLAGS: &[Bitmask] = &[
             Bitmask::entry("VIEW_LOCAL", 1)
                 .extension_old("KHR", "multiview")
                 .promoted("1_1"),
-            Bitmask::entry("DEVICE_GROUP", 2)
-                .extension_old("KHR", "device_group")
-                .promoted("1_1"),
         ],
     ),
     Bitmask::new(
@@ -1481,9 +1477,6 @@ const FLAGS: &[Bitmask] = &[
             Bitmask::entry("EXTENDED_USAGE", 8)
                 .extension_old("KHR", "maintenance2")
                 .promoted("1_1"),
-            Bitmask::entry("ALIAS", 10)
-                .extension_old("KHR", "bind_memory2")
-                .promoted("1_1"),
             Bitmask::entry("PROTECTED", 11),
         ],
     ),
@@ -1493,16 +1486,6 @@ const FLAGS: &[Bitmask] = &[
         "IMAGE_VIEW_CREATE",
         &[],
     ),
-    Bitmask::new(
-        "MemoryAllocateFlags",
-        "MemoryAllocateFlagBits",
-        "MEMORY_ALLOCATE",
-        &[Bitmask::entry("DEVICE_MASK", 0)
-            .extension_old("KHR", "device_group")
-            .promoted("1_1")],
-    )
-    .extension_old("KHR", "device_group")
-    .promoted("1_1"),
     Bitmask::new(
         "MemoryHeapFlags",
         "MemoryHeapFlagBits",
@@ -1534,27 +1517,6 @@ const FLAGS: &[Bitmask] = &[
     )
     .extension_old("EXT", "metal_surface"),
     Bitmask::new(
-        "PeerMemoryFeatureFlags",
-        "PeerMemoryFeatureFlagBits",
-        "PEER_MEMORY_FEATURE",
-        &[
-            Bitmask::entry("COPY_SRC", 0)
-                .extension_old("KHR", "device_group")
-                .promoted("1_1"),
-            Bitmask::entry("COPY_DST", 1)
-                .extension_old("KHR", "device_group")
-                .promoted("1_1"),
-            Bitmask::entry("GENERIC_SRC", 2)
-                .extension_old("KHR", "device_group")
-                .promoted("1_1"),
-            Bitmask::entry("GENERIC_DST", 3)
-                .extension_old("KHR", "device_group")
-                .promoted("1_1"),
-        ],
-    )
-    .extension_old("KHR", "device_group")
-    .promoted("1_1"),
-    Bitmask::new(
         "PipelineCacheCreateFlags",
         "PipelineCacheCreateFlagBits",
         "PIPELINE_CACHE_CREATE",
@@ -1568,12 +1530,6 @@ const FLAGS: &[Bitmask] = &[
             Bitmask::entry("DISABLE_OPTIMIZATION", 0),
             Bitmask::entry("ALLOW_DERIVATIVES", 1),
             Bitmask::entry("DERIVATIVE", 2),
-            Bitmask::entry("VIEW_INDEX_FROM_DEVICE_INDEX", 3)
-                .extension_old("KHR", "device_group")
-                .promoted("1_1"),
-            Bitmask::entry("DISPATCH_BASE", 4)
-                .extension_old("KHR", "device_group")
-                .promoted("1_1"),
         ],
     ),
     Bitmask::new(
@@ -1932,7 +1888,7 @@ const FLAGS: &[Bitmask] = &[
         "SwapchainCreateFlags",
         "SwapchainCreateFlagBits",
         "SWAPCHAIN_CREATE",
-        &[Bitmask::entry("SPLIT_INSTNACE_BIND_REGIONS", 0).extension_old("KHR", "device_group")],
+        &[],
     )
     .extension_old("KHR", "swapchain"),
     Bitmask::new(
@@ -2042,20 +1998,6 @@ const FUNC_POINTERS: &[FuncPointer] = &[
 ];
 
 const STRUCTS: &[Struct] = &[
-    Struct::typed(
-        "AcquireNextImageInfo",
-        "ACQUIRE_NEXT_IMAGE_INFO",
-        vk_ext_enum(61, 10) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("swapchain", "VkSwapchainKHR"),
-            Struct::member("timeout", "u64"),
-            Struct::member("semaphore", "VkSemaphore"),
-            Struct::member("fence", "VkFence"),
-            Struct::member("deviceMask", "u32"),
-        ],
-    )
-    .extensions_old(&[("KHR", "device_group"), ("KHR", "swapchain")]),
     Struct::new(
         "AllocationCallbacks",
         &[
@@ -2113,69 +2055,6 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .copyable(),
-    Struct::typed(
-        "BindBufferMemoryDeviceGroupInfo",
-        "BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO",
-        vk_ext_enum(61, 13) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("deviceIndexCount", "u32"),
-            Struct::member("pDeviceIndices", "*const u32"),
-        ],
-    )
-    .extensions_old(&[("KHR", "device_group"), ("KHR", "bind_memory2")])
-    .promoted("1_1"),
-    Struct::typed(
-        "BindBufferMemoryInfo",
-        "BIND_BUFFER_MEMORY_INFO",
-        vk_ext_enum(158, 0) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("buffer", "VkBuffer"),
-            Struct::member("memory", "VkDeviceMemory"),
-            Struct::member("memoryOffset", DEVICE_SIZE_TYPE),
-        ],
-    )
-    .extensions_old(&[("KHR", "bind_memory2")])
-    .promoted("1_1"),
-    Struct::typed(
-        "BindImageMemoryDeviceGroupInfo",
-        "BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO",
-        vk_ext_enum(61, 14) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("deviceIndexCount", "u32"),
-            Struct::member("pDeviceIndices", "*const u32"),
-            Struct::member("splitInstanceBindRegionCount", "u32"),
-            Struct::member("pSplitInstanceBindRegions", "*const VkRect2D"),
-        ],
-    )
-    .extensions_old(&[("KHR", "device_group"), ("KHR", "bind_memory2")])
-    .promoted("1_1"),
-    Struct::typed(
-        "BindImageMemoryInfo",
-        "BIND_IMAGE_MEMORY_INFO",
-        vk_ext_enum(158, 1) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("image", "VkImage"),
-            Struct::member("memory", "VkDeviceMemory"),
-            Struct::member("memoryOffset", DEVICE_SIZE_TYPE),
-        ],
-    )
-    .extensions_old(&[("KHR", "bind_memory2")])
-    .promoted("1_1"),
-    Struct::typed(
-        "BindImageMemorySwapchainInfo",
-        "BIND_IMAGE_MEMORY_SWAPCHAIN_INFO",
-        vk_ext_enum(61, 9) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("swapchain", "VkSwapchainKHR"),
-            Struct::member("imageIndex", "u32"),
-        ],
-    )
-    .extensions_old(&[("KHR", "device_group"), ("KHR", "swapchain")]),
     Struct::new(
         "BindSparseInfo",
         &[
@@ -2569,27 +2448,6 @@ const STRUCTS: &[Struct] = &[
     )
     .stype("DEVICE_CREATE_INFO", 3, StructUsage::Source),
     Struct::typed(
-        "DeviceGroupBindSparseInfo",
-        "DEVICE_GROUP_BIND_SPARSE_INFO",
-        vk_ext_enum(61, 6) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("resourceDeviceIndex", "u32"),
-            Struct::member("memoryDeviceIndex", "u32"),
-        ],
-    )
-    .extensions_old(&[("KHR", "device_group")])
-    .promoted("1_1"),
-    Struct::typed(
-        "DeviceGroupCommandBufferBeginInfo",
-        "DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO",
-        vk_ext_enum(61, 4) as _,
-        StructUsage::Source,
-        &[Struct::member("deviceMask", "u32")],
-    )
-    .extensions_old(&[("KHR", "device_group")])
-    .promoted("1_1"),
-    Struct::typed(
         "DeviceGroupCreateInfo",
         "DEVICE_GROUP_CREATE_INFO",
         vk_ext_enum(71, 1) as _,
@@ -2601,66 +2459,6 @@ const STRUCTS: &[Struct] = &[
     )
     .extensions_old(&[("KHR", "device_group_creation")])
     .promoted("1_1"),
-    Struct::typed(
-        "DeviceGroupPresentCapabilities",
-        "DEVICE_GROUP_PRESENT_CAPABILITIES",
-        vk_ext_enum(61, 7) as _,
-        StructUsage::Sink,
-        &[
-            Struct::member("presentMask", "[u32; VK_MAX_DEVICE_GROUP_SIZE_KHR]"),
-            Struct::member("modes", "VkDeviceGroupPresentModeFlagsKHR"),
-        ],
-    )
-    .extensions_old(&[("KHR", "device_group"), ("KHR", "surface")]),
-    Struct::typed(
-        "DeviceGroupPresentInfo",
-        "DEVICE_GROUP_PRESENT_INFO",
-        vk_ext_enum(61, 11) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("swapchainCount", "u32"),
-            Struct::member("pDeviceMasks", "*const u32"),
-            Struct::member("mode", "VkDeviceGroupPresentModeFlagBitsKHR"),
-        ],
-    )
-    .extensions_old(&[("KHR", "device_group"), ("KHR", "swapchain")]),
-    Struct::typed(
-        "DeviceGroupRenderPassBeginInfo",
-        "DEVICE_GROUP_RENDER_PASS_BEGIN_INFO",
-        vk_ext_enum(61, 3) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("deviceMask", "u32"),
-            Struct::member("deviceRenderAreaCount", "u32"),
-            Struct::member("pDeviceRenderAreas", "*const VkRect2D"),
-        ],
-    )
-    .extensions_old(&[("KHR", "device_group")])
-    .promoted("1_1"),
-    Struct::typed(
-        "DeviceGroupSubmitInfo",
-        "DEVICE_GROUP_SUBMIT_INFO",
-        vk_ext_enum(61, 5) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("waitSemaphoreCount", "u32"),
-            Struct::member("pWaitSemaphoreDeviceIndices", "*const u32"),
-            Struct::member("commandBufferCount", "u32"),
-            Struct::member("pCommandBufferDeviceMasks", "*const u32"),
-            Struct::member("signalSemaphoreCount", "u32"),
-            Struct::member("pSignalSemaphoreDeviceIndices", "*const u32"),
-        ],
-    )
-    .extensions_old(&[("KHR", "device_group")])
-    .promoted("1_1"),
-    Struct::typed(
-        "DeviceGroupSwapchainCreateInfo",
-        "DEVICE_GROUP_SWAPCHAIN_CREATE_INFO",
-        vk_ext_enum(61, 12) as _,
-        StructUsage::Source,
-        &[Struct::member("modes", "VkDeviceGroupPresentModeFlagsKHR")],
-    )
-    .extensions_old(&[("KHR", "device_group"), ("KHR", "swapchain")]),
     Struct::new(
         "DeviceQueueCreateInfo",
         &[
@@ -3168,14 +2966,6 @@ const STRUCTS: &[Struct] = &[
             Struct::member("layerCount", "u32"),
         ],
     ),
-    Struct::typed(
-        "ImageSwapchainCreateInfo",
-        "IMAGE_SWAPCHAIN_CREATE_INFO",
-        vk_ext_enum(61, 8) as _,
-        StructUsage::Source,
-        &[Struct::member("swapchain", "VkSwapchainKHR")],
-    )
-    .extensions_old(&[("KHR", "device_group"), ("KHR", "swapchain")]),
     Struct::new(
         "ImageViewCreateInfo",
         &[
@@ -3317,20 +3107,6 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .stype("MAPPED_MEMORY_RANGE", 6, StructUsage::Source),
-    Struct::new(
-        "MemoryAllocateFlagsInfo",
-        &[
-            Struct::member("flags", "VkMemoryAllocateFlags"),
-            Struct::member("deviceMask", "u32"),
-        ],
-    )
-    .stype(
-        "MEMORY_ALLOCATE_FLAGS_INFO",
-        vk_ext_enum(61, 0) as _,
-        StructUsage::Source,
-    )
-    .extensions_old(&[("KHR", "device_group")])
-    .promoted("1_1"),
     Struct::new(
         "MemoryAllocateInfo",
         &[
@@ -6133,65 +5909,6 @@ const COMMANDS: &[Command] = &[
     .extension_old("KHR", "external_fence_capabilities")
     .promoted("1_1"),
     Command::new(
-        "GetDeviceGroupPeerMemoryFeatures",
-        &[
-            ("device", "VkDevice"),
-            ("heapIndex", "u32"),
-            ("localDeviceIndex", "u32"),
-            ("remoteDeviceIndex", "u32"),
-            ("pPeerMemoryFeatures", "*mut VkPeerMemoryFeatureFlags"),
-        ],
-    )
-    .extension_old("KHR", "device_group")
-    .promoted("1_1"),
-    Command::new(
-        "GetDeviceGroupPresentCapabilities",
-        &[
-            ("device", "VkDevice"),
-            (
-                "pDeviceGroupPresentCapabilities",
-                "*mut VkDeviceGroupPresentCapabilitiesKHR",
-            ),
-        ],
-    )
-    .failable()
-    .extension_old("KHR", "device_group")
-    .available_condition("feature = \"VK_KHR_surface\""),
-    Command::new(
-        "GetDeviceGroupSurfacePresentModes",
-        &[
-            ("device", "VkDevice"),
-            ("surface", "VkSurfaceKHR"),
-            ("pModes", "*mut VkDeviceGroupPresentModeFlagsKHR"),
-        ],
-    )
-    .failable()
-    .extension_old("KHR", "device_group")
-    .available_condition("feature = \"VK_KHR_surface\""),
-    Command::new(
-        "GetPhysicalDevicePresentRectangles",
-        &[
-            ("physicalDevice", "VkPhysicalDevice"),
-            ("surface", "VkSurfaceKHR"),
-            ("pRectCount", "*mut u32"),
-            ("pRects", "*mut VkRect2D"),
-        ],
-    )
-    .failable()
-    .extension_old("KHR", "device_group")
-    .available_condition("feature = \"VK_KHR_surface\""),
-    Command::new(
-        "AcquireNextImage2",
-        &[
-            ("device", "VkDevice"),
-            ("pAcquireInfo", "*const VkAcquireNextImageInfoKHR"),
-            ("pImageIndex", "*mut u32"),
-        ],
-    )
-    .failable()
-    .extension_old("KHR", "device_group")
-    .available_condition("feature = \"VK_KHR_swapchain\""),
-    Command::new(
         "GetPhysicalDeviceFeatures2",
         &[
             ("physicalDevice", "VkPhysicalDevice"),
@@ -6304,28 +6021,6 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .extension_old("KHR", "get_memory_requirements2")
-    .promoted("1_1"),
-    Command::new(
-        "BindBufferMemory2",
-        &[
-            ("device", "VkDevice"),
-            ("bindInfoCount", "u32"),
-            ("pBindInfos", "*const VkBindBufferMemoryInfoKHR"),
-        ],
-    )
-    .failable()
-    .extension_old("KHR", "bind_memory2")
-    .promoted("1_1"),
-    Command::new(
-        "BindImageMemory2",
-        &[
-            ("device", "VkDevice"),
-            ("bindInfoCount", "u32"),
-            ("pBindInfos", "*const VkBindImageMemoryInfoKHR"),
-        ],
-    )
-    .failable()
-    .extension_old("KHR", "bind_memory2")
     .promoted("1_1"),
     Command::new(
         "CreateDescriptorUpdateTemplate",
@@ -6773,22 +6468,6 @@ const COMMANDS: &[Command] = &[
         &[("pLabelInfo", "*const VkDebugUtilsLabelEXT")],
     )
     .extension_old("EXT", "debug_utils"),
-    Command::inst("SetDeviceMask", &[("deviceMask", "u32")])
-        .extension_old("KHR", "device_group")
-        .promoted("1_1"),
-    Command::inst(
-        "DispatchBase",
-        &[
-            ("baseGroupX", "u32"),
-            ("baseGroupY", "u32"),
-            ("baseGroupZ", "u32"),
-            ("groupCountX", "u32"),
-            ("groupCountY", "u32"),
-            ("groupCountZ", "u32"),
-        ],
-    )
-    .extension_old("KHR", "device_group")
-    .promoted("1_1"),
     Command::inst(
         "SetEvent2",
         &[("event", "VkEvent"), ("pDependencyInfo", "*const VkDependencyInfoKHR")],
