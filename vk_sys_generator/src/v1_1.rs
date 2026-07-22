@@ -19,6 +19,15 @@ pub const VK_KHR_GET_MEMORY_REQUIREMENTS_2: &Extension =
 const VK_KHR_SAMPLER_YCBCR_CONVERSION: &Extension =
     &Extension::khr("sampler_ycbcr_conversion", 14, 157).promoted(VERSION);
 pub const VK_KHR_BIND_MEMORY_2: &Extension = &Extension::khr("bind_memory2", 1, 158).promoted(VERSION);
+pub const VK_KHR_EXTERNAL_MEMORY: &Extension = &Extension::khr("external_memory", 1, 73).promoted(VERSION);
+pub const VK_KHR_EXTERNAL_MEMORY_CAPABILITIES: &Extension =
+    &Extension::khr("external_memory_capabilities", 1, 72).promoted(VERSION);
+pub const VK_KHR_EXTERNAL_SEMAPHORE: &Extension = &Extension::khr("external_semaphore", 1, 78).promoted(VERSION);
+pub const VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES: &Extension =
+    &Extension::khr("external_semaphore_capabilities", 1, 77).promoted(VERSION);
+pub const VK_KHR_EXTERNAL_FENCE: &Extension = &Extension::khr("external_fence", 1, 114).promoted(VERSION);
+pub const VK_KHR_EXTERNAL_FENCE_CAPABILITIES: &Extension =
+    &Extension::khr("external_fence_capabilities", 1, 113).promoted(VERSION);
 
 pub const ELEMENTS: &[Element] = &[
     // VK_KHR_get_physical_device_properties2
@@ -942,5 +951,301 @@ pub const ELEMENTS: &[Element] = &[
     )
     .failable()
     .extension(VK_KHR_BIND_MEMORY_2)
+    .into_element(),
+    // VK_KHR_external_memory
+    VK_KHR_EXTERNAL_MEMORY.header_constants().into_element(),
+    Struct::typed(
+        "ExternalMemoryBufferCreateInfo",
+        "EXTERNAL_MEMORY_BUFFER_CREATE_INFO",
+        VK_KHR_EXTERNAL_MEMORY.ext_enum(0) as _,
+        StructUsage::Source,
+        &[Struct::member("handleTypes", "VkExternalMemoryHandleTypeFlagsKHR")],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_MEMORY])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "ExternalMemoryImageCreateInfo",
+        "EXTERNAL_MEMORY_IMAGE_CREATE_INFO",
+        VK_KHR_EXTERNAL_MEMORY.ext_enum(1) as _,
+        StructUsage::Source,
+        &[Struct::member("handleTypes", "VkExternalMemoryHandleTypeFlagsKHR")],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_MEMORY])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "VkExportMemoryAllocateInfo",
+        "EXPORT_MEMORY_ALLOCATE_INFO",
+        VK_KHR_EXTERNAL_MEMORY.ext_enum(2) as _,
+        StructUsage::Source,
+        &[Struct::member("handleTypes", "VkExternalMemoryHandleTypeFlagsKHR")],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_MEMORY])
+    .promoted(VERSION)
+    .into_element(),
+    // VK_KHR_external_memory_capabilities
+    VK_KHR_EXTERNAL_MEMORY_CAPABILITIES.header_constants().into_element(),
+    Bitmask::new(
+        "ExternalMemoryFeatureFlags",
+        "ExternalMemoryFeatureFlagBits",
+        "EXTERNAL_MEMORY_FEATURE",
+        &[
+            Bitmask::entry("DEDICATED_ONLY", 0).extension(VK_KHR_EXTERNAL_MEMORY_CAPABILITIES),
+            Bitmask::entry("EXPORTABLE", 1).extension(VK_KHR_EXTERNAL_MEMORY_CAPABILITIES),
+            Bitmask::entry("IMPORTABLE", 2).extension(VK_KHR_EXTERNAL_MEMORY_CAPABILITIES),
+        ],
+    )
+    .extension(VK_KHR_EXTERNAL_MEMORY_CAPABILITIES)
+    .into_element(),
+    Bitmask::new(
+        "ExternalMemoryHandleTypeFlags",
+        "ExternalMemoryHandleTypeFlagBits",
+        "EXTERNAL_MEMORY_HANDLE_TYPE",
+        &[
+            Bitmask::entry("OPAQUE_FD", 0).extension(VK_KHR_EXTERNAL_MEMORY_CAPABILITIES),
+            Bitmask::entry("OPAQUE_WIN32", 1).extension(VK_KHR_EXTERNAL_MEMORY_CAPABILITIES),
+            Bitmask::entry("OPAQUE_WIN32_KMT", 2).extension(VK_KHR_EXTERNAL_MEMORY_CAPABILITIES),
+            Bitmask::entry("D3D11_TEXTURE", 3).extension(VK_KHR_EXTERNAL_MEMORY_CAPABILITIES),
+            Bitmask::entry("D3D11_TEXTURE_KMT", 4).extension(VK_KHR_EXTERNAL_MEMORY_CAPABILITIES),
+            Bitmask::entry("D3D12_HEAP", 5).extension(VK_KHR_EXTERNAL_MEMORY_CAPABILITIES),
+            Bitmask::entry("D3D12_RESOURCE", 6).extension(VK_KHR_EXTERNAL_MEMORY_CAPABILITIES),
+        ],
+    )
+    .extension(VK_KHR_EXTERNAL_MEMORY_CAPABILITIES)
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceExternalImageFormatInfo",
+        "PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO",
+        VK_KHR_EXTERNAL_MEMORY_CAPABILITIES.ext_enum(0) as _,
+        StructUsage::Source,
+        &[Struct::member("handleType", "VkExternalMemoryHandleTypeFlagsKHR")],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_MEMORY_CAPABILITIES])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "ExternalImageFormatProperties",
+        "EXTERANL_IMAGE_FORMAT_PROPERTIES",
+        VK_KHR_EXTERNAL_MEMORY_CAPABILITIES.ext_enum(1) as _,
+        StructUsage::Sink,
+        &[Struct::member(
+            "externalMemoryProperties",
+            "VkExternalMemoryPropertiesKHR",
+        )],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_MEMORY_CAPABILITIES])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceExternalBufferInfo",
+        "PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO",
+        VK_KHR_EXTERNAL_MEMORY_CAPABILITIES.ext_enum(2) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("flags", "VkBufferCreateFlags"),
+            Struct::member("usage", "VkBufferUsageFlags"),
+            Struct::member("handleType", "VkExternalMemoryHandleTypeFlagsKHR"),
+        ],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_MEMORY_CAPABILITIES])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "ExternalBufferProperties",
+        "EXTERNAL_BUFFER_PROPERTIES",
+        VK_KHR_EXTERNAL_MEMORY_CAPABILITIES.ext_enum(3) as _,
+        StructUsage::Sink,
+        &[Struct::member(
+            "externalMemoryProperties",
+            "VkExternalMemoryPropertiesKHR",
+        )],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_MEMORY_CAPABILITIES])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::new(
+        "ExternalMemoryProperties",
+        &[
+            Struct::member("externalMemoryFeatures", "VkExternalMemoryFeatureFlagsKHR"),
+            Struct::member("exportFromImportedHandleTypes", "VkExternalMemoryHandleTypeFlagsKHR"),
+            Struct::member("compatibleHandleTypes", "VkExternalMemoryHandleTypeFlagsKHR"),
+        ],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_MEMORY_CAPABILITIES])
+    .promoted(VERSION)
+    .into_element(),
+    Command::new(
+        "GetPhysicalDeviceExternalBufferProperties",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("pExternalBufferInfo", "*const VkPhysicalDeviceExternalBufferInfoKHR"),
+            ("pExternalBufferProperties", "*mut VkExternalBufferPropertiesKHR"),
+        ],
+    )
+    .extension(VK_KHR_EXTERNAL_MEMORY_CAPABILITIES)
+    .into_element(),
+    // VK_KHR_external_semaphore
+    VK_KHR_EXTERNAL_SEMAPHORE.header_constants().into_element(),
+    Bitmask::new(
+        "SemaphoreImportFlags",
+        "SemaphoreImportFlagBits",
+        "SEMAPHORE_IMPORT",
+        &[Bitmask::entry("TEMPORARY", 0).extension(VK_KHR_EXTERNAL_SEMAPHORE)],
+    )
+    .extension(VK_KHR_EXTERNAL_SEMAPHORE)
+    .into_element(),
+    Struct::typed(
+        "ExportSemaphoreCreateInfo",
+        "EXPORT_SEMAPHORE_CREATE_INFO",
+        VK_KHR_EXTERNAL_SEMAPHORE.ext_enum(0) as _,
+        StructUsage::Source,
+        &[Struct::member("handleType", "VkExternalSemaphoreHandleTypeFlagsKHR")],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_SEMAPHORE])
+    .promoted(VERSION)
+    .into_element(),
+    // VK_KHR_external_semaphore_capabilities
+    VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES.header_constants().into_element(),
+    Bitmask::new(
+        "ExternalSemaphoreFeatureFlags",
+        "ExternalSemaphoreFeatureFlagBits",
+        "EXTERNAL_SEMAPHORE_FEATURE",
+        &[
+            Bitmask::entry("EXPORTABLE", 0).extension(VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES),
+            Bitmask::entry("IMPORTABLE", 1).extension(VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES),
+        ],
+    )
+    .extension(VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES)
+    .into_element(),
+    Bitmask::new(
+        "ExternalSemaphoreHandleTypeFlags",
+        "ExternalSemaphoreHandleTypeFlagBits",
+        "EXTERNAL_SEMAPHORE_HANDLE_TYPE",
+        &[
+            Bitmask::entry("OPAQUE_FD", 0).extension(VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES),
+            Bitmask::entry("OPAQUE_WIN32", 1).extension(VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES),
+            Bitmask::entry("OPAQUE_WIN32_KMT", 2).extension(VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES),
+            Bitmask::entry("D3D12_FENCE", 3).extension(VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES),
+            // promoted special alias
+            Bitmask::entry("D3D11_FENCE", 3).version_since(VERSION),
+            Bitmask::entry("SYNC_FD", 4).extension(VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES),
+        ],
+    )
+    .extension(VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES)
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceExternalSemaphoreInfo",
+        "PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO",
+        VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES.ext_enum(0) as _,
+        StructUsage::Source,
+        &[Struct::member("handleType", "VkExternalSemaphoreHandleTypeFlagsKHR")],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "ExternalSemaphoreProperties",
+        "EXTERNAL_SEMAPHORE_PROPERTIES",
+        VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES.ext_enum(1) as _,
+        StructUsage::Sink,
+        &[
+            Struct::member("exportFromImportedHandleTypes", "VkExternalSemaphoreHandleTypeFlagsKHR"),
+            Struct::member("compatibleHandleTypes", "VkExternalSemaphoreHandleTypeFlagsKHR"),
+            Struct::member("externalSemaphoreFeatures", "VkExternalSemaphoreFeatureFlagsKHR"),
+        ],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES])
+    .promoted(VERSION)
+    .into_element(),
+    Command::new(
+        "GetPhysicalDeviceExternalSemaphoreProperties",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            (
+                "pExternalSemaphoreInfo",
+                "*const VkPhysicalDeviceExternalSemaphoreInfoKHR",
+            ),
+            ("pExternalSemaphoreProperties", "*mut VkExternalSemaphorePropertiesKHR"),
+        ],
+    )
+    .extension(VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES)
+    .into_element(),
+    // VK_KHR_external_fence
+    VK_KHR_EXTERNAL_FENCE.header_constants().into_element(),
+    Bitmask::new(
+        "FenceImportFlags",
+        "FenceImportFlagBits",
+        "FENCE_IMPORT",
+        &[Bitmask::entry("TEMPORARY", 0).extension(VK_KHR_EXTERNAL_FENCE)],
+    )
+    .extension(VK_KHR_EXTERNAL_FENCE)
+    .into_element(),
+    Struct::new(
+        "ExportFenceCreateInfo",
+        &[Struct::member("handleTypes", "VkExternalFenceHandleTypeFlagsKHR")],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_FENCE])
+    .promoted(VERSION)
+    .into_element(),
+    // VK_KHR_external_fence_capabilities
+    VK_KHR_EXTERNAL_FENCE_CAPABILITIES.header_constants().into_element(),
+    Bitmask::new(
+        "ExternalFenceFeatureFlags",
+        "ExternalFenceFeatureFlagBits",
+        "EXTERNAL_FENCE_FEATURE",
+        &[
+            Bitmask::entry("EXPORTABLE", 0).extension(VK_KHR_EXTERNAL_FENCE_CAPABILITIES),
+            Bitmask::entry("IMPORTABLE", 1).extension(VK_KHR_EXTERNAL_FENCE_CAPABILITIES),
+        ],
+    )
+    .extension(VK_KHR_EXTERNAL_FENCE_CAPABILITIES)
+    .into_element(),
+    Bitmask::new(
+        "ExternalFenceHandleTypeFlags",
+        "ExternalFenceHandleTypeFlagBits",
+        "EXTERNAL_FENCE_HANDLE_TYPE",
+        &[
+            Bitmask::entry("OPAQUE_FD", 0).extension(VK_KHR_EXTERNAL_FENCE_CAPABILITIES),
+            Bitmask::entry("OPAQUE_WIN32", 1).extension(VK_KHR_EXTERNAL_FENCE_CAPABILITIES),
+            Bitmask::entry("OPAQUE_WIN32_KMT", 2).extension(VK_KHR_EXTERNAL_FENCE_CAPABILITIES),
+            Bitmask::entry("SYNC_FD", 3).extension(VK_KHR_EXTERNAL_FENCE_CAPABILITIES),
+        ],
+    )
+    .extension(VK_KHR_EXTERNAL_FENCE_CAPABILITIES)
+    .into_element(),
+    Struct::typed(
+        "ExternalFenceProperties",
+        "EXTERNAL_FENCE_PROPERTIES",
+        VK_KHR_EXTERNAL_FENCE_CAPABILITIES.ext_enum(1) as _,
+        StructUsage::Sink,
+        &[
+            Struct::member("exportFromImportedHandleTypes", "VkExternalFenceHandleTypeFlagsKHR"),
+            Struct::member("compatibleHandleTypes", "VkExternalFenceHandleTypeFlagsKHR"),
+            Struct::member("externalFenceFeatures", "VkExternalFenceFeatureFlagsKHR"),
+        ],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_FENCE_CAPABILITIES])
+    .promoted(VERSION)
+    .into_element(),
+    Struct::typed(
+        "PhysicalDeviceExternalFenceInfo",
+        "PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO",
+        VK_KHR_EXTERNAL_FENCE_CAPABILITIES.ext_enum(0) as _,
+        StructUsage::Source,
+        &[Struct::member("handleType", "VkExternalFenceHandleTypeFlagsKHR")],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_FENCE_CAPABILITIES])
+    .promoted(VERSION)
+    .into_element(),
+    Command::new(
+        "GetPhysicalDeviceExternalFenceProperties",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("pExternalFenceInfo", "*const VkPhysicalDeviceExternalFenceInfoKHR"),
+            ("pExternalFenceProperties", "*mut VkExternalFencePropertiesKHR"),
+        ],
+    )
+    .extension(VK_KHR_EXTERNAL_FENCE_CAPABILITIES)
     .into_element(),
 ];

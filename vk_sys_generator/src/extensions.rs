@@ -49,6 +49,12 @@ pub const VK_KHR_MAINTENANCE_8: &Extension = &Extension::khr("maintenance8", 1, 
 pub const VK_KHR_MAINTENANCE_9: &Extension = &Extension::khr("maintenance9", 1, 585);
 const VK_EXT_FULL_SCREEN_EXCLUSIVE: &Extension = &Extension::ext("full_screen_exclusive", 4, 256);
 const VK_AMD_SHADER_INFO: &Extension = &Extension::new("AMD", "shader_info", 1, 43);
+pub const VK_KHR_EXTERNAL_MEMORY_WIN32: &Extension = &Extension::khr("external_memory_win32", 1, 74);
+pub const VK_KHR_EXTERNAL_MEMORY_FD: &Extension = &Extension::khr("external_memory_fd", 1, 75);
+pub const VK_KHR_EXTERNAL_SEMAPHORE_WIN32: &Extension = &Extension::khr("external_semaphore_win32", 1, 79);
+pub const VK_KHR_EXTERNAL_SEMAPHORE_FD: &Extension = &Extension::khr("external_semaphore_fd", 1, 80);
+pub const VK_KHR_EXTERNAL_FENCE_WIN32: &Extension = &Extension::khr("external_fence_win32", 1, 115);
+pub const VK_KHR_EXTERNAL_FENCE_FD: &Extension = &Extension::khr("external_fence_fd", 1, 116);
 
 pub const ELEMENTS: &[Element] = &[
     // VK_EXT_debug_report
@@ -3285,5 +3291,376 @@ pub const ELEMENTS: &[Element] = &[
     )
     .failable()
     .extension(VK_AMD_SHADER_INFO)
+    .into_element(),
+    // VK_KHR_external_memory_win32
+    VK_KHR_EXTERNAL_MEMORY_WIN32.header_constants().into_element(),
+    Struct::typed(
+        "ImportMemoryWin32HandleInfo",
+        "IMPORT_MEMORY_WIN32_HANDLE_INFO",
+        VK_KHR_EXTERNAL_MEMORY_WIN32.ext_enum(0) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("handleType", "VkExternalMemoryHandleTypeFlagsKHR"),
+            Struct::member("handle", "windows::Win32::Foundation::HANDLE"),
+            Struct::member("name", "windows::core::PCWSTR"),
+        ],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_MEMORY_WIN32])
+    .into_element(),
+    Struct::typed(
+        "ExportMemoryWin32HandleInfo",
+        "EXPORT_MEMORY_WIN32_HANDLE_INFO",
+        VK_KHR_EXTERNAL_MEMORY_WIN32.ext_enum(1) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("pAttributes", "*const windows::Win32::Security::SECURITY_ATTRIBUTES"),
+            Struct::member("dwAccess", "u32"),
+            Struct::member("name", "windows::core::PCWSTR"),
+        ],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_MEMORY_WIN32])
+    .into_element(),
+    Struct::typed(
+        "MemoryWin32HandleProperties",
+        "MEMORY_WIN32_HANDLE_PROPERTIES",
+        VK_KHR_EXTERNAL_MEMORY_WIN32.ext_enum(2) as _,
+        StructUsage::Sink,
+        &[Struct::member("memoryTypeBits", "u32")],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_MEMORY_WIN32])
+    .into_element(),
+    Struct::typed(
+        "MemoryGetWin32HandleInfo",
+        "MEMORY_GET_WIN32_HANDLE_INFO",
+        VK_KHR_EXTERNAL_MEMORY_WIN32.ext_enum(3) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("memory", "VkDeviceMemory"),
+            Struct::member("handleType", "VkExternalMemoryHandleTypeFlagsKHR"),
+        ],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_MEMORY_WIN32])
+    .into_element(),
+    Command::new(
+        "GetMemoryWin32Handle",
+        &[
+            ("device", "VkDevice"),
+            ("pGetWin32HandleInfo", "*const VkMemoryGetWin32HandleInfoKHR"),
+            ("pHandle", "*mut windows::Win32::Foundation::HANDLE"),
+        ],
+    )
+    .failable()
+    .extension(VK_KHR_EXTERNAL_MEMORY_WIN32)
+    .into_element(),
+    Command::new(
+        "GetMemoryWin32HandleProperties",
+        &[
+            ("device", "VkDevice"),
+            ("handleType", "VkExternalMemoryHandleTypeFlagsKHR"),
+            ("handle", "windows::Win32::Foundation::HANDLE"),
+            ("pMemoryWin32HandleProperties", "*mut VkMemoryWin32HandlePropertiesKHR"),
+        ],
+    )
+    .failable()
+    .extension(VK_KHR_EXTERNAL_MEMORY_WIN32)
+    .into_element(),
+    // VK_KHR_external_memory_fd
+    VK_KHR_EXTERNAL_MEMORY_FD.header_constants().into_element(),
+    Struct::typed(
+        "ImportMemoryFdInfo",
+        "IMPORT_MEMORY_FD_INFO",
+        VK_KHR_EXTERNAL_MEMORY_FD.ext_enum(0) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("handleType", "VkExternalMemoryHandleTypeFlagsKHR"),
+            Struct::member("fd", "core::ffi::c_int"),
+        ],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_MEMORY_FD])
+    .into_element(),
+    Struct::typed(
+        "MemoryFdProperties",
+        "MEMORY_FD_PROPERTIES",
+        VK_KHR_EXTERNAL_MEMORY_FD.ext_enum(1) as _,
+        StructUsage::Sink,
+        &[Struct::member("memoryTypeBits", "u32")],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_MEMORY_FD])
+    .into_element(),
+    Struct::typed(
+        "MemoryGetFdInfo",
+        "MEMORY_GET_FD_INFO",
+        VK_KHR_EXTERNAL_MEMORY_FD.ext_enum(2) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("memory", "VkDeviceMemory"),
+            Struct::member("handleType", "VkExternalMemoryHandleTypeFlagsKHR"),
+        ],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_MEMORY_FD])
+    .into_element(),
+    Command::new(
+        "GetMemoryFd",
+        &[
+            ("device", "VkDevice"),
+            ("pGetFdInfo", "*const VkMemoryGetFdInfoKHR"),
+            ("pFd", "*mut core::ffi::c_int"),
+        ],
+    )
+    .failable()
+    .extension(VK_KHR_EXTERNAL_MEMORY_FD)
+    .into_element(),
+    Command::new(
+        "GetMemoryFdProperties",
+        &[
+            ("device", "VkDevice"),
+            ("handleType", "VkExternalMemoryHandleTypeFlagsKHR"),
+            ("fd", "core::ffi::c_int"),
+            ("pMemoryFdProperties", "*mut VkMemoryFdPropertiesKHR"),
+        ],
+    )
+    .failable()
+    .extension(VK_KHR_EXTERNAL_MEMORY_FD)
+    .into_element(),
+    // VK_KHR_external_semaphore_win32
+    VK_KHR_EXTERNAL_SEMAPHORE_WIN32.header_constants().into_element(),
+    Struct::typed(
+        "ImportSemaphoreWin32HandleInfo",
+        "IMPORT_SEMAPHORE_WIN32_HANDLE_INFO",
+        VK_KHR_EXTERNAL_SEMAPHORE_WIN32.ext_enum(0) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("semaphore", "VkSemaphore"),
+            Struct::member("flags", "VkSemaphoreImportFlagsKHR"),
+            Struct::member("handleType", "VkExternalSemaphoreHandleTypeFlagsKHR"),
+            Struct::member("handle", "windows::Win32::Foundation::HANDLE"),
+            Struct::member("name", "windows::core::PCWSTR"),
+        ],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_SEMAPHORE_WIN32])
+    .into_element(),
+    Struct::typed(
+        "ExportSemaphoreWin32HandleInfo",
+        "EXPORT_SEMAPHORE_WIN32_HANDLE_INFO",
+        VK_KHR_EXTERNAL_SEMAPHORE_WIN32.ext_enum(1) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("pAttributes", "*const windows::Win32::Security::SECURITY_ATTRIBUTES"),
+            Struct::member("dwAccess", "u32"),
+            Struct::member("name", "windows::core::PCWSTR"),
+        ],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_SEMAPHORE_WIN32])
+    .into_element(),
+    Struct::typed(
+        "D3D12FenceSubmitInfo",
+        "D3D12_FENCE_SUBMIT_INFO",
+        VK_KHR_EXTERNAL_SEMAPHORE_WIN32.ext_enum(2) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("waitSemaphoreValuesCount", "u32"),
+            Struct::member("pWaitSemaphoreValues", "*const u64"),
+            Struct::member("signalSemaphoreValuesCount", "u32"),
+            Struct::member("pSignalSemaphoreValues", "*const u64"),
+        ],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_SEMAPHORE_WIN32])
+    .into_element(),
+    Struct::typed(
+        "SemaphoreGetWin32HandleInfo",
+        "SEMAPHORE_GET_WIN32_HANDLE_INFO",
+        VK_KHR_EXTERNAL_SEMAPHORE_WIN32.ext_enum(3) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("semaphore", "VkSemaphore"),
+            Struct::member("handleType", "VkExternalSemaphoreHandleTypeFlagBitsKHR"),
+        ],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_SEMAPHORE_WIN32])
+    .into_element(),
+    Command::new(
+        "ImportSemaphoreWin32Handle",
+        &[
+            ("device", "VkDevice"),
+            (
+                "pImportSemaphoreWin32HandleInfo",
+                "*const VkImportSemaphoreWin32HandleInfoKHR",
+            ),
+        ],
+    )
+    .failable()
+    .extension(VK_KHR_EXTERNAL_SEMAPHORE_WIN32)
+    .into_element(),
+    Command::new(
+        "GetSemaphoreWin32Handle",
+        &[
+            ("device", "VkDevice"),
+            ("pGetWin32HandleInfo", "*const VkSemaphoreGetWin32HandleInfoKHR"),
+            ("pHandle", "*mut windows::Win32::Foundation::HANDLE"),
+        ],
+    )
+    .failable()
+    .extension(VK_KHR_EXTERNAL_SEMAPHORE_WIN32)
+    .into_element(),
+    // VK_KHR_external_semaphore_fd
+    VK_KHR_EXTERNAL_SEMAPHORE_FD.header_constants().into_element(),
+    Struct::typed(
+        "ImportSemaphoreFdInfo",
+        "IMPORT_SEMAPHORE_FD_INFO",
+        VK_KHR_EXTERNAL_SEMAPHORE_FD.ext_enum(0) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("semaphore", "VkSemaphore"),
+            Struct::member("flags", "VkSemaphoreImportFlagsKHR"),
+            Struct::member("handleType", "VkExternalSemaphoreHandleTypeFlagsKHR"),
+            Struct::member("fd", "core::ffi::c_int"),
+        ],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_SEMAPHORE_FD])
+    .into_element(),
+    Struct::typed(
+        "SemaphoreGetFdInfo",
+        "SEMAPHORE_GET_FD_INFO",
+        VK_KHR_EXTERNAL_SEMAPHORE_FD.ext_enum(1) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("semaphore", "VkSemaphore"),
+            Struct::member("handleType", "VkExternalSemaphoreHandleTypeFlagBitsKHR"),
+        ],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_SEMAPHORE_FD])
+    .into_element(),
+    Command::new(
+        "ImportSemaphoreFd",
+        &[
+            ("device", "VkDevice"),
+            ("pImportSemaphoreFdInfo", "*const VkImportSemaphoreFdInfoKHR"),
+        ],
+    )
+    .failable()
+    .extension(VK_KHR_EXTERNAL_SEMAPHORE_FD)
+    .into_element(),
+    Command::new(
+        "GetSemaphoreFd",
+        &[
+            ("device", "VkDevice"),
+            ("pGetFdInfo", "*const VkSemaphoreGetFdInfoKHR"),
+            ("pFd", "*mut core::ffi::c_int"),
+        ],
+    )
+    .failable()
+    .extension(VK_KHR_EXTERNAL_SEMAPHORE_FD)
+    .into_element(),
+    // VK_KHR_external_fence_win32
+    VK_KHR_EXTERNAL_FENCE_WIN32.header_constants().into_element(),
+    Struct::typed(
+        "ImportFenceWin32HandleInfo",
+        "IMPORT_FENCE_WIN32_HANDLE_INFO",
+        VK_KHR_EXTERNAL_FENCE_WIN32.ext_enum(0) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("fence", "VkFence"),
+            Struct::member("flags", "VkFenceImportFlagsKHR"),
+            Struct::member("handleType", "VkExternalFenceHandleTypeFlagsKHR"),
+            Struct::member("handle", "windows::Win32::Foundation::HANDLE"),
+            Struct::member("name", "windows::core::PCWSTR"),
+        ],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_FENCE_WIN32])
+    .into_element(),
+    Struct::typed(
+        "ExportFenceWin32HandleInfo",
+        "EXPORT_FENCE_WIN32_HANDLE_INFO",
+        VK_KHR_EXTERNAL_FENCE_WIN32.ext_enum(1) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("pAttributes", "*const windows::Win32::Security::SECURITY_ATTRIBUTES"),
+            Struct::member("dwAccess", "u32"),
+            Struct::member("name", "windows::core::PCWSTR"),
+        ],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_FENCE_WIN32])
+    .into_element(),
+    Struct::typed(
+        "FenceGetWin32HandleInfo",
+        "FENCE_GET_WIN32_HANDLE_INFO",
+        VK_KHR_EXTERNAL_FENCE_WIN32.ext_enum(2) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("fence", "VkFence"),
+            Struct::member("handleType", "VkExternalFenceHandleTypeFlagsKHR"),
+        ],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_FENCE_WIN32])
+    .into_element(),
+    Command::new(
+        "ImportFenceWin32Handle",
+        &[
+            ("device", "VkDevice"),
+            ("pImportFenceWin32HandleInfo", "*const VkImportFenceWin32HandleInfoKHR"),
+        ],
+    )
+    .failable()
+    .extension(VK_KHR_EXTERNAL_FENCE_WIN32)
+    .into_element(),
+    Command::new(
+        "GetFenceWin32Handle",
+        &[
+            ("device", "VkDevice"),
+            ("pGetWin32HandleInfo", "*const VkFenceGetWin32HandleInfoKHR"),
+            ("pHandle", "*mut windows::Win32::Foundation::HANDLE"),
+        ],
+    )
+    .failable()
+    .extension(VK_KHR_EXTERNAL_FENCE_WIN32)
+    .into_element(),
+    // VK_KHR_external_fence_fd
+    VK_KHR_EXTERNAL_FENCE_FD.header_constants().into_element(),
+    Struct::typed(
+        "ImportFenceFdInfo",
+        "IMPORT_FENCE_FD_INFO",
+        VK_KHR_EXTERNAL_FENCE_FD.ext_enum(0) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("fence", "VkFence"),
+            Struct::member("flags", "VkFenceImportFlagsKHR"),
+            Struct::member("handleType", "VkExternalFenceHandleTypeFlagsKHR"),
+            Struct::member("fd", "core::ffi::c_int"),
+        ],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_FENCE_FD])
+    .into_element(),
+    Struct::typed(
+        "FenceGetFdInfo",
+        "FENCE_GET_FD_INFO",
+        VK_KHR_EXTERNAL_FENCE_FD.ext_enum(1) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("fence", "VkFence"),
+            Struct::member("handleType", "VkExternalFenceHandleTypeFlagsKHR"),
+        ],
+    )
+    .extensions(&[VK_KHR_EXTERNAL_FENCE_FD])
+    .into_element(),
+    Command::new(
+        "ImportFenceFd",
+        &[
+            ("device", "VkDevice"),
+            ("pImportFenceFdInfo", "*const VkImportFenceFdInfoKHR"),
+        ],
+    )
+    .failable()
+    .extension(VK_KHR_EXTERNAL_FENCE_FD)
+    .into_element(),
+    Command::new(
+        "GetFenceFd",
+        &[
+            ("device", "VkDevice"),
+            ("pGetFdInfo", "*const VkFenceGetFdInfoKHR"),
+            ("pFd", "*mut core::ffi::c_int"),
+        ],
+    )
+    .failable()
+    .extension(VK_KHR_EXTERNAL_FENCE_FD)
     .into_element(),
 ];

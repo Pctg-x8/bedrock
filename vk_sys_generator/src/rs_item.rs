@@ -370,7 +370,6 @@ impl core::fmt::Display for ConstantSymbol<'_> {
 
 #[derive(Debug, Clone)]
 pub enum ConstantValue<'s> {
-    SignedLong(i64),
     UnsignedLong(u64),
     Signed(isize),
     SignedNewtyped { ctor: TypeSymbol<'s>, value: isize },
@@ -381,7 +380,6 @@ impl core::fmt::Display for ConstantValue<'_> {
     #[inline]
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::SignedLong(v) => write!(f, "{v}"),
             Self::UnsignedLong(v) => write!(f, "{v}"),
             Self::Signed(v) => write!(f, "{v}"),
             Self::SignedNewtyped { ctor, value } => write!(f, "{ctor}({value})"),
@@ -459,43 +457,22 @@ impl Struct<'_> {
         self.compilation_condition.emit_single_attr(w)?;
         if !self.derives.is_empty() {
             write!(w, "#[derive(")?;
-            let mut first = true;
             if self.derives.contains(StructDerives::DEBUG) {
-                if !first {
-                    w.write_all(b", ")?;
-                }
-                write!(w, "Debug")?;
-                first = false;
+                write!(w, "Debug,")?;
             }
             if self.derives.contains(StructDerives::CLONE) {
-                if !first {
-                    w.write_all(b", ")?;
-                }
-                write!(w, "Clone")?;
-                first = false;
+                write!(w, "Clone,")?;
             }
             if self.derives.contains(StructDerives::COPY) {
-                if !first {
-                    w.write_all(b", ")?;
-                }
-                write!(w, "Copy")?;
-                first = false;
+                write!(w, "Copy,")?;
             }
             if self.derives.contains(StructDerives::EQ) {
-                if !first {
-                    w.write_all(b", ")?;
-                }
-                write!(w, "PartialEq, Eq")?;
-                first = false;
+                write!(w, "PartialEq,Eq,")?;
             }
             if self.derives.contains(StructDerives::HASH) {
-                if !first {
-                    w.write_all(b", ")?;
-                }
-                write!(w, "Hash")?;
-                first = false;
+                write!(w, "Hash,")?;
             }
-            write!(w, ")] ")?;
+            write!(w, ")]")?;
         }
         write!(w, "#[rustfmt::skip]#[repr(C)]pub struct {}{{", self.name)?;
         for member in self.members.iter() {
