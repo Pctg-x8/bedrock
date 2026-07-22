@@ -148,6 +148,10 @@ fn main() -> std::io::Result<()> {
         s.emit(&mut generator);
     }
 
+    for x in COMMANDS {
+        x.emit(&mut generator);
+    }
+
     // chaotic requirement structure
     Struct::typed(
         "PhysicalDeviceIDPropertiesKHR",
