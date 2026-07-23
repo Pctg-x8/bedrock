@@ -616,9 +616,9 @@ impl<'b> BindImageMemoryInfo<'b> {
     }
 }
 #[cfg(feature = "VK_KHR_bind_memory2")]
-impl AsRef<brvk::VkBindIMageMemoryInfoKHR> for BindImageMemoryInfo<'_> {
+impl AsRef<brvk::VkBindImageMemoryInfoKHR> for BindImageMemoryInfo<'_> {
     #[inline(always)]
-    fn as_ref(&self) -> &brvk::VkBindIMageMemoryInfoKHR {
+    fn as_ref(&self) -> &brvk::VkBindImageMemoryInfoKHR {
         &self.0
     }
 }
