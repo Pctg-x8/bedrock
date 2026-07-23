@@ -673,74 +673,44 @@ pub const VK_MAX_GLOBAL_PRIORITY_SIZE: usize = 16;
 #[cfg(feature = "VK_KHR_depth_stencil_resolve")] #[rustfmt::skip] pub const VK_RESOLVE_MODE_NONE_KHR: VkResolveModeFlagBitsKHR = 0;
 #[cfg(feature = "Allow1_2APIs")] #[rustfmt::skip] pub const VK_RESOLVE_MODE_NONE: VkResolveModeFlagBitsKHR = 0;
 
-#[repr(transparent)]
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct VkResult(pub i32);
-#[rustfmt::skip]
-pub const VK_SUCCESS: VkResult = VkResult(0);
-#[rustfmt::skip]
-pub const VK_NOT_READY: VkResult = VkResult(1);
-#[rustfmt::skip]
-pub const VK_TIMEOUT: VkResult = VkResult(2);
-#[rustfmt::skip]
-pub const VK_EVENT_SET: VkResult = VkResult(3);
-#[rustfmt::skip]
-pub const VK_EVENT_RESET: VkResult = VkResult(4);
-#[rustfmt::skip]
-pub const VK_INCOMPLETE: VkResult = VkResult(5);
-#[rustfmt::skip]
-pub const VK_ERROR_OUT_OF_HOST_MEMORY: VkResult = VkResult(-1);
-#[rustfmt::skip]
-pub const VK_ERROR_OUT_OF_DEVICE_MEMORY: VkResult = VkResult(-2);
-#[rustfmt::skip]
-pub const VK_ERROR_INITIALIZATION_FAILED: VkResult = VkResult(-3);
-#[rustfmt::skip]
-pub const VK_ERROR_DEVICE_LOST: VkResult = VkResult(-4);
-#[rustfmt::skip]
-pub const VK_ERROR_MEMORY_MAP_FAILED: VkResult = VkResult(-5);
-#[rustfmt::skip]
-pub const VK_ERROR_LAYER_NOT_PRESENT: VkResult = VkResult(-6);
-#[rustfmt::skip]
-pub const VK_ERROR_EXTENSION_NOT_PRESENT: VkResult = VkResult(-7);
-#[rustfmt::skip]
-pub const VK_ERROR_FEATURE_NOT_PRESENT: VkResult = VkResult(-8);
-#[rustfmt::skip]
-pub const VK_ERROR_INCOMPATIBLE_DRIVER: VkResult = VkResult(-9);
-#[rustfmt::skip]
-pub const VK_ERROR_TOO_MANY_OBJECTS: VkResult = VkResult(-10);
-#[rustfmt::skip]
-pub const VK_ERROR_FORMAT_NOT_SUPPORTED: VkResult = VkResult(-11);
-#[rustfmt::skip]
-pub const VK_ERROR_FRAGMENTED_POOL: VkResult = VkResult(-12);
-#[rustfmt::skip]
-pub const VK_ERROR_UNKNOWN: VkResult = VkResult(-13);
+pub type VkResult = i32;
+#[rustfmt::skip] pub const VK_SUCCESS: VkResult = 0;
+#[rustfmt::skip] pub const VK_NOT_READY: VkResult = 1;
+#[rustfmt::skip] pub const VK_TIMEOUT: VkResult = 2;
+#[rustfmt::skip] pub const VK_EVENT_SET: VkResult = 3;
+#[rustfmt::skip] pub const VK_EVENT_RESET: VkResult = 4;
+#[rustfmt::skip] pub const VK_INCOMPLETE: VkResult = 5;
+#[rustfmt::skip] pub const VK_ERROR_OUT_OF_HOST_MEMORY: VkResult = -1;
+#[rustfmt::skip] pub const VK_ERROR_OUT_OF_DEVICE_MEMORY: VkResult = -2;
+#[rustfmt::skip] pub const VK_ERROR_INITIALIZATION_FAILED: VkResult = -3;
+#[rustfmt::skip] pub const VK_ERROR_DEVICE_LOST: VkResult = -4;
+#[rustfmt::skip] pub const VK_ERROR_MEMORY_MAP_FAILED: VkResult = -5;
+#[rustfmt::skip] pub const VK_ERROR_LAYER_NOT_PRESENT: VkResult = -6;
+#[rustfmt::skip] pub const VK_ERROR_EXTENSION_NOT_PRESENT: VkResult = -7;
+#[rustfmt::skip] pub const VK_ERROR_FEATURE_NOT_PRESENT: VkResult = -8;
+#[rustfmt::skip] pub const VK_ERROR_INCOMPATIBLE_DRIVER: VkResult = -9;
+#[rustfmt::skip] pub const VK_ERROR_TOO_MANY_OBJECTS: VkResult = -10;
+#[rustfmt::skip] pub const VK_ERROR_FORMAT_NOT_SUPPORTED: VkResult = -11;
+#[rustfmt::skip] pub const VK_ERROR_FRAGMENTED_POOL: VkResult = -12;
+#[rustfmt::skip] pub const VK_ERROR_UNKNOWN: VkResult = -13;
 #[cfg(feature = "VK_KHR_surface")]
-#[rustfmt::skip]
-pub const VK_ERROR_SURFACE_LOST_KHR: VkResult = VkResult(-1000000000);
+#[rustfmt::skip] pub const VK_ERROR_SURFACE_LOST_KHR: VkResult = -1000000000;
 #[cfg(feature = "VK_KHR_surface")]
-#[rustfmt::skip]
-pub const VK_ERROR_NATIVE_WINDOW_IN_USE_KHR: VkResult = VkResult(-1000000001);
+#[rustfmt::skip] pub const VK_ERROR_NATIVE_WINDOW_IN_USE_KHR: VkResult = -1000000001;
 #[cfg(feature = "VK_KHR_swapchain")]
-#[rustfmt::skip]
-pub const VK_SUBOPTIMAL_KHR: VkResult = VkResult(1000001003);
+#[rustfmt::skip] pub const VK_SUBOPTIMAL_KHR: VkResult = 1000001003;
 #[cfg(feature = "VK_KHR_swapchain")]
-#[rustfmt::skip]
-pub const VK_ERROR_OUT_OF_DATE_KHR: VkResult = VkResult(-1000001004);
+#[rustfmt::skip] pub const VK_ERROR_OUT_OF_DATE_KHR: VkResult = -1000001004;
 #[cfg(feature = "VK_KHR_display_swapchain")]
-#[rustfmt::skip]
-pub const VK_ERROR_INCOMPATIBLE_DISPLAY_KHR: VkResult = VkResult(-1000003001);
+#[rustfmt::skip] pub const VK_ERROR_INCOMPATIBLE_DISPLAY_KHR: VkResult = -1000003001;
 #[cfg(feature = "VK_KHR_external_memory")]
-#[rustfmt::skip]
-pub const VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR: VkResult = VkResult(-1000072003);
+#[rustfmt::skip] pub const VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR: VkResult = -1000072003;
 #[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_ERROR_INVALID_EXTERNAL_HANDLE: VkResult = VkResult(-1000072003);
+#[rustfmt::skip] pub const VK_ERROR_INVALID_EXTERNAL_HANDLE: VkResult = -1000072003;
 #[cfg(feature = "VK_KHR_maintenance1")]
-#[rustfmt::skip]
-pub const VK_ERROR_OUT_OF_POOL_MEMORY_KHR: VkResult = VkResult(-1000069000);
+#[rustfmt::skip] pub const VK_ERROR_OUT_OF_POOL_MEMORY_KHR: VkResult = -1000069000;
 #[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_ERROR_OUT_OF_POOL_MEMORY: VkResult = VkResult(-1000069000);
+#[rustfmt::skip] pub const VK_ERROR_OUT_OF_POOL_MEMORY: VkResult = -1000069000;
 
 #[rustfmt::skip]
 pub type VkStructureType = i32;
@@ -2407,13 +2377,13 @@ pub const VK_KHR_EXTERNAL_FENCE_FD_SPEC_VERSION: usize = 1;
 #[rustfmt::skip]pub const VK_DYNAMIC_STATE_STENCIL_WRITE_MASK:VkDynamicState=7;
 #[rustfmt::skip]pub const VK_DYNAMIC_STATE_VIEWPORT:VkDynamicState=0;
 #[cfg(feature = "VK_NV_clip_space_w_scaling")]#[rustfmt::skip]pub const VK_DYNAMIC_STATE_VIEWPORT_W_SCALING_NV:VkDynamicState=1000087000;
-#[cfg(feature = "Allow1_2APIs")]#[rustfmt::skip]pub const VK_ERROR_FRAGMENTATION:VkResult=VkResult(-1000161000);
-#[cfg(feature = "VK_EXT_descriptor_indexing")]#[rustfmt::skip]pub const VK_ERROR_FRAGMENTATION_EXT:VkResult=VkResult(-1000161000);
-#[cfg(feature = "VK_EXT_full_screen_exclusive")]#[rustfmt::skip]pub const VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT:VkResult=VkResult(-1000255000);
-#[cfg(feature = "Allow1_2APIs")]#[rustfmt::skip]pub const VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS:VkResult=VkResult(-1000257000);
-#[cfg(feature = "VK_KHR_buffer_device_address")]#[rustfmt::skip]pub const VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR:VkResult=VkResult(-1000257000);
-#[cfg(feature = "Allow1_4APIs")]#[rustfmt::skip]pub const VK_ERROR_NOT_PERMITTED_KHR:VkResult=VkResult(-1000174001);
-#[cfg(feature = "VK_KHR_global_priority")]#[rustfmt::skip]pub const VK_ERROR_NOT_PERMITTED_KHR_KHR:VkResult=VkResult(-1000174001);
+#[cfg(feature = "Allow1_2APIs")]#[rustfmt::skip]pub const VK_ERROR_FRAGMENTATION:VkResult=-1000161000;
+#[cfg(feature = "VK_EXT_descriptor_indexing")]#[rustfmt::skip]pub const VK_ERROR_FRAGMENTATION_EXT:VkResult=-1000161000;
+#[cfg(feature = "VK_EXT_full_screen_exclusive")]#[rustfmt::skip]pub const VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT:VkResult=-1000255000;
+#[cfg(feature = "Allow1_2APIs")]#[rustfmt::skip]pub const VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS:VkResult=-1000257000;
+#[cfg(feature = "VK_KHR_buffer_device_address")]#[rustfmt::skip]pub const VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR:VkResult=-1000257000;
+#[cfg(feature = "Allow1_4APIs")]#[rustfmt::skip]pub const VK_ERROR_NOT_PERMITTED_KHR:VkResult=-1000174001;
+#[cfg(feature = "VK_KHR_global_priority")]#[rustfmt::skip]pub const VK_ERROR_NOT_PERMITTED_KHR_KHR:VkResult=-1000174001;
 #[cfg(feature = "VK_IMG_filter_cubic")]#[rustfmt::skip]pub const VK_FILTER_CUBIC_IMG:VkFilter=1000015000;
 #[rustfmt::skip]pub const VK_FILTER_LINEAR:VkFilter=1;
 #[rustfmt::skip]pub const VK_FILTER_NEAREST:VkFilter=0;

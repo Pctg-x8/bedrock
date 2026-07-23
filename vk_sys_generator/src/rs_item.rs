@@ -368,21 +368,19 @@ impl core::fmt::Display for ConstantSymbol<'_> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub enum ConstantValue<'s> {
+#[derive(Debug, Clone, Copy)]
+pub enum ConstantValue {
     UnsignedLong(u64),
     Signed(isize),
-    SignedNewtyped { ctor: TypeSymbol<'s>, value: isize },
     Bits64(u64),
     Bits32(u32),
 }
-impl core::fmt::Display for ConstantValue<'_> {
+impl core::fmt::Display for ConstantValue {
     #[inline]
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::UnsignedLong(v) => write!(f, "{v}"),
             Self::Signed(v) => write!(f, "{v}"),
-            Self::SignedNewtyped { ctor, value } => write!(f, "{ctor}({value})"),
             // +2 for heading "0x"
             Self::Bits64(v) => write!(f, "{v:#018x}"),
             Self::Bits32(v) => write!(f, "{v:#010x}"),
@@ -394,7 +392,7 @@ pub struct Constant<'s> {
     pub compilation_condition: CompilationCondition<'s>,
     pub name: ConstantSymbol<'s>,
     pub ty: Type<'s>,
-    pub value: ConstantValue<'s>,
+    pub value: ConstantValue,
 }
 impl Constant<'_> {
     pub fn emit(&self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {

@@ -5171,9 +5171,7 @@ const COMMANDS: &[Command] = &[
 ];
 
 fn emit_result_type(w: &mut impl std::io::Write) -> std::io::Result<()> {
-    writeln!(w, "#[repr(transparent)]")?;
-    writeln!(w, "#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]")?;
-    writeln!(w, "pub struct VkResult(pub i32);")?;
+    writeln!(w, "pub type VkResult = i32;")?;
 
     // base defines
     emit_result_const(w, "VK_SUCCESS", 0, 0)?;

@@ -37,8 +37,7 @@ pub fn emit_result_const(w: &mut impl std::io::Write, name: &str, ext_number: u3
         100_0000_000 + (ext_number - 1) * 1_000 + value
     };
 
-    writeln!(w, "#[rustfmt::skip]")?;
-    writeln!(w, "pub const {name}: VkResult = VkResult({value});")
+    writeln!(w, "#[rustfmt::skip] pub const {name}: VkResult = {value};")
 }
 
 #[allow(clippy::inconsistent_digit_grouping)]
@@ -54,8 +53,7 @@ pub fn emit_result_err_const(
         100_0000_000 + (ext_number - 1) * 1_000 + value
     };
 
-    writeln!(w, "#[rustfmt::skip]")?;
-    writeln!(w, "pub const {name}: VkResult = VkResult(-{value});")
+    writeln!(w, "#[rustfmt::skip] pub const {name}: VkResult = -{value};")
 }
 
 pub struct TypeAlias {
@@ -77,7 +75,6 @@ pub struct FuncPointer {
     name: &'static str,
     args: &'static [(&'static str, &'static str)],
     return_ty: Option<&'static str>,
-    extension_old: Option<(&'static str, &'static str)>,
     extension: Option<&'static Extension<'static>>,
 }
 impl FuncPointer {
@@ -86,19 +83,12 @@ impl FuncPointer {
             name,
             args,
             return_ty: None,
-            extension_old: None,
             extension: None,
         }
     }
 
     pub const fn returns(mut self, t: &'static str) -> Self {
         self.return_ty = Some(t);
-        self
-    }
-
-    #[deprecated]
-    pub const fn extension_old(mut self, tag: &'static str, name: &'static str) -> Self {
-        self.extension_old = Some((tag, name));
         self
     }
 
@@ -113,10 +103,6 @@ impl FuncPointer {
 
     pub fn emit(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
         if let Some(Extension { tag, name, .. }) = self.extension {
-            writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
-            writeln!(w, "#[rustfmt::skip]")?;
-            write!(w, "pub type PFN_vk{}{tag} = extern \"system\" fn(", self.name)?;
-        } else if let Some((tag, name)) = self.extension_old {
             writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
             writeln!(w, "#[rustfmt::skip]")?;
             write!(w, "pub type PFN_vk{}{tag} = extern \"system\" fn(", self.name)?;
@@ -250,11 +236,6 @@ impl Enum {
                 suffix: None,
             }
         };
-        let is_newtyped = type_sym
-            == TypeSymbol {
-                stem: "Result",
-                suffix: None,
-            };
         let ty_promoted = self
             .promoted
             .or(self.extension.map(|x| x.promoted_since).filter(|x| !x.is_empty()));
@@ -297,14 +278,7 @@ impl Enum {
                 .or(member.extension.map(|x| x.promoted_since).filter(|x| !x.is_empty()));
 
             let ty = Type::Defined(type_sym.clone());
-            let value = if is_newtyped {
-                ConstantValue::SignedNewtyped {
-                    ctor: type_sym.clone(),
-                    value: member.value,
-                }
-            } else {
-                ConstantValue::Signed(member.value)
-            };
+            let value = ConstantValue::Signed(member.value);
 
             if self.extension.is_some() || member.extension.is_some() {
                 // use ext2
@@ -334,7 +308,7 @@ impl Enum {
                         suffix: member.extension.map(|x| x.tag).or(self.extension.map(|x| x.tag)),
                     },
                     ty: ty.clone(),
-                    value: value.clone(),
+                    value,
                 });
             } else {
                 // use old(deprecated) extension specifier
@@ -357,7 +331,7 @@ impl Enum {
                         suffix: member.extension_old.map(|x| x.1).or(self.extension_old.map(|x| x.1)),
                     },
                     ty: ty.clone(),
-                    value: value.clone(),
+                    value,
                 });
             }
 
@@ -662,7 +636,7 @@ impl Bitmask {
                     suffix: e.extension.map(|x| x.tag).or(e.extension_old.map(|(tag, _)| tag)),
                 },
                 ty: ty.clone(),
-                value: value.clone(),
+                value,
             });
 
             if let Some(p) = e.promoted.or_else(|| e.extension?.promoted_since()) {
@@ -1545,25 +1519,6 @@ impl Command {
                 return_type: self.return_type.map(Type::Raw),
             });
         }
-    }
-}
-
-pub struct FunctionStubArgsIterator<'s> {
-    require_target_command_buffer: bool,
-    args: &'s [(&'s str, &'s str)],
-    args_iter_ptr: usize,
-}
-impl<'s> Iterator for FunctionStubArgsIterator<'s> {
-    type Item = (&'s str, Type<'s>);
-
-    fn next(&mut self) -> Option<Self::Item> {
-        if core::mem::replace(&mut self.require_target_command_buffer, false) {
-            return Some(("commandBuffer", Type::Raw("VkCommandBuffer")));
-        }
-
-        let (n, t) = self.args.get(self.args_iter_ptr)?;
-        self.args_iter_ptr += 1;
-        Some((n, Type::Raw(t)))
     }
 }
 
