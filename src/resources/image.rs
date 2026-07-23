@@ -801,6 +801,7 @@ impl AspectMask {
 }
 
 #[repr(transparent)]
+#[derive(Debug, Clone)]
 pub struct ImageSubresource(pub brvk::VkImageSubresource);
 impl ImageSubresource {
     pub const fn new(aspect_mask: AspectMask, mip_level: u32, array_layer: u32) -> Self {
@@ -813,6 +814,7 @@ impl ImageSubresource {
 }
 
 #[repr(transparent)]
+#[derive(Debug, Clone)]
 pub struct ImageSubresourceLayers(pub brvk::VkImageSubresourceLayers);
 impl ImageSubresourceLayers {
     pub const fn new(aspect_mask: AspectMask, mip_level: u32, layer_range: core::ops::Range<u32>) -> Self {
@@ -826,6 +828,7 @@ impl ImageSubresourceLayers {
 }
 
 #[repr(transparent)]
+#[derive(Debug, Clone)]
 pub struct ImageSubresourceRange(pub brvk::VkImageSubresourceRange);
 impl ImageSubresourceRange {
     /// Constructs a new [`ImageSubresourceRange`] data
