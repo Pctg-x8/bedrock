@@ -812,6 +812,7 @@ impl<'d> SpecializationInfo<'d> {
 }
 
 #[repr(transparent)]
+#[derive(Debug, Clone)]
 pub struct VertexInputBindingDescription(pub brvk::VkVertexInputBindingDescription);
 impl VertexInputBindingDescription {
     /// Consumed per vertex with stride
@@ -844,6 +845,7 @@ impl VertexInputBindingDescription {
 }
 
 #[repr(transparent)]
+#[derive(Debug, Clone)]
 pub struct VertexInputAttributeDescription(pub brvk::VkVertexInputAttributeDescription);
 
 /// Structure specifying parameters of a newly created pipeline vertex input state
