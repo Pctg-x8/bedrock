@@ -1370,13 +1370,7 @@ pub trait DeviceGetMemoryRequirements2Extension: Device {
         info: &crate::BufferMemoryRequirementsInfo2<'_, impl crate::VkHandle<Handle = brvk::VkBuffer>>,
         sink: &mut core::mem::MaybeUninit<brvk::VkMemoryRequirements2KHR>,
     ) {
-        unsafe {
-            self.get_buffer_memory_requirements_2_khr_fn().0(
-                self.native_ptr(),
-                core::ptr::from_ref(info).cast(),
-                sink.as_mut_ptr(),
-            )
-        }
+        unsafe { self.get_buffer_memory_requirements_2_khr_fn().0(self.native_ptr(), info.as_ref(), sink.as_mut_ptr()) }
     }
 
     /// Returns the memory requirements for specified Vulkan object.
@@ -1387,13 +1381,7 @@ pub trait DeviceGetMemoryRequirements2Extension: Device {
         info: &crate::ImageMemoryRequirementsInfo2<'_, impl crate::VkHandle<Handle = brvk::VkImage>>,
         sink: &mut core::mem::MaybeUninit<brvk::VkMemoryRequirements2KHR>,
     ) {
-        unsafe {
-            self.get_image_memory_requirements_2_khr_fn().0(
-                self.native_ptr(),
-                core::ptr::from_ref(info).cast(),
-                sink.as_mut_ptr(),
-            )
-        }
+        unsafe { self.get_image_memory_requirements_2_khr_fn().0(self.native_ptr(), info.as_ref(), sink.as_mut_ptr()) }
     }
 
     /// Query a number of memory requirements for a sparse image.
