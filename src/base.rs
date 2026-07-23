@@ -2163,6 +2163,7 @@ impl PhysicalDeviceMemoryProperties {
 }
 
 #[repr(transparent)]
+#[derive(Debug, Clone)]
 pub struct MemoryType(brvk::VkMemoryType);
 impl MemoryType {
     pub const fn property_flags(&self) -> MemoryPropertyFlags {
@@ -2175,6 +2176,7 @@ impl MemoryType {
 }
 
 #[repr(transparent)]
+#[derive(Debug, Clone)]
 pub struct MemoryHeap(brvk::VkMemoryHeap);
 impl MemoryHeap {
     pub const fn flags(&self) -> MemoryHeapFlags {
