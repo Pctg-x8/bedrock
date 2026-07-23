@@ -1067,19 +1067,10 @@ pub type PFN_vkFreeFunction = extern "system" fn(pUserData: *mut core::ffi::c_vo
 
 #[rustfmt::skip]
 pub type PFN_vkVoidFunction = extern "system" fn();
-#[cfg(any(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]#[rustfmt::skip]pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR:VkStructureType=1000071004;
-#[cfg(any(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]#[derive(Debug,Clone,)]#[rustfmt::skip]#[repr(C)]pub struct VkPhysicalDeviceIDPropertiesKHR{pub sType:VkStructureType,pub pNext:*mut core::ffi::c_void,pub deviceUUID:[u8; VK_UUID_SIZE],pub driverUUID:[u8; VK_UUID_SIZE],pub deviceLUID:[u8; VK_LUID_SIZE_KHR],pub deviceNodeMask:u32,pub deviceLUIDValid:VkBool32,}
-#[cfg(any(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]#[rustfmt::skip]unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceIDPropertiesKHR{#[inline(always)]fn as_generic(&self)->&crate::GenericVulkanSinkStructure{unsafe{core::mem::transmute::<&Self,&crate::GenericVulkanSinkStructure>(self)}}#[inline(always)]fn as_generic_mut(&mut self)->&mut crate::GenericVulkanSinkStructure{unsafe{core::mem::transmute::<&mut Self, &mut crate::GenericVulkanSinkStructure>(self)}}}
-#[cfg(any(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]#[rustfmt::skip]impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceIDPropertiesKHR{const TYPE: VkStructureType=VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR;}
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub type VkPhysicalDeviceIDProperties = VkPhysicalDeviceIDPropertiesKHR;
+
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR;
-#[cfg(feature = "VK_KHR_variable_pointers")]
-#[rustfmt::skip]
-pub type VkPhysicalDeviceVariablePointerFeaturesKHR = VkPhysicalDeviceVariablePointersFeaturesKHR;
 #[cfg(feature = "VK_KHR_variable_pointers")]
 #[rustfmt::skip]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTER_FEATURES_KHR: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES_KHR;
@@ -2905,6 +2896,7 @@ pub const VK_KHR_EXTERNAL_FENCE_FD_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_EXT_host_image_copy")]#[rustfmt::skip]pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_FEATURES_EXT:VkStructureType=1000270000;
 #[cfg(feature = "Allow1_4APIs")]#[rustfmt::skip]pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_PROPERTIES:VkStructureType=1000270001;
 #[cfg(feature = "VK_EXT_host_image_copy")]#[rustfmt::skip]pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_PROPERTIES_EXT:VkStructureType=1000270001;
+#[cfg(any(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]#[rustfmt::skip]pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR:VkStructureType=1000071004;
 #[cfg(feature = "VK_EXT_image_drm_format_modifier")]#[rustfmt::skip]pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT:VkStructureType=1000158002;
 #[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2:VkStructureType=1000059004;
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]#[rustfmt::skip]pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2_KHR:VkStructureType=1000059004;
@@ -4673,6 +4665,10 @@ pub const VK_KHR_EXTERNAL_FENCE_FD_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_EXT_host_image_copy")]#[derive(Debug,Clone,)]#[rustfmt::skip]#[repr(C)]pub struct VkPhysicalDeviceHostImageCopyProperitesEXT{pub sType:VkStructureType,pub pNext:*mut core::ffi::c_void,pub copySrcLayoutCount:u32,pub pCopySrcLayouts:*mut VkImageLayout,pub copyDstLayoutCount:u32,pub pCopyDstLayouts:*mut VkImageLayout,pub optimalTilingLayoutUUID:[u8; VK_UUID_SIZE],pub identicalMemoryTypeRequirements:VkBool32,}
 #[cfg(feature = "VK_EXT_host_image_copy")]#[rustfmt::skip]unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceHostImageCopyProperitesEXT{#[inline(always)]fn as_generic(&self)->&crate::GenericVulkanSinkStructure{unsafe{core::mem::transmute::<&Self,&crate::GenericVulkanSinkStructure>(self)}}#[inline(always)]fn as_generic_mut(&mut self)->&mut crate::GenericVulkanSinkStructure{unsafe{core::mem::transmute::<&mut Self, &mut crate::GenericVulkanSinkStructure>(self)}}}
 #[cfg(feature = "VK_EXT_host_image_copy")]#[rustfmt::skip]impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceHostImageCopyProperitesEXT{const TYPE: VkStructureType=VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_PROPERTIES_EXT;}
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub type VkPhysicalDeviceIDProperties=VkPhysicalDeviceIDPropertiesKHR;
+#[cfg(any(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]#[derive(Debug,Clone,)]#[rustfmt::skip]#[repr(C)]pub struct VkPhysicalDeviceIDPropertiesKHR{pub sType:VkStructureType,pub pNext:*mut core::ffi::c_void,pub deviceUUID:[u8; VK_UUID_SIZE],pub driverUUID:[u8; VK_UUID_SIZE],pub deviceLUID:[u8; VK_LUID_SIZE_KHR],pub deviceNodeMask:u32,pub deviceLUIDValid:VkBool32,}
+#[cfg(any(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]#[rustfmt::skip]unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceIDPropertiesKHR{#[inline(always)]fn as_generic(&self)->&crate::GenericVulkanSinkStructure{unsafe{core::mem::transmute::<&Self,&crate::GenericVulkanSinkStructure>(self)}}#[inline(always)]fn as_generic_mut(&mut self)->&mut crate::GenericVulkanSinkStructure{unsafe{core::mem::transmute::<&mut Self, &mut crate::GenericVulkanSinkStructure>(self)}}}
+#[cfg(any(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]#[rustfmt::skip]impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceIDPropertiesKHR{const TYPE: VkStructureType=VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR;}
 #[cfg(feature = "VK_EXT_image_drm_format_modifier")]#[derive(Debug,Clone,)]#[rustfmt::skip]#[repr(C)]pub struct VkPhysicalDeviceImageDrmFormatModifierInfoEXT{pub sType:VkStructureType,pub pNext:*const core::ffi::c_void,pub drmFormatModifer:u64,pub sharingMode:VkSharingMode,pub queueFamilyIndexCount:u32,pub pQueueFamilyIndices:*const u32,}
 #[cfg(feature = "VK_EXT_image_drm_format_modifier")]#[rustfmt::skip]unsafe impl crate::VulkanStructure for VkPhysicalDeviceImageDrmFormatModifierInfoEXT{#[inline(always)]fn as_generic(&self)->&crate::GenericVulkanStructure{unsafe{core::mem::transmute::<&Self,&crate::GenericVulkanStructure>(self)}}#[inline(always)]fn as_generic_mut(&mut self)->&mut crate::GenericVulkanStructure{unsafe{core::mem::transmute::<&mut Self, &mut crate::GenericVulkanStructure>(self)}}}
 #[cfg(feature = "VK_EXT_image_drm_format_modifier")]#[rustfmt::skip]impl crate::TypedVulkanStructure for VkPhysicalDeviceImageDrmFormatModifierInfoEXT{const TYPE: VkStructureType=VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT;}
@@ -4865,6 +4861,7 @@ pub const VK_KHR_EXTERNAL_FENCE_FD_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_KHR_timeline_semaphore")]#[rustfmt::skip]unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceTimelineSemaphorePropertiesKHR{#[inline(always)]fn as_generic(&self)->&crate::GenericVulkanSinkStructure{unsafe{core::mem::transmute::<&Self,&crate::GenericVulkanSinkStructure>(self)}}#[inline(always)]fn as_generic_mut(&mut self)->&mut crate::GenericVulkanSinkStructure{unsafe{core::mem::transmute::<&mut Self, &mut crate::GenericVulkanSinkStructure>(self)}}}
 #[cfg(feature = "VK_KHR_timeline_semaphore")]#[rustfmt::skip]impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceTimelineSemaphorePropertiesKHR{const TYPE: VkStructureType=VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES_KHR;}
 #[rustfmt::skip]pub type VkPhysicalDeviceType=i32;
+#[cfg(feature = "VK_KHR_variable_pointers")]#[rustfmt::skip]pub type VkPhysicalDeviceVariablePointerFeaturesKHR=VkPhysicalDeviceVariablePointersFeaturesKHR;
 #[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub type VkPhysicalDeviceVariablePointersFeatures=VkPhysicalDeviceVariablePointersFeaturesKHR;
 #[cfg(feature = "VK_KHR_variable_pointers")]#[derive(Debug,Clone,)]#[rustfmt::skip]#[repr(C)]pub struct VkPhysicalDeviceVariablePointersFeaturesKHR{pub sType:VkStructureType,pub pNext:*mut core::ffi::c_void,pub variablePointersStorageBuffer:VkBool32,pub variablePointers:VkBool32,}
 #[cfg(feature = "VK_KHR_variable_pointers")]#[rustfmt::skip]unsafe impl crate::VulkanStructure for VkPhysicalDeviceVariablePointersFeaturesKHR{#[inline(always)]fn as_generic(&self)->&crate::GenericVulkanStructure{unsafe{core::mem::transmute::<&Self,&crate::GenericVulkanStructure>(self)}}#[inline(always)]fn as_generic_mut(&mut self)->&mut crate::GenericVulkanStructure{unsafe{core::mem::transmute::<&mut Self, &mut crate::GenericVulkanStructure>(self)}}}

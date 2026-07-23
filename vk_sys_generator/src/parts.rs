@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 use crate::rs_item::{
     CompilationCondition, Constant, ConstantSymbol, ConstantValue, FeatureName, FnSymbol, FunctionPtrNewtype,
@@ -1152,13 +1152,14 @@ impl Struct {
         unimplemented!();
     }
 
-    pub fn emit_extra_cfg(&self, w: &mut impl std::io::Write, cfg: &str) -> std::io::Result<()> {
+    pub fn emit_extra_cfg(&self, emitter: &mut (impl RustCodeEmitter + ?Sized), cfg: CompilationCondition<'static>) {
         assert!(
             self.extensions_old.is_empty() && self.extensions.is_empty(),
             "struct def has some extensions"
         );
         assert!(self.promoted.is_none());
         // no extensions: simple define
+
         let mut derives = self.derives();
         let mut typed_vulkan_structure_impl = None;
         let mut typed_vulkan_sink_structure_impl = None;
@@ -1169,15 +1170,12 @@ impl Struct {
                 suffix: None,
             };
 
-            Constant {
-                compilation_condition: CompilationCondition::Raw(cfg),
+            emitter.emit_const(Constant {
+                compilation_condition: cfg.clone(),
                 name: st_const_sym.clone(),
                 ty: Type::Raw("VkStructureType"),
                 value: ConstantValue::UnsignedLong(v as _),
-            }
-            .emit(w)?;
-            w.write_all(b"\n")?;
-
+            });
             if u.is_source() {
                 derives |= StructDerives::VULKAN_STRUCTURE;
                 typed_vulkan_structure_impl = Some(StructTypedVulkanStructureImpl {
@@ -1192,8 +1190,8 @@ impl Struct {
             }
         }
 
-        crate::rs_item::Struct {
-            compilation_condition: CompilationCondition::Raw(cfg),
+        emitter.emit_struct(crate::rs_item::Struct {
+            compilation_condition: cfg,
             name: TypeSymbol {
                 stem: self.name,
                 suffix: None,
@@ -1203,10 +1201,7 @@ impl Struct {
             typed_vulkan_structure_impl,
             typed_vulkan_sink_structure_impl,
             default: StructDefault::None,
-        }
-        .emit(w)?;
-
-        Ok(())
+        });
     }
 }
 

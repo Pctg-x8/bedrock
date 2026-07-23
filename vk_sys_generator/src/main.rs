@@ -8,8 +8,8 @@ use parts::{
 use crate::{
     extensions::VK_KHR_SURFACE,
     rs_item::{
-        CompilationCondition, Constant, ConstantSymbol, FnSymbol, FunctionPtrNewtype, FunctionStub, RustCodeEmitter,
-        TypeSymbol,
+        CompilationCondition, Constant, ConstantSymbol, FeatureName, FnSymbol, FunctionPtrNewtype, FunctionStub,
+        RustCodeEmitter, TypeSymbol,
     },
     v1_1::{VK_KHR_BIND_MEMORY_2, VK_KHR_DEVICE_GROUP},
     v1_4::VK_KHR_MAINTENANCE_5,
@@ -168,21 +168,56 @@ fn main() -> std::io::Result<()> {
             ]
         },
     )
-    .emit_extra_cfg(&mut o, "any(feature = \"VK_KHR_external_fence_capabilities\", feature = \"VK_KHR_external_memory_capabilities\", feature = \"VK_KHR_external_semaphore_capabilities\")")?;
+    .emit_extra_cfg(
+        &mut generator,
+        CompilationCondition::any([
+            CompilationCondition::Feature(FeatureName::VulkanExt {
+                tag: "KHR",
+                name: "external_fence_capabilities",
+            }),
+            CompilationCondition::Feature(FeatureName::VulkanExt {
+                tag: "KHR",
+                name: "external_memory_capabilities",
+            }),
+            CompilationCondition::Feature(FeatureName::VulkanExt {
+                tag: "KHR",
+                name: "external_semaphore_capabilities",
+            }),
+        ]),
+    );
+    generator.emit_type_alias(rs_item::TypeAlias {
+        compilation_condition: CompilationCondition::Feature(FeatureName::AllowApiVersion("1_1")),
+        target_name: TypeSymbol {
+            stem: "PhysicalDeviceIDProperties",
+            suffix: None,
+        },
+        source_name: rs_item::Type::Defined(TypeSymbol {
+            stem: "PhysicalDeviceIDProperties",
+            suffix: Some("KHR"),
+        }),
+    });
+    // TODO: const aliasing(そもそもこれ普通にpromoteできないか？)
     o.write_all(b"\n")?;
-    o.write_all(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
-    o.write_all(b"#[rustfmt::skip]\n")?;
-    o.write_all(b"pub type VkPhysicalDeviceIDProperties = VkPhysicalDeviceIDPropertiesKHR;\n")?;
     o.write_all(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
     o.write_all(b"#[rustfmt::skip]\n")?;
     o.write_all(b"pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR;\n")?;
 
     // struct aliasing
-    o.write_all(b"#[cfg(feature = \"VK_KHR_variable_pointers\")]\n")?;
-    o.write_all(b"#[rustfmt::skip]\n")?;
-    o.write_all(
-        b"pub type VkPhysicalDeviceVariablePointerFeaturesKHR = VkPhysicalDeviceVariablePointersFeaturesKHR;\n",
-    )?;
+    generator.emit_type_alias(rs_item::TypeAlias {
+        compilation_condition: CompilationCondition::Feature(FeatureName::VulkanExt {
+            tag: "KHR",
+            name: "variable_pointers",
+        }),
+        target_name: TypeSymbol {
+            stem: "PhysicalDeviceVariablePointerFeatures",
+            suffix: Some("KHR"),
+        },
+        source_name: rs_item::Type::Defined(TypeSymbol {
+            stem: "PhysicalDeviceVariablePointersFeatures",
+            suffix: Some("KHR"),
+        }),
+    });
+    // TODO: const aliasing
     o.write_all(b"#[cfg(feature = \"VK_KHR_variable_pointers\")]\n")?;
     o.write_all(b"#[rustfmt::skip]\n")?;
     o.write_all(b"pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTER_FEATURES_KHR: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES_KHR;\n")?;

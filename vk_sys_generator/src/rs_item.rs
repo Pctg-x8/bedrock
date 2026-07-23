@@ -4,7 +4,6 @@ use bitflags::bitflags;
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub enum FeatureName<'s> {
-    Raw(&'s str),
     VulkanExt { tag: &'s str, name: &'s str },
     AllowApiVersion(&'s str),
 }
@@ -12,7 +11,6 @@ impl core::fmt::Display for FeatureName<'_> {
     #[inline]
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Raw(x) => f.write_str(x),
             Self::VulkanExt { tag, name } => write!(f, "VK_{tag}_{name}"),
             Self::AllowApiVersion(v) => write!(f, "Allow{v}APIs"),
         }
@@ -22,8 +20,6 @@ impl core::fmt::Display for FeatureName<'_> {
 #[derive(Debug, Clone, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub enum CompilationCondition<'s> {
     Empty,
-    #[deprecated = "原則使わない(available_conditionsの仕組みは将来的に廃止する)"]
-    Raw(&'s str),
     Feature(FeatureName<'s>),
     All(BTreeSet<CompilationCondition<'s>>),
     Any(BTreeSet<CompilationCondition<'s>>),
@@ -32,7 +28,6 @@ impl CompilationCondition<'_> {
     fn emit_content(&self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {
         match self {
             Self::Empty => Ok(()),
-            Self::Raw(s) => w.write_all(s.as_bytes()),
             Self::Feature(f) => write!(w, "feature = \"{f}\""),
             Self::All(xs) => {
                 w.write_all(b"all(")?;

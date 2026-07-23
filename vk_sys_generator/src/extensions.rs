@@ -1,6 +1,6 @@
 use crate::{
     parts::*,
-    v1_1::{VK_KHR_DEVICE_GROUP, VK_KHR_EXTERNAL_MEMORY},
+    v1_1::{VK_KHR_DEVICE_GROUP, VK_KHR_EXTERNAL_MEMORY, VK_KHR_EXTERNAL_MEMORY_CAPABILITIES},
     v1_3::VK_KHR_FORMAT_FEATURE_FLAGS_2,
     vk_ext_enum,
 };
@@ -2897,15 +2897,14 @@ pub const ELEMENTS: &[Element] = &[
     // VK_AMD_draw_indirect_count
     Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_AMD_DRAW_INDIRECT_COUNT)),
     // VK_EXT_external_memory_dma_buf
-    Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_EXT_EXTERNAL_MEMORY_DMA_BUF)),
-    Element::Bitmask(
-        Bitmask::extending(
-            "ExternalMemoryHandleTypeFlagBits",
-            "EXTERNAL_MEMORY_HANDLE_TYPE",
-            &[Bitmask::entry("DMA_BUF", 9).extension(VK_EXT_EXTERNAL_MEMORY_DMA_BUF)],
-        )
-        .extension_old("KHR", "external_memory_capabilities"),
-    ),
+    VK_EXT_EXTERNAL_MEMORY_DMA_BUF.header_constants().into_element(),
+    Bitmask::extending(
+        "ExternalMemoryHandleTypeFlagBits",
+        "EXTERNAL_MEMORY_HANDLE_TYPE",
+        &[Bitmask::entry("DMA_BUF", 9).extension(VK_EXT_EXTERNAL_MEMORY_DMA_BUF)],
+    )
+    .extension(VK_KHR_EXTERNAL_MEMORY_CAPABILITIES)
+    .into_element(),
     // VK_IMG_filter_cubic
     Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_IMG_FILTER_CUBIC)),
     Element::Enum(Enum::extending(
