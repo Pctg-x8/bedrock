@@ -411,6 +411,13 @@ impl<'b> BindBufferMemoryInfo<'b> {
         self.0
     }
 }
+#[cfg(feature = "VK_KHR_bind_memory2")]
+impl AsRef<brvk::VkBindBufferMemoryInfoKHR> for BindBufferMemoryInfo<'_> {
+    #[inline(always)]
+    fn as_ref(&self) -> &brvk::VkBindBufferMemoryInfoKHR {
+        &self.0
+    }
+}
 
 /// Bitmask specifying allowed usage of a buffer
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]

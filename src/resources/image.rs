@@ -615,6 +615,13 @@ impl<'b> BindImageMemoryInfo<'b> {
         self.0
     }
 }
+#[cfg(feature = "VK_KHR_bind_memory2")]
+impl AsRef<brvk::VkBindIMageMemoryInfoKHR> for BindImageMemoryInfo<'_> {
+    #[inline(always)]
+    fn as_ref(&self) -> &brvk::VkBindIMageMemoryInfoKHR {
+        &self.0
+    }
+}
 
 /// Layouts of image and image subresources
 #[repr(u32)]
