@@ -6885,8 +6885,8 @@ pub const VK_KHR_EXTERNAL_FENCE_FD_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_KHR_synchronization2")]#[rustfmt::skip]unsafe impl crate::PFN for PFN_vkCmdWriteTimestamp2KHR{const NAME_CSTR:&'static core::ffi::CStr=c"vkCmdWriteTimestamp2KHR";#[inline(always)]unsafe fn from_void_fn(p:PFN_vkVoidFunction)->Self{unsafe{core::mem::transmute::<PFN_vkVoidFunction,Self>(p)}}}
 
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
-#[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
-#[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]
+#[cfg_attr(all(not(feature = "DynamicLoaded"), feature = "Implements", not(windows)), link(name = "vulkan"))]
+#[cfg_attr(all(not(feature = "DynamicLoaded"), feature = "Implements", windows), link(name = "vulkan-1"))]
 #[rustfmt::skip]
 unsafe extern "system" {
     #[cfg(feature = "Allow1_1APIs")]pub fn vkAcquireNextImage2(device:VkDevice,pAcquireInfo:*const VkAcquireNextImageInfoKHR,pImageIndex:*mut u32)->VkResult;

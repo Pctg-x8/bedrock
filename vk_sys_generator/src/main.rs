@@ -318,8 +318,8 @@ impl CodeGenerator {
 
         w.write_all(b"\n")?;
         w.write_all(b"#[cfg(all(feature = \"Implements\", not(feature = \"DynamicLoaded\")))]\n")?;
-        w.write_all(b"#[cfg_attr(all(not(windows), not(target_os = \"macos\"), not(feature = \"DynamicLoaded\")), link(name = \"vulkan\"))]\n")?;
-        w.write_all(b"#[cfg_attr(all(windows, not(feature = \"DynamicLoaded\"), feature = \"Implements\"), link(name = \"vulkan-1\"))]\n")?;
+        w.write_all(b"#[cfg_attr(all(not(feature = \"DynamicLoaded\"), feature = \"Implements\", not(windows)), link(name = \"vulkan\"))]\n")?;
+        w.write_all(b"#[cfg_attr(all(not(feature = \"DynamicLoaded\"), feature = \"Implements\", windows), link(name = \"vulkan-1\"))]\n")?;
         w.write_all(b"#[rustfmt::skip]\n")?;
         w.write_all(b"unsafe extern \"system\" {\n")?;
         let mut sorted = self.fntable.into_values().collect::<Vec<_>>();
