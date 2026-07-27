@@ -2,18 +2,18 @@ use std::{collections::HashMap, io::Write};
 
 use parts::{
     Bitmask, Command, Enum, ExtensionHeaderConstants, FuncPointer, Object, Struct, StructUsage, TypeAlias, Union,
-    emit_c_enum_type, emit_const, emit_result_const, emit_result_err_const,
+    emit_c_enum_type, emit_const,
 };
 
 use crate::{
     extensions::{VK_KHR_DISPLAY_SWAPCHAIN, VK_KHR_SURFACE, VK_KHR_SWAPCHAIN},
     parts::EnumType,
     rs_item::{
-        CompilationCondition, Constant, ConstantSymbol, ConstantValue, FeatureName, FnSymbol, FunctionPtrNewtype,
-        FunctionStub, RustCodeEmitter, TypeSymbol,
+        CompilationCondition, Constant, ConstantSymbol, FeatureName, FnSymbol, FunctionPtrNewtype, FunctionStub,
+        RustCodeEmitter, TypeSymbol,
     },
     v1_1::{
-        VK_KHR_BIND_MEMORY_2, VK_KHR_DEVICE_GROUP, VK_KHR_EXTERNAL_MEMORY, VK_KHR_MAINTENANCE_1, VK_KHR_MAINTENANCE_2,
+        VK_KHR_BIND_MEMORY_2, VK_KHR_DEVICE_GROUP, VK_KHR_EXTERNAL_MEMORY, VK_KHR_MAINTENANCE_1,
         VK_KHR_SAMPLER_YCBCR_CONVERSION,
     },
     v1_4::VK_KHR_MAINTENANCE_5,
@@ -505,7 +505,6 @@ pub static ATTACHMENT_STORE_OP: EnumType = EnumType::new("AttachmentStoreOp", "A
 pub static BLEND_FACTOR: EnumType = EnumType::new("BlendFactor", "BLEND_FACTOR");
 pub static BLEND_OP: EnumType = EnumType::new("BlendOp", "BLEND_OP");
 pub static BORDER_COLOR: EnumType = EnumType::new("BorderColor", "BORDER_COLOR");
-pub static COLOR_SPACE: EnumType = EnumType::new("ColorSpace", "COLOR_SPACE").extension(&VK_KHR_SURFACE);
 pub static COMMAND_BUFFER_LEVEL: EnumType = EnumType::new("CommandBufferLevel", "COMMAND_BUFFER_LEVEL");
 pub static COMPARE_OP: EnumType = EnumType::new("CompareOp", "COMPARE_OP");
 pub static COMPONENT_SWIZZLE: EnumType = EnumType::new("ComponentSwizzle", "COMPONENT_SWIZZLE");
@@ -522,10 +521,7 @@ pub static LOGIC_OP: EnumType = EnumType::new("LogicOp", "LOGIC_OP");
 pub static INTERNAL_ALLOCATION_TYPE: EnumType = EnumType::new("InternalAllocationType", "INTERNAL_ALLOCATION_TYPE");
 pub static PHYSICAL_DEVICE_TYPE: EnumType = EnumType::new("PhysicalDeviceType", "PHYSICAL_DEVICE_TYPE");
 pub static PIPELINE_BIND_POINT: EnumType = EnumType::new("PipelineBindPoint", "PIPELINE_BIND_POINT");
-pub static POINT_CLIPPING_BEHAVIOR: EnumType =
-    EnumType::new("PointClippingBehavior", "POINT_CLIPPING_BEHAVIOR").extension(VK_KHR_MAINTENANCE_2);
 pub static POLYGON_MODE: EnumType = EnumType::new("PolygonMode", "POLYGON_MODE");
-pub static PRESENT_MODE: EnumType = EnumType::new("PresentMode", "PRESENT_MODE").extension(&VK_KHR_SURFACE);
 pub static PRIMITIVE_TOPOLOGY: EnumType = EnumType::new("PrimitiveTopology", "PRIMITIVE_TOPOLOGY");
 pub static QUERY_TYPE: EnumType = EnumType::new("QueryType", "QUERY_TYPE");
 pub static SAMPLER_ADDRESS_MODE: EnumType = EnumType::new("SamplerAddressMode", "SAMPLER_ADDRESS_MODE");
@@ -534,8 +530,6 @@ pub static SHARING_MODE: EnumType = EnumType::new("SharingMode", "SHARING_MODE")
 pub static STENCIL_OP: EnumType = EnumType::new("StencilOp", "STENCIL_OP");
 pub static SUBPASS_CONTENTS: EnumType = EnumType::new("SubpassContents", "SUBPASS_CONTENTS");
 pub static SYSTEM_ALLOCATION_SCOPE: EnumType = EnumType::new("SystemAllocationScope", "SYSTEM_ALLOCATION_SCOPE");
-pub static TESSELLATION_DOMAIN_ORIGIN: EnumType =
-    EnumType::new("TessellationDomainOrigin", "TESSELLATION_DOMAIN_ORIGIN").extension(VK_KHR_MAINTENANCE_2);
 pub static VERTEX_INPUT_RATE: EnumType = EnumType::new("VertexInputRate", "VERTEX_INPUT_RATE");
 
 fn emit_enums(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
@@ -583,12 +577,6 @@ fn emit_enums(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     BORDER_COLOR.member("INT_OPAQUE_BLACK", 3).emit(emitter);
     BORDER_COLOR.member("FLOAT_OPAQUE_WHITE", 4).emit(emitter);
     BORDER_COLOR.member("INT_OPAQUE_WHITE", 5).emit(emitter);
-
-    COLOR_SPACE.emit(emitter);
-    COLOR_SPACE
-        .member("SRGB_NONLINEAR", 0)
-        .override_extension_number(0)
-        .emit(emitter);
 
     COMMAND_BUFFER_LEVEL.emit(emitter);
     COMMAND_BUFFER_LEVEL.member("PRIMARY", 0).emit(emitter);
@@ -655,18 +643,6 @@ fn emit_enums(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     IMAGE_LAYOUT.member("TRANSFER_SRC_OPTIMAL", 6).emit(emitter);
     IMAGE_LAYOUT.member("TRANSFER_DST_OPTIMAL", 7).emit(emitter);
     IMAGE_LAYOUT.member("PREINITIALIZED", 8).emit(emitter);
-    IMAGE_LAYOUT
-        .member("PRESENT_SRC", 2)
-        .extension(&VK_KHR_SWAPCHAIN)
-        .emit(emitter);
-    IMAGE_LAYOUT
-        .member("DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL", 0)
-        .extension(VK_KHR_MAINTENANCE_2)
-        .emit(emitter);
-    IMAGE_LAYOUT
-        .member("DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL", 1)
-        .extension(VK_KHR_MAINTENANCE_2)
-        .emit(emitter);
 
     IMAGE_TILING.emit(emitter);
     IMAGE_TILING.member("OPTIMAL", 0).emit(emitter);
@@ -722,38 +698,10 @@ fn emit_enums(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     PIPELINE_BIND_POINT.member("GRAPHICS", 0).emit(emitter);
     PIPELINE_BIND_POINT.member("COMPUTE", 1).emit(emitter);
 
-    POINT_CLIPPING_BEHAVIOR.emit(emitter);
-    POINT_CLIPPING_BEHAVIOR
-        .member("ALL_CLIP_PLANES", 0)
-        .override_extension_number(0)
-        .emit(emitter);
-    POINT_CLIPPING_BEHAVIOR
-        .member("USER_CLIP_PLANES", 1)
-        .override_extension_number(0)
-        .emit(emitter);
-
     POLYGON_MODE.emit(emitter);
     POLYGON_MODE.member("FILL", 0).emit(emitter);
     POLYGON_MODE.member("LINE", 1).emit(emitter);
     POLYGON_MODE.member("POINT", 2).emit(emitter);
-
-    PRESENT_MODE.emit(emitter);
-    PRESENT_MODE
-        .member("IMMEDIATE", 0)
-        .override_extension_number(0)
-        .emit(emitter);
-    PRESENT_MODE
-        .member("MAILBOX", 1)
-        .override_extension_number(0)
-        .emit(emitter);
-    PRESENT_MODE
-        .member("FIFO", 2)
-        .override_extension_number(0)
-        .emit(emitter);
-    PRESENT_MODE
-        .member("FIFO_RELAXED", 3)
-        .override_extension_number(0)
-        .emit(emitter);
 
     PRIMITIVE_TOPOLOGY.emit(emitter);
     PRIMITIVE_TOPOLOGY.member("POINT_LIST", 0).emit(emitter);
@@ -811,16 +759,6 @@ fn emit_enums(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     SYSTEM_ALLOCATION_SCOPE.member("CACHE", 2).emit(emitter);
     SYSTEM_ALLOCATION_SCOPE.member("DEVICE", 3).emit(emitter);
     SYSTEM_ALLOCATION_SCOPE.member("INSTANCE", 4).emit(emitter);
-
-    TESSELLATION_DOMAIN_ORIGIN.emit(emitter);
-    TESSELLATION_DOMAIN_ORIGIN
-        .member("UPPER_LEFT", 0)
-        .override_extension_number(0)
-        .emit(emitter);
-    TESSELLATION_DOMAIN_ORIGIN
-        .member("LOWER_LEFT", 1)
-        .override_extension_number(0)
-        .emit(emitter);
 
     VERTEX_INPUT_RATE.emit(emitter);
     VERTEX_INPUT_RATE.member("VERTEX", 0).emit(emitter);

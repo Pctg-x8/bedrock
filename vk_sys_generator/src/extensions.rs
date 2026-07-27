@@ -1,5 +1,5 @@
 use crate::{
-    ERROR,
+    ERROR, IMAGE_LAYOUT,
     parts::*,
     rs_item::RustCodeEmitter,
     v1_1::{VK_KHR_DEVICE_GROUP, VK_KHR_EXTERNAL_MEMORY, VK_KHR_EXTERNAL_MEMORY_CAPABILITIES},
@@ -77,6 +77,8 @@ const COMPOSITE_ALPHA_FLAGS: &BitmaskType =
 const SURFACE_TRANSFORM_FLAGS: &BitmaskType =
     &BitmaskType::new("SurfaceTransformFlags", "SurfaceTransformFlagBits", "SURFACE_TRANSFORM")
         .extension(VK_KHR_SURFACE);
+pub const COLOR_SPACE: &EnumType = &EnumType::new("ColorSpace", "COLOR_SPACE").extension(VK_KHR_SURFACE);
+pub const PRESENT_MODE: &EnumType = &EnumType::new("PresentMode", "PRESENT_MODE").extension(VK_KHR_SURFACE);
 const SURFACE_CAPABILITIES: &Struct = &Struct::new(
     "SurfaceCapabilities",
     &[
@@ -114,6 +116,30 @@ fn emit_surface(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
         .member("NATIVE_WINDOW_IN_USE", 1)
         .neg()
         .extension(VK_KHR_SURFACE)
+        .emit(emitter);
+
+    COLOR_SPACE.emit(emitter);
+    COLOR_SPACE
+        .member("SRGB_NONLINEAR", 0)
+        .override_extension_number(0)
+        .emit(emitter);
+
+    PRESENT_MODE.emit(emitter);
+    PRESENT_MODE
+        .member("IMMEDIATE", 0)
+        .override_extension_number(0)
+        .emit(emitter);
+    PRESENT_MODE
+        .member("MAILBOX", 1)
+        .override_extension_number(0)
+        .emit(emitter);
+    PRESENT_MODE
+        .member("FIFO", 2)
+        .override_extension_number(0)
+        .emit(emitter);
+    PRESENT_MODE
+        .member("FIFO_RELAXED", 3)
+        .override_extension_number(0)
         .emit(emitter);
 
     COMPOSITE_ALPHA_FLAGS.emit(emitter);
@@ -536,6 +562,11 @@ const PRESENT_INFO: &Struct = &Struct::typed(
 .extensions(&[VK_KHR_SWAPCHAIN]);
 fn emit_swapchain(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     VK_KHR_SWAPCHAIN.header_constants().emit(emitter);
+
+    IMAGE_LAYOUT
+        .member("PRESENT_SRC", 2)
+        .extension(VK_KHR_SWAPCHAIN)
+        .emit(emitter);
 
     SWAPCHAIN_CREATE_FLAGS.emit(emitter);
 

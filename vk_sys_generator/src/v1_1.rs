@@ -1,6 +1,7 @@
 //! v1.1 promoted elements
 
 use crate::{
+    IMAGE_LAYOUT,
     extensions::{DEBUG_REPORT_OBJECT_TYPE, VK_EXT_DEBUG_REPORT, VK_KHR_SURFACE, VK_KHR_SWAPCHAIN},
     parts::*,
     rs_item::RustCodeEmitter,
@@ -57,6 +58,10 @@ fn emit_maintenance1(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
 }
 
 pub const VK_KHR_MAINTENANCE_2: &Extension = &Extension::khr("maintenance2", 1, 118).promoted(VERSION);
+pub const POINT_CLIPPING_BEHAVIOR: &EnumType =
+    &EnumType::new("PointClippingBehavior", "POINT_CLIPPING_BEHAVIOR").extension(VK_KHR_MAINTENANCE_2);
+pub const TESSELLATION_DOMAIN_ORIGIN: &EnumType =
+    &EnumType::new("TessellationDomainOrigin", "TESSELLATION_DOMAIN_ORIGIN").extension(VK_KHR_MAINTENANCE_2);
 const PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES: &Struct = &Struct::typed(
     "PhysicalDevicePointClippingProperties",
     "PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES",
@@ -111,6 +116,35 @@ const INPUT_ATTACHMENT_ASPECT_REFERENCE: &Struct = &Struct::new(
 .promoted(VERSION);
 fn emit_maintenance2(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     VK_KHR_MAINTENANCE_2.header_constants().emit(emitter);
+
+    IMAGE_LAYOUT
+        .member("DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL", 0)
+        .extension(VK_KHR_MAINTENANCE_2)
+        .emit(emitter);
+    IMAGE_LAYOUT
+        .member("DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL", 1)
+        .extension(VK_KHR_MAINTENANCE_2)
+        .emit(emitter);
+
+    POINT_CLIPPING_BEHAVIOR.emit(emitter);
+    POINT_CLIPPING_BEHAVIOR
+        .member("ALL_CLIP_PLANES", 0)
+        .override_extension_number(0)
+        .emit(emitter);
+    POINT_CLIPPING_BEHAVIOR
+        .member("USER_CLIP_PLANES", 1)
+        .override_extension_number(0)
+        .emit(emitter);
+
+    TESSELLATION_DOMAIN_ORIGIN.emit(emitter);
+    TESSELLATION_DOMAIN_ORIGIN
+        .member("UPPER_LEFT", 0)
+        .override_extension_number(0)
+        .emit(emitter);
+    TESSELLATION_DOMAIN_ORIGIN
+        .member("LOWER_LEFT", 1)
+        .override_extension_number(0)
+        .emit(emitter);
 
     PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES.emit(emitter);
     RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO.emit(emitter);
@@ -327,7 +361,7 @@ pub const ELEMENTS: &[Element] = &[
         "SWAPCHAIN_CREATE",
         &[Bitmask::entry("SPLIT_INSTNACE_BIND_REGIONS", 0).extension(VK_KHR_DEVICE_GROUP)],
     )
-    .extension(&VK_KHR_SWAPCHAIN)
+    .extension(VK_KHR_SWAPCHAIN)
     .into_element(),
     Bitmask::new(
         "MemoryAllocateFlags",
@@ -889,7 +923,7 @@ pub const ELEMENTS: &[Element] = &[
         &[Enum::member("SAMPLER_YCBCR_CONVERSION", vk_ext_enum(157, 0) as _)
             .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)],
     )
-    .extension(&VK_EXT_DEBUG_REPORT)
+    .extension(VK_EXT_DEBUG_REPORT)
     .into_element(),
     Struct::typed(
         "SamplerYcbcrConversionCreateInfo",
