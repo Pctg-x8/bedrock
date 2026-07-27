@@ -126,6 +126,126 @@ impl FuncPointer {
     }
 }
 
+pub struct EnumType {
+    name: &'static str,
+    prefix: &'static str,
+    extension: Option<&'static Extension<'static>>,
+}
+impl EnumType {
+    pub const fn new(name: &'static str, prefix: &'static str) -> Self {
+        Self {
+            name,
+            prefix,
+            extension: None,
+        }
+    }
+
+    pub const fn extension(mut self, ext: &'static Extension<'static>) -> Self {
+        self.extension = Some(ext);
+        self
+    }
+
+    pub const fn member(&'static self, name: &'static str, value: isize) -> EnumMember2 {
+        EnumMember2::new(self, name, value)
+    }
+
+    fn rs_typesym(&self) -> TypeSymbol<'static> {
+        TypeSymbol {
+            stem: self.name,
+            suffix: self.extension.map(|x| x.tag),
+        }
+    }
+
+    fn rs_requirements(&self) -> CompilationCondition<'static> {
+        CompilationCondition::all(self.extension.map(|x| {
+            CompilationCondition::Feature(FeatureName::VulkanExt {
+                tag: x.tag,
+                name: x.name,
+            })
+        }))
+    }
+
+    pub fn emit(&self, emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+        let source_type = Type::Raw("i32");
+        emitter.emit_type_alias(crate::rs_item::TypeAlias {
+            compilation_condition: self.rs_requirements(),
+            target_name: self.rs_typesym(),
+            source_name: source_type.clone(),
+        });
+
+        if let Some(promoted) = self.extension.and_then(|x| x.promoted_since()) {
+            // promoted symbol
+            emitter.emit_type_alias(crate::rs_item::TypeAlias {
+                compilation_condition: CompilationCondition::Feature(FeatureName::AllowApiVersion(promoted)),
+                target_name: TypeSymbol {
+                    stem: self.name,
+                    suffix: None,
+                },
+                source_name: source_type,
+            });
+        }
+    }
+}
+
+pub struct EnumMember2 {
+    ty: &'static EnumType,
+    name: &'static str,
+    value: isize,
+    extension: Option<&'static Extension<'static>>,
+}
+impl EnumMember2 {
+    pub const fn new(ty: &'static EnumType, name: &'static str, value: isize) -> Self {
+        Self {
+            ty,
+            name,
+            value,
+            extension: None,
+        }
+    }
+
+    pub const fn extension(mut self, ext: &'static Extension<'static>) -> Self {
+        self.extension = Some(ext);
+        self
+    }
+
+    pub fn emit(&self, emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+        let ty = Type::Defined(self.ty.rs_typesym());
+        let val = ConstantValue::Signed(self.value);
+
+        emitter.emit_const(Constant {
+            compilation_condition: self
+                .ty
+                .rs_requirements()
+                .and(CompilationCondition::all(self.extension.map(|x| {
+                    CompilationCondition::Feature(FeatureName::VulkanExt {
+                        tag: x.tag,
+                        name: x.name,
+                    })
+                }))),
+            name: ConstantSymbol::Enum {
+                prefix: self.ty.prefix,
+                stem: self.name,
+                suffix: self.extension.or(self.ty.extension).map(|x| x.tag),
+            },
+            ty: ty.clone(),
+            value: val.clone(),
+        });
+        if let Some(promoted) = self.extension.and_then(|x| x.promoted_since()) {
+            emitter.emit_const(Constant {
+                compilation_condition: CompilationCondition::Feature(FeatureName::AllowApiVersion(promoted))
+                    .and(self.ty.rs_requirements()),
+                name: ConstantSymbol::Enum {
+                    prefix: self.ty.prefix,
+                    stem: self.name,
+                    suffix: None,
+                },
+                ty,
+                value: val,
+            });
+        }
+    }
+}
+
 pub struct EnumMember {
     name: &'static str,
     value: isize,
@@ -399,6 +519,236 @@ impl BitmaskEntry {
     pub const fn version_since(mut self, v: &'static str) -> Self {
         self.version_since = Some(v);
         self
+    }
+}
+
+pub struct BitmaskEntry2 {
+    ty: &'static BitmaskType,
+    name: &'static str,
+    bitpos: usize,
+    extension: Option<&'static Extension<'static>>,
+    side_extensions: &'static [&'static Extension<'static>],
+    promoted_override: Option<&'static str>,
+    version_since: Option<&'static str>,
+}
+impl BitmaskEntry2 {
+    pub const fn new(ty: &'static BitmaskType, name: &'static str, bitpos: usize) -> Self {
+        Self {
+            ty,
+            name,
+            bitpos,
+            extension: None,
+            side_extensions: &[],
+            promoted_override: None,
+            version_since: None,
+        }
+    }
+
+    pub const fn extension(mut self, ext: &'static Extension<'static>) -> Self {
+        self.extension = Some(ext);
+        self
+    }
+
+    pub const fn side_extensions(mut self, side_extensions: &'static [&'static Extension<'static>]) -> Self {
+        self.side_extensions = side_extensions;
+        self
+    }
+
+    pub const fn version_since(mut self, version_since: &'static str) -> Self {
+        self.version_since = Some(version_since);
+        self
+    }
+
+    pub const fn override_promoted(mut self, promoted: &'static str) -> Self {
+        self.promoted_override = Some(promoted);
+        self
+    }
+
+    pub fn emit(&self, emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+        let ty = Type::Defined(self.ty.rs_bits_typesym());
+        let val = if self.ty.long {
+            ConstantValue::Bits64(1u64 << self.bitpos)
+        } else {
+            ConstantValue::Bits32(1u32 << self.bitpos)
+        };
+
+        emitter.emit_const(Constant {
+            compilation_condition: self.ty.rs_requirements().and(CompilationCondition::all(
+                self.extension
+                    .map(|x| {
+                        CompilationCondition::Feature(FeatureName::VulkanExt {
+                            tag: x.tag,
+                            name: x.name,
+                        })
+                    })
+                    .into_iter()
+                    .chain(self.side_extensions.iter().map(|x| {
+                        CompilationCondition::Feature(FeatureName::VulkanExt {
+                            tag: x.tag,
+                            name: x.name,
+                        })
+                    }))
+                    .chain(
+                        self.version_since
+                            .map(|x| CompilationCondition::Feature(FeatureName::AllowApiVersion(x))),
+                    ),
+            )),
+            name: ConstantSymbol::Bitmask {
+                prefix: self.ty.prefix,
+                stem: self.name,
+                suffix: self.extension.or(self.ty.extension).map(|x| x.tag),
+            },
+            ty: ty.clone(),
+            value: val.clone(),
+        });
+
+        if let Some(promoted) = self.promoted_override.or_else(|| self.extension?.promoted_since()) {
+            // symbol promotion
+            emitter.emit_const(Constant {
+                compilation_condition: self
+                    .ty
+                    .rs_requirements()
+                    .and(CompilationCondition::Feature(FeatureName::AllowApiVersion(promoted))),
+                name: ConstantSymbol::Bitmask {
+                    prefix: self.ty.prefix,
+                    stem: self.name,
+                    suffix: None,
+                },
+                ty,
+                value: val,
+            });
+        }
+    }
+}
+
+pub struct BitmaskType {
+    name: &'static str,
+    bits_name: &'static str,
+    prefix: &'static str,
+    version_since: Option<&'static str>,
+    extension: Option<&'static Extension<'static>>,
+    side_extensions: &'static [&'static Extension<'static>],
+    long: bool,
+}
+impl BitmaskType {
+    pub const fn new(name: &'static str, bits_name: &'static str, prefix: &'static str) -> Self {
+        Self {
+            name,
+            bits_name,
+            prefix,
+            version_since: None,
+            extension: None,
+            side_extensions: &[],
+            long: false,
+        }
+    }
+
+    pub const fn long(mut self) -> Self {
+        self.long = true;
+        self
+    }
+
+    pub const fn extension(mut self, ext: &'static Extension<'static>) -> Self {
+        self.extension = Some(ext);
+        self
+    }
+
+    pub const fn side_extensions(mut self, side_extensions: &'static [&'static Extension<'static>]) -> Self {
+        self.side_extensions = side_extensions;
+        self
+    }
+
+    pub const fn version_since(mut self, version_since: &'static str) -> Self {
+        self.version_since = Some(version_since);
+        self
+    }
+
+    pub const fn entry(&'static self, name: &'static str, bitpos: usize) -> BitmaskEntry2 {
+        BitmaskEntry2::new(self, name, bitpos)
+    }
+
+    fn rs_bits_typesym(&self) -> TypeSymbol<'static> {
+        TypeSymbol {
+            stem: self.bits_name,
+            suffix: self.extension.map(|x| x.tag),
+        }
+    }
+
+    fn rs_bits_typesym_promoted(&self) -> TypeSymbol<'static> {
+        TypeSymbol {
+            stem: self.bits_name,
+            suffix: None,
+        }
+    }
+
+    fn rs_typesym(&self) -> TypeSymbol<'static> {
+        TypeSymbol {
+            stem: self.name,
+            suffix: self.extension.map(|x| x.tag),
+        }
+    }
+
+    fn rs_typesym_promoted(&self) -> TypeSymbol<'static> {
+        TypeSymbol {
+            stem: self.name,
+            suffix: None,
+        }
+    }
+
+    fn rs_requirements(&self) -> CompilationCondition<'static> {
+        CompilationCondition::all(
+            self.extension
+                .map(|x| {
+                    CompilationCondition::Feature(FeatureName::VulkanExt {
+                        tag: x.tag,
+                        name: x.name,
+                    })
+                })
+                .into_iter()
+                .chain(self.side_extensions.iter().map(|x| {
+                    CompilationCondition::Feature(FeatureName::VulkanExt {
+                        tag: x.tag,
+                        name: x.name,
+                    })
+                }))
+                .chain(
+                    self.version_since
+                        .map(|x| CompilationCondition::Feature(FeatureName::AllowApiVersion(x))),
+                ),
+        )
+    }
+
+    pub fn emit(&self, emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+        let source_name = if self.long {
+            Type::Raw("VkFlags64")
+        } else {
+            Type::Raw("VkFlags")
+        };
+
+        emitter.emit_type_alias(crate::rs_item::TypeAlias {
+            compilation_condition: self.rs_requirements(),
+            target_name: self.rs_typesym(),
+            source_name: source_name.clone(),
+        });
+        emitter.emit_type_alias(crate::rs_item::TypeAlias {
+            compilation_condition: self.rs_requirements(),
+            target_name: self.rs_bits_typesym(),
+            source_name: source_name.clone(),
+        });
+
+        if let Some(promoted) = self.extension.and_then(|x| x.promoted_since()) {
+            // promote symbol
+            emitter.emit_type_alias(crate::rs_item::TypeAlias {
+                compilation_condition: CompilationCondition::Feature(FeatureName::AllowApiVersion(promoted)),
+                target_name: self.rs_typesym_promoted(),
+                source_name: source_name.clone(),
+            });
+            emitter.emit_type_alias(crate::rs_item::TypeAlias {
+                compilation_condition: CompilationCondition::Feature(FeatureName::AllowApiVersion(promoted)),
+                target_name: self.rs_bits_typesym_promoted(),
+                source_name,
+            });
+        }
     }
 }
 

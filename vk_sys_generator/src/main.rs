@@ -227,6 +227,8 @@ fn main() -> std::io::Result<()> {
         x.emit(&mut generator, &mut o)?;
     }
 
+    v1_1::emit_descriptor_update_template(&mut generator);
+
     for x in v1_2::ELEMENTS {
         x.emit(&mut generator, &mut o)?;
     }

@@ -1,8 +1,9 @@
 //! v1.1 promoted elements
 
 use crate::{
-    extensions::{VK_EXT_DEBUG_REPORT, VK_KHR_SURFACE, VK_KHR_SWAPCHAIN},
+    extensions::{DEBUG_REPORT_OBJECT_TYPE, VK_EXT_DEBUG_REPORT, VK_KHR_SURFACE, VK_KHR_SWAPCHAIN},
     parts::*,
+    rs_item::RustCodeEmitter,
     vk_ext_enum,
 };
 
@@ -11,8 +12,6 @@ pub const VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2: &Extension =
     &Extension::khr("get_physical_device_properties2", 2, 60).promoted(VERSION);
 pub const VK_KHR_DEVICE_GROUP: &Extension = &Extension::khr("device_group", 4, 61).promoted(VERSION);
 const VK_EXT_SHADER_SUBGROUP_VOTE: &Extension = &Extension::ext("shader_subgroup_vote", 1, 66).promoted(VERSION);
-pub const VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE: &Extension =
-    &Extension::khr("descriptor_update_template", 1, 86).promoted(VERSION);
 pub const VK_KHR_DEDICATED_ALLOCATION: &Extension = &Extension::khr("dedicated_allocation", 1, 128).promoted(VERSION);
 pub const VK_KHR_GET_MEMORY_REQUIREMENTS_2: &Extension =
     &Extension::khr("get_memory_requirements2", 1, 147).promoted(VERSION);
@@ -28,6 +27,19 @@ pub const VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES: &Extension =
 pub const VK_KHR_EXTERNAL_FENCE: &Extension = &Extension::khr("external_fence", 1, 114).promoted(VERSION);
 pub const VK_KHR_EXTERNAL_FENCE_CAPABILITIES: &Extension =
     &Extension::khr("external_fence_capabilities", 1, 113).promoted(VERSION);
+
+pub const VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE: &Extension =
+    &Extension::khr("descriptor_update_template", 1, 86).promoted(VERSION);
+pub fn emit_descriptor_update_template(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+    VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE.header_constants().emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member(
+            "DESCRIPTOR_UPDATE_TEMPLATE",
+            VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE.ext_enum(0) as _,
+        )
+        .extension(VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE)
+        .emit(emitter);
+}
 
 pub const ELEMENTS: &[Element] = &[
     // VK_KHR_get_physical_device_properties2
@@ -511,7 +523,6 @@ pub const ELEMENTS: &[Element] = &[
     // VK_EXT_shader_subgroup_vote
     VK_EXT_SHADER_SUBGROUP_VOTE.header_constants().into_element(),
     // VK_KHR_descriptor_update_template
-    VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE.header_constants().into_element(),
     Bitmask::new(
         "DescriptorUpdateTemplateCreateFlags",
         "DescriptorUpdateTemplateCreateFlagBits",
@@ -519,17 +530,6 @@ pub const ELEMENTS: &[Element] = &[
         &[],
     )
     .extension(VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE)
-    .into_element(),
-    Enum::extending(
-        "DebugReportObjectType",
-        "DEBUG_REPORT_OBJECT_TYPE",
-        &[Enum::member(
-            "DESCRIPTOR_UPDATE_TEMPLATE",
-            VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE.ext_enum(0) as _,
-        )
-        .extension(VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE)],
-    )
-    .extension(VK_EXT_DEBUG_REPORT)
     .into_element(),
     Enum::new(
         "DescriptorUpdateTemplateType",

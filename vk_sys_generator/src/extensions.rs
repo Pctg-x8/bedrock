@@ -62,68 +62,64 @@ pub const VK_KHR_EXTERNAL_FENCE_WIN32: &Extension = &Extension::khr("external_fe
 pub const VK_KHR_EXTERNAL_FENCE_FD: &Extension = &Extension::khr("external_fence_fd", 1, 116);
 
 pub const VK_EXT_DEBUG_REPORT: &Extension = &Extension::ext("debug_report", 10, 12);
+const DEBUG_REPORT_FLAGS: BitmaskType =
+    BitmaskType::new("DebugReportFlags", "DebugReportFlagBits", "DEBUG_REPORT").extension(VK_EXT_DEBUG_REPORT);
+pub const DEBUG_REPORT_OBJECT_TYPE: EnumType =
+    EnumType::new("DebugReportObjectType", "DEBUG_REPORT_OBJECT_TYPE").extension(VK_EXT_DEBUG_REPORT);
 pub fn emit_debug_report(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     VK_EXT_DEBUG_REPORT.header_constants().emit(emitter);
-    Bitmask::new(
-        "DebugReportFlags",
-        "DebugReportFlagBits",
-        "DEBUG_REPORT",
-        &const {
-            [
-                Bitmask::entry("INFORMATION", 0).extension(VK_EXT_DEBUG_REPORT),
-                Bitmask::entry("WARNING", 1).extension(VK_EXT_DEBUG_REPORT),
-                Bitmask::entry("PERFORMANCE_WARNING", 2).extension(VK_EXT_DEBUG_REPORT),
-                Bitmask::entry("ERROR", 3).extension(VK_EXT_DEBUG_REPORT),
-                Bitmask::entry("DEBUG", 4).extension(VK_EXT_DEBUG_REPORT),
-            ]
-        },
-    )
-    .extension(VK_EXT_DEBUG_REPORT)
-    .emit(emitter);
-    Enum::new(
-        "DebugReportObjectType",
-        "DEBUG_REPORT_OBJECT_TYPE",
-        &const {
-            [
-                Enum::member("UNKNOWN", 0).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("INSTANCE", 1).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("PHYSICAL_DEVICE", 2).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("DEVICE", 3).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("QUEUE", 4).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("SEMAPHORE", 5).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("COMMAND_BUFFER", 6).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("FENCE", 7).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("DEVICE_MEMORY", 8).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("BUFFER", 9).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("IMAGE", 10).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("EVENT", 11).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("QUERY_POOL", 12).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("BUFFER_VIEW", 13).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("IMAGE_VIEW", 14).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("SHADER_MODULE", 15).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("PIPELINE_CACHE", 16).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("PIPELINE_LAYOUT", 17).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("RENDER_PASS", 18).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("PIPELINE", 19).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("DESCRIPTOR_SET_LAYOUT", 20).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("SAMPLER", 21).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("DESCRIPTOR_POOL", 22).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("DESCRIPTOR_SET", 23).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("FRAMEBUFFER", 24).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("COMMAND_POOL", 25).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("SURFACE_KHR", 26).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("SWAPCHAIN_KHR", 27).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("DEBUG_REPORT_CALLBACK_EXT", 28).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("DISPLAY_KHR", 29).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("DISPLAY_MODE_KHR", 30).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("OBJECT_TABLE_NVX", 31).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("INDIRECT_COMMANDS_LAYOUT_NVX", 32).extension(VK_EXT_DEBUG_REPORT),
-                Enum::member("VALIDATION_CACHE_EXT", 33).extension(VK_EXT_DEBUG_REPORT),
-            ]
-        },
-    )
-    .extension(VK_EXT_DEBUG_REPORT)
-    .emit(emitter);
+
+    DEBUG_REPORT_FLAGS.emit(emitter);
+    DEBUG_REPORT_FLAGS.entry("INFORMATION", 0).emit(emitter);
+    DEBUG_REPORT_FLAGS.entry("WARNING", 1).emit(emitter);
+    DEBUG_REPORT_FLAGS.entry("PERFORMANCE_WARNING", 2).emit(emitter);
+    DEBUG_REPORT_FLAGS.entry("ERROR", 3).emit(emitter);
+    DEBUG_REPORT_FLAGS.entry("DEBUG", 4).emit(emitter);
+
+    DEBUG_REPORT_OBJECT_TYPE.emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("UNKNOWN", 0).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("INSTANCE", 1).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("PHYSICAL_DEVICE", 2).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("DEVICE", 3).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("QUEUE", 4).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("SEMAPHORE", 5).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("COMMAND_BUFFER", 6).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("FENCE", 7).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("DEVICE_MEMORY", 8).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("BUFFER", 9).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("IMAGE", 10).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("EVENT", 11).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("QUERY_POOL", 12).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("BUFFER_VIEW", 13).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("IMAGE_VIEW", 14).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("SHADER_MODULE", 15).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("PIPELINE_CACHE", 16).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("PIPELINE_LAYOUT", 17).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("RENDER_PASS", 18).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("PIPELINE", 19).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("DESCRIPTOR_SET_LAYOUT", 20)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("SAMPLER", 21).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("DESCRIPTOR_POOL", 22).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("DESCRIPTOR_SET", 23).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("FRAMEBUFFER", 24).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("COMMAND_POOL", 25).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("SURFACE_KHR", 26).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("SWAPCHAIN_KHR", 27).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("DEBUG_REPORT_CALLBACK_EXT", 28)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("DISPLAY_KHR", 29).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("DISPLAY_MODE_KHR", 30).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE.member("OBJECT_TABLE_NVX", 31).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("INDIRECT_COMMANDS_LAYOUT_NVX", 32)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("VALIDATION_CACHE_EXT", 33)
+        .emit(emitter);
+
     Struct::typed(
         "DebugReportCallbackCreateInfo",
         "DEBUG_REPORT_CALLBACK_CREATE_INFO",
