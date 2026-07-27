@@ -161,6 +161,12 @@ impl<T> ArrayQueryResult<T> {
             is_incomplete: self.is_incomplete,
         }
     }
+
+    #[inline(always)]
+    pub fn assert_complete(self) -> T {
+        assert!(!self.is_incomplete, "the query was incomplete!");
+        self.result
+    }
 }
 
 #[cfg(feature = "VK_KHR_swapchain")]
