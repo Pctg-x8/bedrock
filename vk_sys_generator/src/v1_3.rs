@@ -8,6 +8,7 @@ const VK_KHR_MAINTENANCE_4: &Extension = &Extension::khr("maintenance4", 2, 414)
 pub const VK_KHR_FORMAT_FEATURE_FLAGS_2: &Extension = &Extension::khr("format_feature_flags2", 2, 361);
 pub const VK_KHR_COPY_COMMANDS_2: &Extension = &Extension::khr("copy_commands2", 1, 338);
 pub const VK_KHR_DYNAMIC_RENDERING: &Extension = &Extension::khr("dynamic_rendering", 1, 45);
+pub const VK_KHR_SYNCHRONIZATION2: &Extension = &Extension::khr("synchronization2", 1, 315).promoted(VERSION);
 
 pub const ELEMENTS: &[Element] = &[
     Bitmask::extending(

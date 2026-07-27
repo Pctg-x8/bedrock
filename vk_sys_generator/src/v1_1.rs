@@ -1,7 +1,7 @@
 //! v1.1 promoted elements
 
 use crate::{
-    IMAGE_LAYOUT,
+    FORMAT_FEATURE_FLAGS, IMAGE_CREATE_FLAGS, IMAGE_LAYOUT,
     extensions::{DEBUG_REPORT_OBJECT_TYPE, VK_EXT_DEBUG_REPORT, VK_KHR_SURFACE, VK_KHR_SWAPCHAIN},
     parts::*,
     rs_item::RustCodeEmitter,
@@ -35,6 +35,7 @@ pub const VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES: &Extension =
 pub const VK_KHR_EXTERNAL_FENCE: &Extension = &Extension::khr("external_fence", 1, 114).promoted(VERSION);
 pub const VK_KHR_EXTERNAL_FENCE_CAPABILITIES: &Extension =
     &Extension::khr("external_fence_capabilities", 1, 113).promoted(VERSION);
+pub const VK_KHR_MULTIVIEW: &Extension = &Extension::khr("multiview", 1, 54).promoted(VERSION);
 
 pub const VK_KHR_MAINTENANCE_1: &Extension = &Extension::khr("maintenance1", 2, 70).promoted(VERSION);
 const COMMAND_POOL_TRIM_FLAGS: &BitmaskType =
@@ -42,6 +43,19 @@ const COMMAND_POOL_TRIM_FLAGS: &BitmaskType =
         .extension(VK_KHR_MAINTENANCE_1);
 fn emit_maintenance1(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     VK_KHR_MAINTENANCE_1.header_constants().emit(emitter);
+
+    FORMAT_FEATURE_FLAGS
+        .entry("TRANSFER_SRC", 14)
+        .extension(VK_KHR_MAINTENANCE_1)
+        .emit(emitter);
+    FORMAT_FEATURE_FLAGS
+        .entry("TRANSFER_DST", 15)
+        .extension(VK_KHR_MAINTENANCE_1)
+        .emit(emitter);
+    IMAGE_CREATE_FLAGS
+        .entry("2D_ARRAY_COMPATIBLE", 5)
+        .extension(VK_KHR_MAINTENANCE_1)
+        .emit(emitter);
 
     COMMAND_POOL_TRIM_FLAGS.emit(emitter);
 
@@ -123,6 +137,15 @@ fn emit_maintenance2(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
         .emit(emitter);
     IMAGE_LAYOUT
         .member("DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL", 1)
+        .extension(VK_KHR_MAINTENANCE_2)
+        .emit(emitter);
+
+    IMAGE_CREATE_FLAGS
+        .entry("BLOCK_TEXEL_VIEW_COMPATIBLE", 7)
+        .extension(VK_KHR_MAINTENANCE_2)
+        .emit(emitter);
+    IMAGE_CREATE_FLAGS
+        .entry("EXTENDED_USAGE", 8)
         .extension(VK_KHR_MAINTENANCE_2)
         .emit(emitter);
 

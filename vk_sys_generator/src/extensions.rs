@@ -20,6 +20,7 @@ pub fn emit(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     emit_debug_utils(emitter);
 }
 
+pub const VK_KHR_DISPLAY: &Extension = &Extension::khr("display", 23, 3);
 pub const VK_EXT_VALIDATION_CACHE: &Extension = &Extension::ext("validation_cache", 1, 161);
 pub const VK_EXT_VALIDATION_FLAGS: &Extension = &Extension::ext("validation_flags", 1, 62);
 pub const VK_EXT_BLEND_OPERATION_ADVANCED: &Extension = &Extension::ext("blend_operation_advanced", 2, 149);
@@ -70,6 +71,7 @@ pub const VK_KHR_EXTERNAL_SEMAPHORE_WIN32: &Extension = &Extension::khr("externa
 pub const VK_KHR_EXTERNAL_SEMAPHORE_FD: &Extension = &Extension::khr("external_semaphore_fd", 1, 80);
 pub const VK_KHR_EXTERNAL_FENCE_WIN32: &Extension = &Extension::khr("external_fence_win32", 1, 115);
 pub const VK_KHR_EXTERNAL_FENCE_FD: &Extension = &Extension::khr("external_fence_fd", 1, 116);
+pub const VK_KHR_PORTABILITY_ENUMERATION: &Extension = &Extension::khr("portability_enumeration", 1, 395);
 
 pub const VK_KHR_SURFACE: &Extension = &Extension::khr("surface", 25, 1);
 const COMPOSITE_ALPHA_FLAGS: &BitmaskType =

@@ -1,21 +1,25 @@
 use std::{collections::HashMap, io::Write};
 
 use parts::{
-    Bitmask, Command, Enum, ExtensionHeaderConstants, FuncPointer, Object, Struct, StructUsage, TypeAlias, Union,
-    emit_c_enum_type, emit_const,
+    Command, ExtensionHeaderConstants, FuncPointer, Object, Struct, StructUsage, TypeAlias, Union, emit_c_enum_type,
+    emit_const,
 };
 
 use crate::{
-    extensions::{VK_KHR_DISPLAY_SWAPCHAIN, VK_KHR_SURFACE, VK_KHR_SWAPCHAIN},
-    parts::EnumType,
+    extensions::{
+        VK_EXT_BLEND_OPERATION_ADVANCED, VK_KHR_DISPLAY, VK_KHR_DISPLAY_SWAPCHAIN, VK_KHR_PORTABILITY_ENUMERATION,
+        VK_KHR_SURFACE, VK_KHR_SWAPCHAIN,
+    },
+    parts::{BitmaskType, EnumType},
     rs_item::{
         CompilationCondition, Constant, ConstantSymbol, FeatureName, FnSymbol, FunctionPtrNewtype, FunctionStub,
         RustCodeEmitter, TypeSymbol,
     },
     v1_1::{
-        VK_KHR_BIND_MEMORY_2, VK_KHR_DEVICE_GROUP, VK_KHR_EXTERNAL_MEMORY, VK_KHR_MAINTENANCE_1,
+        VK_KHR_BIND_MEMORY_2, VK_KHR_DEVICE_GROUP, VK_KHR_EXTERNAL_MEMORY, VK_KHR_MAINTENANCE_1, VK_KHR_MULTIVIEW,
         VK_KHR_SAMPLER_YCBCR_CONVERSION,
     },
+    v1_3::VK_KHR_SYNCHRONIZATION2,
     v1_4::VK_KHR_MAINTENANCE_5,
 };
 
@@ -39,10 +43,6 @@ fn main() -> std::io::Result<()> {
 
     for ta in TYPE_ALIASES {
         ta.emit(&mut o)?;
-    }
-
-    for f in FLAGS {
-        f.emit(&mut generator);
     }
 
     // flags extra constants
@@ -126,6 +126,7 @@ fn main() -> std::io::Result<()> {
     emit_enums(&mut generator);
     emit_result_type(&mut generator);
     emit_format_enum(&mut generator);
+    emit_bitflags(&mut generator);
 
     for f in FUNC_POINTERS {
         o.write_all(b"\n")?;
@@ -413,15 +414,7 @@ const DEVICE_SIZE_TYPE: &str = "VkDeviceSize";
 const DEVICE_ADDR_TYPE: &str = "VkDeviceAddress";
 
 const EXTENSION_HEADER_CONSTANTS: &[ExtensionHeaderConstants] = &[
-    ExtensionHeaderConstants::new("VK_KHR_surface", 25),
-    ExtensionHeaderConstants::new("VK_KHR_swapchain", 68),
     ExtensionHeaderConstants::new("VK_KHR_display", 21),
-    ExtensionHeaderConstants::new("VK_KHR_xlib_surface", 6),
-    ExtensionHeaderConstants::new("VK_KHR_xcb_surface", 6),
-    ExtensionHeaderConstants::new("VK_KHR_wayland_surface", 6),
-    ExtensionHeaderConstants::new("VK_KHR_android_surface", 6),
-    ExtensionHeaderConstants::new("VK_KHR_win32_surface", 6),
-    ExtensionHeaderConstants::new("VK_EXT_metal_surface", 1),
     ExtensionHeaderConstants::new("VK_KHR_win32_keyed_mutex", 1),
     ExtensionHeaderConstants::new("VK_KHR_get_surface_capabilities2", 1),
     ExtensionHeaderConstants::new("VK_KHR_device_group_creation", 1),
@@ -432,8 +425,6 @@ const EXTENSION_HEADER_CONSTANTS: &[ExtensionHeaderConstants] = &[
     ExtensionHeaderConstants::new("VK_KHR_storage_buffer_storage_class", 1),
     ExtensionHeaderConstants::new("VK_KHR_variable_pointers", 1),
     ExtensionHeaderConstants::new("VK_KHR_16bit_storage", 1),
-    ExtensionHeaderConstants::new("VK_KHR_maintenance1", 2),
-    ExtensionHeaderConstants::new("VK_KHR_maintenance2", 1),
     ExtensionHeaderConstants::new("VK_KHR_maintenance3", 1),
     ExtensionHeaderConstants::new("VK_KHR_synchronization2", 1),
 ];
@@ -765,731 +756,632 @@ fn emit_enums(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     VERTEX_INPUT_RATE.member("INSTANCE", 1).emit(emitter);
 }
 
-const FLAGS: &[Bitmask] = &[
-    Bitmask::new(
-        "AccessFlags",
-        "AccessFlagBits",
-        "ACCESS",
-        &[
-            Bitmask::entry("INDIRECT_COMMAND_READ", 0),
-            Bitmask::entry("INDEX_READ", 1),
-            Bitmask::entry("VERTEX_ATTRIBUTE_READ", 2),
-            Bitmask::entry("UNIFORM_READ", 3),
-            Bitmask::entry("INPUT_ATTACHMENT_READ", 4),
-            Bitmask::entry("SHADER_READ", 5),
-            Bitmask::entry("SHADER_WRITE", 6),
-            Bitmask::entry("COLOR_ATTACHMENT_READ", 7),
-            Bitmask::entry("COLOR_ATTACHMENT_WRITE", 8),
-            Bitmask::entry("DEPTH_STENCIL_ATTACHMENT_READ", 9),
-            Bitmask::entry("DEPTH_STENCIL_ATTACHMENT_WRITE", 10),
-            Bitmask::entry("TRANSFER_READ", 11),
-            Bitmask::entry("TRANSFER_WRITE", 12),
-            Bitmask::entry("HOST_READ", 13),
-            Bitmask::entry("HOST_WRITE", 14),
-            Bitmask::entry("MEMORY_READ", 15),
-            Bitmask::entry("MEMORY_WRITE", 16),
-            Bitmask::entry("COLOR_ATTACHMENT_READ_NONCOHERENT", 19).extension_old("EXT", "blend_operation_advanced"),
-        ],
-    ),
-    Bitmask::new(
-        "AccessFlags2",
-        "AccessFlagBits2",
-        "ACCESS_2",
-        &[
-            Bitmask::entry("INDIRECT_COMMAND_READ", 0)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("INDEX_READ", 1)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("VERTEX_ATTRIBUTE_READ", 2)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("UNIFORM_READ", 3)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("INPUT_ATTACHMENT_READ", 4)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("SHADER_READ", 5)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("SHADER_WRITE", 6)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("COLOR_ATTACHMENT_READ", 7)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("COLOR_ATTACHMENT_WRITE", 8)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("DEPTH_STENCIL_ATTACHMENT_READ", 9)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("DEPTH_STENCIL_ATTACHMENT_WRITE", 10)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("TRANSFER_READ", 11)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("TRANSFER_WRITE", 12)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("HOST_READ", 13)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("HOST_WRITE", 14)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("MEMORY_READ", 15)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("MEMORY_WRITE", 16)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("SHADER_SAMPLED_READ", 32)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("SHADER_STORAGE_READ", 33)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("SHADER_STORAGE_WRITE", 34)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-        ],
-    )
+pub const ACCESS_FLAGS: &BitmaskType = &BitmaskType::new("AccessFlags", "AccessFlagBits", "ACCESS");
+pub const ACCESS_FLAGS_2: &BitmaskType = &BitmaskType::new("AccessFlags2", "AccessFlagBits2", "ACCESS_2")
     .long()
-    .extension_old("KHR", "synchronization2")
-    .promoted("1_3"),
-    Bitmask::new(
-        "AttachmentDescriptionFlags",
-        "AttachmentDescriptionFlagBits",
-        "ATTACHMENT_DESCRIPTION",
-        &[Bitmask::entry("MAY_ALIAS", 0)],
-    ),
-    Bitmask::new(
-        "BufferCreateFlags",
-        "BufferCreateFlagBits",
-        "BUFFER_CREATE",
-        &[
-            Bitmask::entry("SPARSE_BINDING", 0),
-            Bitmask::entry("SPARSE_RESIDENCY", 1),
-            Bitmask::entry("SPARSE_ALIASED", 2),
-            Bitmask::entry("PROTECTED", 3).version_since("1_1"),
-        ],
-    ),
-    Bitmask::new(
-        "BufferUsageFlags",
-        "BufferUsageFlagBits",
-        "BUFFER_USAGE",
-        &[
-            Bitmask::entry("TRANSFER_SRC", 0),
-            Bitmask::entry("TRANSFER_DST", 1),
-            Bitmask::entry("UNIFORM_TEXEL_BUFFER", 2),
-            Bitmask::entry("STORAGE_TEXEL_BUFFER", 3),
-            Bitmask::entry("UNIFORM_BUFFER", 4),
-            Bitmask::entry("STORAGE_BUFFER", 5),
-            Bitmask::entry("INDEX_BUFFER", 6),
-            Bitmask::entry("VERTEX_BUFFER", 7),
-            Bitmask::entry("INDIRECT_BUFFER", 8),
-        ],
-    ),
-    Bitmask::new(
-        "BufferViewCreateFlags",
-        "BufferViewCreateFlagBits",
-        "BUFFER_VIEW_CREATE",
-        &[],
-    ),
-    Bitmask::new(
-        "ColorComponentFlags",
-        "ColorComponentFlagBits",
-        "COLOR_COMPONENT",
-        &[
-            Bitmask::entry("R", 0),
-            Bitmask::entry("G", 1),
-            Bitmask::entry("B", 2),
-            Bitmask::entry("A", 3),
-        ],
-    ),
-    Bitmask::new(
-        "CommandBufferResetFlags",
-        "CommandBufferResetFlagBits",
-        "COMMAND_BUFFER_RESET",
-        &[Bitmask::entry("RELEASE_RESOURCES", 0)],
-    ),
-    Bitmask::new(
-        "CommandBufferUsageFlags",
-        "CommandBufferUsageFlagBits",
-        "COMMAND_BUFFER_USAGE",
-        &[
-            Bitmask::entry("ONE_TIME_SUBMIT", 0),
-            Bitmask::entry("RENDER_PASS_CONTINUE", 1),
-            Bitmask::entry("SIMULTANEOUS_USE", 2),
-        ],
-    ),
-    Bitmask::new(
-        "CommandPoolCreateFlags",
-        "CommandPoolCreateFlagBits",
-        "COMMAND_POOL_CREATE",
-        &[
-            Bitmask::entry("TRANSIENT", 0),
-            Bitmask::entry("RESET_COMMAND_BUFFER", 1),
-            Bitmask::entry("PROTECTED", 2).version_since("1_1"),
-        ],
-    ),
-    Bitmask::new(
-        "CommandPoolResetFlags",
-        "CommandPoolResetFlagBits",
-        "COMMAND_POOL_RESET",
-        &[Bitmask::entry("RELEASE_RESOURCES", 0)],
-    ),
-    Bitmask::new(
-        "CullModeFlags",
-        "CullModeFlagBits",
-        "CULL_MODE",
-        &[Bitmask::entry("FRONT", 0), Bitmask::entry("BACK", 1)],
-    ),
-    Bitmask::new(
-        "DependencyFlags",
-        "DependencyFlagBits",
-        "DEPENDENCY",
-        &[
-            Bitmask::entry("BY_REGION", 0),
-            Bitmask::entry("VIEW_LOCAL", 1)
-                .extension_old("KHR", "multiview")
-                .promoted("1_1"),
-        ],
-    ),
-    Bitmask::new(
-        "DescriptorPoolCreateFlags",
-        "DescriptorPoolCreateFlagBits",
-        "DESCRIPTOR_POOL_CREATE",
-        &[Bitmask::entry("FREE_DESCRIPTOR_SET", 0)],
-    ),
-    Bitmask::new(
-        "DescriptorPoolResetFlags",
-        "DescriptorPoolResetFlagBits",
-        "DESCRIPTOR_POOL_RESET",
-        &[],
-    ),
-    Bitmask::new(
-        "DescriptorSetLayoutCreateFlags",
-        "DescriptorSetLayoutCreateFlagBits",
-        "DESCRIPTOR_SET_LAYOUT_CREATE",
-        &[],
-    ),
-    Bitmask::new("DeviceCreateFlags", "DeviceCreateFlagBits", "DEVICE_CREATE", &[]),
-    Bitmask::new(
-        "DeviceGroupPresentModeFlags",
-        "DeviceGroupPresentModeFlagBits",
-        "DEVICE_GROUP_PRESENT_MODE",
-        &[],
-    )
-    .extension(VK_KHR_DEVICE_GROUP)
-    .promoted("1_1")
-    .side_extensions(&[VK_KHR_SURFACE]),
-    Bitmask::new(
-        "DeviceQueueCreateFlags",
-        "DeviceQueueCreateFlagBits",
-        "DEVICE_QUEUE_CREATE",
-        &[Bitmask::entry("PROTECTED", 0)],
-    ),
-    Bitmask::new(
-        "DisplayModeCreateFlags",
-        "DisplayModeCreateFlagBits",
-        "DISPLAY_MODE_CREATE",
-        &[],
-    )
-    .extension_old("KHR", "display"),
-    Bitmask::new(
-        "DisplayPlaneAlphaFlags",
-        "DisplayPlaneAlphaFlagBits",
-        "DISPLAY_PLANE_ALPHA",
-        &[
-            Bitmask::entry("OPAQUE", 0).extension_old("KHR", "display"),
-            Bitmask::entry("GLOBAL", 1).extension_old("KHR", "display"),
-            Bitmask::entry("PER_PIXEL", 2).extension_old("KHR", "display"),
-            Bitmask::entry("PER_PIXEL_PREMULTIPLIED", 3).extension_old("KHR", "display"),
-        ],
-    )
-    .extension_old("KHR", "display"),
-    Bitmask::new(
-        "DisplaySurfaceCreateFlags",
-        "DisplaySurfaceCreateFlagBits",
-        "DISPLAY_SURFACE_CREATE",
-        &[],
-    )
-    .extension_old("KHR", "display"),
-    Bitmask::new("EventCreateFlags", "EventCreateFlagBits", "EVENT_CREATE", &[]),
-    Bitmask::new(
-        "FenceCreateFlags",
-        "FenceCreateFlagBits",
-        "FENCE_CREATE",
-        &[Bitmask::entry("SIGNALED", 0)],
-    ),
-    Bitmask::new(
-        "FormatFeatureFlags",
-        "FormatFeatureFlagBits",
-        "FORMAT_FEATURE",
-        &[
-            Bitmask::entry("SAMPLED_IMAGE", 0),
-            Bitmask::entry("STORAGE_IMAGE", 1),
-            Bitmask::entry("STORAGE_IMAGE_ATOMIC", 2),
-            Bitmask::entry("UNIFORM_TEXEL_BUFFER", 3),
-            Bitmask::entry("STORAGE_TEXEL_BUFFER", 4),
-            Bitmask::entry("STORAGE_TEXEL_BUFFER_ATOMIC", 5),
-            Bitmask::entry("VERTEX_BUFFER", 6),
-            Bitmask::entry("COLOR_ATTACHMENT", 7),
-            Bitmask::entry("COLOR_ATTACHMENT_BLEND", 8),
-            Bitmask::entry("DEPTH_STENCIL_ATTACHMENT", 9),
-            Bitmask::entry("BLIT_SRC", 10),
-            Bitmask::entry("BLIT_DST", 11),
-            Bitmask::entry("SAMPLED_IMAGE_FILTER_LINEAR", 12),
-            Bitmask::entry("TRANSFER_SRC", 14)
-                .extension_old("KHR", "maintenance1")
-                .promoted("1_1"),
-            Bitmask::entry("TRANSFER_DST", 15)
-                .extension_old("KHR", "maintenance1")
-                .promoted("1_1"),
-        ],
-    ),
-    Bitmask::new(
-        "FramebufferCreateFlags",
-        "FramebufferCreateFlagBits",
-        "FRAMEBUFFER_CREATE",
-        &[],
-    ),
-    Bitmask::new(
-        "InstanceCreateFlags",
-        "InstanceCreateFlagBits",
-        "INSTANCE_CREATE",
-        &[Bitmask::entry("ENUMERATE_PORTABILITY", 0)
-            .extension_old("KHR", "portability_enumeration")
-            .promoted("1_1")],
-    ),
-    Bitmask::new(
-        "ImageAspectFlags",
-        "ImageAspectFlagBits",
-        "IMAGE_ASPECT",
-        &[
-            Bitmask::entry("COLOR", 0),
-            Bitmask::entry("DEPTH", 1),
-            Bitmask::entry("STENCIL", 2),
-            Bitmask::entry("METADATA", 3),
-        ],
-    ),
-    Bitmask::new(
-        "ImageUsageFlags",
-        "ImageUsageFlagBits",
-        "IMAGE_USAGE",
-        &[
-            Bitmask::entry("TRANSFER_SRC", 0),
-            Bitmask::entry("TRANSFER_DST", 1),
-            Bitmask::entry("SAMPLED", 2),
-            Bitmask::entry("STORAGE", 3),
-            Bitmask::entry("COLOR_ATTACHMENT", 4),
-            Bitmask::entry("DEPTH_STENCIL_ATTACHMENT", 5),
-            Bitmask::entry("TRANSIENT_ATTACHMENT", 6),
-            Bitmask::entry("INPUT_ATTACHMENT", 7),
-        ],
-    ),
-    Bitmask::new(
-        "ImageCreateFlags",
-        "ImageCreateFlagBits",
-        "IMAGE_CREATE",
-        &[
-            Bitmask::entry("SPARSE_BINDING", 0),
-            Bitmask::entry("SPARSE_RESIDENCY", 1),
-            Bitmask::entry("SPARSE_ALIASED", 2),
-            Bitmask::entry("MUTABLE_FORMAT", 3),
-            Bitmask::entry("CUBE_COMPATIBLE", 4),
-            Bitmask::entry("2D_ARRAY_COMPATIBLE", 5)
-                .extension_old("KHR", "maintenance1")
-                .promoted("1_1"),
-            Bitmask::entry("SPLIT_INSTANCE_BIND_REGIONS", 6)
-                .extension(VK_KHR_DEVICE_GROUP)
-                .side_extensions(&[VK_KHR_BIND_MEMORY_2])
-                .promoted("1_1"),
-            Bitmask::entry("BLOCK_TEXEL_VIEW_COMPATIBLE", 7)
-                .extension_old("KHR", "maintenance2")
-                .promoted("1_1"),
-            Bitmask::entry("EXTENDED_USAGE", 8)
-                .extension_old("KHR", "maintenance2")
-                .promoted("1_1"),
-            Bitmask::entry("PROTECTED", 11),
-        ],
-    ),
-    Bitmask::new(
-        "ImageViewCreateFlags",
-        "ImageViewCreateFlagBits",
-        "IMAGE_VIEW_CREATE",
-        &[],
-    ),
-    Bitmask::new(
-        "MemoryHeapFlags",
-        "MemoryHeapFlagBits",
-        "MEMORY_HEAP",
-        &[
-            Bitmask::entry("DEVICE_LOCAL", 0),
-            Bitmask::entry("MULTI_INSTANCE", 1).version_since("1_1"),
-        ],
-    ),
-    Bitmask::new(
-        "MemoryPropertyFlags",
-        "MemoryPropertyFlagBits",
-        "MEMORY_PROPERTY",
-        &[
-            Bitmask::entry("DEVICE_LOCAL", 0),
-            Bitmask::entry("HOST_VISIBLE", 1),
-            Bitmask::entry("HOST_COHERENT", 2),
-            Bitmask::entry("HOST_CACHED", 3),
-            Bitmask::entry("LAZILY_ALLOCATED", 4),
-            Bitmask::entry("PROTECTED", 5),
-        ],
-    ),
-    Bitmask::new("MemoryMapFlags", "MemoryMapFlagBits", "MEMORY_MAP", &[]),
-    Bitmask::new(
-        "PipelineCacheCreateFlags",
-        "PipelineCacheCreateFlagBits",
-        "PIPELINE_CACHE_CREATE",
-        &[],
-    ),
-    Bitmask::new(
-        "PipelineCreateFlags",
-        "PipelineCreateFlagBits",
-        "PIPELINE_CREATE",
-        &[
-            Bitmask::entry("DISABLE_OPTIMIZATION", 0),
-            Bitmask::entry("ALLOW_DERIVATIVES", 1),
-            Bitmask::entry("DERIVATIVE", 2),
-        ],
-    ),
-    Bitmask::new(
-        "PipelineLayoutCreateFlags",
-        "PipelineLayoutCreateFlagBits",
-        "PIPELINE_LAYOUT_CREATE",
-        &[],
-    ),
-    Bitmask::new(
-        "PipelineDepthStencilStateCreateFlags",
-        "PipelineDepthStencilStateCreateFlagBits",
-        "PIPELINE_DEPTH_STENCIL_STATE_CREATE",
-        &[],
-    ),
-    Bitmask::new(
-        "PipelineDynamicStateCreateFlags",
-        "PipelineDynamicStateCreateFlagBits",
-        "PIPELINE_DYNAMIC_STATE_CREATE",
-        &[],
-    ),
-    Bitmask::new(
-        "PipelineColorBlendStateCreateFlags",
-        "PipelineColorBlendStateCreateFlagBits",
-        "PIPELINE_COLOR_BLEND_STATE_CREATE",
-        &[],
-    ),
-    Bitmask::new(
-        "PipelineMultisampleStateCreateFlags",
-        "PipelineMultisampleStateCreateFlagBits",
-        "PIPELINE_MULTISAMPLE_STATE_CREATE",
-        &[],
-    ),
-    Bitmask::new(
-        "PipelineRasterizationStateCreateFlags",
-        "PipelineRasterizationStateCreateFlagBits",
-        "PIPELINE_RASTERIZATION_STATE_CREATE",
-        &[],
-    ),
-    Bitmask::new(
-        "PipelineViewportStateCreateFlags",
-        "PipelineViewportStateCreateFlagBits",
-        "PIPELINE_VIEWPORT_STATE_CREATE",
-        &[],
-    ),
-    Bitmask::new(
-        "PipelineTessellationStateCreateFlags",
-        "PipelineTessellationStateCreateFlagBits",
-        "PIPELINE_TESSELLATION_STATE_CREATE",
-        &[],
-    ),
-    Bitmask::new(
-        "PipelineInputAssemblyStateCreateFlags",
-        "PipelineInputAssemblyStateCreateFlagBits",
-        "PIPELINE_INPUT_ASSEMBLY_STATE_CREATE",
-        &[],
-    ),
-    Bitmask::new(
-        "PipelineVertexInputStateCreateFlags",
-        "PipelineVertexInputStateCreateFlagBits",
-        "PIPELINE_VERTEX_INPUT_STATE_CREATE",
-        &[],
-    ),
-    Bitmask::new(
-        "PipelineShaderStageCreateFlags",
-        "PipelineShaderStageCreateFlagBits",
-        "PIPELINE_SHADER_STAGE_CREATE",
-        &[],
-    ),
-    Bitmask::new(
-        "PipelineStageFlags",
-        "PipelineStageFlagBits",
-        "PIPELINE_STAGE",
-        &[
-            Bitmask::entry("TOP_OF_PIPE", 0),
-            Bitmask::entry("DRAW_INDIRECT", 1),
-            Bitmask::entry("VERTEX_INPUT", 2),
-            Bitmask::entry("VERTEX_SHADER", 3),
-            Bitmask::entry("TESSELLATION_CONTROL_SHADER", 4),
-            Bitmask::entry("TESSELLATION_EVALUATION_SHADER", 5),
-            Bitmask::entry("GEOMETRY_SHADER", 6),
-            Bitmask::entry("FRAGMENT_SHADER", 7),
-            Bitmask::entry("EARLY_FRAGMENT_TESTS", 8),
-            Bitmask::entry("LATE_FRAGMENT_TESTS", 9),
-            Bitmask::entry("COLOR_ATTACHMENT_OUTPUT", 10),
-            Bitmask::entry("COMPUTE_SHADER", 11),
-            Bitmask::entry("TRANSFER", 12),
-            Bitmask::entry("BOTTOM_OF_PIPE", 13),
-            Bitmask::entry("HOST", 14),
-            Bitmask::entry("ALL_GRAPHICS", 15),
-            Bitmask::entry("ALL_COMMANDS", 16),
-        ],
-    ),
-    Bitmask::new(
-        "PipelineStageFlags2",
-        "PipelineStageFlagBits2",
-        "PIPELINE_STAGE_2",
-        &[
-            Bitmask::entry("TOP_OF_PIPE", 0)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("DRAW_INDIRECT", 1)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("VERTEX_INPUT", 2)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("VERTEX_SHADER", 3)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("TESSELLATION_CONTROL_SHADER", 4)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("TESSELLATION_EVALUATION_SHADER", 5)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("GEOMETRY_SHADER", 6)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("FRAGMENT_SHADER", 7)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("EARLY_FRAGMENT_TESTS", 8)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("LATE_FRAGMENT_TESTS", 9)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("COLOR_ATTACHMENT_OUTPUT", 10)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("COMPUTE_SHADER", 11)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("ALL_TRANSFER", 12)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("BOTTOM_OF_PIPE", 13)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("HOST", 14)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("ALL_GRAPHICS", 15)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("ALL_COMMANDS", 16)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("COPY", 32)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("RESOLVE", 33)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("BLIT", 34)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("CLEAR", 35)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("INDEX_INPUT", 36)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("VERTEX_ATTRIBUTE_INPUT", 37)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-            Bitmask::entry("PRE_RASTERIZATION_SHADERS", 38)
-                .extension_old("KHR", "synchronization2")
-                .promoted("1_3"),
-        ],
-    )
-    .long()
-    .extension_old("KHR", "synchronization2")
-    .promoted("1_3"),
-    Bitmask::new(
-        "QueryControlFlags",
-        "QueryControlFlagBits",
-        "QUERY_CONTROL",
-        &[Bitmask::entry("PRECISE", 0)],
-    ),
-    Bitmask::new(
-        "QueryPipelineStatisticFlags",
-        "QueryPipelineStatisticFlagBits",
-        "QUERY_PIPELINE_STATISTIC",
-        &[
-            Bitmask::entry("INPUT_ASSEMBLY_VERTICES", 0),
-            Bitmask::entry("INPUT_ASSEMBLY_PRIMITIVES", 1),
-            Bitmask::entry("VERTEX_SHADER_INVOCATIONS", 2),
-            Bitmask::entry("GEOMETRY_SHADER_INVOCATIONS", 3),
-            Bitmask::entry("GEOMETRY_SHADER_PRIMITIVES", 4),
-            Bitmask::entry("CLIPPING_INVOCATIONS", 5),
-            Bitmask::entry("CLIPPING_PRIMITIVES", 6),
-            Bitmask::entry("FRAGMENT_SHADER_INVOCATIONS", 7),
-            Bitmask::entry("TESSELLATION_CONTROL_SHADER_PATCHES", 8),
-            Bitmask::entry("TESSELLATION_EVALUATION_SHADER_INVOCATIONS", 9),
-            Bitmask::entry("COMPUTE_SHADER_INVOCATIONS", 10),
-        ],
-    ),
-    Bitmask::new(
-        "QueryPoolCreateFlags",
-        "QueryPoolCreateFlagBits",
-        "QUERY_POOL_CREATE",
-        &[],
-    ),
-    Bitmask::new(
-        "QueryResultFlags",
-        "QueryResultFlagBits",
-        "QUERY_RESULT",
-        &[
-            Bitmask::entry("64", 0),
-            Bitmask::entry("WAIT", 1),
-            Bitmask::entry("WITH_AVAILABILITY", 2),
-            Bitmask::entry("PARTIAL", 3),
-        ],
-    ),
-    Bitmask::new(
-        "QueueFlags",
-        "QueueFlagBits",
-        "QUEUE",
-        &[
-            Bitmask::entry("GRAPHICS", 0),
-            Bitmask::entry("COMPUTE", 1),
-            Bitmask::entry("TRANSFER", 2),
-            Bitmask::entry("SPARSE_BINDING", 3),
-            Bitmask::entry("PROTECTED", 4),
-        ],
-    ),
-    Bitmask::new(
-        "RenderPassCreateFlags",
-        "RenderPassCreateFlagBits",
-        "RENDER_PASS_CREATE",
-        &[],
-    ),
-    Bitmask::new(
-        "SampleCountFlags",
-        "SampleCountFlagBits",
-        "SAMPLE_COUNT",
-        &[
-            Bitmask::entry("1", 0),
-            Bitmask::entry("2", 1),
-            Bitmask::entry("4", 2),
-            Bitmask::entry("8", 3),
-            Bitmask::entry("16", 4),
-            Bitmask::entry("32", 5),
-            Bitmask::entry("64", 6),
-        ],
-    ),
-    Bitmask::new("SamplerCreateFlags", "SamplerCreateFlagBits", "SAMPLER_CREATE", &[]),
-    Bitmask::new(
-        "SemaphoreCreateFlags",
-        "SemaphoreCreateFlagBits",
-        "SEMAPHORE_CREATE",
-        &[],
-    ),
-    Bitmask::new(
-        "ShaderModuleCreateFlags",
-        "ShaderModuleCreateFlagBits",
-        "SHADER_MODULE_CREATE",
-        &[],
-    ),
-    Bitmask::new(
-        "ShaderStageFlags",
-        "ShaderStageFlagBits",
-        "SHADER_STAGE",
-        &[
-            Bitmask::entry("VERTEX", 0),
-            Bitmask::entry("TESSELLATION_CONTROL", 1),
-            Bitmask::entry("TESSELLATION_EVALUATION", 2),
-            Bitmask::entry("GEOMETRY", 3),
-            Bitmask::entry("FRAGMENT", 4),
-            Bitmask::entry("COMPUTE", 5),
-        ],
-    ),
-    Bitmask::new(
-        "SparseMemoryBindFlags",
-        "SparseMemoryBindFlagBits",
-        "SPARSE_MEMORY_BIND",
-        &[Bitmask::entry("METADATA", 0)],
-    ),
-    Bitmask::new(
-        "SparseImageFormatFlags",
-        "SparseImageFormatFlagBits",
-        "SPARSE_IMAGE_FORMAT",
-        &[
-            Bitmask::entry("SINGLE_MIPTAIL", 0),
-            Bitmask::entry("ALIGNED_MIP_SIZE", 1),
-            Bitmask::entry("NONSTANDARD_BLOCK_SIZE", 2),
-        ],
-    ),
-    Bitmask::new(
-        "StencilFaceFlags",
-        "StencilFaceFlagBits",
-        "STENCIL_FACE",
-        &[Bitmask::entry("FRONT", 0), Bitmask::entry("BACK", 1)],
-    ),
-    Bitmask::new(
-        "SubgroupFeatureFlags",
-        "SubgroupFeatureFlagBits",
-        "SUBGROUP_FEATURE",
-        &[
-            Bitmask::entry("BASIC", 0),
-            Bitmask::entry("VOTE", 1),
-            Bitmask::entry("ARITHMETIC", 2),
-            Bitmask::entry("BALLOT", 3),
-            Bitmask::entry("SHUFFLE", 4),
-            Bitmask::entry("SHUFFLE_RELATIVE", 5),
-            Bitmask::entry("CLUSTERED", 6),
-            Bitmask::entry("QUAD", 7),
-        ],
-    )
-    .version_since("1_1"),
-    Bitmask::new(
-        "SubmitFlags",
-        "SubmitFlagBits",
-        "SUBMIT",
-        &[Bitmask::entry("PROTECTED", 0)
-            .extension_old("KHR", "synchronization2")
-            .promoted("1_3")],
-    )
-    .extension_old("KHR", "synchronization2")
-    .promoted("1_3"),
-    Bitmask::new(
-        "SubpassDescriptionFlags",
-        "SubpassDescriptionFlagBits",
-        "SUBPASS_DESCRIPTION",
-        &[],
-    ),
-];
+    .extension(VK_KHR_SYNCHRONIZATION2);
+pub const ATTACHMENT_DESCRIPTION_FLAGS: &BitmaskType = &BitmaskType::new(
+    "AttachmentDescriptionFlags",
+    "AttachmentDescriptionFlagBits",
+    "ATTACHMENT_DESCRIPTION",
+);
+pub const BUFFER_CREATE_FLAGS: &BitmaskType =
+    &BitmaskType::new("BufferCreateFlags", "BufferCreateFlagBits", "BUFFER_CREATE");
+pub const BUFFER_USAGE_FLAGS: &BitmaskType =
+    &BitmaskType::new("BufferUsageFlags", "BufferUsageFlagBits", "BUFFER_USAGE");
+pub const BUFFER_VIEW_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "BufferViewCreateFlags",
+    "BufferViewCreateFlagBits",
+    "BUFFER_VIEW_CREATE",
+);
+pub const COLOR_COMPONENT_FLAGS: &BitmaskType =
+    &BitmaskType::new("ColorComponentFlags", "ColorComponentFlagBits", "COLOR_COMPONENT");
+pub const COMMAND_BUFFER_RESET_FLAGS: &BitmaskType = &BitmaskType::new(
+    "CommandBufferResetFlags",
+    "CommandBufferResetFlagBits",
+    "COMMAND_BUFFER_RESET",
+);
+pub const COMMAND_BUFFER_USAGE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "CommandBufferUsageFlags",
+    "CommandBufferUsageFlagBits",
+    "COMMAND_BUFFER_USAGE",
+);
+pub const COMMAND_POOL_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "CommandPoolCreateFlags",
+    "CommandPoolCreateFlagBits",
+    "COMMAND_POOL_CREATE",
+);
+pub const COMMAND_POOL_RESET_FLAGS: &BitmaskType = &BitmaskType::new(
+    "CommandPoolResetFlags",
+    "CommandPoolResetFlagBits",
+    "COMMAND_POOL_RESET",
+);
+pub const CULL_MODE_FLAGS: &BitmaskType = &BitmaskType::new("CullModeFlags", "CullModeFlagBits", "CULL_MODE");
+pub const DEPENDENCY_FLAGS: &BitmaskType = &BitmaskType::new("DependencyFlags", "DependencyFlagBits", "DEPENDENCY");
+pub const DESCRIPTOR_POOL_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "DescriptorPoolCreateFlags",
+    "DescriptorPoolCreateFlagBits",
+    "DESCRIPTOR_POOL_CREATE",
+);
+pub const DESCRIPTOR_POOL_RESET_FLAGS: &BitmaskType = &BitmaskType::new(
+    "DescriptorPoolResetFlags",
+    "DescriptorPoolResetFlagBits",
+    "DESCRIPTOR_POOL_RESET",
+);
+pub const DESCRIPTOR_SET_LAYOUT_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "DescriptorSetLayoutCreateFlags",
+    "DescriptorSetLayoutCreateFlagBits",
+    "DESCRIPTOR_SET_LAYOUT_CREATE",
+);
+pub const DEVICE_CREATE_FLAGS: &BitmaskType =
+    &BitmaskType::new("DeviceCreateFlags", "DeviceCreateFlagBits", "DEVICE_CREATE");
+pub const DEVICE_GROUP_PRESENT_MODE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "DeviceGroupPresentModeFlags",
+    "DeviceGroupPresentModeFlagBits",
+    "DEVICE_GROUP_PRESENT_MODE",
+)
+.extension(VK_KHR_DEVICE_GROUP)
+.side_extensions(&[VK_KHR_SURFACE]);
+pub const DEVICE_QUEUE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "DeviceQueueCreateFlags",
+    "DeviceQueueCreateFlagBits",
+    "DEVICE_QUEUE_CREATE",
+);
+pub const DISPLAY_MODE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "DisplayModeCreateFlags",
+    "DisplayModeCreateFlagBits",
+    "DISPLAY_MODE_CREATE",
+)
+.extension(VK_KHR_DISPLAY);
+pub const DISPLAY_PLANE_ALPHA_FLAGS: &BitmaskType = &BitmaskType::new(
+    "DisplayPlaneAlphaFlags",
+    "DisplayPlaneAlphaFlagBits",
+    "DISPLAY_PLANE_ALPHA",
+)
+.extension(VK_KHR_DISPLAY);
+pub const DISPLAY_SURFACE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "DisplaySurfaceCreateFlags",
+    "DisplaySurfaceCreateFlagBits",
+    "DISPLAY_SURFACE_CREATE",
+)
+.extension(VK_KHR_DISPLAY);
+pub const EVENT_CREATE_FLAGS: &BitmaskType =
+    &BitmaskType::new("EventCreateFlags", "EventCreateFlagBits", "EVENT_CREATE");
+pub const FENCE_CREATE_FLAGS: &BitmaskType =
+    &BitmaskType::new("FenceCreateFlags", "FenceCreateFlagBits", "FENCE_CREATE");
+pub const FORMAT_FEATURE_FLAGS: &BitmaskType =
+    &BitmaskType::new("FormatFeatureFlags", "FormatFeatureFlagBits", "FORMAT_FEATURE");
+pub const FRAMEBUFFER_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "FramebufferCreateFlags",
+    "FramebufferCreateFlagBits",
+    "FRAMEBUFFER_CREATE",
+);
+pub const INSTANCE_CREATE_FLAGS: &BitmaskType =
+    &BitmaskType::new("InstanceCreateFlags", "InstanceCreateFlagBits", "INSTANCE_CREATE");
+pub const IMAGE_ASPECT_FLAGS: &BitmaskType =
+    &BitmaskType::new("ImageAspectFlags", "ImageAspectFlagBits", "IMAGE_ASPECT");
+pub const IMAGE_USAGE_FLAGS: &BitmaskType = &BitmaskType::new("ImageUsageFlags", "ImageUsageFlagBits", "IMAGE_USAGE");
+pub const IMAGE_CREATE_FLAGS: &BitmaskType =
+    &BitmaskType::new("ImageCreateFlags", "ImageCreateFlagBits", "IMAGE_CREATE");
+pub const IMAGE_VIEW_CREATE_FLAGS: &BitmaskType =
+    &BitmaskType::new("ImageViewCreateFlags", "ImageViewCreateFlagBits", "IMAGE_VIEW_CREATE");
+pub const MEMORY_HEAP_FLAGS: &BitmaskType = &BitmaskType::new("MemoryHeapFlags", "MemoryHeapFlagBits", "MEMORY_HEAP");
+pub const MEMORY_PROPERTY_FLAGS: &BitmaskType =
+    &BitmaskType::new("MemoryPropertyFlags", "MemoryPropertyFlagBits", "MEMORY_PROPERTY");
+pub const MEMORY_MAP_FLAGS: &BitmaskType = &BitmaskType::new("MemoryMapFlags", "MemoryMapFlagBits", "MEMORY_MAP");
+pub const PIPELINE_CACHE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "PipelineCacheCreateFlags",
+    "PipelineCacheCreateFlagBits",
+    "PIPELINE_CACHE_CREATE",
+);
+pub const PIPELINE_CREATE_FLAGS: &BitmaskType =
+    &BitmaskType::new("PipelineCreateFlags", "PipelineCreateFlagBits", "PIPELINE_CREATE");
+pub const PIPELINE_LAYOUT_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "PipelineLayoutCreateFlags",
+    "PipelineLayoutCreateFlagBits",
+    "PIPELINE_LAYOUT_CREATE",
+);
+pub const PIPELINE_DEPTH_STENCIL_STATE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "PipelineDepthStencilStateCreateFlags",
+    "PipelineDepthStencilStateCreateFlagBits",
+    "PIPELINE_DEPTH_STENCIL_STATE_CREATE",
+);
+pub const PIPELINE_DYNAMIC_STATE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "PipelineDynamicStateCreateFlags",
+    "PipelineDynamicStateCreateFlagBits",
+    "PIPELINE_DYNAMIC_STATE_CREATE",
+);
+pub const PIPELINE_COLOR_BLEND_STATE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "PipelineColorBlendStateCreateFlags",
+    "PipelineColorBlendStateCreateFlagBits",
+    "PIPELINE_COLOR_BLEND_STATE_CREATE",
+);
+pub const PIPELINE_MULTISAMPLE_STATE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "PipelineMultisampleStateCreateFlags",
+    "PipelineMultisampleStateCreateFlagBits",
+    "PIPELINE_MULTISAMPLE_STATE_CREATE",
+);
+pub const PIPELINE_RASTERIZATION_STATE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "PipelineRasterizationStateCreateFlags",
+    "PipelineRasterizationStateCreateFlagBits",
+    "PIPELINE_RASTERIZATION_STATE_CREATE",
+);
+pub const PIPELINE_VIEWPORT_STATE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "PipelineViewportStateCreateFlags",
+    "PipelineViewportStateCreateFlagBits",
+    "PIPELINE_VIEWPORT_STATE_CREATE",
+);
+pub const PIPELINE_TESSELLATION_STATE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "PipelineTessellationStateCreateFlags",
+    "PipelineTessellationStateCreateFlagBits",
+    "PIPELINE_TESSELLATION_STATE_CREATE",
+);
+pub const PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "PipelineInputAssemblyStateCreateFlags",
+    "PipelineInputAssemblyStateCreateFlagBits",
+    "PIPELINE_INPUT_ASSEMBLY_STATE_CREATE",
+);
+pub const PIPELINE_VERTEX_INPUT_STATE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "PipelineVertexInputStateCreateFlags",
+    "PipelineVertexInputStateCreateFlagBits",
+    "PIPELINE_VERTEX_INPUT_STATE_CREATE",
+);
+pub const PIPELINE_SHADER_STAGE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "PipelineShaderStageCreateFlags",
+    "PipelineShaderStageCreateFlagBits",
+    "PIPELINE_SHADER_STAGE_CREATE",
+);
+pub const PIPELINE_STAGE_FLAGS: &BitmaskType =
+    &BitmaskType::new("PipelineStageFlags", "PipelineStageFlagBits", "PIPELINE_STAGE");
+pub const PIPELINE_STAGE_FLAGS_2: &BitmaskType =
+    &BitmaskType::new("PipelineStageFlags2", "PipelineStageFlagBits2", "PIPELINE_STAGE_2")
+        .long()
+        .extension(VK_KHR_SYNCHRONIZATION2);
+pub const QUERY_CONTROL_FLAGS: &BitmaskType =
+    &BitmaskType::new("QueryControlFlags", "QueryControlFlagBits", "QUERY_CONTROL");
+pub const QUERY_PIPELINE_STATISTIC_FLAGS: &BitmaskType = &BitmaskType::new(
+    "QueryPipelineStatisticFlags",
+    "QueryPipelineStatisticFlagBits",
+    "QUERY_PIPELINE_STATISTIC",
+);
+pub const QUERY_POOL_CREATE_FLAGS: &BitmaskType =
+    &BitmaskType::new("QueryPoolCreateFlags", "QueryPoolCreateFlagBits", "QUERY_POOL_CREATE");
+pub const QUERY_RESULT_FLAGS: &BitmaskType =
+    &BitmaskType::new("QueryResultFlags", "QueryResultFlagBits", "QUERY_RESULT");
+pub const QUEUE_FLAGS: &BitmaskType = &BitmaskType::new("QueueFlags", "QueueFlagBits", "QUEUE");
+pub const RENDER_PASS_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "RenderPassCreateFlags",
+    "RenderPassCreateFlagBits",
+    "RENDER_PASS_CREATE",
+);
+pub const SAMPLE_COUNT_FLAGS: &BitmaskType =
+    &BitmaskType::new("SampleCountFlags", "SampleCountFlagBits", "SAMPLE_COUNT");
+pub const SAMPLER_CREATE_FLAGS: &BitmaskType =
+    &BitmaskType::new("SamplerCreateFlags", "SamplerCreateFlagBits", "SMAPLER_CREATE");
+pub const SEMAPHORE_CREATE_FLAGS: &BitmaskType =
+    &BitmaskType::new("SemaphoreCreateFlags", "SemaphoreCreateFlagBits", "SEMAPHORE_CREATE");
+pub const SHADER_MODULE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "ShaderModuleCreateFlags",
+    "ShaderModuleCreateFlagBits",
+    "SHADER_MODULE_CREATE",
+);
+pub const SHADER_STAGE_FLAGS: &BitmaskType =
+    &BitmaskType::new("ShaderStageFlags", "ShaderStageFlagBits", "SHADER_STAGE");
+pub const SPARSE_MEMORY_BIND_FLAGS: &BitmaskType = &BitmaskType::new(
+    "SparseMemoryBindFlags",
+    "SparseMemoryBindFlagBits",
+    "SPARSE_MEMORY_BIND",
+);
+pub const SPARSE_IMAGE_FORMAT_FLAGS: &BitmaskType = &BitmaskType::new(
+    "SparseImageFormatFlags",
+    "SparseImageFormatFlagBits",
+    "SPARSE_IMAGE_FORMAT",
+);
+pub const STENCIL_FACE_FLAGS: &BitmaskType =
+    &BitmaskType::new("StencilFaceFlags", "StencilFaceFlagBits", "STENCIL_FACE");
+pub const SUBGROUP_FEATURE_FLAGS: &BitmaskType =
+    &BitmaskType::new("SubgroupFeatureFlags", "SubgroupFeatureFlagBits", "SUBGROUP_FEATURE").version_since("1_1");
+pub const SUBMIT_FLAGS: &BitmaskType =
+    &BitmaskType::new("SubmitFlags", "SubmitFlagBits", "SUBMIT").extension(VK_KHR_SYNCHRONIZATION2);
+pub const SUBPASS_DESCRIPTION_FLAGS: &BitmaskType = &BitmaskType::new(
+    "SubpassDescriptionFlags",
+    "SubpassDescriptionFlagBits",
+    "SUBPASS_DESCRIPTION",
+);
+
+fn emit_bitflags(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+    ACCESS_FLAGS.emit(emitter);
+    ACCESS_FLAGS.entry("INDIRECT_COMMAND_READ", 0).emit(emitter);
+    ACCESS_FLAGS.entry("INDEX_READ", 1).emit(emitter);
+    ACCESS_FLAGS.entry("VERTEX_ATTRIBUTE_READ", 2).emit(emitter);
+    ACCESS_FLAGS.entry("UNIFORM_READ", 3).emit(emitter);
+    ACCESS_FLAGS.entry("INPUT_ATTACHMENT_READ", 4).emit(emitter);
+    ACCESS_FLAGS.entry("SHADER_READ", 5).emit(emitter);
+    ACCESS_FLAGS.entry("SHADER_WRITE", 6).emit(emitter);
+    ACCESS_FLAGS.entry("COLOR_ATTACHMENT_READ", 7).emit(emitter);
+    ACCESS_FLAGS.entry("COLOR_ATTACHMENT_WRITE", 8).emit(emitter);
+    ACCESS_FLAGS.entry("DEPTH_STENCIL_ATTACHMENT_READ", 9).emit(emitter);
+    ACCESS_FLAGS.entry("DEPTH_STENCIL_ATTACHMENT_WRITE", 10).emit(emitter);
+    ACCESS_FLAGS.entry("TRANSFER_READ", 11).emit(emitter);
+    ACCESS_FLAGS.entry("TRANSFER_WRITE", 12).emit(emitter);
+    ACCESS_FLAGS.entry("HOST_READ", 13).emit(emitter);
+    ACCESS_FLAGS.entry("HOST_WRITE", 14).emit(emitter);
+    ACCESS_FLAGS.entry("MEMORY_READ", 15).emit(emitter);
+    ACCESS_FLAGS.entry("MEMORY_WRITE", 16).emit(emitter);
+    ACCESS_FLAGS
+        .entry("COLOR_ATTACHMENT_READ_NONCOHERENT", 19)
+        .extension(VK_EXT_BLEND_OPERATION_ADVANCED)
+        .emit(emitter);
+
+    ACCESS_FLAGS_2.emit(emitter);
+    ACCESS_FLAGS_2.entry("INDIRECT_COMMAND_READ", 0).emit(emitter);
+    ACCESS_FLAGS_2.entry("INDEX_READ", 1).emit(emitter);
+    ACCESS_FLAGS_2.entry("VERTEX_ATTRIBUTE_READ", 2).emit(emitter);
+    ACCESS_FLAGS_2.entry("UNIFORM_READ", 3).emit(emitter);
+    ACCESS_FLAGS_2.entry("INPUT_ATTACHMENT_READ", 4).emit(emitter);
+    ACCESS_FLAGS_2.entry("SHADER_READ", 5).emit(emitter);
+    ACCESS_FLAGS_2.entry("SHADER_WRITE", 6).emit(emitter);
+    ACCESS_FLAGS_2.entry("COLOR_ATTACHMENT_READ", 7).emit(emitter);
+    ACCESS_FLAGS_2.entry("COLOR_ATTACHMENT_WRITE", 8).emit(emitter);
+    ACCESS_FLAGS_2.entry("DEPTH_STENCIL_ATTACHMENT_READ", 9).emit(emitter);
+    ACCESS_FLAGS_2.entry("DEPTH_STENCIL_ATTACHMENT_WRITE", 10).emit(emitter);
+    ACCESS_FLAGS_2.entry("TRANSFER_READ", 11).emit(emitter);
+    ACCESS_FLAGS_2.entry("TRANSFER_WRITE", 12).emit(emitter);
+    ACCESS_FLAGS_2.entry("HOST_READ", 13).emit(emitter);
+    ACCESS_FLAGS_2.entry("HOST_WRITE", 14).emit(emitter);
+    ACCESS_FLAGS_2.entry("MEMORY_READ", 15).emit(emitter);
+    ACCESS_FLAGS_2.entry("MEMORY_WRITE", 16).emit(emitter);
+    ACCESS_FLAGS_2.entry("SHADER_SAMPLED_READ", 32).emit(emitter);
+    ACCESS_FLAGS_2.entry("SHADER_STORAGE_READ", 33).emit(emitter);
+    ACCESS_FLAGS_2.entry("SHADER_STORAGE_WRITE", 34).emit(emitter);
+
+    ATTACHMENT_DESCRIPTION_FLAGS.emit(emitter);
+    ATTACHMENT_DESCRIPTION_FLAGS.entry("MAY_ALIAS", 0).emit(emitter);
+
+    BUFFER_CREATE_FLAGS.emit(emitter);
+    BUFFER_CREATE_FLAGS.entry("SPARSE_BINDING", 0).emit(emitter);
+    BUFFER_CREATE_FLAGS.entry("SPARSE_RESIDENCY", 1).emit(emitter);
+    BUFFER_CREATE_FLAGS.entry("SPARSE_ALIASED", 2).emit(emitter);
+    BUFFER_CREATE_FLAGS
+        .entry("PROTECTED", 3)
+        .version_since("1_1")
+        .emit(emitter);
+
+    BUFFER_USAGE_FLAGS.emit(emitter);
+    BUFFER_USAGE_FLAGS.entry("TRANSFER_SRC", 0).emit(emitter);
+    BUFFER_USAGE_FLAGS.entry("TRANSFER_DST", 1).emit(emitter);
+    BUFFER_USAGE_FLAGS.entry("UNIFORM_TEXEL_BUFFER", 2).emit(emitter);
+    BUFFER_USAGE_FLAGS.entry("STORAGE_TEXEL_BUFFER", 3).emit(emitter);
+    BUFFER_USAGE_FLAGS.entry("UNIFORM_BUFFER", 4).emit(emitter);
+    BUFFER_USAGE_FLAGS.entry("STORAGE_BUFFER", 5).emit(emitter);
+    BUFFER_USAGE_FLAGS.entry("INDEX_BUFFER", 6).emit(emitter);
+    BUFFER_USAGE_FLAGS.entry("VERTEX_BUFFER", 7).emit(emitter);
+    BUFFER_USAGE_FLAGS.entry("INDIRECT_BUFFER", 8).emit(emitter);
+
+    BUFFER_VIEW_CREATE_FLAGS.emit(emitter);
+
+    COLOR_COMPONENT_FLAGS.emit(emitter);
+    COLOR_COMPONENT_FLAGS.entry("R", 0).emit(emitter);
+    COLOR_COMPONENT_FLAGS.entry("G", 1).emit(emitter);
+    COLOR_COMPONENT_FLAGS.entry("B", 2).emit(emitter);
+    COLOR_COMPONENT_FLAGS.entry("A", 3).emit(emitter);
+
+    COMMAND_BUFFER_RESET_FLAGS.emit(emitter);
+    COMMAND_BUFFER_RESET_FLAGS.entry("RELEASE_RESOURCES", 0).emit(emitter);
+
+    COMMAND_BUFFER_USAGE_FLAGS.emit(emitter);
+    COMMAND_BUFFER_USAGE_FLAGS.entry("ONE_TIME_SUBMIT", 0).emit(emitter);
+    COMMAND_BUFFER_USAGE_FLAGS
+        .entry("RENDER_PASS_CONTINUE", 1)
+        .emit(emitter);
+    COMMAND_BUFFER_USAGE_FLAGS.entry("SIMULTANEOUS_USE", 2).emit(emitter);
+
+    COMMAND_POOL_CREATE_FLAGS.emit(emitter);
+    COMMAND_POOL_CREATE_FLAGS.entry("TRANSIENT", 0).emit(emitter);
+    COMMAND_POOL_CREATE_FLAGS.entry("RESET_COMMAND_BUFFER", 1).emit(emitter);
+    COMMAND_POOL_CREATE_FLAGS
+        .entry("PROTECTED", 2)
+        .version_since("1_1")
+        .emit(emitter);
+
+    COMMAND_POOL_RESET_FLAGS.emit(emitter);
+    COMMAND_POOL_RESET_FLAGS.entry("RELEASE_RESOURCES", 0).emit(emitter);
+
+    CULL_MODE_FLAGS.emit(emitter);
+    CULL_MODE_FLAGS.entry("FRONT", 0).emit(emitter);
+    CULL_MODE_FLAGS.entry("BACK", 1).emit(emitter);
+
+    DEPENDENCY_FLAGS.emit(emitter);
+    DEPENDENCY_FLAGS.entry("BY_REGION", 0).emit(emitter);
+    DEPENDENCY_FLAGS
+        .entry("VIEW_LOCAL", 1)
+        .extension(VK_KHR_MULTIVIEW)
+        .emit(emitter);
+
+    DESCRIPTOR_POOL_CREATE_FLAGS.emit(emitter);
+    DESCRIPTOR_POOL_CREATE_FLAGS
+        .entry("FREE_DESCRIPTOR_SET", 0)
+        .emit(emitter);
+
+    DESCRIPTOR_POOL_RESET_FLAGS.emit(emitter);
+    DESCRIPTOR_SET_LAYOUT_CREATE_FLAGS.emit(emitter);
+    DEVICE_CREATE_FLAGS.emit(emitter);
+    DEVICE_GROUP_PRESENT_MODE_FLAGS.emit(emitter);
+
+    DEVICE_QUEUE_CREATE_FLAGS.emit(emitter);
+    DEVICE_QUEUE_CREATE_FLAGS.entry("PROTECTED", 0).emit(emitter);
+
+    DISPLAY_MODE_CREATE_FLAGS.emit(emitter);
+
+    DISPLAY_PLANE_ALPHA_FLAGS.emit(emitter);
+    DISPLAY_PLANE_ALPHA_FLAGS.entry("OPAQUE", 0).emit(emitter);
+    DISPLAY_PLANE_ALPHA_FLAGS.entry("GLOBAL", 1).emit(emitter);
+    DISPLAY_PLANE_ALPHA_FLAGS.entry("PER_PIXEL", 2).emit(emitter);
+    DISPLAY_PLANE_ALPHA_FLAGS
+        .entry("PER_PIXEL_PREMULTIPLIED", 3)
+        .emit(emitter);
+
+    DISPLAY_SURFACE_CREATE_FLAGS.emit(emitter);
+    EVENT_CREATE_FLAGS.emit(emitter);
+
+    FENCE_CREATE_FLAGS.emit(emitter);
+    FENCE_CREATE_FLAGS.entry("SIGNALED", 0).emit(emitter);
+
+    FORMAT_FEATURE_FLAGS.emit(emitter);
+    FORMAT_FEATURE_FLAGS.entry("SAMPLED_IMAGE", 0).emit(emitter);
+    FORMAT_FEATURE_FLAGS.entry("STORAGE_IMAGE", 1).emit(emitter);
+    FORMAT_FEATURE_FLAGS.entry("STORAGE_IMAGE_ATOMIC", 2).emit(emitter);
+    FORMAT_FEATURE_FLAGS.entry("UNIFORM_TEXEL_BUFFER", 3).emit(emitter);
+    FORMAT_FEATURE_FLAGS.entry("STORAGE_TEXEL_BUFFER", 4).emit(emitter);
+    FORMAT_FEATURE_FLAGS
+        .entry("STORAGE_TEXEL_BUFFER_ATOMIC", 5)
+        .emit(emitter);
+    FORMAT_FEATURE_FLAGS.entry("VERTEX_BUFFER", 6).emit(emitter);
+    FORMAT_FEATURE_FLAGS.entry("COLOR_ATTACHMENT", 7).emit(emitter);
+    FORMAT_FEATURE_FLAGS.entry("COLOR_ATTACHMENT_BLEND", 8).emit(emitter);
+    FORMAT_FEATURE_FLAGS.entry("DEPTH_STENCIL_ATTACHMENT", 9).emit(emitter);
+    FORMAT_FEATURE_FLAGS.entry("BLIT_SRC", 10).emit(emitter);
+    FORMAT_FEATURE_FLAGS.entry("BLIT_DST", 11).emit(emitter);
+    FORMAT_FEATURE_FLAGS
+        .entry("SAMPLED_IMAGE_FILTER_LINEAR", 12)
+        .emit(emitter);
+
+    FRAMEBUFFER_CREATE_FLAGS.emit(emitter);
+
+    INSTANCE_CREATE_FLAGS.emit(emitter);
+    INSTANCE_CREATE_FLAGS
+        .entry("ENUMERATE_PORTABILITY", 0)
+        .extension(VK_KHR_PORTABILITY_ENUMERATION)
+        .emit(emitter);
+
+    IMAGE_ASPECT_FLAGS.emit(emitter);
+    IMAGE_ASPECT_FLAGS.entry("COLOR", 0).emit(emitter);
+    IMAGE_ASPECT_FLAGS.entry("DEPTH", 1).emit(emitter);
+    IMAGE_ASPECT_FLAGS.entry("STENCIL", 2).emit(emitter);
+    IMAGE_ASPECT_FLAGS.entry("METADATA", 3).emit(emitter);
+
+    IMAGE_USAGE_FLAGS.emit(emitter);
+    IMAGE_USAGE_FLAGS.entry("TRANSFER_SRC", 0).emit(emitter);
+    IMAGE_USAGE_FLAGS.entry("TRANSFER_DST", 1).emit(emitter);
+    IMAGE_USAGE_FLAGS.entry("SAMPLED", 2).emit(emitter);
+    IMAGE_USAGE_FLAGS.entry("STORAGE", 3).emit(emitter);
+    IMAGE_USAGE_FLAGS.entry("COLOR_ATTACHMENT", 4).emit(emitter);
+    IMAGE_USAGE_FLAGS.entry("DEPTH_STENCIL_ATTACHMENT", 5).emit(emitter);
+    IMAGE_USAGE_FLAGS.entry("TRANSIENT_ATTACHMENT", 6).emit(emitter);
+    IMAGE_USAGE_FLAGS.entry("INPUT_ATTACHMENT", 7).emit(emitter);
+
+    IMAGE_CREATE_FLAGS.emit(emitter);
+    IMAGE_CREATE_FLAGS.entry("SPARSE_BINDING", 0).emit(emitter);
+    IMAGE_CREATE_FLAGS.entry("SPARSE_RESIDENCY", 1).emit(emitter);
+    IMAGE_CREATE_FLAGS.entry("SPARSE_ALIASED", 2).emit(emitter);
+    IMAGE_CREATE_FLAGS.entry("MUTABLE_FORMAT", 3).emit(emitter);
+    IMAGE_CREATE_FLAGS.entry("CUBE_COMPATIBLE", 4).emit(emitter);
+    IMAGE_CREATE_FLAGS
+        .entry("SPLIT_INSTANCE_BIND_REGIONS", 6)
+        .extension(VK_KHR_DEVICE_GROUP)
+        .side_extensions(&[VK_KHR_BIND_MEMORY_2])
+        .emit(emitter);
+    IMAGE_CREATE_FLAGS.entry("PROTECTED", 11).emit(emitter);
+
+    IMAGE_VIEW_CREATE_FLAGS.emit(emitter);
+
+    MEMORY_HEAP_FLAGS.emit(emitter);
+    MEMORY_HEAP_FLAGS.entry("DEVICE_LOCAL", 0).emit(emitter);
+    MEMORY_HEAP_FLAGS
+        .entry("MULTI_INSTANCE", 1)
+        .version_since("1_1")
+        .emit(emitter);
+
+    MEMORY_PROPERTY_FLAGS.emit(emitter);
+    MEMORY_PROPERTY_FLAGS.entry("DEVICE_LOCAL", 0).emit(emitter);
+    MEMORY_PROPERTY_FLAGS.entry("HOST_VISIBLE", 1).emit(emitter);
+    MEMORY_PROPERTY_FLAGS.entry("HOST_COHERENT", 2).emit(emitter);
+    MEMORY_PROPERTY_FLAGS.entry("HOST_CACHED", 3).emit(emitter);
+    MEMORY_PROPERTY_FLAGS.entry("LAZILY_ALLOCATED", 4).emit(emitter);
+    MEMORY_PROPERTY_FLAGS.entry("PROTECTED", 5).emit(emitter);
+
+    MEMORY_MAP_FLAGS.emit(emitter);
+    PIPELINE_CACHE_CREATE_FLAGS.emit(emitter);
+
+    PIPELINE_CREATE_FLAGS.emit(emitter);
+    PIPELINE_CREATE_FLAGS.entry("DISABLE_OPTIMIZATION", 0).emit(emitter);
+    PIPELINE_CREATE_FLAGS.entry("ALLOW_DERIVATIVES", 1).emit(emitter);
+    PIPELINE_CREATE_FLAGS.entry("DERIVATIVE", 2).emit(emitter);
+
+    PIPELINE_LAYOUT_CREATE_FLAGS.emit(emitter);
+    PIPELINE_DEPTH_STENCIL_STATE_CREATE_FLAGS.emit(emitter);
+    PIPELINE_DYNAMIC_STATE_CREATE_FLAGS.emit(emitter);
+    PIPELINE_COLOR_BLEND_STATE_CREATE_FLAGS.emit(emitter);
+    PIPELINE_MULTISAMPLE_STATE_CREATE_FLAGS.emit(emitter);
+    PIPELINE_RASTERIZATION_STATE_CREATE_FLAGS.emit(emitter);
+    PIPELINE_VIEWPORT_STATE_CREATE_FLAGS.emit(emitter);
+    PIPELINE_TESSELLATION_STATE_CREATE_FLAGS.emit(emitter);
+    PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_FLAGS.emit(emitter);
+    PIPELINE_VERTEX_INPUT_STATE_CREATE_FLAGS.emit(emitter);
+    PIPELINE_SHADER_STAGE_CREATE_FLAGS.emit(emitter);
+
+    PIPELINE_STAGE_FLAGS.emit(emitter);
+    PIPELINE_STAGE_FLAGS.entry("TOP_OF_PIPE", 0).emit(emitter);
+    PIPELINE_STAGE_FLAGS.entry("DRAW_INDIRECT", 1).emit(emitter);
+    PIPELINE_STAGE_FLAGS.entry("VERTEX_INPUT", 2).emit(emitter);
+    PIPELINE_STAGE_FLAGS.entry("VERTEX_SHADER", 3).emit(emitter);
+    PIPELINE_STAGE_FLAGS
+        .entry("TESSELLATION_CONTROL_SHADER", 4)
+        .emit(emitter);
+    PIPELINE_STAGE_FLAGS
+        .entry("TESSELLATION_EVALUATION_SHADER", 5)
+        .emit(emitter);
+    PIPELINE_STAGE_FLAGS.entry("GEOMETRY_SHADER", 6).emit(emitter);
+    PIPELINE_STAGE_FLAGS.entry("FRAGMENT_SHADER", 7).emit(emitter);
+    PIPELINE_STAGE_FLAGS.entry("EARLY_FRAGMENT_TESTS", 8).emit(emitter);
+    PIPELINE_STAGE_FLAGS.entry("LATE_FRAGMENT_TESTS", 9).emit(emitter);
+    PIPELINE_STAGE_FLAGS.entry("COLOR_ATTACHMENT_OUTPUT", 10).emit(emitter);
+    PIPELINE_STAGE_FLAGS.entry("COMPUTE_SHADER", 11).emit(emitter);
+    PIPELINE_STAGE_FLAGS.entry("TRANSFER", 12).emit(emitter);
+    PIPELINE_STAGE_FLAGS.entry("BOTTOM_OF_PIPE", 13).emit(emitter);
+    PIPELINE_STAGE_FLAGS.entry("HOST", 14).emit(emitter);
+    PIPELINE_STAGE_FLAGS.entry("ALL_GRAPHICS", 15).emit(emitter);
+    PIPELINE_STAGE_FLAGS.entry("ALL_COMMANDS", 16).emit(emitter);
+
+    PIPELINE_STAGE_FLAGS_2.emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("TOP_OF_PIPE", 0).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("DRAW_INDIRECT", 1).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("VERTEX_INPUT", 2).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("VERTEX_SHADER", 3).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2
+        .entry("TESSELLATION_CONTROL_SHADER", 4)
+        .emit(emitter);
+    PIPELINE_STAGE_FLAGS_2
+        .entry("TESSELLATION_EVALUATION_SHADER", 5)
+        .emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("GEOMETRY_SHADER", 6).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("FRAGMENT_SHADER", 7).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("EARLY_FRAGMENT_TESTS", 8).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("LATE_FRAGMENT_TESTS", 9).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2
+        .entry("COLOR_ATTACHMENT_OUTPUT", 10)
+        .emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("COMPUTE_SHADER", 11).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("ALL_TRANSFER", 12).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("BOTTOM_OF_PIPE", 13).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("HOST", 14).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("ALL_GRAPHICS", 15).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("ALL_COMMANDS", 16).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("COPY", 32).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("RESOLVE", 33).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("BLIT", 34).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("CLEAR", 35).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("INDEX_INPUT", 36).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("VERTEX_ATTRIBUTE_INPUT", 37).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2
+        .entry("PRE_RASTERIZATION_SHADERS", 38)
+        .emit(emitter);
+
+    QUERY_CONTROL_FLAGS.emit(emitter);
+    QUERY_CONTROL_FLAGS.entry("PRECISE", 0).emit(emitter);
+
+    QUERY_PIPELINE_STATISTIC_FLAGS.emit(emitter);
+    QUERY_PIPELINE_STATISTIC_FLAGS
+        .entry("INPUT_ASSEMBLY_VERTICES", 0)
+        .emit(emitter);
+    QUERY_PIPELINE_STATISTIC_FLAGS
+        .entry("INPUT_ASSEMBLY_PRIMITIVES", 1)
+        .emit(emitter);
+    QUERY_PIPELINE_STATISTIC_FLAGS
+        .entry("VERTEX_SHADER_INVOCATIONS", 2)
+        .emit(emitter);
+    QUERY_PIPELINE_STATISTIC_FLAGS
+        .entry("GEOMETRY_SHADER_INVOCATIONS", 3)
+        .emit(emitter);
+    QUERY_PIPELINE_STATISTIC_FLAGS
+        .entry("GEOMETRY_SHADER_PRIMITIVES", 4)
+        .emit(emitter);
+    QUERY_PIPELINE_STATISTIC_FLAGS
+        .entry("CLIPPING_INVOCATIONS", 5)
+        .emit(emitter);
+    QUERY_PIPELINE_STATISTIC_FLAGS
+        .entry("CLIPPING_PRIMITIVES", 6)
+        .emit(emitter);
+    QUERY_PIPELINE_STATISTIC_FLAGS
+        .entry("FRAGMENT_SHADER_INVOCATIONS", 7)
+        .emit(emitter);
+    QUERY_PIPELINE_STATISTIC_FLAGS
+        .entry("TESSELLATION_CONTROL_SHADER_PATCHES", 8)
+        .emit(emitter);
+    QUERY_PIPELINE_STATISTIC_FLAGS
+        .entry("TESSELLATION_EVALUATION_SHADER_INVOCATIONS", 9)
+        .emit(emitter);
+    QUERY_PIPELINE_STATISTIC_FLAGS
+        .entry("COMPUTE_SHADER_INVOCATIONS", 10)
+        .emit(emitter);
+
+    QUERY_POOL_CREATE_FLAGS.emit(emitter);
+
+    QUERY_RESULT_FLAGS.emit(emitter);
+    QUERY_RESULT_FLAGS.entry("64", 0).emit(emitter);
+    QUERY_RESULT_FLAGS.entry("WAIT", 1).emit(emitter);
+    QUERY_RESULT_FLAGS.entry("WITH_AVAILABILITY", 2).emit(emitter);
+    QUERY_RESULT_FLAGS.entry("PARTIAL", 3).emit(emitter);
+
+    QUEUE_FLAGS.emit(emitter);
+    QUEUE_FLAGS.entry("GRAPHICS", 0).emit(emitter);
+    QUEUE_FLAGS.entry("COMPUTE", 1).emit(emitter);
+    QUEUE_FLAGS.entry("TRANSFER", 2).emit(emitter);
+    QUEUE_FLAGS.entry("SPARSE_BINDING", 3).emit(emitter);
+    QUEUE_FLAGS.entry("PROTECTED", 4).emit(emitter);
+
+    RENDER_PASS_CREATE_FLAGS.emit(emitter);
+
+    SAMPLE_COUNT_FLAGS.emit(emitter);
+    SAMPLE_COUNT_FLAGS.entry("1", 0).emit(emitter);
+    SAMPLE_COUNT_FLAGS.entry("2", 1).emit(emitter);
+    SAMPLE_COUNT_FLAGS.entry("4", 2).emit(emitter);
+    SAMPLE_COUNT_FLAGS.entry("8", 3).emit(emitter);
+    SAMPLE_COUNT_FLAGS.entry("16", 4).emit(emitter);
+    SAMPLE_COUNT_FLAGS.entry("32", 5).emit(emitter);
+    SAMPLE_COUNT_FLAGS.entry("64", 6).emit(emitter);
+
+    SAMPLER_CREATE_FLAGS.emit(emitter);
+    SEMAPHORE_CREATE_FLAGS.emit(emitter);
+    SHADER_MODULE_CREATE_FLAGS.emit(emitter);
+
+    SHADER_STAGE_FLAGS.emit(emitter);
+    SHADER_STAGE_FLAGS.entry("VERTEX", 0).emit(emitter);
+    SHADER_STAGE_FLAGS.entry("TESSELLATION_CONTROL", 1).emit(emitter);
+    SHADER_STAGE_FLAGS.entry("TESSELLATION_EVALUATION", 2).emit(emitter);
+    SHADER_STAGE_FLAGS.entry("GEOMETRY", 3).emit(emitter);
+    SHADER_STAGE_FLAGS.entry("FRAGMENT", 4).emit(emitter);
+    SHADER_STAGE_FLAGS.entry("COMPUTE", 5).emit(emitter);
+
+    SPARSE_MEMORY_BIND_FLAGS.emit(emitter);
+    SPARSE_MEMORY_BIND_FLAGS.entry("METADATA", 0).emit(emitter);
+
+    SPARSE_IMAGE_FORMAT_FLAGS.emit(emitter);
+    SPARSE_IMAGE_FORMAT_FLAGS.entry("SINGLE_MIPTAIL", 0).emit(emitter);
+    SPARSE_IMAGE_FORMAT_FLAGS.entry("ALIGNED_MIP_SIZE", 1).emit(emitter);
+    SPARSE_IMAGE_FORMAT_FLAGS
+        .entry("NONSTANDARD_BLOCK_SIZE", 2)
+        .emit(emitter);
+
+    STENCIL_FACE_FLAGS.emit(emitter);
+    STENCIL_FACE_FLAGS.entry("FRONT", 0).emit(emitter);
+    STENCIL_FACE_FLAGS.entry("BACK", 1).emit(emitter);
+
+    SUBGROUP_FEATURE_FLAGS.emit(emitter);
+    SUBGROUP_FEATURE_FLAGS.entry("BASIC", 0).emit(emitter);
+    SUBGROUP_FEATURE_FLAGS.entry("VOTE", 1).emit(emitter);
+    SUBGROUP_FEATURE_FLAGS.entry("ARITHMETIC", 2).emit(emitter);
+    SUBGROUP_FEATURE_FLAGS.entry("BALLOT", 3).emit(emitter);
+    SUBGROUP_FEATURE_FLAGS.entry("SHUFFLE", 4).emit(emitter);
+    SUBGROUP_FEATURE_FLAGS.entry("SHUFFLE_RELATIVE", 5).emit(emitter);
+    SUBGROUP_FEATURE_FLAGS.entry("CLUSTERED", 6).emit(emitter);
+    SUBGROUP_FEATURE_FLAGS.entry("QUAD", 7).emit(emitter);
+
+    SUBMIT_FLAGS.emit(emitter);
+    SUBMIT_FLAGS.entry("PROTECTED", 0).emit(emitter);
+
+    SUBPASS_DESCRIPTION_FLAGS.emit(emitter);
+}
 
 const FUNC_POINTERS: &[FuncPointer] = &[
     FuncPointer::new(

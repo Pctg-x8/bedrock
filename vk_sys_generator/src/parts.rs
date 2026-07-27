@@ -29,33 +29,6 @@ pub fn emit_const(w: &mut impl std::io::Write, name: &str, r#type: &str, value: 
     writeln!(w, "pub const {name}: {type} = {value};")
 }
 
-#[allow(clippy::inconsistent_digit_grouping)]
-pub fn emit_result_const(w: &mut impl std::io::Write, name: &str, ext_number: u32, value: u32) -> std::io::Result<()> {
-    let value = if ext_number == 0 {
-        value
-    } else {
-        100_0000_000 + (ext_number - 1) * 1_000 + value
-    };
-
-    writeln!(w, "#[rustfmt::skip] pub const {name}: VkResult = {value};")
-}
-
-#[allow(clippy::inconsistent_digit_grouping)]
-pub fn emit_result_err_const(
-    w: &mut impl std::io::Write,
-    name: &str,
-    ext_number: u32,
-    value: u32,
-) -> std::io::Result<()> {
-    let value = if ext_number == 0 {
-        value
-    } else {
-        100_0000_000 + (ext_number - 1) * 1_000 + value
-    };
-
-    writeln!(w, "#[rustfmt::skip] pub const {name}: VkResult = -{value};")
-}
-
 pub struct TypeAlias {
     name: &'static str,
     org_type: &'static str,
@@ -631,13 +604,22 @@ impl BitmaskEntry2 {
             value: val.clone(),
         });
 
-        if let Some(promoted) = self.promoted_override.or_else(|| self.extension?.promoted_since()) {
+        if let Some(promoted) = self
+            .promoted_override
+            .or_else(|| self.extension.or(self.ty.extension)?.promoted_since())
+        {
             // symbol promotion
             emitter.emit_const(Constant {
                 compilation_condition: self
                     .ty
                     .rs_requirements()
-                    .and(CompilationCondition::Feature(FeatureName::AllowApiVersion(promoted))),
+                    .and(CompilationCondition::Feature(FeatureName::AllowApiVersion(promoted)))
+                    .and(CompilationCondition::all(self.side_extensions.iter().map(|x| {
+                        CompilationCondition::Feature(FeatureName::VulkanExt {
+                            tag: x.tag,
+                            name: x.name,
+                        })
+                    }))),
                 name: ConstantSymbol::Bitmask {
                     prefix: self.ty.prefix,
                     stem: self.name,
@@ -768,12 +750,26 @@ impl BitmaskType {
         if let Some(promoted) = self.extension.and_then(|x| x.promoted_since()) {
             // promote symbol
             emitter.emit_type_alias(crate::rs_item::TypeAlias {
-                compilation_condition: CompilationCondition::Feature(FeatureName::AllowApiVersion(promoted)),
+                compilation_condition: CompilationCondition::Feature(FeatureName::AllowApiVersion(promoted)).and(
+                    CompilationCondition::all(self.side_extensions.iter().map(|x| {
+                        CompilationCondition::Feature(FeatureName::VulkanExt {
+                            tag: x.tag,
+                            name: x.name,
+                        })
+                    })),
+                ),
                 target_name: self.rs_typesym_promoted(),
                 source_name: source_name.clone(),
             });
             emitter.emit_type_alias(crate::rs_item::TypeAlias {
-                compilation_condition: CompilationCondition::Feature(FeatureName::AllowApiVersion(promoted)),
+                compilation_condition: CompilationCondition::Feature(FeatureName::AllowApiVersion(promoted)).and(
+                    CompilationCondition::all(self.side_extensions.iter().map(|x| {
+                        CompilationCondition::Feature(FeatureName::VulkanExt {
+                            tag: x.tag,
+                            name: x.name,
+                        })
+                    })),
+                ),
                 target_name: self.rs_bits_typesym_promoted(),
                 source_name,
             });
