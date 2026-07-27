@@ -145,7 +145,7 @@ impl EnumType {
         self
     }
 
-    pub const fn member(&'static self, name: &'static str, value: isize) -> EnumMember2 {
+    pub const fn member(&'static self, name: &'static str, value: i32) -> EnumMember2 {
         EnumMember2::new(self, name, value)
     }
 
@@ -190,17 +190,26 @@ impl EnumType {
 pub struct EnumMember2 {
     ty: &'static EnumType,
     name: &'static str,
-    value: isize,
+    value: i32,
+    neg: bool,
     extension: Option<&'static Extension<'static>>,
+    extension_number_override: Option<i32>,
 }
 impl EnumMember2 {
-    pub const fn new(ty: &'static EnumType, name: &'static str, value: isize) -> Self {
+    pub const fn new(ty: &'static EnumType, name: &'static str, value: i32) -> Self {
         Self {
             ty,
             name,
             value,
+            neg: false,
             extension: None,
+            extension_number_override: None,
         }
+    }
+
+    pub const fn neg(mut self) -> Self {
+        self.neg = true;
+        self
     }
 
     pub const fn extension(mut self, ext: &'static Extension<'static>) -> Self {
@@ -208,9 +217,29 @@ impl EnumMember2 {
         self
     }
 
+    pub const fn override_extension_number(mut self, number: i32) -> Self {
+        self.extension_number_override = Some(number);
+        self
+    }
+
+    fn real_value(&self) -> isize {
+        if let Some(x) = self
+            .extension_number_override
+            .or_else(|| self.extension.or(self.ty.extension).map(|x| x.number))
+        {
+            if self.neg {
+                -(crate::vk_ext_enum(x, self.value) as isize)
+            } else {
+                crate::vk_ext_enum(x, self.value) as _
+            }
+        } else {
+            self.value as _
+        }
+    }
+
     pub fn emit(&self, emitter: &mut (impl RustCodeEmitter + ?Sized)) {
         let ty = Type::Defined(self.ty.rs_typesym());
-        let val = ConstantValue::Signed(self.value);
+        let val = ConstantValue::Signed(self.real_value());
 
         emitter.emit_const(Constant {
             compilation_condition: self

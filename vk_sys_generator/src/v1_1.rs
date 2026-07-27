@@ -8,6 +8,8 @@ use crate::{
 };
 
 const VERSION: &str = "1_1";
+pub const VK_KHR_MAINTENANCE_1: &Extension = &Extension::khr("maintenance1", 2, 70).promoted(VERSION);
+pub const VK_KHR_MAINTENANCE_2: &Extension = &Extension::khr("maintenance2", 1, 118).promoted(VERSION);
 pub const VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2: &Extension =
     &Extension::khr("get_physical_device_properties2", 2, 60).promoted(VERSION);
 pub const VK_KHR_DEVICE_GROUP: &Extension = &Extension::khr("device_group", 4, 61).promoted(VERSION);
@@ -15,7 +17,7 @@ const VK_EXT_SHADER_SUBGROUP_VOTE: &Extension = &Extension::ext("shader_subgroup
 pub const VK_KHR_DEDICATED_ALLOCATION: &Extension = &Extension::khr("dedicated_allocation", 1, 128).promoted(VERSION);
 pub const VK_KHR_GET_MEMORY_REQUIREMENTS_2: &Extension =
     &Extension::khr("get_memory_requirements2", 1, 147).promoted(VERSION);
-const VK_KHR_SAMPLER_YCBCR_CONVERSION: &Extension =
+pub const VK_KHR_SAMPLER_YCBCR_CONVERSION: &Extension =
     &Extension::khr("sampler_ycbcr_conversion", 14, 157).promoted(VERSION);
 pub const VK_KHR_BIND_MEMORY_2: &Extension = &Extension::khr("bind_memory2", 1, 158).promoted(VERSION);
 pub const VK_KHR_EXTERNAL_MEMORY: &Extension = &Extension::khr("external_memory", 1, 73).promoted(VERSION);
@@ -33,10 +35,7 @@ pub const VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE: &Extension =
 pub fn emit_descriptor_update_template(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE.header_constants().emit(emitter);
     DEBUG_REPORT_OBJECT_TYPE
-        .member(
-            "DESCRIPTOR_UPDATE_TEMPLATE",
-            VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE.ext_enum(0) as _,
-        )
+        .member("DESCRIPTOR_UPDATE_TEMPLATE", 0)
         .extension(VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE)
         .emit(emitter);
 }

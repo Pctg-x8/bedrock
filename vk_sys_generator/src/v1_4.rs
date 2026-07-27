@@ -1,7 +1,7 @@
 use crate::{parts::*, v1_1::VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE, vk_ext_enum};
 
 const VERSION: &str = "1_4";
-pub const VK_KHR_MAINTENANCE_5: &Extension = &Extension::khr("maintenance5", 1, 471);
+pub const VK_KHR_MAINTENANCE_5: &Extension = &Extension::khr("maintenance5", 1, 471).promoted(VERSION);
 const VK_KHR_MAINTENANCE_6: &Extension = &Extension::khr("maintenance6", 1, 546);
 const VK_KHR_VERTEX_ATTRIBUTE_DIVISOR: &Extension = &Extension::khr("vertex_attribute_divisor", 1, 191);
 const VK_KHR_GLOBAL_PRIORITY: &Extension = &Extension::khr("global_priority", 1, 175);

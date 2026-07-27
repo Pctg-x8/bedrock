@@ -6,12 +6,16 @@ use parts::{
 };
 
 use crate::{
-    extensions::VK_KHR_SURFACE,
+    extensions::{VK_KHR_DISPLAY_SWAPCHAIN, VK_KHR_SURFACE, VK_KHR_SWAPCHAIN},
+    parts::EnumType,
     rs_item::{
-        CompilationCondition, Constant, ConstantSymbol, FeatureName, FnSymbol, FunctionPtrNewtype, FunctionStub,
-        RustCodeEmitter, TypeSymbol,
+        CompilationCondition, Constant, ConstantSymbol, ConstantValue, FeatureName, FnSymbol, FunctionPtrNewtype,
+        FunctionStub, RustCodeEmitter, TypeSymbol,
     },
-    v1_1::{VK_KHR_BIND_MEMORY_2, VK_KHR_DEVICE_GROUP},
+    v1_1::{
+        VK_KHR_BIND_MEMORY_2, VK_KHR_DEVICE_GROUP, VK_KHR_EXTERNAL_MEMORY, VK_KHR_MAINTENANCE_1, VK_KHR_MAINTENANCE_2,
+        VK_KHR_SAMPLER_YCBCR_CONVERSION,
+    },
     v1_4::VK_KHR_MAINTENANCE_5,
 };
 
@@ -116,19 +120,12 @@ fn main() -> std::io::Result<()> {
     o.write_all(b"#[cfg(feature = \"Allow1_2APIs\")] #[rustfmt::skip] pub const VK_RESOLVE_MODE_NONE: VkResolveModeFlagBitsKHR = 0;\n")?;
 
     o.write_all(b"\n")?;
-
-    emit_result_type(&mut o)?;
-
-    o.write_all(b"\n")?;
     emit_c_enum_type(&mut o, "VkStructureType")?;
     emit_c_enum_type(&mut o, "VkObjectType")?;
 
-    for e in ENUMS {
-        e.emit(&mut generator);
-    }
-
-    o.write_all(b"\n")?;
-    emit_format_enum(&mut o)?;
+    emit_enums(&mut generator);
+    emit_result_type(&mut generator);
+    emit_format_enum(&mut generator);
 
     for f in FUNC_POINTERS {
         o.write_all(b"\n")?;
@@ -223,11 +220,10 @@ fn main() -> std::io::Result<()> {
         c.emit(&mut o)?;
     }
 
+    v1_1::emit_descriptor_update_template(&mut generator);
     for x in v1_1::ELEMENTS {
         x.emit(&mut generator, &mut o)?;
     }
-
-    v1_1::emit_descriptor_update_template(&mut generator);
 
     for x in v1_2::ELEMENTS {
         x.emit(&mut generator, &mut o)?;
@@ -241,11 +237,10 @@ fn main() -> std::io::Result<()> {
         x.emit(&mut generator, &mut o)?;
     }
 
+    extensions::emit(&mut generator);
     for x in extensions::ELEMENTS {
         x.emit(&mut generator, &mut o)?;
     }
-
-    extensions::emit_debug_report(&mut generator);
 
     generator.generate(&mut o)?;
 
@@ -405,6 +400,10 @@ impl RustCodeEmitter for CodeGenerator {
 
 #[allow(clippy::inconsistent_digit_grouping)]
 const fn vk_ext_enum(extnumber: i32, offset: i32) -> i32 {
+    if extnumber == 0 {
+        return offset;
+    }
+
     100_0000_000 + (extnumber - 1) * 1000 + offset
 }
 
@@ -501,372 +500,332 @@ const OBJECTS: &[Object] = &[
     .extension_old("VK_EXT_debug_utils"),
 ];
 
-const ENUMS: &[Enum] = &[
-    Enum::new(
-        "AttachmentLoadOp",
-        "ATTACHMENT_LOAD_OP",
-        &[
-            Enum::member("LOAD", 0),
-            Enum::member("CLEAR", 1),
-            Enum::member("DONT_CARE", 2),
-        ],
-    ),
-    Enum::new(
-        "AttachmentStoreOp",
-        "ATTACHMENT_STORE_OP",
-        &[Enum::member("STORE", 0), Enum::member("DONT_CARE", 1)],
-    ),
-    Enum::new(
-        "BlendFactor",
-        "BLEND_FACTOR",
-        &[
-            Enum::member("ZERO", 0),
-            Enum::member("ONE", 1),
-            Enum::member("SRC_COLOR", 2),
-            Enum::member("ONE_MINUS_SRC_COLOR", 3),
-            Enum::member("DST_COLOR", 4),
-            Enum::member("ONE_MINUS_DST_COLOR", 5),
-            Enum::member("SRC_ALPHA", 6),
-            Enum::member("ONE_MINUS_SRC_ALPHA", 7),
-            Enum::member("DST_ALPHA", 8),
-            Enum::member("ONE_MINUS_DST_ALPHA", 9),
-            Enum::member("CONSTANT_COLOR", 10),
-            Enum::member("ONE_MINUS_CONSTANT_COLOR", 11),
-            Enum::member("CONSTANT_ALPHA", 12),
-            Enum::member("ONE_MINUS_CONSTANT_ALPHA", 13),
-            Enum::member("SRC_ALPHA_STAURATE", 14),
-            Enum::member("SRC1_COLOR", 15),
-            Enum::member("ONE_MINUS_SRC1_COLOR", 16),
-            Enum::member("SRC1_ALPHA", 17),
-            Enum::member("ONE_MINUS_SRC1_ALPHA", 18),
-        ],
-    ),
-    Enum::new(
-        "BlendOp",
-        "BLEND_OP",
-        &[
-            Enum::member("ADD", 0),
-            Enum::member("SUBTRACT", 1),
-            Enum::member("REVERSE_SUBTRACT", 2),
-            Enum::member("MIN", 3),
-            Enum::member("MAX", 4),
-        ],
-    ),
-    Enum::new(
-        "BorderColor",
-        "BORDER_COLOR",
-        &[
-            Enum::member("FLOAT_TRANSPARENT_BLACK", 0),
-            Enum::member("INT_TRANSPARENT_BLACK", 1),
-            Enum::member("FLOAT_OPAQUE_BLACK", 2),
-            Enum::member("INT_OPAQUE_BLACK", 3),
-            Enum::member("FLOAT_OPAQUE_WHITE", 4),
-            Enum::member("INT_OPAQUE_WHITE", 5),
-        ],
-    ),
-    Enum::new(
-        "ColorSpace",
-        "COLOR_SPACE",
-        &[Enum::member("SRGB_NONLINEAR", 0).extension_old("KHR", "surface")],
-    )
-    .extension_old("KHR", "surface"),
-    Enum::new(
-        "CommandBufferLevel",
-        "COMMAND_BUFFER_LEVEL",
-        &[Enum::member("PRIMARY", 0), Enum::member("SECONDARY", 1)],
-    ),
-    Enum::new(
-        "CompareOp",
-        "COMPARE_OP",
-        &[
-            Enum::member("NEVER", 0),
-            Enum::member("LESS", 1),
-            Enum::member("EQUAL", 2),
-            Enum::member("LESS_OR_EQUAL", 3),
-            Enum::member("GREATER", 4),
-            Enum::member("NOT_EQUAL", 5),
-            Enum::member("GREATER_OR_EQUAL", 6),
-            Enum::member("ALWAYS", 7),
-        ],
-    ),
-    Enum::new(
-        "ComponentSwizzle",
-        "COMPONENT_SWIZZLE",
-        &[
-            Enum::member("IDENTITY", 0),
-            Enum::member("ZERO", 1),
-            Enum::member("ONE", 2),
-            Enum::member("R", 3),
-            Enum::member("G", 4),
-            Enum::member("B", 5),
-            Enum::member("A", 6),
-        ],
-    ),
-    Enum::new(
-        "DescriptorType",
-        "DESCRIPTOR_TYPE",
-        &[
-            Enum::member("SAMPLER", 0),
-            Enum::member("COMBINED_IMAGE_SAMPLER", 1),
-            Enum::member("SAMPLED_IMAGE", 2),
-            Enum::member("STORAGE_IMAGE", 3),
-            Enum::member("UNIFORM_TEXEL_BUFFER", 4),
-            Enum::member("STORAGE_TEXEL_BUFFER", 5),
-            Enum::member("UNIFORM_BUFFER", 6),
-            Enum::member("STORAGE_BUFFER", 7),
-            Enum::member("UNIFORM_BUFFER_DYNAMIC", 8),
-            Enum::member("STORAGE_BUFFER_DYNAMIC", 9),
-            Enum::member("INPUT_ATTACHMENT", 10),
-        ],
-    ),
-    Enum::new(
-        "DynamicState",
-        "DYNAMIC_STATE",
-        &[
-            Enum::member("VIEWPORT", 0),
-            Enum::member("SCISSOR", 1),
-            Enum::member("LINE_WIDTH", 2),
-            Enum::member("DEPTH_BIAS", 3),
-            Enum::member("BLEND_CONSTANTS", 4),
-            Enum::member("DEPTH_BOUNDS", 5),
-            Enum::member("STENCIL_COMPARE_MASK", 6),
-            Enum::member("STENCIL_WRITE_MASK", 7),
-            Enum::member("STENCIL_REFERENCE", 8),
-        ],
-    ),
-    Enum::new(
-        "Filter",
-        "FILTER",
-        &[Enum::member("NEAREST", 0), Enum::member("LINEAR", 1)],
-    ),
-    Enum::new(
-        "FrontFace",
-        "FRONT_FACE",
-        &[Enum::member("COUNTER_CLOCKWISE", 0), Enum::member("CLOCKWISE", 1)],
-    ),
-    Enum::new(
-        "ImageLayout",
-        "IMAGE_LAYOUT",
-        &[
-            Enum::member("UNDEFINED", 0),
-            Enum::member("GENERAL", 1),
-            Enum::member("COLOR_ATTACHMENT_OPTIMAL", 2),
-            Enum::member("DEPTH_STENCIL_ATTACHMENT_OPTIMAL", 3),
-            Enum::member("DEPTH_STENCIL_READ_ONLY_OPTIMAL", 4),
-            Enum::member("SHADER_READ_ONLY_OPTIMAL", 5),
-            Enum::member("TRANSFER_SRC_OPTIMAL", 6),
-            Enum::member("TRANSFER_DST_OPTIMAL", 7),
-            Enum::member("PREINITIALIZED", 8),
-            Enum::member("PRESENT_SRC", vk_ext_enum(2, 2) as _).extension_old("KHR", "swapchain"),
-            Enum::member("DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL", vk_ext_enum(118, 0) as _)
-                .extension_old("KHR", "maintenance2")
-                .promoted("1_1"),
-            Enum::member("DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL", vk_ext_enum(118, 1) as _)
-                .extension_old("KHR", "maintenance2")
-                .promoted("1_1"),
-        ],
-    ),
-    Enum::new(
-        "ImageTiling",
-        "IMAGE_TILING",
-        &[Enum::member("OPTIMAL", 0), Enum::member("LINEAR", 1)],
-    ),
-    Enum::new(
-        "ImageType",
-        "IMAGE_TYPE",
-        &[Enum::member("1D", 0), Enum::member("2D", 1), Enum::member("3D", 2)],
-    ),
-    Enum::new(
-        "ImageViewType",
-        "IMAGE_VIEW_TYPE",
-        &[
-            Enum::member("1D", 0),
-            Enum::member("2D", 1),
-            Enum::member("3D", 2),
-            Enum::member("CUBE", 3),
-            Enum::member("1D_ARRAY", 4),
-            Enum::member("2D_ARRAY", 5),
-            Enum::member("CUBE_ARRAY", 6),
-        ],
-    ),
-    Enum::new(
-        "IndexType",
-        "INDEX_TYPE",
-        &[Enum::member("UINT16", 0), Enum::member("UINT32", 1)],
-    ),
-    Enum::new(
-        "LogicOp",
-        "LOGIC_OP",
-        &[
-            Enum::member("CLEAR", 0),
-            Enum::member("AND", 1),
-            Enum::member("AND_REVERSE", 2),
-            Enum::member("COPY", 3),
-            Enum::member("AND_INVERTED", 4),
-            Enum::member("NO_OP", 5),
-            Enum::member("XOR", 6),
-            Enum::member("OR", 7),
-            Enum::member("NOR", 8),
-            Enum::member("EQUIVALENT", 9),
-            Enum::member("INVERT", 10),
-            Enum::member("OR_REVERSE", 11),
-            Enum::member("COPY_INVERTED", 12),
-            Enum::member("OR_INVERTED", 13),
-            Enum::member("NAND", 14),
-            Enum::member("SET", 15),
-        ],
-    ),
-    Enum::new(
-        "InternalAllocationType",
-        "INTERNAL_ALLOCATION_TYPE",
-        &[Enum::member("EXECUTABLE", 0)],
-    ),
-    Enum::new(
-        "PhysicalDeviceType",
-        "PHYSICAL_DEVICE_TYPE",
-        &[
-            Enum::member("OTHER", 0),
-            Enum::member("INTEGRATED_GPU", 1),
-            Enum::member("DISCRETE_GPU", 2),
-            Enum::member("VIRTUAL_GPU", 3),
-            Enum::member("CPU", 4),
-        ],
-    ),
-    Enum::new(
-        "PipelineBindPoint",
-        "PIPELINE_BIND_POINT",
-        &[Enum::member("GRAPHICS", 0), Enum::member("COMPUTE", 1)],
-    ),
-    Enum::new(
-        "PointClippingBehavior",
-        "POINT_CLIPPING_BEHAVIOR",
-        &[
-            Enum::member("ALL_CLIP_PLANES", 0)
-                .extension_old("KHR", "maintenance2")
-                .promoted("1_1"),
-            Enum::member("USER_CLIP_PLANES", 1)
-                .extension_old("KHR", "maintenance2")
-                .promoted("1_1"),
-        ],
-    )
-    .extension_old("KHR", "maintenance2")
-    .promoted("1_1"),
-    Enum::new(
-        "PolygonMode",
-        "POLYGON_MODE",
-        &[
-            Enum::member("FILL", 0),
-            Enum::member("LINE", 1),
-            Enum::member("POINT", 2),
-        ],
-    ),
-    Enum::new(
-        "PresentMode",
-        "PRESENT_MODE",
-        &[
-            Enum::member("IMMEDIATE", 0).extension_old("KHR", "surface"),
-            Enum::member("MAILBOX", 1).extension_old("KHR", "surface"),
-            Enum::member("FIFO", 2).extension_old("KHR", "surface"),
-            Enum::member("FIFO_RELAXED", 3).extension_old("KHR", "surface"),
-        ],
-    )
-    .extension_old("KHR", "surface"),
-    Enum::new(
-        "PrimitiveTopology",
-        "PRIMITIVE_TOPOLOGY",
-        &[
-            Enum::member("POINT_LIST", 0),
-            Enum::member("LINE_LIST", 1),
-            Enum::member("LINE_STRIP", 2),
-            Enum::member("TRIANGLE_LIST", 3),
-            Enum::member("TRIANGLE_STRIP", 4),
-            Enum::member("TRIANGLE_FAN", 5),
-            Enum::member("LINE_LIST_WITH_ADJACENCY", 6),
-            Enum::member("LINE_STRIP_WITH_ADJACENCY", 7),
-            Enum::member("TRIANGLE_LIST_WITH_ADJACENCY", 8),
-            Enum::member("TRIANGLE_STRIP_WITH_ADJACENCY", 9),
-            Enum::member("PATCH_LIST", 10),
-        ],
-    ),
-    Enum::new(
-        "QueryType",
-        "QUERY_TYPE",
-        &[
-            Enum::member("OCCLUSION", 0),
-            Enum::member("PIPELINE_STATISTICS", 1),
-            Enum::member("TIMESTAMP", 2),
-        ],
-    ),
-    Enum::new(
-        "SamplerAddressMode",
-        "SAMPLER_ADDRESS_MODE",
-        &[
-            Enum::member("REPEAT", 0),
-            Enum::member("MIRRORED_REPEAT", 1),
-            Enum::member("CLAMP_TO_EDGE", 2),
-            Enum::member("CLAMP_TO_BORDER", 3),
-        ],
-    ),
-    Enum::new(
-        "SamplerMipmapMode",
-        "SAMPLER_MIPMAP_MODE",
-        &[Enum::member("NEAREST", 0), Enum::member("LINEAR", 1)],
-    ),
-    Enum::new(
-        "SharingMode",
-        "SHARING_MODE",
-        &[Enum::member("EXCLUSIVE", 0), Enum::member("CONCURRENT", 1)],
-    ),
-    Enum::new(
-        "StencilOp",
-        "STENCIL_OP",
-        &[
-            Enum::member("KEEP", 0),
-            Enum::member("ZERO", 1),
-            Enum::member("REPLACE", 2),
-            Enum::member("INCREMENT_AND_CLAMP", 3),
-            Enum::member("DECREMENT_AND_CLAMP", 4),
-            Enum::member("INVERT", 5),
-            Enum::member("INCREMENT_AND_WRAP", 6),
-            Enum::member("DECREMENT_AND_WRAP", 7),
-        ],
-    ),
-    Enum::new(
-        "SubpassContents",
-        "SUBPASS_CONTENTS",
-        &[Enum::member("INLINE", 0), Enum::member("SECONDARY_COMMAND_BUFFERS", 1)],
-    ),
-    Enum::new(
-        "SystemAllocationScope",
-        "SYSTEM_ALLOCATION_SCOPE",
-        &[
-            Enum::member("COMMAND", 0),
-            Enum::member("OBJECT", 1),
-            Enum::member("CACHE", 2),
-            Enum::member("DEVICE", 3),
-            Enum::member("INSTANCE", 4),
-        ],
-    ),
-    Enum::new(
-        "TessellationDomainOrigin",
-        "TESSELLATION_DOMAIN_ORIGIN",
-        &[
-            Enum::member("UPPER_LEFT", 0)
-                .extension_old("KHR", "maintenance2")
-                .promoted("1_1"),
-            Enum::member("LOWER_LEFT", 1)
-                .extension_old("KHR", "maintenance2")
-                .promoted("1_1"),
-        ],
-    )
-    .extension_old("KHR", "maintenance2")
-    .promoted("1_1"),
-    Enum::new(
-        "VertexInputRate",
-        "VERTEX_INPUT_RATE",
-        &[Enum::member("VERTEX", 0), Enum::member("INSTANCE", 1)],
-    ),
-];
+pub static ATTACHMENT_LOAD_OP: EnumType = EnumType::new("AttachmentLoadOp", "ATTACHMENT_LOAD_OP");
+pub static ATTACHMENT_STORE_OP: EnumType = EnumType::new("AttachmentStoreOp", "ATTACHMENT_STORE_OP");
+pub static BLEND_FACTOR: EnumType = EnumType::new("BlendFactor", "BLEND_FACTOR");
+pub static BLEND_OP: EnumType = EnumType::new("BlendOp", "BLEND_OP");
+pub static BORDER_COLOR: EnumType = EnumType::new("BorderColor", "BORDER_COLOR");
+pub static COLOR_SPACE: EnumType = EnumType::new("ColorSpace", "COLOR_SPACE").extension(VK_KHR_SURFACE);
+pub static COMMAND_BUFFER_LEVEL: EnumType = EnumType::new("CommandBufferLevel", "COMMAND_BUFFER_LEVEL");
+pub static COMPARE_OP: EnumType = EnumType::new("CompareOp", "COMPARE_OP");
+pub static COMPONENT_SWIZZLE: EnumType = EnumType::new("ComponentSwizzle", "COMPONENT_SWIZZLE");
+pub static DESCRIPTOR_TYPE: EnumType = EnumType::new("DescriptorType", "DESCRIPTOR_TYPE");
+pub static DYNAMIC_STATE: EnumType = EnumType::new("DynamicState", "DYNAMIC_STATE");
+pub static FILTER: EnumType = EnumType::new("Filter", "FILTER");
+pub static FRONT_FACE: EnumType = EnumType::new("FrontFace", "FRONT_FACE");
+pub static IMAGE_LAYOUT: EnumType = EnumType::new("ImageLayout", "IMAGE_LAYOUT");
+pub static IMAGE_TILING: EnumType = EnumType::new("ImageTiling", "IMAGE_TILING");
+pub static IMAGE_TYPE: EnumType = EnumType::new("ImageType", "IMAGE_TYPE");
+pub static IMAGE_VIEW_TYPE: EnumType = EnumType::new("ImageViewType", "IMAGE_VIEW_TYPE");
+pub static INDEX_TYPE: EnumType = EnumType::new("IndexType", "INDEX_TYPE");
+pub static LOGIC_OP: EnumType = EnumType::new("LogicOp", "LOGIC_OP");
+pub static INTERNAL_ALLOCATION_TYPE: EnumType = EnumType::new("InternalAllocationType", "INTERNAL_ALLOCATION_TYPE");
+pub static PHYSICAL_DEVICE_TYPE: EnumType = EnumType::new("PhysicalDeviceType", "PHYSICAL_DEVICE_TYPE");
+pub static PIPELINE_BIND_POINT: EnumType = EnumType::new("PipelineBindPoint", "PIPELINE_BIND_POINT");
+pub static POINT_CLIPPING_BEHAVIOR: EnumType =
+    EnumType::new("PointClippingBehavior", "POINT_CLIPPING_BEHAVIOR").extension(VK_KHR_MAINTENANCE_2);
+pub static POLYGON_MODE: EnumType = EnumType::new("PolygonMode", "POLYGON_MODE");
+pub static PRESENT_MODE: EnumType = EnumType::new("PresentMode", "PRESENT_MODE").extension(VK_KHR_SURFACE);
+pub static PRIMITIVE_TOPOLOGY: EnumType = EnumType::new("PrimitiveTopology", "PRIMITIVE_TOPOLOGY");
+pub static QUERY_TYPE: EnumType = EnumType::new("QueryType", "QUERY_TYPE");
+pub static SAMPLER_ADDRESS_MODE: EnumType = EnumType::new("SamplerAddressMode", "SAMPLER_ADDRESS_MODE");
+pub static SAMPLER_MIPMAP_MODE: EnumType = EnumType::new("SamplerMipmapMode", "SAMPLER_MIPMAP_MODE");
+pub static SHARING_MODE: EnumType = EnumType::new("SharingMode", "SHARING_MODE");
+pub static STENCIL_OP: EnumType = EnumType::new("StencilOp", "STENCIL_OP");
+pub static SUBPASS_CONTENTS: EnumType = EnumType::new("SubpassContents", "SUBPASS_CONTENTS");
+pub static SYSTEM_ALLOCATION_SCOPE: EnumType = EnumType::new("SystemAllocationScope", "SYSTEM_ALLOCATION_SCOPE");
+pub static TESSELLATION_DOMAIN_ORIGIN: EnumType =
+    EnumType::new("TessellationDomainOrigin", "TESSELLATION_DOMAIN_ORIGIN").extension(VK_KHR_MAINTENANCE_2);
+pub static VERTEX_INPUT_RATE: EnumType = EnumType::new("VertexInputRate", "VERTEX_INPUT_RATE");
+
+fn emit_enums(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+    ATTACHMENT_LOAD_OP.emit(emitter);
+    ATTACHMENT_LOAD_OP.member("LOAD", 0).emit(emitter);
+    ATTACHMENT_LOAD_OP.member("CLEAR", 1).emit(emitter);
+    ATTACHMENT_LOAD_OP.member("DONT_CARE", 2).emit(emitter);
+
+    ATTACHMENT_STORE_OP.emit(emitter);
+    ATTACHMENT_STORE_OP.member("STORE", 0).emit(emitter);
+    ATTACHMENT_STORE_OP.member("DONT_CARE", 1).emit(emitter);
+
+    BLEND_FACTOR.emit(emitter);
+    BLEND_FACTOR.member("ZERO", 0).emit(emitter);
+    BLEND_FACTOR.member("ONE", 1).emit(emitter);
+    BLEND_FACTOR.member("SRC_COLOR", 2).emit(emitter);
+    BLEND_FACTOR.member("ONE_MINUS_SRC_COLOR", 3).emit(emitter);
+    BLEND_FACTOR.member("DST_COLOR", 4).emit(emitter);
+    BLEND_FACTOR.member("ONE_MINUS_DST_COLOR", 5).emit(emitter);
+    BLEND_FACTOR.member("SRC_ALPHA", 6).emit(emitter);
+    BLEND_FACTOR.member("ONE_MINUS_SRC_ALPHA", 7).emit(emitter);
+    BLEND_FACTOR.member("DST_ALPHA", 8).emit(emitter);
+    BLEND_FACTOR.member("ONE_MINUS_DST_ALPHA", 9).emit(emitter);
+    BLEND_FACTOR.member("CONSTANT_COLOR", 10).emit(emitter);
+    BLEND_FACTOR.member("ONE_MINUS_CONSTANT_COLOR", 11).emit(emitter);
+    BLEND_FACTOR.member("CONSTANT_ALPHA", 12).emit(emitter);
+    BLEND_FACTOR.member("ONE_MINUS_CONSTANT_ALPHA", 13).emit(emitter);
+    BLEND_FACTOR.member("SRC_ALPHA_STAURATE", 14).emit(emitter);
+    BLEND_FACTOR.member("SRC1_COLOR", 15).emit(emitter);
+    BLEND_FACTOR.member("ONE_MINUS_SRC1_COLOR", 16).emit(emitter);
+    BLEND_FACTOR.member("SRC1_ALPHA", 17).emit(emitter);
+    BLEND_FACTOR.member("ONE_MINUS_SRC1_ALPHA", 18).emit(emitter);
+
+    BLEND_OP.emit(emitter);
+    BLEND_OP.member("ADD", 0).emit(emitter);
+    BLEND_OP.member("SUBTRACT", 1).emit(emitter);
+    BLEND_OP.member("REVERSE_SUBTRACT", 2).emit(emitter);
+    BLEND_OP.member("MIN", 3).emit(emitter);
+    BLEND_OP.member("MAX", 4).emit(emitter);
+
+    BORDER_COLOR.emit(emitter);
+    BORDER_COLOR.member("FLOAT_TRANSPARENT_BLACK", 0).emit(emitter);
+    BORDER_COLOR.member("INT_TRANSPARENT_BLACK", 1).emit(emitter);
+    BORDER_COLOR.member("FLOAT_OPAQUE_BLACK", 2).emit(emitter);
+    BORDER_COLOR.member("INT_OPAQUE_BLACK", 3).emit(emitter);
+    BORDER_COLOR.member("FLOAT_OPAQUE_WHITE", 4).emit(emitter);
+    BORDER_COLOR.member("INT_OPAQUE_WHITE", 5).emit(emitter);
+
+    COLOR_SPACE.emit(emitter);
+    COLOR_SPACE
+        .member("SRGB_NONLINEAR", 0)
+        .override_extension_number(0)
+        .emit(emitter);
+
+    COMMAND_BUFFER_LEVEL.emit(emitter);
+    COMMAND_BUFFER_LEVEL.member("PRIMARY", 0).emit(emitter);
+    COMMAND_BUFFER_LEVEL.member("SECONDARY", 1).emit(emitter);
+
+    COMPARE_OP.emit(emitter);
+    COMPARE_OP.member("NEVER", 0).emit(emitter);
+    COMPARE_OP.member("LESS", 1).emit(emitter);
+    COMPARE_OP.member("EQUAL", 2).emit(emitter);
+    COMPARE_OP.member("LESS_OR_EQUAL", 3).emit(emitter);
+    COMPARE_OP.member("GREATER", 4).emit(emitter);
+    COMPARE_OP.member("NOT_EQUAL", 5).emit(emitter);
+    COMPARE_OP.member("GREATER_OR_EQUAL", 6).emit(emitter);
+    COMPARE_OP.member("ALWAYS", 7).emit(emitter);
+
+    COMPONENT_SWIZZLE.emit(emitter);
+    COMPONENT_SWIZZLE.member("IDENTITY", 0).emit(emitter);
+    COMPONENT_SWIZZLE.member("ZERO", 1).emit(emitter);
+    COMPONENT_SWIZZLE.member("ONE", 2).emit(emitter);
+    COMPONENT_SWIZZLE.member("R", 3).emit(emitter);
+    COMPONENT_SWIZZLE.member("G", 4).emit(emitter);
+    COMPONENT_SWIZZLE.member("B", 5).emit(emitter);
+    COMPONENT_SWIZZLE.member("A", 6).emit(emitter);
+
+    DESCRIPTOR_TYPE.emit(emitter);
+    DESCRIPTOR_TYPE.member("SAMPLER", 0).emit(emitter);
+    DESCRIPTOR_TYPE.member("COMBINED_IMAGE_SAMPLER", 1).emit(emitter);
+    DESCRIPTOR_TYPE.member("SAMPLED_IMAGE", 2).emit(emitter);
+    DESCRIPTOR_TYPE.member("STORAGE_IMAGE", 3).emit(emitter);
+    DESCRIPTOR_TYPE.member("UNIFORM_TEXEL_BUFFER", 4).emit(emitter);
+    DESCRIPTOR_TYPE.member("STORAGE_TEXEL_BUFFER", 5).emit(emitter);
+    DESCRIPTOR_TYPE.member("UNIFORM_BUFFER", 6).emit(emitter);
+    DESCRIPTOR_TYPE.member("STORAGE_BUFFER", 7).emit(emitter);
+    DESCRIPTOR_TYPE.member("UNIFORM_BUFFER_DYNAMIC", 8).emit(emitter);
+    DESCRIPTOR_TYPE.member("STORAGE_BUFFER_DYNAMIC", 9).emit(emitter);
+    DESCRIPTOR_TYPE.member("INPUT_ATTACHMENT", 10).emit(emitter);
+
+    DYNAMIC_STATE.emit(emitter);
+    DYNAMIC_STATE.member("VIEWPORT", 0).emit(emitter);
+    DYNAMIC_STATE.member("SCISSOR", 1).emit(emitter);
+    DYNAMIC_STATE.member("LINE_WIDTH", 2).emit(emitter);
+    DYNAMIC_STATE.member("DEPTH_BIAS", 3).emit(emitter);
+    DYNAMIC_STATE.member("BLEND_CONSTANTS", 4).emit(emitter);
+    DYNAMIC_STATE.member("DEPTH_BOUNDS", 5).emit(emitter);
+    DYNAMIC_STATE.member("STENCIL_COMPARE_MASK", 6).emit(emitter);
+    DYNAMIC_STATE.member("STENCIL_WRITE_MASK", 7).emit(emitter);
+    DYNAMIC_STATE.member("STENCIL_REFERENCE", 8).emit(emitter);
+
+    FILTER.emit(emitter);
+    FILTER.member("NEAREST", 0).emit(emitter);
+    FILTER.member("LINEAR", 1).emit(emitter);
+
+    FRONT_FACE.emit(emitter);
+    FRONT_FACE.member("COUNTER_CLOCKWISE", 0).emit(emitter);
+    FRONT_FACE.member("CLOCKWISE", 1).emit(emitter);
+
+    IMAGE_LAYOUT.emit(emitter);
+    IMAGE_LAYOUT.member("UNDEFINED", 0).emit(emitter);
+    IMAGE_LAYOUT.member("GENERAL", 1).emit(emitter);
+    IMAGE_LAYOUT.member("COLOR_ATTACHMENT_OPTIMAL", 2).emit(emitter);
+    IMAGE_LAYOUT.member("DEPTH_STENCIL_ATTACHMENT_OPTIMAL", 3).emit(emitter);
+    IMAGE_LAYOUT.member("DEPTH_STENCIL_READ_ONLY_OPTIMAL", 4).emit(emitter);
+    IMAGE_LAYOUT.member("SHADER_READ_ONLY_OPTIMAL", 5).emit(emitter);
+    IMAGE_LAYOUT.member("TRANSFER_SRC_OPTIMAL", 6).emit(emitter);
+    IMAGE_LAYOUT.member("TRANSFER_DST_OPTIMAL", 7).emit(emitter);
+    IMAGE_LAYOUT.member("PREINITIALIZED", 8).emit(emitter);
+    IMAGE_LAYOUT
+        .member("PRESENT_SRC", 2)
+        .extension(VK_KHR_SWAPCHAIN)
+        .emit(emitter);
+    IMAGE_LAYOUT
+        .member("DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL", 0)
+        .extension(VK_KHR_MAINTENANCE_2)
+        .emit(emitter);
+    IMAGE_LAYOUT
+        .member("DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL", 1)
+        .extension(VK_KHR_MAINTENANCE_2)
+        .emit(emitter);
+
+    IMAGE_TILING.emit(emitter);
+    IMAGE_TILING.member("OPTIMAL", 0).emit(emitter);
+    IMAGE_TILING.member("LINEAR", 1).emit(emitter);
+
+    IMAGE_TYPE.emit(emitter);
+    IMAGE_TYPE.member("1D", 0).emit(emitter);
+    IMAGE_TYPE.member("2D", 1).emit(emitter);
+    IMAGE_TYPE.member("3D", 2).emit(emitter);
+
+    IMAGE_VIEW_TYPE.emit(emitter);
+    IMAGE_VIEW_TYPE.member("1D", 0).emit(emitter);
+    IMAGE_VIEW_TYPE.member("2D", 1).emit(emitter);
+    IMAGE_VIEW_TYPE.member("3D", 2).emit(emitter);
+    IMAGE_VIEW_TYPE.member("CUBE", 3).emit(emitter);
+    IMAGE_VIEW_TYPE.member("1D_ARRAY", 4).emit(emitter);
+    IMAGE_VIEW_TYPE.member("2D_ARRAY", 5).emit(emitter);
+    IMAGE_VIEW_TYPE.member("CUBE_ARRAY", 6).emit(emitter);
+
+    INDEX_TYPE.emit(emitter);
+    INDEX_TYPE.member("UINT16", 0).emit(emitter);
+    INDEX_TYPE.member("UINT32", 1).emit(emitter);
+
+    LOGIC_OP.emit(emitter);
+    LOGIC_OP.member("CLEAR", 0).emit(emitter);
+    LOGIC_OP.member("AND", 1).emit(emitter);
+    LOGIC_OP.member("AND_REVERSE", 2).emit(emitter);
+    LOGIC_OP.member("COPY", 3).emit(emitter);
+    LOGIC_OP.member("AND_INVERTED", 4).emit(emitter);
+    LOGIC_OP.member("NO_OP", 5).emit(emitter);
+    LOGIC_OP.member("XOR", 6).emit(emitter);
+    LOGIC_OP.member("OR", 7).emit(emitter);
+    LOGIC_OP.member("NOR", 8).emit(emitter);
+    LOGIC_OP.member("EQUIVALENT", 9).emit(emitter);
+    LOGIC_OP.member("INVERT", 10).emit(emitter);
+    LOGIC_OP.member("OR_REVERSE", 11).emit(emitter);
+    LOGIC_OP.member("COPY_INVERTED", 12).emit(emitter);
+    LOGIC_OP.member("OR_INVERTED", 13).emit(emitter);
+    LOGIC_OP.member("NAND", 14).emit(emitter);
+    LOGIC_OP.member("SET", 15).emit(emitter);
+
+    INTERNAL_ALLOCATION_TYPE.emit(emitter);
+    INTERNAL_ALLOCATION_TYPE.member("EXECUTABLE", 0).emit(emitter);
+
+    PHYSICAL_DEVICE_TYPE.emit(emitter);
+    PHYSICAL_DEVICE_TYPE.member("OTHER", 0).emit(emitter);
+    PHYSICAL_DEVICE_TYPE.member("INTEGRATED_GPU", 1).emit(emitter);
+    PHYSICAL_DEVICE_TYPE.member("DISCRETE_GPU", 2).emit(emitter);
+    PHYSICAL_DEVICE_TYPE.member("VIRTUAL_GPU", 3).emit(emitter);
+    PHYSICAL_DEVICE_TYPE.member("CPU", 4).emit(emitter);
+
+    PIPELINE_BIND_POINT.emit(emitter);
+    PIPELINE_BIND_POINT.member("GRAPHICS", 0).emit(emitter);
+    PIPELINE_BIND_POINT.member("COMPUTE", 1).emit(emitter);
+
+    POINT_CLIPPING_BEHAVIOR.emit(emitter);
+    POINT_CLIPPING_BEHAVIOR
+        .member("ALL_CLIP_PLANES", 0)
+        .override_extension_number(0)
+        .emit(emitter);
+    POINT_CLIPPING_BEHAVIOR
+        .member("USER_CLIP_PLANES", 1)
+        .override_extension_number(0)
+        .emit(emitter);
+
+    POLYGON_MODE.emit(emitter);
+    POLYGON_MODE.member("FILL", 0).emit(emitter);
+    POLYGON_MODE.member("LINE", 1).emit(emitter);
+    POLYGON_MODE.member("POINT", 2).emit(emitter);
+
+    PRESENT_MODE.emit(emitter);
+    PRESENT_MODE
+        .member("IMMEDIATE", 0)
+        .override_extension_number(0)
+        .emit(emitter);
+    PRESENT_MODE
+        .member("MAILBOX", 1)
+        .override_extension_number(0)
+        .emit(emitter);
+    PRESENT_MODE
+        .member("FIFO", 2)
+        .override_extension_number(0)
+        .emit(emitter);
+    PRESENT_MODE
+        .member("FIFO_RELAXED", 3)
+        .override_extension_number(0)
+        .emit(emitter);
+
+    PRIMITIVE_TOPOLOGY.emit(emitter);
+    PRIMITIVE_TOPOLOGY.member("POINT_LIST", 0).emit(emitter);
+    PRIMITIVE_TOPOLOGY.member("LINE_LIST", 1).emit(emitter);
+    PRIMITIVE_TOPOLOGY.member("LINE_STRIP", 2).emit(emitter);
+    PRIMITIVE_TOPOLOGY.member("TRIANGLE_LIST", 3).emit(emitter);
+    PRIMITIVE_TOPOLOGY.member("TRIANGLE_STRIP", 4).emit(emitter);
+    PRIMITIVE_TOPOLOGY.member("TRIANGLE_FAN", 5).emit(emitter);
+    PRIMITIVE_TOPOLOGY.member("LINE_LIST_WITH_ADJACENCY", 6).emit(emitter);
+    PRIMITIVE_TOPOLOGY.member("LINE_STRIP_WITH_ADJACENCY", 7).emit(emitter);
+    PRIMITIVE_TOPOLOGY
+        .member("TRIANGLE_LIST_WITH_ADJACENCY", 8)
+        .emit(emitter);
+    PRIMITIVE_TOPOLOGY
+        .member("TRIANGLE_STRIP_WITH_ADJACENCY", 9)
+        .emit(emitter);
+    PRIMITIVE_TOPOLOGY.member("PATCH_LIST", 10).emit(emitter);
+
+    QUERY_TYPE.emit(emitter);
+    QUERY_TYPE.member("OCCLUSION", 0).emit(emitter);
+    QUERY_TYPE.member("PIPELINE_STATISTICS", 1).emit(emitter);
+    QUERY_TYPE.member("TIMESTAMP", 2).emit(emitter);
+
+    SAMPLER_ADDRESS_MODE.emit(emitter);
+    SAMPLER_ADDRESS_MODE.member("REPEAT", 0).emit(emitter);
+    SAMPLER_ADDRESS_MODE.member("MIRRORED_REPEAT", 1).emit(emitter);
+    SAMPLER_ADDRESS_MODE.member("CLAMP_TO_EDGE", 2).emit(emitter);
+    SAMPLER_ADDRESS_MODE.member("CLAMP_TO_BORDER", 3).emit(emitter);
+
+    SAMPLER_MIPMAP_MODE.emit(emitter);
+    SAMPLER_MIPMAP_MODE.member("NEAREST", 0).emit(emitter);
+    SAMPLER_MIPMAP_MODE.member("LINEAR", 1).emit(emitter);
+
+    SHARING_MODE.emit(emitter);
+    SHARING_MODE.member("EXCLUSIVE", 0).emit(emitter);
+    SHARING_MODE.member("CONCURRENT", 1).emit(emitter);
+
+    STENCIL_OP.emit(emitter);
+    STENCIL_OP.member("KEEP", 0).emit(emitter);
+    STENCIL_OP.member("ZERO", 1).emit(emitter);
+    STENCIL_OP.member("REPLACE", 2).emit(emitter);
+    STENCIL_OP.member("INCREMENT_AND_CLAMP", 3).emit(emitter);
+    STENCIL_OP.member("DECREMENT_AND_CLAMP", 4).emit(emitter);
+    STENCIL_OP.member("INVERT", 5).emit(emitter);
+    STENCIL_OP.member("INCREMENT_AND_WRAP", 6).emit(emitter);
+    STENCIL_OP.member("DECREMENT_AND_WRAP", 7).emit(emitter);
+
+    SUBPASS_CONTENTS.emit(emitter);
+    SUBPASS_CONTENTS.member("INLINE", 0).emit(emitter);
+    SUBPASS_CONTENTS.member("SECONDARY_COMMAND_BUFFERS", 1).emit(emitter);
+
+    SYSTEM_ALLOCATION_SCOPE.emit(emitter);
+    SYSTEM_ALLOCATION_SCOPE.member("COMMAND", 0).emit(emitter);
+    SYSTEM_ALLOCATION_SCOPE.member("OBJECT", 1).emit(emitter);
+    SYSTEM_ALLOCATION_SCOPE.member("CACHE", 2).emit(emitter);
+    SYSTEM_ALLOCATION_SCOPE.member("DEVICE", 3).emit(emitter);
+    SYSTEM_ALLOCATION_SCOPE.member("INSTANCE", 4).emit(emitter);
+
+    TESSELLATION_DOMAIN_ORIGIN.emit(emitter);
+    TESSELLATION_DOMAIN_ORIGIN
+        .member("UPPER_LEFT", 0)
+        .override_extension_number(0)
+        .emit(emitter);
+    TESSELLATION_DOMAIN_ORIGIN
+        .member("LOWER_LEFT", 1)
+        .override_extension_number(0)
+        .emit(emitter);
+
+    VERTEX_INPUT_RATE.emit(emitter);
+    VERTEX_INPUT_RATE.member("VERTEX", 0).emit(emitter);
+    VERTEX_INPUT_RATE.member("INSTANCE", 1).emit(emitter);
+}
 
 const FLAGS: &[Bitmask] = &[
     Bitmask::new(
@@ -5200,524 +5159,409 @@ const COMMANDS: &[Command] = &[
     .promoted("1_3"),
 ];
 
-fn emit_result_type(w: &mut impl std::io::Write) -> std::io::Result<()> {
-    writeln!(w, "pub type VkResult = i32;")?;
+pub static RESULT: EnumType = EnumType::new("Result", "");
+pub static ERROR: EnumType = EnumType::new("Result", "ERROR");
+fn emit_result_type(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+    RESULT.emit(emitter);
 
     // base defines
-    emit_result_const(w, "VK_SUCCESS", 0, 0)?;
-    emit_result_const(w, "VK_NOT_READY", 0, 1)?;
-    emit_result_const(w, "VK_TIMEOUT", 0, 2)?;
-    emit_result_const(w, "VK_EVENT_SET", 0, 3)?;
-    emit_result_const(w, "VK_EVENT_RESET", 0, 4)?;
-    emit_result_const(w, "VK_INCOMPLETE", 0, 5)?;
-    emit_result_err_const(w, "VK_ERROR_OUT_OF_HOST_MEMORY", 0, 1)?;
-    emit_result_err_const(w, "VK_ERROR_OUT_OF_DEVICE_MEMORY", 0, 2)?;
-    emit_result_err_const(w, "VK_ERROR_INITIALIZATION_FAILED", 0, 3)?;
-    emit_result_err_const(w, "VK_ERROR_DEVICE_LOST", 0, 4)?;
-    emit_result_err_const(w, "VK_ERROR_MEMORY_MAP_FAILED", 0, 5)?;
-    emit_result_err_const(w, "VK_ERROR_LAYER_NOT_PRESENT", 0, 6)?;
-    emit_result_err_const(w, "VK_ERROR_EXTENSION_NOT_PRESENT", 0, 7)?;
-    emit_result_err_const(w, "VK_ERROR_FEATURE_NOT_PRESENT", 0, 8)?;
-    emit_result_err_const(w, "VK_ERROR_INCOMPATIBLE_DRIVER", 0, 9)?;
-    emit_result_err_const(w, "VK_ERROR_TOO_MANY_OBJECTS", 0, 10)?;
-    emit_result_err_const(w, "VK_ERROR_FORMAT_NOT_SUPPORTED", 0, 11)?;
-    emit_result_err_const(w, "VK_ERROR_FRAGMENTED_POOL", 0, 12)?;
-    emit_result_err_const(w, "VK_ERROR_UNKNOWN", 0, 13)?;
+    RESULT.member("SUCCESS", 0).emit(emitter);
+    RESULT.member("NOT_READY", 1).emit(emitter);
+    RESULT.member("TIMEOUT", 2).emit(emitter);
+    RESULT.member("EVENT_SET", 3).emit(emitter);
+    RESULT.member("EVENT_RESET", 4).emit(emitter);
+    RESULT.member("INCOMPLETE", 5).emit(emitter);
+    ERROR.member("OUT_OF_HOST_MEMORY", 1).neg().emit(emitter);
+    ERROR.member("OUT_OF_DEVICE_MEMORY", 2).neg().emit(emitter);
+    ERROR.member("INITIALIZATION_FAILED", 3).neg().emit(emitter);
+    ERROR.member("DEVICE_LOST", 4).neg().emit(emitter);
+    ERROR.member("MEMORY_MAP_FAILED", 5).neg().emit(emitter);
+    ERROR.member("LAYER_NOT_PRESENT", 6).neg().emit(emitter);
+    ERROR.member("EXTENSION_NOT_PRESENT", 7).neg().emit(emitter);
+    ERROR.member("FEATURE_NOT_PRESENT", 8).neg().emit(emitter);
+    ERROR.member("INCOMPATIBLE_DRIVER", 9).neg().emit(emitter);
+    ERROR.member("TOO_MANY_OBJECTS", 10).neg().emit(emitter);
+    ERROR.member("FORMAT_NOT_SUPPORTED", 11).neg().emit(emitter);
+    ERROR.member("FRAGMENTED_POOL", 12).neg().emit(emitter);
+    ERROR.member("UNKNOWN", 13).neg().emit(emitter);
 
     // from extensions
-    w.write_all(b"#[cfg(feature = \"VK_KHR_surface\")]\n")?;
-    emit_result_err_const(w, "VK_ERROR_SURFACE_LOST_KHR", 1, 0)?;
-    w.write_all(b"#[cfg(feature = \"VK_KHR_surface\")]\n")?;
-    emit_result_err_const(w, "VK_ERROR_NATIVE_WINDOW_IN_USE_KHR", 1, 1)?;
-    w.write_all(b"#[cfg(feature = \"VK_KHR_swapchain\")]\n")?;
-    emit_result_const(w, "VK_SUBOPTIMAL_KHR", 2, 3)?;
-    w.write_all(b"#[cfg(feature = \"VK_KHR_swapchain\")]\n")?;
-    emit_result_err_const(w, "VK_ERROR_OUT_OF_DATE_KHR", 2, 4)?;
-    w.write_all(b"#[cfg(feature = \"VK_KHR_display_swapchain\")]\n")?;
-    emit_result_err_const(w, "VK_ERROR_INCOMPATIBLE_DISPLAY_KHR", 4, 1)?;
+    ERROR
+        .member("SURFACE_LOST", 0)
+        .neg()
+        .extension(VK_KHR_SURFACE)
+        .emit(emitter);
+    ERROR
+        .member("NATIVE_WINDOW_IN_USE", 1)
+        .neg()
+        .extension(VK_KHR_SURFACE)
+        .emit(emitter);
+    RESULT.member("SUBOPTIMAL", 3).extension(VK_KHR_SWAPCHAIN).emit(emitter);
+    ERROR
+        .member("OUT_OF_DATE", 4)
+        .neg()
+        .extension(VK_KHR_SWAPCHAIN)
+        .emit(emitter);
+    ERROR
+        .member("INCOMPATIBLE_DISPLAY", 1)
+        .neg()
+        .extension(VK_KHR_DISPLAY_SWAPCHAIN)
+        .emit(emitter);
 
     // from promoted extensions
-    w.write_all(b"#[cfg(feature = \"VK_KHR_external_memory\")]\n")?;
-    emit_result_err_const(w, "VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR", 73, 3)?;
-    w.write_all(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
-    emit_result_err_const(w, "VK_ERROR_INVALID_EXTERNAL_HANDLE", 73, 3)?;
-    w.write_all(b"#[cfg(feature = \"VK_KHR_maintenance1\")]\n")?;
-    emit_result_err_const(w, "VK_ERROR_OUT_OF_POOL_MEMORY_KHR", 70, 0)?;
-    w.write_all(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
-    emit_result_err_const(w, "VK_ERROR_OUT_OF_POOL_MEMORY", 70, 0)?;
-
-    Ok(())
+    ERROR
+        .member("INVALID_EXTERNAL_HANDLE", 3)
+        .neg()
+        .extension(VK_KHR_EXTERNAL_MEMORY)
+        .emit(emitter);
+    ERROR
+        .member("OUT_OF_POOL_MEMORY", 0)
+        .neg()
+        .extension(VK_KHR_MAINTENANCE_1)
+        .emit(emitter);
 }
 
-fn emit_format_enum(w: &mut impl Write) -> std::io::Result<()> {
-    emit_c_enum_type(w, "VkFormat")?;
-    emit_const(w, "VK_FORMAT_UNDEFINED", "VkFormat", "0")?;
+pub static FORMAT: EnumType = EnumType::new("Format", "FORMAT");
+fn emit_format_enum(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+    FORMAT.emit(emitter);
+    FORMAT.member("UNDEFINED", 0).emit(emitter);
 
     // packed format
-    fn packed(w: &mut impl Write, bit_assign: &str, r#repr: &str, size: usize, value: usize) -> std::io::Result<()> {
-        writeln!(
-            w,
-            "pub const VK_FORMAT_{bit_assign}_{repr}_PACK{size}: VkFormat = {value};"
-        )
-    }
-    fn packed_s(
-        w: &mut impl Write,
-        bit_assign: &str,
-        r#repr: &str,
-        size: usize,
-        suffix: &str,
-        value: usize,
-    ) -> std::io::Result<()> {
-        writeln!(
-            w,
-            "pub const VK_FORMAT_{bit_assign}_{repr}_PACK{size}_{suffix}: VkFormat = {value};"
-        )
-    }
-
-    packed(w, "R4G4", "UNORM", 8, 1)?;
-    packed(w, "R4G4B4A4", "UNORM", 16, 2)?;
-    packed(w, "B4G4R4A4", "UNORM", 16, 3)?;
-    packed(w, "R5G6B5", "UNORM", 16, 4)?;
-    packed(w, "B5G6R5", "UNORM", 16, 5)?;
-    packed(w, "R5G5B5A1", "UNORM", 16, 6)?;
-    packed(w, "B5G5R5A1", "UNORM", 16, 7)?;
-    packed(w, "A1R5G5B5", "UNORM", 16, 8)?;
+    FORMAT.member("R4G4_UNORM_PACK8", 1).emit(emitter);
+    FORMAT.member("R4G4B4A4_UNORM_PACK16", 2).emit(emitter);
+    FORMAT.member("B4G4R4A4_UNORM_PACK16", 3).emit(emitter);
+    FORMAT.member("R5G6B5_UNORM_PACK16", 4).emit(emitter);
+    FORMAT.member("B5G6R5_UNORM_PACK16", 5).emit(emitter);
+    FORMAT.member("R5G5B5A1_UNORM_PACK16", 6).emit(emitter);
+    FORMAT.member("B5G5R5A1_UNORM_PACK16", 7).emit(emitter);
+    FORMAT.member("A1R5G5B5_UNORM_PACK16", 8).emit(emitter);
 
     // straight format
-    fn f(w: &mut impl Write, bit_assign: &str, r#repr: &str, value: usize) -> std::io::Result<()> {
-        writeln!(w, "pub const VK_FORMAT_{bit_assign}_{repr}: VkFormat = {value};")
-    }
-    fn f2(
-        w: &mut impl Write,
-        bit_assign1: &str,
-        r#repr1: &str,
-        bit_assign2: &str,
-        r#repr2: &str,
-        value: usize,
-    ) -> std::io::Result<()> {
-        writeln!(
-            w,
-            "pub const VK_FORMAT_{bit_assign1}_{repr1}_{bit_assign2}_{repr2}: VkFormat = {value};"
-        )
-    }
-    f(w, "R8", "UNORM", 9)?;
-    f(w, "R8", "SNORM", 10)?;
-    f(w, "R8", "USCALED", 11)?;
-    f(w, "R8", "SSCALED", 12)?;
-    f(w, "R8", "UINT", 13)?;
-    f(w, "R8", "SINT", 14)?;
-    f(w, "R8", "SRGB", 15)?;
-    f(w, "R8G8", "UNORM", 16)?;
-    f(w, "R8G8", "SNORM", 17)?;
-    f(w, "R8G8", "USCALED", 18)?;
-    f(w, "R8G8", "SSCALED", 19)?;
-    f(w, "R8G8", "UINT", 20)?;
-    f(w, "R8G8", "SINT", 21)?;
-    f(w, "R8G8", "SRGB", 22)?;
-    f(w, "R8G8B8", "UNORM", 23)?;
-    f(w, "R8G8B8", "SNORM", 24)?;
-    f(w, "R8G8B8", "USCALED", 25)?;
-    f(w, "R8G8B8", "SSCALED", 26)?;
-    f(w, "R8G8B8", "UINT", 27)?;
-    f(w, "R8G8B8", "SINT", 28)?;
-    f(w, "R8G8B8", "SRGB", 29)?;
-    f(w, "B8G8R8", "UNORM", 30)?;
-    f(w, "B8G8R8", "SNORM", 31)?;
-    f(w, "B8G8R8", "USCALED", 32)?;
-    f(w, "B8G8R8", "SSCALED", 33)?;
-    f(w, "B8G8R8", "UINT", 34)?;
-    f(w, "B8G8R8", "SINT", 35)?;
-    f(w, "B8G8R8", "SRGB", 36)?;
-    f(w, "R8G8B8A8", "UNORM", 37)?;
-    f(w, "R8G8B8A8", "SNORM", 38)?;
-    f(w, "R8G8B8A8", "USCALED", 39)?;
-    f(w, "R8G8B8A8", "SSCALED", 40)?;
-    f(w, "R8G8B8A8", "UINT", 41)?;
-    f(w, "R8G8B8A8", "SINT", 42)?;
-    f(w, "R8G8B8A8", "SRGB", 43)?;
-    f(w, "B8G8R8A8", "UNORM", 44)?;
-    f(w, "B8G8R8A8", "SNORM", 45)?;
-    f(w, "B8G8R8A8", "USCALED", 46)?;
-    f(w, "B8G8R8A8", "SSCALED", 47)?;
-    f(w, "B8G8R8A8", "UINT", 48)?;
-    f(w, "B8G8R8A8", "SINT", 49)?;
-    f(w, "B8G8R8A8", "SRGB", 50)?;
-    packed(w, "A8B8G8R8", "UNORM", 32, 51)?;
-    packed(w, "A8B8G8R8", "SNORM", 32, 52)?;
-    packed(w, "A8B8G8R8", "USCALED", 32, 53)?;
-    packed(w, "A8B8G8R8", "SSCALED", 32, 54)?;
-    packed(w, "A8B8G8R8", "UINT", 32, 55)?;
-    packed(w, "A8B8G8R8", "SINT", 32, 56)?;
-    packed(w, "A8B8G8R8", "SRGB", 32, 57)?;
-    packed(w, "A2R10G10B10", "UNORM", 32, 58)?;
-    packed(w, "A2R10G10B10", "SNORM", 32, 59)?;
-    packed(w, "A2R10G10B10", "USCALED", 32, 60)?;
-    packed(w, "A2R10G10B10", "SSCALED", 32, 61)?;
-    packed(w, "A2R10G10B10", "UINT", 32, 62)?;
-    packed(w, "A2R10G10B10", "SINT", 32, 63)?;
-    packed(w, "A2B10G10R10", "UNORM", 32, 64)?;
-    packed(w, "A2B10G10R10", "SNORM", 32, 65)?;
-    packed(w, "A2B10G10R10", "USCALED", 32, 66)?;
-    packed(w, "A2B10G10R10", "SSCALED", 32, 67)?;
-    packed(w, "A2B10G10R10", "UINT", 32, 68)?;
-    packed(w, "A2B10G10R10", "SINT", 32, 69)?;
-    f(w, "R16", "UNORM", 70)?;
-    f(w, "R16", "SNORM", 71)?;
-    f(w, "R16", "USCALED", 72)?;
-    f(w, "R16", "SSCALED", 73)?;
-    f(w, "R16", "UINT", 74)?;
-    f(w, "R16", "SINT", 75)?;
-    f(w, "R16", "SFLOAT", 76)?;
-    f(w, "R16G16", "UNORM", 77)?;
-    f(w, "R16G16", "SNORM", 78)?;
-    f(w, "R16G16", "USCALED", 79)?;
-    f(w, "R16G16", "SSCALED", 80)?;
-    f(w, "R16G16", "UINT", 81)?;
-    f(w, "R16G16", "SINT", 82)?;
-    f(w, "R16G16", "SFLOAT", 83)?;
-    f(w, "R16G16B16", "UNORM", 84)?;
-    f(w, "R16G16B16", "SNORM", 85)?;
-    f(w, "R16G16B16", "USCALED", 86)?;
-    f(w, "R16G16B16", "SSCALED", 87)?;
-    f(w, "R16G16B16", "UINT", 88)?;
-    f(w, "R16G16B16", "SINT", 89)?;
-    f(w, "R16G16B16", "SFLOAT", 90)?;
-    f(w, "R16G16B16A16", "UNORM", 91)?;
-    f(w, "R16G16B16A16", "SNORM", 92)?;
-    f(w, "R16G16B16A16", "USCALED", 93)?;
-    f(w, "R16G16B16A16", "SSCALED", 94)?;
-    f(w, "R16G16B16A16", "UINT", 95)?;
-    f(w, "R16G16B16A16", "SINT", 96)?;
-    f(w, "R16G16B16A16", "SFLOAT", 97)?;
-    f(w, "R32", "UINT", 98)?;
-    f(w, "R32", "SINT", 99)?;
-    f(w, "R32", "SFLOAT", 100)?;
-    f(w, "R32G32", "UINT", 101)?;
-    f(w, "R32G32", "SINT", 102)?;
-    f(w, "R32G32", "SFLOAT", 103)?;
-    f(w, "R32G32B32", "UINT", 104)?;
-    f(w, "R32G32B32", "SINT", 105)?;
-    f(w, "R32G32B32", "SFLOAT", 106)?;
-    f(w, "R32G32B32A32", "UINT", 107)?;
-    f(w, "R32G32B32A32", "SINT", 108)?;
-    f(w, "R32G32B32A32", "SFLOAT", 109)?;
-    f(w, "R64", "UINT", 110)?;
-    f(w, "R64", "SINT", 111)?;
-    f(w, "R64", "SFLOAT", 112)?;
-    f(w, "R64G64", "UINT", 113)?;
-    f(w, "R64G64", "SINT", 114)?;
-    f(w, "R64G64", "SFLOAT", 115)?;
-    f(w, "R64G64B64", "UINT", 116)?;
-    f(w, "R64G64B64", "SINT", 117)?;
-    f(w, "R64G64B64", "SFLOAT", 118)?;
-    f(w, "R64G64B64A64", "UINT", 119)?;
-    f(w, "R64G64B64A64", "SINT", 120)?;
-    f(w, "R64G64B64A64", "SFLOAT", 121)?;
-    packed(w, "B10G11R11", "UFLOAT", 32, 122)?;
-    packed(w, "E5B9G9R9", "UFLOAT", 32, 123)?;
-    f(w, "D16", "UNORM", 124)?;
-    packed(w, "X8_D24", "UNORM", 32, 125)?;
-    f(w, "D32", "SFLOAT", 126)?;
-    f(w, "S8", "UINT", 127)?;
-    f2(w, "D16", "UNORM", "S8", "UINT", 128)?;
-    f2(w, "D24", "UNORM", "S8", "UINT", 129)?;
-    f2(w, "D32", "SFLOAT", "S8", "UINT", 130)?;
-    writeln!(w, "#[cfg(feature = \"VK_KHR_maintenance5\")]")?;
-    writeln!(
-        w,
-        "pub const VK_FORMAT_A1B5G5R4_UNORM_PACK16_KHR: VkFormat = {};",
-        VK_KHR_MAINTENANCE_5.ext_enum(0)
-    )?;
-    writeln!(w, "#[cfg(feature = \"Allow1_4APIs\")]")?;
-    packed(w, "A1B5G5R4", "UNORM", 16, VK_KHR_MAINTENANCE_5.ext_enum(0) as _)?;
-    writeln!(w, "#[cfg(feature = \"VK_KHR_maintenance5\")]")?;
-    writeln!(
-        w,
-        "pub const VK_FORMAT_A8_UNORM_KHR: VkFormat = {};",
-        VK_KHR_MAINTENANCE_5.ext_enum(1)
-    )?;
-    writeln!(w, "#[cfg(feature = \"Allow1_4APIs\")]")?;
-    f(w, "A8", "UNORM", VK_KHR_MAINTENANCE_5.ext_enum(1) as _)?;
+    FORMAT.member("R8_UNORM", 9).emit(emitter);
+    FORMAT.member("R8_SNORM", 10).emit(emitter);
+    FORMAT.member("R8_USCALED", 11).emit(emitter);
+    FORMAT.member("R8_SSCALED", 12).emit(emitter);
+    FORMAT.member("R8_UINT", 13).emit(emitter);
+    FORMAT.member("R8_SINT", 14).emit(emitter);
+    FORMAT.member("R8_SRGB", 15).emit(emitter);
+    FORMAT.member("R8G8_UNORM", 16).emit(emitter);
+    FORMAT.member("R8G8_SNORM", 17).emit(emitter);
+    FORMAT.member("R8G8_USCALED", 18).emit(emitter);
+    FORMAT.member("R8G8_SSCALED", 19).emit(emitter);
+    FORMAT.member("R8G8_UINT", 20).emit(emitter);
+    FORMAT.member("R8G8_SINT", 21).emit(emitter);
+    FORMAT.member("R8G8_SRGB", 22).emit(emitter);
+    FORMAT.member("R8G8B8_UNORM", 23).emit(emitter);
+    FORMAT.member("R8G8B8_SNORM", 24).emit(emitter);
+    FORMAT.member("R8G8B8_USCALED", 25).emit(emitter);
+    FORMAT.member("R8G8B8_SSCALED", 26).emit(emitter);
+    FORMAT.member("R8G8B8_UINT", 27).emit(emitter);
+    FORMAT.member("R8G8B8_SINT", 28).emit(emitter);
+    FORMAT.member("R8G8B8_SRGB", 29).emit(emitter);
+    FORMAT.member("B8G8R8_UNORM", 30).emit(emitter);
+    FORMAT.member("B8G8R8_SNORM", 31).emit(emitter);
+    FORMAT.member("B8G8R8_USCALED", 32).emit(emitter);
+    FORMAT.member("B8G8R8_SSCALED", 33).emit(emitter);
+    FORMAT.member("B8G8R8_UINT", 34).emit(emitter);
+    FORMAT.member("B8G8R8_SINT", 35).emit(emitter);
+    FORMAT.member("B8G8R8_SRGB", 36).emit(emitter);
+    FORMAT.member("R8G8B8A8_UNORM", 37).emit(emitter);
+    FORMAT.member("R8G8B8A8_SNORM", 38).emit(emitter);
+    FORMAT.member("R8G8B8A8_USCALED", 39).emit(emitter);
+    FORMAT.member("R8G8B8A8_SSCALED", 40).emit(emitter);
+    FORMAT.member("R8G8B8A8_UINT", 41).emit(emitter);
+    FORMAT.member("R8G8B8A8_SINT", 42).emit(emitter);
+    FORMAT.member("R8G8B8A8_SRGB", 43).emit(emitter);
+    FORMAT.member("B8G8R8A8_UNORM", 44).emit(emitter);
+    FORMAT.member("B8G8R8A8_SNORM", 45).emit(emitter);
+    FORMAT.member("B8G8R8A8_USCALED", 46).emit(emitter);
+    FORMAT.member("B8G8R8A8_SSCALED", 47).emit(emitter);
+    FORMAT.member("B8G8R8A8_UINT", 48).emit(emitter);
+    FORMAT.member("B8G8R8A8_SINT", 49).emit(emitter);
+    FORMAT.member("B8G8R8A8_SRGB", 50).emit(emitter);
+    FORMAT.member("A8B8G8R8_UNORM_PACK32", 51).emit(emitter);
+    FORMAT.member("A8B8G8R8_SNORM_PACK32", 52).emit(emitter);
+    FORMAT.member("A8B8G8R8_USCALED_PACK32", 53).emit(emitter);
+    FORMAT.member("A8B8G8R8_SSCALED_PACK32", 54).emit(emitter);
+    FORMAT.member("A8B8G8R8_UINT_PACK32", 55).emit(emitter);
+    FORMAT.member("A8B8G8R8_SINT_PACK32", 56).emit(emitter);
+    FORMAT.member("A8B8G8R8_SRGB_PACK32", 57).emit(emitter);
+    FORMAT.member("A2R10G10B10_UNORM_PACK32", 58).emit(emitter);
+    FORMAT.member("A2R10G10B10_SNORM_PACK32", 59).emit(emitter);
+    FORMAT.member("A2R10G10B10_USCALED_PACK32", 60).emit(emitter);
+    FORMAT.member("A2R10G10B10_SSCALED_PACK32", 61).emit(emitter);
+    FORMAT.member("A2R10G10B10_UINT_PACK32", 62).emit(emitter);
+    FORMAT.member("A2R10G10B10_SINT_PACK32", 63).emit(emitter);
+    FORMAT.member("A2B10G10R10_UNORM_PACK32", 64).emit(emitter);
+    FORMAT.member("A2B10G10R10_SNORM_PACK32", 65).emit(emitter);
+    FORMAT.member("A2B10G10R10_USCALED_PACK32", 66).emit(emitter);
+    FORMAT.member("A2B10G10R10_SSCALED_PACK32", 67).emit(emitter);
+    FORMAT.member("A2B10G10R10_UINT_PACK32", 68).emit(emitter);
+    FORMAT.member("A2B10G10R10_SINT_PACK32", 69).emit(emitter);
+    FORMAT.member("R16_UNORM", 70).emit(emitter);
+    FORMAT.member("R16_SNORM", 71).emit(emitter);
+    FORMAT.member("R16_USCALED", 72).emit(emitter);
+    FORMAT.member("R16_SSCALED", 73).emit(emitter);
+    FORMAT.member("R16_UINT", 74).emit(emitter);
+    FORMAT.member("R16_SINT", 75).emit(emitter);
+    FORMAT.member("R16_SFLOAT", 76).emit(emitter);
+    FORMAT.member("R16G16_UNORM", 77).emit(emitter);
+    FORMAT.member("R16G16_SNORM", 78).emit(emitter);
+    FORMAT.member("R16G16_USCALED", 79).emit(emitter);
+    FORMAT.member("R16G16_SSCALED", 80).emit(emitter);
+    FORMAT.member("R16G16_UINT", 81).emit(emitter);
+    FORMAT.member("R16G16_SINT", 82).emit(emitter);
+    FORMAT.member("R16G16_SFLOAT", 83).emit(emitter);
+    FORMAT.member("R16G16B16_UNORM", 84).emit(emitter);
+    FORMAT.member("R16G16B16_SNORM", 85).emit(emitter);
+    FORMAT.member("R16G16B16_USCALED", 86).emit(emitter);
+    FORMAT.member("R16G16B16_SSCALED", 87).emit(emitter);
+    FORMAT.member("R16G16B16_UINT", 88).emit(emitter);
+    FORMAT.member("R16G16B16_SINT", 89).emit(emitter);
+    FORMAT.member("R16G16B16_SFLOAT", 90).emit(emitter);
+    FORMAT.member("R16G16B16A16_UNORM", 91).emit(emitter);
+    FORMAT.member("R16G16B16A16_SNORM", 92).emit(emitter);
+    FORMAT.member("R16G16B16A16_USCALED", 93).emit(emitter);
+    FORMAT.member("R16G16B16A16_SSCALED", 94).emit(emitter);
+    FORMAT.member("R16G16B16A16_UINT", 95).emit(emitter);
+    FORMAT.member("R16G16B16A16_SINT", 96).emit(emitter);
+    FORMAT.member("R16G16B16A16_SFLOAT", 97).emit(emitter);
+    FORMAT.member("R32_UINT", 98).emit(emitter);
+    FORMAT.member("R32_SINT", 99).emit(emitter);
+    FORMAT.member("R32_SFLOAT", 100).emit(emitter);
+    FORMAT.member("R32G32_UINT", 101).emit(emitter);
+    FORMAT.member("R32G32_SINT", 102).emit(emitter);
+    FORMAT.member("R32G32_SFLOAT", 103).emit(emitter);
+    FORMAT.member("R32G32B32_UINT", 104).emit(emitter);
+    FORMAT.member("R32G32B32_SINT", 105).emit(emitter);
+    FORMAT.member("R32G32B32_SFLOAT", 106).emit(emitter);
+    FORMAT.member("R32G32B32A32_UINT", 107).emit(emitter);
+    FORMAT.member("R32G32B32A32_SINT", 108).emit(emitter);
+    FORMAT.member("R32G32B32A32_SFLOAT", 109).emit(emitter);
+    FORMAT.member("R64_UINT", 110).emit(emitter);
+    FORMAT.member("R64_SINT", 111).emit(emitter);
+    FORMAT.member("R64_SFLOAT", 112).emit(emitter);
+    FORMAT.member("R64G64_UINT", 113).emit(emitter);
+    FORMAT.member("R64G64_SINT", 114).emit(emitter);
+    FORMAT.member("R64G64_SFLOAT", 115).emit(emitter);
+    FORMAT.member("R64G64B64_UINT", 116).emit(emitter);
+    FORMAT.member("R64G64B64_SINT", 117).emit(emitter);
+    FORMAT.member("R64G64B64_SFLOAT", 118).emit(emitter);
+    FORMAT.member("R64G64B64A64_UINT", 119).emit(emitter);
+    FORMAT.member("R64G64B64A64_SINT", 120).emit(emitter);
+    FORMAT.member("R64G64B64A64_SFLOAT", 121).emit(emitter);
+    FORMAT.member("B10G11R11_UFLOAT_PACK32", 122).emit(emitter);
+    FORMAT.member("E5B9G9R9_UFLOAT_PACK32", 123).emit(emitter);
+    FORMAT.member("D16_UNORM", 124).emit(emitter);
+    FORMAT.member("X8_D24_UNORM_PACK32", 125).emit(emitter);
+    FORMAT.member("D32_SFLOAT", 126).emit(emitter);
+    FORMAT.member("S8_UINT", 127).emit(emitter);
+    FORMAT.member("D16_UNORM_S8_UINT", 128).emit(emitter);
+    FORMAT.member("D24_UNORM_S8_UINT", 129).emit(emitter);
+    FORMAT.member("D32_SFLOAT_S8_UINT", 130).emit(emitter);
+    FORMAT
+        .member("A1B5G5R4_UNORM_PACK16", 0)
+        .extension(VK_KHR_MAINTENANCE_5)
+        .emit(emitter);
+    FORMAT
+        .member("A8_UNORM", 1)
+        .extension(VK_KHR_MAINTENANCE_5)
+        .emit(emitter);
 
     // compressed formats
-    fn bc(w: &mut impl std::io::Write, variant: u8, order_repr: &str, value: usize) -> std::io::Result<()> {
-        writeln!(
-            w,
-            "pub const VK_FORMAT_BC{variant}_{order_repr}_BLOCK: VkFormat = {value};",
-        )
-    }
-    bc(w, 1, "RGB_UNORM", 131)?;
-    bc(w, 1, "RGB_SRGB", 132)?;
-    bc(w, 1, "RGBA_UNORM", 133)?;
-    bc(w, 1, "RGBA_SRGB", 134)?;
-    bc(w, 2, "UNORM", 135)?;
-    bc(w, 2, "SRGB", 136)?;
-    bc(w, 3, "UNORM", 137)?;
-    bc(w, 3, "SRGB", 138)?;
-    bc(w, 4, "UNORM", 139)?;
-    bc(w, 4, "SNORM", 140)?;
-    bc(w, 5, "UNORM", 141)?;
-    bc(w, 5, "SNORM", 142)?;
-    w.write_all(b"pub const VK_FORMAT_BC6H_UFLOAT_BLOCK: VkFormat = 143;\n")?;
-    w.write_all(b"pub const VK_FORMAT_BC6H_SFLOAT_BLOCK: VkFormat = 144;\n")?;
-    bc(w, 7, "UNORM", 145)?;
-    bc(w, 7, "SRGB", 146)?;
+    FORMAT.member("BC1_RGB_UNORM_BLOCK", 131).emit(emitter);
+    FORMAT.member("BC1_RGB_SRGB_BLOCK", 132).emit(emitter);
+    FORMAT.member("BC1_RGBA_UNORM_BLOCK", 133).emit(emitter);
+    FORMAT.member("BC1_RGBA_SRGB_BLOCK", 134).emit(emitter);
+    FORMAT.member("BC2_UNORM_BLOCK", 135).emit(emitter);
+    FORMAT.member("BC2_SRGB_BLOCK", 136).emit(emitter);
+    FORMAT.member("BC3_UNORM_BLOCK", 137).emit(emitter);
+    FORMAT.member("BC3_SRGB_BLOCK", 138).emit(emitter);
+    FORMAT.member("BC4_UNORM_BLOCK", 139).emit(emitter);
+    FORMAT.member("BC4_SNORM_BLOCK", 140).emit(emitter);
+    FORMAT.member("BC5_UNORM_BLOCK", 141).emit(emitter);
+    FORMAT.member("BC5_SNORM_BLOCK", 142).emit(emitter);
+    FORMAT.member("BC6H_UFLOAT_BLOCK", 143).emit(emitter);
+    FORMAT.member("BC6H_SFLOAT_BLOCK", 144).emit(emitter);
+    FORMAT.member("BC7_UNORM_BLOCK", 145).emit(emitter);
+    FORMAT.member("BC7_SRGB_BLOCK", 146).emit(emitter);
 
-    fn etc2(w: &mut impl std::io::Write, bit_assign: &str, r#repr: &str, value: usize) -> std::io::Result<()> {
-        writeln!(
-            w,
-            "pub const VK_FORMAT_ETC2_{bit_assign}_{repr}_BLOCK: VkFormat = {value};"
-        )
-    }
-    etc2(w, "R8G8B8", "UNORM", 147)?;
-    etc2(w, "R8G8B8", "SRGB", 148)?;
-    etc2(w, "R8G8B8A1", "UNORM", 149)?;
-    etc2(w, "R8G8B8A1", "SRGB", 150)?;
-    etc2(w, "R8G8B8A8", "UNORM", 151)?;
-    etc2(w, "R8G8B8A8", "SRGB", 152)?;
+    FORMAT.member("ETC2_R8G8B8_UNORM_BLOCK", 147).emit(emitter);
+    FORMAT.member("ETC2_R8G8B8_SRGB_BLOCK", 148).emit(emitter);
+    FORMAT.member("ETC2_R8G8B8A1_UNORM_BLOCK", 149).emit(emitter);
+    FORMAT.member("ETC2_R8G8B8A1_SRGB_BLOCK", 150).emit(emitter);
+    FORMAT.member("ETC2_R8G8B8A8_UNORM_BLOCK", 151).emit(emitter);
+    FORMAT.member("ETC2_R8G8B8A8_SRGB_BLOCK", 152).emit(emitter);
 
-    fn eac(w: &mut impl std::io::Write, bit_assign: &str, r#repr: &str, value: usize) -> std::io::Result<()> {
-        writeln!(
-            w,
-            "pub const VK_FORMAT_EAC_{bit_assign}_{repr}_BLOCK: VkFormat = {value};"
-        )
-    }
-    eac(w, "R11", "UNORM", 153)?;
-    eac(w, "R11", "SNORM", 154)?;
-    eac(w, "R11G11", "UNORM", 155)?;
-    eac(w, "R11G11", "SNORM", 156)?;
+    FORMAT.member("EAC_R11_UNORM_BLOCK", 153).emit(emitter);
+    FORMAT.member("EAC_R11_SNORM_BLOCK", 154).emit(emitter);
+    FORMAT.member("EAC_R11G11_UNORM_BLOCK", 155).emit(emitter);
+    FORMAT.member("EAC_R11G11_SNORM_BLOCK", 156).emit(emitter);
 
-    fn astc(w: &mut impl std::io::Write, bw: u8, bh: u8, r#repr: &str, value: usize) -> std::io::Result<()> {
-        writeln!(
-            w,
-            "pub const VK_FORMAT_ASTC_{bw}x{bh}_{repr}_BLOCK: VkFormat = {value};"
-        )
-    }
-    astc(w, 4, 4, "UNORM", 157)?;
-    astc(w, 4, 4, "SRGB", 158)?;
-    astc(w, 5, 4, "UNORM", 159)?;
-    astc(w, 5, 4, "SRGB", 160)?;
-    astc(w, 5, 5, "UNORM", 161)?;
-    astc(w, 5, 5, "SRGB", 162)?;
-    astc(w, 6, 5, "UNORM", 163)?;
-    astc(w, 6, 5, "SRGB", 164)?;
-    astc(w, 6, 6, "UNORM", 165)?;
-    astc(w, 6, 6, "SRGB", 166)?;
-    astc(w, 8, 5, "UNORM", 167)?;
-    astc(w, 8, 5, "SRGB", 168)?;
-    astc(w, 8, 6, "UNORM", 169)?;
-    astc(w, 8, 6, "SRGB", 170)?;
-    astc(w, 8, 8, "UNORM", 171)?;
-    astc(w, 8, 8, "SRGB", 172)?;
-    astc(w, 10, 5, "UNORM", 173)?;
-    astc(w, 10, 5, "SRGB", 174)?;
-    astc(w, 10, 6, "UNORM", 175)?;
-    astc(w, 10, 6, "SRGB", 176)?;
-    astc(w, 10, 8, "UNORM", 177)?;
-    astc(w, 10, 8, "SRGB", 178)?;
-    astc(w, 10, 10, "UNORM", 179)?;
-    astc(w, 10, 10, "SRGB", 180)?;
-    astc(w, 12, 10, "UNORM", 181)?;
-    astc(w, 12, 10, "SRGB", 182)?;
-    astc(w, 12, 12, "UNORM", 183)?;
-    astc(w, 12, 12, "SRGB", 184)?;
+    FORMAT.member("ASTC_4x4_UNORM_BLOCK", 157).emit(emitter);
+    FORMAT.member("ASTC_4x4_SRGB_BLOCK", 158).emit(emitter);
+    FORMAT.member("ASTC_5x4_UNORM_BLOCK", 159).emit(emitter);
+    FORMAT.member("ASTC_5x4_SRGB_BLOCK", 160).emit(emitter);
+    FORMAT.member("ASTC_5x5_UNORM_BLOCK", 161).emit(emitter);
+    FORMAT.member("ASTC_5x5_SRGB_BLOCK", 162).emit(emitter);
+    FORMAT.member("ASTC_6x5_UNORM_BLOCK", 163).emit(emitter);
+    FORMAT.member("ASTC_6x5_SRGB_BLOCK", 164).emit(emitter);
+    FORMAT.member("ASTC_6x6_UNORM_BLOCK", 165).emit(emitter);
+    FORMAT.member("ASTC_6x6_SRGB_BLOCK", 166).emit(emitter);
+    FORMAT.member("ASTC_8x5_UNORM_BLOCK", 167).emit(emitter);
+    FORMAT.member("ASTC_8x5_SRGB_BLOCK", 168).emit(emitter);
+    FORMAT.member("ASTC_8x6_UNORM_BLOCK", 169).emit(emitter);
+    FORMAT.member("ASTC_8x6_SRGB_BLOCK", 170).emit(emitter);
+    FORMAT.member("ASTC_8x8_UNORM_BLOCK", 171).emit(emitter);
+    FORMAT.member("ASTC_8x8_SRGB_BLOCK", 172).emit(emitter);
+    FORMAT.member("ASTC_10x5_UNORM_BLOCK", 173).emit(emitter);
+    FORMAT.member("ASTC_10x5_SRGB_BLOCK", 174).emit(emitter);
+    FORMAT.member("ASTC_10x6_UNORM_BLOCK", 175).emit(emitter);
+    FORMAT.member("ASTC_10x6_SRGB_BLOCK", 176).emit(emitter);
+    FORMAT.member("ASTC_10x8_UNORM_BLOCK", 177).emit(emitter);
+    FORMAT.member("ASTC_10x8_SRGB_BLOCK", 178).emit(emitter);
+    FORMAT.member("ASTC_10x10_UNORM_BLOCK", 179).emit(emitter);
+    FORMAT.member("ASTC_10x10_SRGB_BLOCK", 180).emit(emitter);
+    FORMAT.member("ASTC_12x10_UNORM_BLOCK", 181).emit(emitter);
+    FORMAT.member("ASTC_12x10_SRGB_BLOCK", 182).emit(emitter);
+    FORMAT.member("ASTC_12x12_UNORM_BLOCK", 183).emit(emitter);
+    FORMAT.member("ASTC_12x12_SRGB_BLOCK", 184).emit(emitter);
 
     // sampler_ycbcr_conversion
-    fn ycbcr(
-        w: &mut impl std::io::Write,
-        bit_assign: &str,
-        dim: &str,
-        r#repr: &str,
-        value: i32,
-    ) -> std::io::Result<()> {
-        w.write_all(b"#[cfg(feature = \"VK_KHR_sampler_ycbcr_conversion\")]\n")?;
-        writeln!(
-            w,
-            "pub const VK_FORMAT_{bit_assign}_{dim}_{repr}_KHR: VkFormat = {value};"
-        )?;
-        w.write_all(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
-        writeln!(w, "pub const VK_FORMAT_{bit_assign}_{dim}_{repr}: VkFormat = {value};")?;
-
-        Ok(())
-    }
-    fn ycbcr_planes(
-        w: &mut impl std::io::Write,
-        bit_assign_per_plane: &[&str],
-        dim: &str,
-        r#repr: &str,
-        value: i32,
-    ) -> std::io::Result<()> {
-        let bit_assign = bit_assign_per_plane.join("_");
-        let plane_count = bit_assign_per_plane.len();
-        w.write_all(b"#[cfg(feature = \"VK_KHR_sampler_ycbcr_conversion\")]\n")?;
-        writeln!(
-            w,
-            "pub const VK_FORMAT_{bit_assign}_{plane_count}PLANE_{dim}_{repr}_KHR: VkFormat = {value};"
-        )?;
-        w.write_all(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
-        writeln!(
-            w,
-            "pub const VK_FORMAT_{bit_assign}_{plane_count}PLANE_{dim}_{repr}: VkFormat = {value};"
-        )?;
-
-        Ok(())
-    }
-    ycbcr(w, "G8B8G8R8", "422", "UNORM", vk_ext_enum(157, 0))?;
-    ycbcr(w, "B8G8R8G8", "422", "UNORM", vk_ext_enum(157, 1))?;
-    ycbcr_planes(w, &["G8", "B8", "R8"], "420", "UNORM", vk_ext_enum(157, 2))?;
-    ycbcr_planes(w, &["G8", "B8R8"], "420", "UNORM", vk_ext_enum(157, 3))?;
-    ycbcr_planes(w, &["G8", "B8", "R8"], "422", "UNORM", vk_ext_enum(157, 4))?;
-    ycbcr_planes(w, &["G8", "B8R8"], "422", "UNORM", vk_ext_enum(157, 5))?;
-    ycbcr_planes(w, &["G8", "B8", "R8"], "444", "UNORM", vk_ext_enum(157, 6))?;
-    w.write_all(b"#[cfg(feature = \"VK_KHR_sampler_ycbcr_conversion\")]\n")?;
-    packed_s(w, "R10X6", "UNORM", 16, "KHR", vk_ext_enum(157, 7) as _)?;
-    w.write_all(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
-    packed(w, "R10X6", "UNORM", 16, vk_ext_enum(157, 7) as _)?;
-    writeln!(
-        w,
-        r#"#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_R10X6G10X6_UNORM_2PACK16_KHR: VkFormat = {v};
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_R10X6G10X6_UNORM_2PACK16: VkFormat = {v};"#,
-        v = vk_ext_enum(157, 8)
-    )?;
-    writeln!(
-        w,
-        r#"#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_R10X6G10X6B10X6A10X6_UNORM_4PACK16_KHR: VkFormat = {v};
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_R10X6G10X6B10X6A10X6_UNORM_4PACK16: VkFormat = {v};"#,
-        v = vk_ext_enum(157, 9)
-    )?;
-    writeln!(
-        w,
-        r#"#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16_KHR: VkFormat = {v};
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16: VkFormat = {v};"#,
-        v = vk_ext_enum(157, 10)
-    )?;
-    writeln!(
-        w,
-        r#"#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16_KHR: VkFormat = {v};
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16: VkFormat = {v};"#,
-        v = vk_ext_enum(157, 11)
-    )?;
-    ycbcr_planes(
-        w,
-        &["G10X6", "B10X6", "R10X6"],
-        "420",
-        "UNORM_3PACK16",
-        vk_ext_enum(157, 12),
-    )?;
-    ycbcr_planes(
-        w,
-        &["G10X6", "B10X6R10X6"],
-        "420",
-        "UNORM_3PACK16",
-        vk_ext_enum(157, 13),
-    )?;
-    ycbcr_planes(
-        w,
-        &["G10X6", "B10X6", "R10X6"],
-        "422",
-        "UNORM_3PACK16",
-        vk_ext_enum(157, 14),
-    )?;
-    ycbcr_planes(
-        w,
-        &["G10X6", "B10X6R10X6"],
-        "422",
-        "UNORM_3PACK16",
-        vk_ext_enum(157, 15),
-    )?;
-    ycbcr_planes(
-        w,
-        &["G10X6", "B10X6", "R10X6"],
-        "444",
-        "UNORM_3PACK16",
-        vk_ext_enum(157, 16),
-    )?;
-    w.write_all(b"#[cfg(feature = \"VK_KHR_sampler_ycbcr_conversion\")]\n")?;
-    packed_s(w, "R12X4", "UNORM", 16, "KHR", vk_ext_enum(157, 17) as _)?;
-    w.write_all(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
-    packed(w, "R12X4", "UNORM", 16, vk_ext_enum(157, 17) as _)?;
-    writeln!(
-        w,
-        r#"#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_R12X4G12X4_UNORM_2PACK16_KHR: VkFormat = {v};
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_R12X4G12X4_UNORM_2PACK16: VkFormat = {v};"#,
-        v = vk_ext_enum(157, 18)
-    )?;
-    writeln!(
-        w,
-        r#"#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_R12X4G12X4B12X4A12X4_UNORM_4PACK16_KHR: VkFormat = {v};
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_R12X4G12X4B12X4A12X4_UNORM_4PACK16: VkFormat = {v};"#,
-        v = vk_ext_enum(157, 19)
-    )?;
-    writeln!(
-        w,
-        r#"#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16_KHR: VkFormat = {v};
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16: VkFormat = {v};"#,
-        v = vk_ext_enum(157, 20)
-    )?;
-    writeln!(
-        w,
-        r#"#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16_KHR: VkFormat = {v};
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16: VkFormat = {v};"#,
-        v = vk_ext_enum(157, 21)
-    )?;
-    ycbcr_planes(
-        w,
-        &["G12X4", "B12X4", "R12X4"],
-        "420",
-        "UNORM_3PACK16",
-        vk_ext_enum(157, 22),
-    )?;
-    ycbcr_planes(
-        w,
-        &["G12X4", "B12X4R12X4"],
-        "420",
-        "UNORM_3PACK16",
-        vk_ext_enum(157, 23),
-    )?;
-    ycbcr_planes(
-        w,
-        &["G12X4", "B12X4", "R12X4"],
-        "422",
-        "UNORM_3PACK16",
-        vk_ext_enum(157, 24),
-    )?;
-    ycbcr_planes(
-        w,
-        &["G12X4", "B12X4R12X4"],
-        "422",
-        "UNORM_3PACK16",
-        vk_ext_enum(157, 25),
-    )?;
-    ycbcr_planes(
-        w,
-        &["G12X4", "B12X4", "R12X4"],
-        "444",
-        "UNORM_3PACK16",
-        vk_ext_enum(157, 26),
-    )?;
-    ycbcr(w, "G16B16G16R16", "422", "UNORM", vk_ext_enum(157, 27))?;
-    ycbcr(w, "B16G16R16G16", "422", "UNORM", vk_ext_enum(157, 28))?;
-    ycbcr_planes(w, &["G16", "B16", "R16"], "420", "UNORM", vk_ext_enum(157, 29))?;
-    ycbcr_planes(w, &["G16", "B16R16"], "420", "UNORM", vk_ext_enum(157, 30))?;
-    ycbcr_planes(w, &["G16", "B16", "R16"], "422", "UNORM", vk_ext_enum(157, 31))?;
-    ycbcr_planes(w, &["G16", "B16R16"], "422", "UNORM", vk_ext_enum(157, 32))?;
-    ycbcr_planes(w, &["G16", "B16", "R16"], "444", "UNORM", vk_ext_enum(157, 33))?;
-
-    Ok(())
+    FORMAT
+        .member("G8B8G8R8_422_UNORM", 0)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("B8G8R8G8_422_UNORM", 1)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("G8_B8_R8_3PLANE_420_UNORM", 2)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("G8_B8R8_2PLANE_420_UNORM", 3)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("G8_B8_R8_3PLANE_422_UNORM", 4)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("G8_B8R8_2PLANE_422_UNORM", 5)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("G8_B8_R8_3PLANE_444_UNORM", 6)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("R10X6_UNORM_PACK16", 7)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("R10X6G10X6_UNORM_2PACK16", 8)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("R10X6G10X6B10X6A10X6_UNORM_4PACK16", 9)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("G10X6B10X6G10X6R10X6_422_UNORM_4PACK16", 10)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("B10X6G10X6R10X6G10X6_422_UNORM_4PACK16", 11)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16", 12)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16", 13)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16", 14)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16", 15)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("G10X6_B10X6_R10X6_3PLANE_444_UNORM_3PACK16", 16)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("R12X4_UNORM_PACK16", 17)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("R12X4G12X4_UNORM_2PACK16", 18)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("R12X4G12X4B12X4A12X4_UNORM_4PACK16", 19)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("G12X4B12X4G12X4R12X4_422_UNORM_4PACK16", 20)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("B12X4G12X4R12X4G12X4_422_UNORM_4PACK16", 21)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16", 22)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16", 23)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16", 24)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16", 25)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("G12X4_B12X4_R12X4_3PLANE_444_UNORM_3PACK16", 26)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("G16B16G16R16_422_UNORM", 27)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("B16G16R16G16_422_UNORM", 28)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("G16_B16_R16_3PLANE_420_UNORM", 29)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("G16_B16R16_2PLANE_420_UNORM", 30)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("G16_B16_R16_3PLANE_422_UNORM", 31)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("G16_B16R16_2PLANE_422_UNORM", 32)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
+    FORMAT
+        .member("G16_B16_R16_3PLANE_444_UNORM", 33)
+        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
+        .emit(emitter);
 }

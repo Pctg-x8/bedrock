@@ -345,6 +345,16 @@ impl core::fmt::Display for ConstantSymbol<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Enum {
+                prefix: "",
+                stem,
+                suffix: None,
+            } => write!(f, "VK_{stem}"),
+            Self::Enum {
+                prefix: "",
+                stem,
+                suffix: Some(suffix),
+            } => write!(f, "VK_{stem}_{suffix}"),
+            Self::Enum {
                 prefix,
                 stem,
                 suffix: None,

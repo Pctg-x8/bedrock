@@ -672,382 +672,10 @@ pub const VK_MAX_GLOBAL_PRIORITY_SIZE: usize = 16;
 #[cfg(feature = "VK_KHR_depth_stencil_resolve")] #[rustfmt::skip] pub const VK_RESOLVE_MODE_NONE_KHR: VkResolveModeFlagBitsKHR = 0;
 #[cfg(feature = "Allow1_2APIs")] #[rustfmt::skip] pub const VK_RESOLVE_MODE_NONE: VkResolveModeFlagBitsKHR = 0;
 
-pub type VkResult = i32;
-#[rustfmt::skip] pub const VK_SUCCESS: VkResult = 0;
-#[rustfmt::skip] pub const VK_NOT_READY: VkResult = 1;
-#[rustfmt::skip] pub const VK_TIMEOUT: VkResult = 2;
-#[rustfmt::skip] pub const VK_EVENT_SET: VkResult = 3;
-#[rustfmt::skip] pub const VK_EVENT_RESET: VkResult = 4;
-#[rustfmt::skip] pub const VK_INCOMPLETE: VkResult = 5;
-#[rustfmt::skip] pub const VK_ERROR_OUT_OF_HOST_MEMORY: VkResult = -1;
-#[rustfmt::skip] pub const VK_ERROR_OUT_OF_DEVICE_MEMORY: VkResult = -2;
-#[rustfmt::skip] pub const VK_ERROR_INITIALIZATION_FAILED: VkResult = -3;
-#[rustfmt::skip] pub const VK_ERROR_DEVICE_LOST: VkResult = -4;
-#[rustfmt::skip] pub const VK_ERROR_MEMORY_MAP_FAILED: VkResult = -5;
-#[rustfmt::skip] pub const VK_ERROR_LAYER_NOT_PRESENT: VkResult = -6;
-#[rustfmt::skip] pub const VK_ERROR_EXTENSION_NOT_PRESENT: VkResult = -7;
-#[rustfmt::skip] pub const VK_ERROR_FEATURE_NOT_PRESENT: VkResult = -8;
-#[rustfmt::skip] pub const VK_ERROR_INCOMPATIBLE_DRIVER: VkResult = -9;
-#[rustfmt::skip] pub const VK_ERROR_TOO_MANY_OBJECTS: VkResult = -10;
-#[rustfmt::skip] pub const VK_ERROR_FORMAT_NOT_SUPPORTED: VkResult = -11;
-#[rustfmt::skip] pub const VK_ERROR_FRAGMENTED_POOL: VkResult = -12;
-#[rustfmt::skip] pub const VK_ERROR_UNKNOWN: VkResult = -13;
-#[cfg(feature = "VK_KHR_surface")]
-#[rustfmt::skip] pub const VK_ERROR_SURFACE_LOST_KHR: VkResult = -1000000000;
-#[cfg(feature = "VK_KHR_surface")]
-#[rustfmt::skip] pub const VK_ERROR_NATIVE_WINDOW_IN_USE_KHR: VkResult = -1000000001;
-#[cfg(feature = "VK_KHR_swapchain")]
-#[rustfmt::skip] pub const VK_SUBOPTIMAL_KHR: VkResult = 1000001003;
-#[cfg(feature = "VK_KHR_swapchain")]
-#[rustfmt::skip] pub const VK_ERROR_OUT_OF_DATE_KHR: VkResult = -1000001004;
-#[cfg(feature = "VK_KHR_display_swapchain")]
-#[rustfmt::skip] pub const VK_ERROR_INCOMPATIBLE_DISPLAY_KHR: VkResult = -1000003001;
-#[cfg(feature = "VK_KHR_external_memory")]
-#[rustfmt::skip] pub const VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR: VkResult = -1000072003;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip] pub const VK_ERROR_INVALID_EXTERNAL_HANDLE: VkResult = -1000072003;
-#[cfg(feature = "VK_KHR_maintenance1")]
-#[rustfmt::skip] pub const VK_ERROR_OUT_OF_POOL_MEMORY_KHR: VkResult = -1000069000;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip] pub const VK_ERROR_OUT_OF_POOL_MEMORY: VkResult = -1000069000;
-
 #[rustfmt::skip]
 pub type VkStructureType = i32;
 #[rustfmt::skip]
 pub type VkObjectType = i32;
-
-#[rustfmt::skip]
-pub type VkFormat = i32;
-#[rustfmt::skip]
-pub const VK_FORMAT_UNDEFINED: VkFormat = 0;
-pub const VK_FORMAT_R4G4_UNORM_PACK8: VkFormat = 1;
-pub const VK_FORMAT_R4G4B4A4_UNORM_PACK16: VkFormat = 2;
-pub const VK_FORMAT_B4G4R4A4_UNORM_PACK16: VkFormat = 3;
-pub const VK_FORMAT_R5G6B5_UNORM_PACK16: VkFormat = 4;
-pub const VK_FORMAT_B5G6R5_UNORM_PACK16: VkFormat = 5;
-pub const VK_FORMAT_R5G5B5A1_UNORM_PACK16: VkFormat = 6;
-pub const VK_FORMAT_B5G5R5A1_UNORM_PACK16: VkFormat = 7;
-pub const VK_FORMAT_A1R5G5B5_UNORM_PACK16: VkFormat = 8;
-pub const VK_FORMAT_R8_UNORM: VkFormat = 9;
-pub const VK_FORMAT_R8_SNORM: VkFormat = 10;
-pub const VK_FORMAT_R8_USCALED: VkFormat = 11;
-pub const VK_FORMAT_R8_SSCALED: VkFormat = 12;
-pub const VK_FORMAT_R8_UINT: VkFormat = 13;
-pub const VK_FORMAT_R8_SINT: VkFormat = 14;
-pub const VK_FORMAT_R8_SRGB: VkFormat = 15;
-pub const VK_FORMAT_R8G8_UNORM: VkFormat = 16;
-pub const VK_FORMAT_R8G8_SNORM: VkFormat = 17;
-pub const VK_FORMAT_R8G8_USCALED: VkFormat = 18;
-pub const VK_FORMAT_R8G8_SSCALED: VkFormat = 19;
-pub const VK_FORMAT_R8G8_UINT: VkFormat = 20;
-pub const VK_FORMAT_R8G8_SINT: VkFormat = 21;
-pub const VK_FORMAT_R8G8_SRGB: VkFormat = 22;
-pub const VK_FORMAT_R8G8B8_UNORM: VkFormat = 23;
-pub const VK_FORMAT_R8G8B8_SNORM: VkFormat = 24;
-pub const VK_FORMAT_R8G8B8_USCALED: VkFormat = 25;
-pub const VK_FORMAT_R8G8B8_SSCALED: VkFormat = 26;
-pub const VK_FORMAT_R8G8B8_UINT: VkFormat = 27;
-pub const VK_FORMAT_R8G8B8_SINT: VkFormat = 28;
-pub const VK_FORMAT_R8G8B8_SRGB: VkFormat = 29;
-pub const VK_FORMAT_B8G8R8_UNORM: VkFormat = 30;
-pub const VK_FORMAT_B8G8R8_SNORM: VkFormat = 31;
-pub const VK_FORMAT_B8G8R8_USCALED: VkFormat = 32;
-pub const VK_FORMAT_B8G8R8_SSCALED: VkFormat = 33;
-pub const VK_FORMAT_B8G8R8_UINT: VkFormat = 34;
-pub const VK_FORMAT_B8G8R8_SINT: VkFormat = 35;
-pub const VK_FORMAT_B8G8R8_SRGB: VkFormat = 36;
-pub const VK_FORMAT_R8G8B8A8_UNORM: VkFormat = 37;
-pub const VK_FORMAT_R8G8B8A8_SNORM: VkFormat = 38;
-pub const VK_FORMAT_R8G8B8A8_USCALED: VkFormat = 39;
-pub const VK_FORMAT_R8G8B8A8_SSCALED: VkFormat = 40;
-pub const VK_FORMAT_R8G8B8A8_UINT: VkFormat = 41;
-pub const VK_FORMAT_R8G8B8A8_SINT: VkFormat = 42;
-pub const VK_FORMAT_R8G8B8A8_SRGB: VkFormat = 43;
-pub const VK_FORMAT_B8G8R8A8_UNORM: VkFormat = 44;
-pub const VK_FORMAT_B8G8R8A8_SNORM: VkFormat = 45;
-pub const VK_FORMAT_B8G8R8A8_USCALED: VkFormat = 46;
-pub const VK_FORMAT_B8G8R8A8_SSCALED: VkFormat = 47;
-pub const VK_FORMAT_B8G8R8A8_UINT: VkFormat = 48;
-pub const VK_FORMAT_B8G8R8A8_SINT: VkFormat = 49;
-pub const VK_FORMAT_B8G8R8A8_SRGB: VkFormat = 50;
-pub const VK_FORMAT_A8B8G8R8_UNORM_PACK32: VkFormat = 51;
-pub const VK_FORMAT_A8B8G8R8_SNORM_PACK32: VkFormat = 52;
-pub const VK_FORMAT_A8B8G8R8_USCALED_PACK32: VkFormat = 53;
-pub const VK_FORMAT_A8B8G8R8_SSCALED_PACK32: VkFormat = 54;
-pub const VK_FORMAT_A8B8G8R8_UINT_PACK32: VkFormat = 55;
-pub const VK_FORMAT_A8B8G8R8_SINT_PACK32: VkFormat = 56;
-pub const VK_FORMAT_A8B8G8R8_SRGB_PACK32: VkFormat = 57;
-pub const VK_FORMAT_A2R10G10B10_UNORM_PACK32: VkFormat = 58;
-pub const VK_FORMAT_A2R10G10B10_SNORM_PACK32: VkFormat = 59;
-pub const VK_FORMAT_A2R10G10B10_USCALED_PACK32: VkFormat = 60;
-pub const VK_FORMAT_A2R10G10B10_SSCALED_PACK32: VkFormat = 61;
-pub const VK_FORMAT_A2R10G10B10_UINT_PACK32: VkFormat = 62;
-pub const VK_FORMAT_A2R10G10B10_SINT_PACK32: VkFormat = 63;
-pub const VK_FORMAT_A2B10G10R10_UNORM_PACK32: VkFormat = 64;
-pub const VK_FORMAT_A2B10G10R10_SNORM_PACK32: VkFormat = 65;
-pub const VK_FORMAT_A2B10G10R10_USCALED_PACK32: VkFormat = 66;
-pub const VK_FORMAT_A2B10G10R10_SSCALED_PACK32: VkFormat = 67;
-pub const VK_FORMAT_A2B10G10R10_UINT_PACK32: VkFormat = 68;
-pub const VK_FORMAT_A2B10G10R10_SINT_PACK32: VkFormat = 69;
-pub const VK_FORMAT_R16_UNORM: VkFormat = 70;
-pub const VK_FORMAT_R16_SNORM: VkFormat = 71;
-pub const VK_FORMAT_R16_USCALED: VkFormat = 72;
-pub const VK_FORMAT_R16_SSCALED: VkFormat = 73;
-pub const VK_FORMAT_R16_UINT: VkFormat = 74;
-pub const VK_FORMAT_R16_SINT: VkFormat = 75;
-pub const VK_FORMAT_R16_SFLOAT: VkFormat = 76;
-pub const VK_FORMAT_R16G16_UNORM: VkFormat = 77;
-pub const VK_FORMAT_R16G16_SNORM: VkFormat = 78;
-pub const VK_FORMAT_R16G16_USCALED: VkFormat = 79;
-pub const VK_FORMAT_R16G16_SSCALED: VkFormat = 80;
-pub const VK_FORMAT_R16G16_UINT: VkFormat = 81;
-pub const VK_FORMAT_R16G16_SINT: VkFormat = 82;
-pub const VK_FORMAT_R16G16_SFLOAT: VkFormat = 83;
-pub const VK_FORMAT_R16G16B16_UNORM: VkFormat = 84;
-pub const VK_FORMAT_R16G16B16_SNORM: VkFormat = 85;
-pub const VK_FORMAT_R16G16B16_USCALED: VkFormat = 86;
-pub const VK_FORMAT_R16G16B16_SSCALED: VkFormat = 87;
-pub const VK_FORMAT_R16G16B16_UINT: VkFormat = 88;
-pub const VK_FORMAT_R16G16B16_SINT: VkFormat = 89;
-pub const VK_FORMAT_R16G16B16_SFLOAT: VkFormat = 90;
-pub const VK_FORMAT_R16G16B16A16_UNORM: VkFormat = 91;
-pub const VK_FORMAT_R16G16B16A16_SNORM: VkFormat = 92;
-pub const VK_FORMAT_R16G16B16A16_USCALED: VkFormat = 93;
-pub const VK_FORMAT_R16G16B16A16_SSCALED: VkFormat = 94;
-pub const VK_FORMAT_R16G16B16A16_UINT: VkFormat = 95;
-pub const VK_FORMAT_R16G16B16A16_SINT: VkFormat = 96;
-pub const VK_FORMAT_R16G16B16A16_SFLOAT: VkFormat = 97;
-pub const VK_FORMAT_R32_UINT: VkFormat = 98;
-pub const VK_FORMAT_R32_SINT: VkFormat = 99;
-pub const VK_FORMAT_R32_SFLOAT: VkFormat = 100;
-pub const VK_FORMAT_R32G32_UINT: VkFormat = 101;
-pub const VK_FORMAT_R32G32_SINT: VkFormat = 102;
-pub const VK_FORMAT_R32G32_SFLOAT: VkFormat = 103;
-pub const VK_FORMAT_R32G32B32_UINT: VkFormat = 104;
-pub const VK_FORMAT_R32G32B32_SINT: VkFormat = 105;
-pub const VK_FORMAT_R32G32B32_SFLOAT: VkFormat = 106;
-pub const VK_FORMAT_R32G32B32A32_UINT: VkFormat = 107;
-pub const VK_FORMAT_R32G32B32A32_SINT: VkFormat = 108;
-pub const VK_FORMAT_R32G32B32A32_SFLOAT: VkFormat = 109;
-pub const VK_FORMAT_R64_UINT: VkFormat = 110;
-pub const VK_FORMAT_R64_SINT: VkFormat = 111;
-pub const VK_FORMAT_R64_SFLOAT: VkFormat = 112;
-pub const VK_FORMAT_R64G64_UINT: VkFormat = 113;
-pub const VK_FORMAT_R64G64_SINT: VkFormat = 114;
-pub const VK_FORMAT_R64G64_SFLOAT: VkFormat = 115;
-pub const VK_FORMAT_R64G64B64_UINT: VkFormat = 116;
-pub const VK_FORMAT_R64G64B64_SINT: VkFormat = 117;
-pub const VK_FORMAT_R64G64B64_SFLOAT: VkFormat = 118;
-pub const VK_FORMAT_R64G64B64A64_UINT: VkFormat = 119;
-pub const VK_FORMAT_R64G64B64A64_SINT: VkFormat = 120;
-pub const VK_FORMAT_R64G64B64A64_SFLOAT: VkFormat = 121;
-pub const VK_FORMAT_B10G11R11_UFLOAT_PACK32: VkFormat = 122;
-pub const VK_FORMAT_E5B9G9R9_UFLOAT_PACK32: VkFormat = 123;
-pub const VK_FORMAT_D16_UNORM: VkFormat = 124;
-pub const VK_FORMAT_X8_D24_UNORM_PACK32: VkFormat = 125;
-pub const VK_FORMAT_D32_SFLOAT: VkFormat = 126;
-pub const VK_FORMAT_S8_UINT: VkFormat = 127;
-pub const VK_FORMAT_D16_UNORM_S8_UINT: VkFormat = 128;
-pub const VK_FORMAT_D24_UNORM_S8_UINT: VkFormat = 129;
-pub const VK_FORMAT_D32_SFLOAT_S8_UINT: VkFormat = 130;
-#[cfg(feature = "VK_KHR_maintenance5")]
-pub const VK_FORMAT_A1B5G5R4_UNORM_PACK16_KHR: VkFormat = 1000470000;
-#[cfg(feature = "Allow1_4APIs")]
-pub const VK_FORMAT_A1B5G5R4_UNORM_PACK16: VkFormat = 1000470000;
-#[cfg(feature = "VK_KHR_maintenance5")]
-pub const VK_FORMAT_A8_UNORM_KHR: VkFormat = 1000470001;
-#[cfg(feature = "Allow1_4APIs")]
-pub const VK_FORMAT_A8_UNORM: VkFormat = 1000470001;
-pub const VK_FORMAT_BC1_RGB_UNORM_BLOCK: VkFormat = 131;
-pub const VK_FORMAT_BC1_RGB_SRGB_BLOCK: VkFormat = 132;
-pub const VK_FORMAT_BC1_RGBA_UNORM_BLOCK: VkFormat = 133;
-pub const VK_FORMAT_BC1_RGBA_SRGB_BLOCK: VkFormat = 134;
-pub const VK_FORMAT_BC2_UNORM_BLOCK: VkFormat = 135;
-pub const VK_FORMAT_BC2_SRGB_BLOCK: VkFormat = 136;
-pub const VK_FORMAT_BC3_UNORM_BLOCK: VkFormat = 137;
-pub const VK_FORMAT_BC3_SRGB_BLOCK: VkFormat = 138;
-pub const VK_FORMAT_BC4_UNORM_BLOCK: VkFormat = 139;
-pub const VK_FORMAT_BC4_SNORM_BLOCK: VkFormat = 140;
-pub const VK_FORMAT_BC5_UNORM_BLOCK: VkFormat = 141;
-pub const VK_FORMAT_BC5_SNORM_BLOCK: VkFormat = 142;
-pub const VK_FORMAT_BC6H_UFLOAT_BLOCK: VkFormat = 143;
-pub const VK_FORMAT_BC6H_SFLOAT_BLOCK: VkFormat = 144;
-pub const VK_FORMAT_BC7_UNORM_BLOCK: VkFormat = 145;
-pub const VK_FORMAT_BC7_SRGB_BLOCK: VkFormat = 146;
-pub const VK_FORMAT_ETC2_R8G8B8_UNORM_BLOCK: VkFormat = 147;
-pub const VK_FORMAT_ETC2_R8G8B8_SRGB_BLOCK: VkFormat = 148;
-pub const VK_FORMAT_ETC2_R8G8B8A1_UNORM_BLOCK: VkFormat = 149;
-pub const VK_FORMAT_ETC2_R8G8B8A1_SRGB_BLOCK: VkFormat = 150;
-pub const VK_FORMAT_ETC2_R8G8B8A8_UNORM_BLOCK: VkFormat = 151;
-pub const VK_FORMAT_ETC2_R8G8B8A8_SRGB_BLOCK: VkFormat = 152;
-pub const VK_FORMAT_EAC_R11_UNORM_BLOCK: VkFormat = 153;
-pub const VK_FORMAT_EAC_R11_SNORM_BLOCK: VkFormat = 154;
-pub const VK_FORMAT_EAC_R11G11_UNORM_BLOCK: VkFormat = 155;
-pub const VK_FORMAT_EAC_R11G11_SNORM_BLOCK: VkFormat = 156;
-pub const VK_FORMAT_ASTC_4x4_UNORM_BLOCK: VkFormat = 157;
-pub const VK_FORMAT_ASTC_4x4_SRGB_BLOCK: VkFormat = 158;
-pub const VK_FORMAT_ASTC_5x4_UNORM_BLOCK: VkFormat = 159;
-pub const VK_FORMAT_ASTC_5x4_SRGB_BLOCK: VkFormat = 160;
-pub const VK_FORMAT_ASTC_5x5_UNORM_BLOCK: VkFormat = 161;
-pub const VK_FORMAT_ASTC_5x5_SRGB_BLOCK: VkFormat = 162;
-pub const VK_FORMAT_ASTC_6x5_UNORM_BLOCK: VkFormat = 163;
-pub const VK_FORMAT_ASTC_6x5_SRGB_BLOCK: VkFormat = 164;
-pub const VK_FORMAT_ASTC_6x6_UNORM_BLOCK: VkFormat = 165;
-pub const VK_FORMAT_ASTC_6x6_SRGB_BLOCK: VkFormat = 166;
-pub const VK_FORMAT_ASTC_8x5_UNORM_BLOCK: VkFormat = 167;
-pub const VK_FORMAT_ASTC_8x5_SRGB_BLOCK: VkFormat = 168;
-pub const VK_FORMAT_ASTC_8x6_UNORM_BLOCK: VkFormat = 169;
-pub const VK_FORMAT_ASTC_8x6_SRGB_BLOCK: VkFormat = 170;
-pub const VK_FORMAT_ASTC_8x8_UNORM_BLOCK: VkFormat = 171;
-pub const VK_FORMAT_ASTC_8x8_SRGB_BLOCK: VkFormat = 172;
-pub const VK_FORMAT_ASTC_10x5_UNORM_BLOCK: VkFormat = 173;
-pub const VK_FORMAT_ASTC_10x5_SRGB_BLOCK: VkFormat = 174;
-pub const VK_FORMAT_ASTC_10x6_UNORM_BLOCK: VkFormat = 175;
-pub const VK_FORMAT_ASTC_10x6_SRGB_BLOCK: VkFormat = 176;
-pub const VK_FORMAT_ASTC_10x8_UNORM_BLOCK: VkFormat = 177;
-pub const VK_FORMAT_ASTC_10x8_SRGB_BLOCK: VkFormat = 178;
-pub const VK_FORMAT_ASTC_10x10_UNORM_BLOCK: VkFormat = 179;
-pub const VK_FORMAT_ASTC_10x10_SRGB_BLOCK: VkFormat = 180;
-pub const VK_FORMAT_ASTC_12x10_UNORM_BLOCK: VkFormat = 181;
-pub const VK_FORMAT_ASTC_12x10_SRGB_BLOCK: VkFormat = 182;
-pub const VK_FORMAT_ASTC_12x12_UNORM_BLOCK: VkFormat = 183;
-pub const VK_FORMAT_ASTC_12x12_SRGB_BLOCK: VkFormat = 184;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G8B8G8R8_422_UNORM_KHR: VkFormat = 1000156000;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G8B8G8R8_422_UNORM: VkFormat = 1000156000;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_B8G8R8G8_422_UNORM_KHR: VkFormat = 1000156001;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_B8G8R8G8_422_UNORM: VkFormat = 1000156001;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM_KHR: VkFormat = 1000156002;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM: VkFormat = 1000156002;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G8_B8R8_2PLANE_420_UNORM_KHR: VkFormat = 1000156003;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G8_B8R8_2PLANE_420_UNORM: VkFormat = 1000156003;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G8_B8_R8_3PLANE_422_UNORM_KHR: VkFormat = 1000156004;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G8_B8_R8_3PLANE_422_UNORM: VkFormat = 1000156004;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G8_B8R8_2PLANE_422_UNORM_KHR: VkFormat = 1000156005;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G8_B8R8_2PLANE_422_UNORM: VkFormat = 1000156005;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G8_B8_R8_3PLANE_444_UNORM_KHR: VkFormat = 1000156006;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G8_B8_R8_3PLANE_444_UNORM: VkFormat = 1000156006;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_R10X6_UNORM_PACK16_KHR: VkFormat = 1000156007;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_R10X6_UNORM_PACK16: VkFormat = 1000156007;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_R10X6G10X6_UNORM_2PACK16_KHR: VkFormat = 1000156008;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_R10X6G10X6_UNORM_2PACK16: VkFormat = 1000156008;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_R10X6G10X6B10X6A10X6_UNORM_4PACK16_KHR: VkFormat = 1000156009;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_R10X6G10X6B10X6A10X6_UNORM_4PACK16: VkFormat = 1000156009;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16_KHR: VkFormat = 1000156010;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16: VkFormat = 1000156010;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16_KHR: VkFormat = 1000156011;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16: VkFormat = 1000156011;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16_KHR: VkFormat = 1000156012;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16: VkFormat = 1000156012;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16_KHR: VkFormat = 1000156013;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16: VkFormat = 1000156013;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16_KHR: VkFormat = 1000156014;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16: VkFormat = 1000156014;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16_KHR: VkFormat = 1000156015;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16: VkFormat = 1000156015;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_444_UNORM_3PACK16_KHR: VkFormat = 1000156016;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_444_UNORM_3PACK16: VkFormat = 1000156016;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_R12X4_UNORM_PACK16_KHR: VkFormat = 1000156017;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_R12X4_UNORM_PACK16: VkFormat = 1000156017;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_R12X4G12X4_UNORM_2PACK16_KHR: VkFormat = 1000156018;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_R12X4G12X4_UNORM_2PACK16: VkFormat = 1000156018;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_R12X4G12X4B12X4A12X4_UNORM_4PACK16_KHR: VkFormat = 1000156019;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_R12X4G12X4B12X4A12X4_UNORM_4PACK16: VkFormat = 1000156019;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16_KHR: VkFormat = 1000156020;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16: VkFormat = 1000156020;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16_KHR: VkFormat = 1000156021;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16: VkFormat = 1000156021;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16_KHR: VkFormat = 1000156022;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16: VkFormat = 1000156022;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16_KHR: VkFormat = 1000156023;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16: VkFormat = 1000156023;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16_KHR: VkFormat = 1000156024;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16: VkFormat = 1000156024;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16_KHR: VkFormat = 1000156025;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16: VkFormat = 1000156025;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_444_UNORM_3PACK16_KHR: VkFormat = 1000156026;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_444_UNORM_3PACK16: VkFormat = 1000156026;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G16B16G16R16_422_UNORM_KHR: VkFormat = 1000156027;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G16B16G16R16_422_UNORM: VkFormat = 1000156027;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_B16G16R16G16_422_UNORM_KHR: VkFormat = 1000156028;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_B16G16R16G16_422_UNORM: VkFormat = 1000156028;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G16_B16_R16_3PLANE_420_UNORM_KHR: VkFormat = 1000156029;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G16_B16_R16_3PLANE_420_UNORM: VkFormat = 1000156029;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G16_B16R16_2PLANE_420_UNORM_KHR: VkFormat = 1000156030;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G16_B16R16_2PLANE_420_UNORM: VkFormat = 1000156030;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G16_B16_R16_3PLANE_422_UNORM_KHR: VkFormat = 1000156031;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G16_B16_R16_3PLANE_422_UNORM: VkFormat = 1000156031;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G16_B16R16_2PLANE_422_UNORM_KHR: VkFormat = 1000156032;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G16_B16R16_2PLANE_422_UNORM: VkFormat = 1000156032;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-pub const VK_FORMAT_G16_B16_R16_3PLANE_444_UNORM_KHR: VkFormat = 1000156033;
-#[cfg(feature = "Allow1_1APIs")]
-pub const VK_FORMAT_G16_B16_R16_3PLANE_444_UNORM: VkFormat = 1000156033;
 
 #[rustfmt::skip]
 pub type PFN_vkInternalAllocationNotification = extern "system" fn(pUserData: *mut core::ffi::c_void, size: usize, allocationType: VkInternalAllocationType, allocationScope: VkSystemAllocationScope);
@@ -1512,6 +1140,13 @@ pub const VK_EXT_DISCARD_RECTANGLES_EXTENSION_NAME: &str = "VK_EXT_discard_recta
 #[cfg(feature = "VK_EXT_discard_rectangles")]
 #[rustfmt::skip]
 pub const VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION: usize = 1;
+#[rustfmt::skip]pub const VK_EVENT_RESET:VkResult=4;
+#[rustfmt::skip]pub const VK_EVENT_SET:VkResult=3;
+#[rustfmt::skip]pub const VK_INCOMPLETE:VkResult=5;
+#[rustfmt::skip]pub const VK_NOT_READY:VkResult=1;
+#[cfg(feature = "VK_KHR_swapchain")]#[rustfmt::skip]pub const VK_SUBOPTIMAL_KHR:VkResult=1000001003;
+#[rustfmt::skip]pub const VK_SUCCESS:VkResult=0;
+#[rustfmt::skip]pub const VK_TIMEOUT:VkResult=2;
 #[rustfmt::skip]pub const VK_ATTACHMENT_LOAD_OP_CLEAR:VkAttachmentLoadOp=1;
 #[rustfmt::skip]pub const VK_ATTACHMENT_LOAD_OP_DONT_CARE:VkAttachmentLoadOp=2;
 #[rustfmt::skip]pub const VK_ATTACHMENT_LOAD_OP_LOAD:VkAttachmentLoadOp=0;
@@ -1702,16 +1337,195 @@ pub const VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION: usize = 1;
 #[rustfmt::skip]pub const VK_DYNAMIC_STATE_STENCIL_WRITE_MASK:VkDynamicState=7;
 #[rustfmt::skip]pub const VK_DYNAMIC_STATE_VIEWPORT:VkDynamicState=0;
 #[cfg(feature = "VK_NV_clip_space_w_scaling")]#[rustfmt::skip]pub const VK_DYNAMIC_STATE_VIEWPORT_W_SCALING_NV:VkDynamicState=1000087000;
+#[rustfmt::skip]pub const VK_ERROR_DEVICE_LOST:VkResult=4;
+#[rustfmt::skip]pub const VK_ERROR_EXTENSION_NOT_PRESENT:VkResult=7;
+#[rustfmt::skip]pub const VK_ERROR_FEATURE_NOT_PRESENT:VkResult=8;
+#[rustfmt::skip]pub const VK_ERROR_FORMAT_NOT_SUPPORTED:VkResult=11;
 #[cfg(feature = "Allow1_2APIs")]#[rustfmt::skip]pub const VK_ERROR_FRAGMENTATION:VkResult=-1000161000;
 #[cfg(feature = "VK_EXT_descriptor_indexing")]#[rustfmt::skip]pub const VK_ERROR_FRAGMENTATION_EXT:VkResult=-1000161000;
+#[rustfmt::skip]pub const VK_ERROR_FRAGMENTED_POOL:VkResult=12;
 #[cfg(feature = "VK_EXT_full_screen_exclusive")]#[rustfmt::skip]pub const VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT:VkResult=-1000255000;
+#[cfg(feature = "VK_KHR_display_swapchain")]#[rustfmt::skip]pub const VK_ERROR_INCOMPATIBLE_DISPLAY_KHR:VkResult=-1000003001;
+#[rustfmt::skip]pub const VK_ERROR_INCOMPATIBLE_DRIVER:VkResult=9;
+#[rustfmt::skip]pub const VK_ERROR_INITIALIZATION_FAILED:VkResult=3;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_ERROR_INVALID_EXTERNAL_HANDLE:VkResult=-1000072003;
+#[cfg(feature = "VK_KHR_external_memory")]#[rustfmt::skip]pub const VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR:VkResult=-1000072003;
 #[cfg(feature = "Allow1_2APIs")]#[rustfmt::skip]pub const VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS:VkResult=-1000257000;
 #[cfg(feature = "VK_KHR_buffer_device_address")]#[rustfmt::skip]pub const VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR:VkResult=-1000257000;
+#[rustfmt::skip]pub const VK_ERROR_LAYER_NOT_PRESENT:VkResult=6;
+#[rustfmt::skip]pub const VK_ERROR_MEMORY_MAP_FAILED:VkResult=5;
+#[cfg(feature = "VK_KHR_surface")]#[rustfmt::skip]pub const VK_ERROR_NATIVE_WINDOW_IN_USE_KHR:VkResult=-1000000001;
 #[cfg(feature = "Allow1_4APIs")]#[rustfmt::skip]pub const VK_ERROR_NOT_PERMITTED_KHR:VkResult=-1000174001;
 #[cfg(feature = "VK_KHR_global_priority")]#[rustfmt::skip]pub const VK_ERROR_NOT_PERMITTED_KHR_KHR:VkResult=-1000174001;
+#[cfg(feature = "VK_KHR_swapchain")]#[rustfmt::skip]pub const VK_ERROR_OUT_OF_DATE_KHR:VkResult=-1000001004;
+#[rustfmt::skip]pub const VK_ERROR_OUT_OF_DEVICE_MEMORY:VkResult=2;
+#[rustfmt::skip]pub const VK_ERROR_OUT_OF_HOST_MEMORY:VkResult=1;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_ERROR_OUT_OF_POOL_MEMORY:VkResult=-1000069000;
+#[cfg(feature = "VK_KHR_maintenance1")]#[rustfmt::skip]pub const VK_ERROR_OUT_OF_POOL_MEMORY_KHR:VkResult=-1000069000;
+#[cfg(feature = "VK_KHR_surface")]#[rustfmt::skip]pub const VK_ERROR_SURFACE_LOST_KHR:VkResult=-1000000000;
+#[rustfmt::skip]pub const VK_ERROR_TOO_MANY_OBJECTS:VkResult=10;
+#[rustfmt::skip]pub const VK_ERROR_UNKNOWN:VkResult=13;
 #[cfg(feature = "VK_IMG_filter_cubic")]#[rustfmt::skip]pub const VK_FILTER_CUBIC_IMG:VkFilter=1000015000;
 #[rustfmt::skip]pub const VK_FILTER_LINEAR:VkFilter=1;
 #[rustfmt::skip]pub const VK_FILTER_NEAREST:VkFilter=0;
+#[cfg(feature = "Allow1_4APIs")]#[rustfmt::skip]pub const VK_FORMAT_A1B5G5R4_UNORM_PACK16:VkFormat=1000470000;
+#[cfg(feature = "VK_KHR_maintenance5")]#[rustfmt::skip]pub const VK_FORMAT_A1B5G5R4_UNORM_PACK16_KHR:VkFormat=1000470000;
+#[rustfmt::skip]pub const VK_FORMAT_A1R5G5B5_UNORM_PACK16:VkFormat=8;
+#[rustfmt::skip]pub const VK_FORMAT_A2B10G10R10_SINT_PACK32:VkFormat=69;
+#[rustfmt::skip]pub const VK_FORMAT_A2B10G10R10_SNORM_PACK32:VkFormat=65;
+#[rustfmt::skip]pub const VK_FORMAT_A2B10G10R10_SSCALED_PACK32:VkFormat=67;
+#[rustfmt::skip]pub const VK_FORMAT_A2B10G10R10_UINT_PACK32:VkFormat=68;
+#[rustfmt::skip]pub const VK_FORMAT_A2B10G10R10_UNORM_PACK32:VkFormat=64;
+#[rustfmt::skip]pub const VK_FORMAT_A2B10G10R10_USCALED_PACK32:VkFormat=66;
+#[rustfmt::skip]pub const VK_FORMAT_A2R10G10B10_SINT_PACK32:VkFormat=63;
+#[rustfmt::skip]pub const VK_FORMAT_A2R10G10B10_SNORM_PACK32:VkFormat=59;
+#[rustfmt::skip]pub const VK_FORMAT_A2R10G10B10_SSCALED_PACK32:VkFormat=61;
+#[rustfmt::skip]pub const VK_FORMAT_A2R10G10B10_UINT_PACK32:VkFormat=62;
+#[rustfmt::skip]pub const VK_FORMAT_A2R10G10B10_UNORM_PACK32:VkFormat=58;
+#[rustfmt::skip]pub const VK_FORMAT_A2R10G10B10_USCALED_PACK32:VkFormat=60;
+#[rustfmt::skip]pub const VK_FORMAT_A8B8G8R8_SINT_PACK32:VkFormat=56;
+#[rustfmt::skip]pub const VK_FORMAT_A8B8G8R8_SNORM_PACK32:VkFormat=52;
+#[rustfmt::skip]pub const VK_FORMAT_A8B8G8R8_SRGB_PACK32:VkFormat=57;
+#[rustfmt::skip]pub const VK_FORMAT_A8B8G8R8_SSCALED_PACK32:VkFormat=54;
+#[rustfmt::skip]pub const VK_FORMAT_A8B8G8R8_UINT_PACK32:VkFormat=55;
+#[rustfmt::skip]pub const VK_FORMAT_A8B8G8R8_UNORM_PACK32:VkFormat=51;
+#[rustfmt::skip]pub const VK_FORMAT_A8B8G8R8_USCALED_PACK32:VkFormat=53;
+#[cfg(feature = "Allow1_4APIs")]#[rustfmt::skip]pub const VK_FORMAT_A8_UNORM:VkFormat=1000470001;
+#[cfg(feature = "VK_KHR_maintenance5")]#[rustfmt::skip]pub const VK_FORMAT_A8_UNORM_KHR:VkFormat=1000470001;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_10x10_SRGB_BLOCK:VkFormat=180;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_10x10_UNORM_BLOCK:VkFormat=179;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_10x5_SRGB_BLOCK:VkFormat=174;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_10x5_UNORM_BLOCK:VkFormat=173;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_10x6_SRGB_BLOCK:VkFormat=176;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_10x6_UNORM_BLOCK:VkFormat=175;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_10x8_SRGB_BLOCK:VkFormat=178;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_10x8_UNORM_BLOCK:VkFormat=177;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_12x10_SRGB_BLOCK:VkFormat=182;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_12x10_UNORM_BLOCK:VkFormat=181;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_12x12_SRGB_BLOCK:VkFormat=184;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_12x12_UNORM_BLOCK:VkFormat=183;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_4x4_SRGB_BLOCK:VkFormat=158;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_4x4_UNORM_BLOCK:VkFormat=157;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_5x4_SRGB_BLOCK:VkFormat=160;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_5x4_UNORM_BLOCK:VkFormat=159;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_5x5_SRGB_BLOCK:VkFormat=162;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_5x5_UNORM_BLOCK:VkFormat=161;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_6x5_SRGB_BLOCK:VkFormat=164;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_6x5_UNORM_BLOCK:VkFormat=163;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_6x6_SRGB_BLOCK:VkFormat=166;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_6x6_UNORM_BLOCK:VkFormat=165;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_8x5_SRGB_BLOCK:VkFormat=168;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_8x5_UNORM_BLOCK:VkFormat=167;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_8x6_SRGB_BLOCK:VkFormat=170;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_8x6_UNORM_BLOCK:VkFormat=169;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_8x8_SRGB_BLOCK:VkFormat=172;
+#[rustfmt::skip]pub const VK_FORMAT_ASTC_8x8_UNORM_BLOCK:VkFormat=171;
+#[rustfmt::skip]pub const VK_FORMAT_B10G11R11_UFLOAT_PACK32:VkFormat=122;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16:VkFormat=1000156011;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16_KHR:VkFormat=1000156011;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16:VkFormat=1000156021;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16_KHR:VkFormat=1000156021;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_B16G16R16G16_422_UNORM:VkFormat=1000156028;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_B16G16R16G16_422_UNORM_KHR:VkFormat=1000156028;
+#[rustfmt::skip]pub const VK_FORMAT_B4G4R4A4_UNORM_PACK16:VkFormat=3;
+#[rustfmt::skip]pub const VK_FORMAT_B5G5R5A1_UNORM_PACK16:VkFormat=7;
+#[rustfmt::skip]pub const VK_FORMAT_B5G6R5_UNORM_PACK16:VkFormat=5;
+#[rustfmt::skip]pub const VK_FORMAT_B8G8R8A8_SINT:VkFormat=49;
+#[rustfmt::skip]pub const VK_FORMAT_B8G8R8A8_SNORM:VkFormat=45;
+#[rustfmt::skip]pub const VK_FORMAT_B8G8R8A8_SRGB:VkFormat=50;
+#[rustfmt::skip]pub const VK_FORMAT_B8G8R8A8_SSCALED:VkFormat=47;
+#[rustfmt::skip]pub const VK_FORMAT_B8G8R8A8_UINT:VkFormat=48;
+#[rustfmt::skip]pub const VK_FORMAT_B8G8R8A8_UNORM:VkFormat=44;
+#[rustfmt::skip]pub const VK_FORMAT_B8G8R8A8_USCALED:VkFormat=46;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_B8G8R8G8_422_UNORM:VkFormat=1000156001;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_B8G8R8G8_422_UNORM_KHR:VkFormat=1000156001;
+#[rustfmt::skip]pub const VK_FORMAT_B8G8R8_SINT:VkFormat=35;
+#[rustfmt::skip]pub const VK_FORMAT_B8G8R8_SNORM:VkFormat=31;
+#[rustfmt::skip]pub const VK_FORMAT_B8G8R8_SRGB:VkFormat=36;
+#[rustfmt::skip]pub const VK_FORMAT_B8G8R8_SSCALED:VkFormat=33;
+#[rustfmt::skip]pub const VK_FORMAT_B8G8R8_UINT:VkFormat=34;
+#[rustfmt::skip]pub const VK_FORMAT_B8G8R8_UNORM:VkFormat=30;
+#[rustfmt::skip]pub const VK_FORMAT_B8G8R8_USCALED:VkFormat=32;
+#[rustfmt::skip]pub const VK_FORMAT_BC1_RGBA_SRGB_BLOCK:VkFormat=134;
+#[rustfmt::skip]pub const VK_FORMAT_BC1_RGBA_UNORM_BLOCK:VkFormat=133;
+#[rustfmt::skip]pub const VK_FORMAT_BC1_RGB_SRGB_BLOCK:VkFormat=132;
+#[rustfmt::skip]pub const VK_FORMAT_BC1_RGB_UNORM_BLOCK:VkFormat=131;
+#[rustfmt::skip]pub const VK_FORMAT_BC2_SRGB_BLOCK:VkFormat=136;
+#[rustfmt::skip]pub const VK_FORMAT_BC2_UNORM_BLOCK:VkFormat=135;
+#[rustfmt::skip]pub const VK_FORMAT_BC3_SRGB_BLOCK:VkFormat=138;
+#[rustfmt::skip]pub const VK_FORMAT_BC3_UNORM_BLOCK:VkFormat=137;
+#[rustfmt::skip]pub const VK_FORMAT_BC4_SNORM_BLOCK:VkFormat=140;
+#[rustfmt::skip]pub const VK_FORMAT_BC4_UNORM_BLOCK:VkFormat=139;
+#[rustfmt::skip]pub const VK_FORMAT_BC5_SNORM_BLOCK:VkFormat=142;
+#[rustfmt::skip]pub const VK_FORMAT_BC5_UNORM_BLOCK:VkFormat=141;
+#[rustfmt::skip]pub const VK_FORMAT_BC6H_SFLOAT_BLOCK:VkFormat=144;
+#[rustfmt::skip]pub const VK_FORMAT_BC6H_UFLOAT_BLOCK:VkFormat=143;
+#[rustfmt::skip]pub const VK_FORMAT_BC7_SRGB_BLOCK:VkFormat=146;
+#[rustfmt::skip]pub const VK_FORMAT_BC7_UNORM_BLOCK:VkFormat=145;
+#[rustfmt::skip]pub const VK_FORMAT_D16_UNORM:VkFormat=124;
+#[rustfmt::skip]pub const VK_FORMAT_D16_UNORM_S8_UINT:VkFormat=128;
+#[rustfmt::skip]pub const VK_FORMAT_D24_UNORM_S8_UINT:VkFormat=129;
+#[rustfmt::skip]pub const VK_FORMAT_D32_SFLOAT:VkFormat=126;
+#[rustfmt::skip]pub const VK_FORMAT_D32_SFLOAT_S8_UINT:VkFormat=130;
+#[rustfmt::skip]pub const VK_FORMAT_E5B9G9R9_UFLOAT_PACK32:VkFormat=123;
+#[rustfmt::skip]pub const VK_FORMAT_EAC_R11G11_SNORM_BLOCK:VkFormat=156;
+#[rustfmt::skip]pub const VK_FORMAT_EAC_R11G11_UNORM_BLOCK:VkFormat=155;
+#[rustfmt::skip]pub const VK_FORMAT_EAC_R11_SNORM_BLOCK:VkFormat=154;
+#[rustfmt::skip]pub const VK_FORMAT_EAC_R11_UNORM_BLOCK:VkFormat=153;
+#[rustfmt::skip]pub const VK_FORMAT_ETC2_R8G8B8A1_SRGB_BLOCK:VkFormat=150;
+#[rustfmt::skip]pub const VK_FORMAT_ETC2_R8G8B8A1_UNORM_BLOCK:VkFormat=149;
+#[rustfmt::skip]pub const VK_FORMAT_ETC2_R8G8B8A8_SRGB_BLOCK:VkFormat=152;
+#[rustfmt::skip]pub const VK_FORMAT_ETC2_R8G8B8A8_UNORM_BLOCK:VkFormat=151;
+#[rustfmt::skip]pub const VK_FORMAT_ETC2_R8G8B8_SRGB_BLOCK:VkFormat=148;
+#[rustfmt::skip]pub const VK_FORMAT_ETC2_R8G8B8_UNORM_BLOCK:VkFormat=147;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16:VkFormat=1000156010;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16_KHR:VkFormat=1000156010;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16:VkFormat=1000156013;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16_KHR:VkFormat=1000156013;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16:VkFormat=1000156015;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16_KHR:VkFormat=1000156015;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16:VkFormat=1000156012;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16_KHR:VkFormat=1000156012;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16:VkFormat=1000156014;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16_KHR:VkFormat=1000156014;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_444_UNORM_3PACK16:VkFormat=1000156016;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_444_UNORM_3PACK16_KHR:VkFormat=1000156016;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16:VkFormat=1000156020;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16_KHR:VkFormat=1000156020;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16:VkFormat=1000156023;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16_KHR:VkFormat=1000156023;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16:VkFormat=1000156025;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16_KHR:VkFormat=1000156025;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16:VkFormat=1000156022;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16_KHR:VkFormat=1000156022;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16:VkFormat=1000156024;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16_KHR:VkFormat=1000156024;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_444_UNORM_3PACK16:VkFormat=1000156026;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_444_UNORM_3PACK16_KHR:VkFormat=1000156026;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_G16B16G16R16_422_UNORM:VkFormat=1000156027;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_G16B16G16R16_422_UNORM_KHR:VkFormat=1000156027;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_G16_B16R16_2PLANE_420_UNORM:VkFormat=1000156030;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_G16_B16R16_2PLANE_420_UNORM_KHR:VkFormat=1000156030;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_G16_B16R16_2PLANE_422_UNORM:VkFormat=1000156032;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_G16_B16R16_2PLANE_422_UNORM_KHR:VkFormat=1000156032;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_G16_B16_R16_3PLANE_420_UNORM:VkFormat=1000156029;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_G16_B16_R16_3PLANE_420_UNORM_KHR:VkFormat=1000156029;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_G16_B16_R16_3PLANE_422_UNORM:VkFormat=1000156031;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_G16_B16_R16_3PLANE_422_UNORM_KHR:VkFormat=1000156031;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_G16_B16_R16_3PLANE_444_UNORM:VkFormat=1000156033;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_G16_B16_R16_3PLANE_444_UNORM_KHR:VkFormat=1000156033;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_G8B8G8R8_422_UNORM:VkFormat=1000156000;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_G8B8G8R8_422_UNORM_KHR:VkFormat=1000156000;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_G8_B8R8_2PLANE_420_UNORM:VkFormat=1000156003;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_G8_B8R8_2PLANE_420_UNORM_KHR:VkFormat=1000156003;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_G8_B8R8_2PLANE_422_UNORM:VkFormat=1000156005;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_G8_B8R8_2PLANE_422_UNORM_KHR:VkFormat=1000156005;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM:VkFormat=1000156002;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM_KHR:VkFormat=1000156002;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_G8_B8_R8_3PLANE_422_UNORM:VkFormat=1000156004;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_G8_B8_R8_3PLANE_422_UNORM_KHR:VkFormat=1000156004;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_G8_B8_R8_3PLANE_444_UNORM:VkFormat=1000156006;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_G8_B8_R8_3PLANE_444_UNORM_KHR:VkFormat=1000156006;
 #[cfg(feature = "VK_IMG_format_pvrtc")]#[rustfmt::skip]pub const VK_FORMAT_PVRTC1_2BPP_SRGB_BLOCK_IMG:VkFormat=1000054004;
 #[cfg(feature = "VK_IMG_format_pvrtc")]#[rustfmt::skip]pub const VK_FORMAT_PVRTC1_2BPP_UNORM_BLOCK_IMG:VkFormat=1000054000;
 #[cfg(feature = "VK_IMG_format_pvrtc")]#[rustfmt::skip]pub const VK_FORMAT_PVRTC1_4BPP_SRGB_BLOCK_IMG:VkFormat=1000054005;
@@ -1720,6 +1534,105 @@ pub const VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_IMG_format_pvrtc")]#[rustfmt::skip]pub const VK_FORMAT_PVRTC2_2BPP_UNORM_BLOCK_IMG:VkFormat=1000054002;
 #[cfg(feature = "VK_IMG_format_pvrtc")]#[rustfmt::skip]pub const VK_FORMAT_PVRTC2_4BPP_SRGB_BLOCK_IMG:VkFormat=1000054007;
 #[cfg(feature = "VK_IMG_format_pvrtc")]#[rustfmt::skip]pub const VK_FORMAT_PVRTC2_4BPP_UNORM_BLOCK_IMG:VkFormat=1000054003;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_R10X6G10X6B10X6A10X6_UNORM_4PACK16:VkFormat=1000156009;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_R10X6G10X6B10X6A10X6_UNORM_4PACK16_KHR:VkFormat=1000156009;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_R10X6G10X6_UNORM_2PACK16:VkFormat=1000156008;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_R10X6G10X6_UNORM_2PACK16_KHR:VkFormat=1000156008;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_R10X6_UNORM_PACK16:VkFormat=1000156007;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_R10X6_UNORM_PACK16_KHR:VkFormat=1000156007;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_R12X4G12X4B12X4A12X4_UNORM_4PACK16:VkFormat=1000156019;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_R12X4G12X4B12X4A12X4_UNORM_4PACK16_KHR:VkFormat=1000156019;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_R12X4G12X4_UNORM_2PACK16:VkFormat=1000156018;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_R12X4G12X4_UNORM_2PACK16_KHR:VkFormat=1000156018;
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FORMAT_R12X4_UNORM_PACK16:VkFormat=1000156017;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_FORMAT_R12X4_UNORM_PACK16_KHR:VkFormat=1000156017;
+#[rustfmt::skip]pub const VK_FORMAT_R16G16B16A16_SFLOAT:VkFormat=97;
+#[rustfmt::skip]pub const VK_FORMAT_R16G16B16A16_SINT:VkFormat=96;
+#[rustfmt::skip]pub const VK_FORMAT_R16G16B16A16_SNORM:VkFormat=92;
+#[rustfmt::skip]pub const VK_FORMAT_R16G16B16A16_SSCALED:VkFormat=94;
+#[rustfmt::skip]pub const VK_FORMAT_R16G16B16A16_UINT:VkFormat=95;
+#[rustfmt::skip]pub const VK_FORMAT_R16G16B16A16_UNORM:VkFormat=91;
+#[rustfmt::skip]pub const VK_FORMAT_R16G16B16A16_USCALED:VkFormat=93;
+#[rustfmt::skip]pub const VK_FORMAT_R16G16B16_SFLOAT:VkFormat=90;
+#[rustfmt::skip]pub const VK_FORMAT_R16G16B16_SINT:VkFormat=89;
+#[rustfmt::skip]pub const VK_FORMAT_R16G16B16_SNORM:VkFormat=85;
+#[rustfmt::skip]pub const VK_FORMAT_R16G16B16_SSCALED:VkFormat=87;
+#[rustfmt::skip]pub const VK_FORMAT_R16G16B16_UINT:VkFormat=88;
+#[rustfmt::skip]pub const VK_FORMAT_R16G16B16_UNORM:VkFormat=84;
+#[rustfmt::skip]pub const VK_FORMAT_R16G16B16_USCALED:VkFormat=86;
+#[rustfmt::skip]pub const VK_FORMAT_R16G16_SFLOAT:VkFormat=83;
+#[rustfmt::skip]pub const VK_FORMAT_R16G16_SINT:VkFormat=82;
+#[rustfmt::skip]pub const VK_FORMAT_R16G16_SNORM:VkFormat=78;
+#[rustfmt::skip]pub const VK_FORMAT_R16G16_SSCALED:VkFormat=80;
+#[rustfmt::skip]pub const VK_FORMAT_R16G16_UINT:VkFormat=81;
+#[rustfmt::skip]pub const VK_FORMAT_R16G16_UNORM:VkFormat=77;
+#[rustfmt::skip]pub const VK_FORMAT_R16G16_USCALED:VkFormat=79;
+#[rustfmt::skip]pub const VK_FORMAT_R16_SFLOAT:VkFormat=76;
+#[rustfmt::skip]pub const VK_FORMAT_R16_SINT:VkFormat=75;
+#[rustfmt::skip]pub const VK_FORMAT_R16_SNORM:VkFormat=71;
+#[rustfmt::skip]pub const VK_FORMAT_R16_SSCALED:VkFormat=73;
+#[rustfmt::skip]pub const VK_FORMAT_R16_UINT:VkFormat=74;
+#[rustfmt::skip]pub const VK_FORMAT_R16_UNORM:VkFormat=70;
+#[rustfmt::skip]pub const VK_FORMAT_R16_USCALED:VkFormat=72;
+#[rustfmt::skip]pub const VK_FORMAT_R32G32B32A32_SFLOAT:VkFormat=109;
+#[rustfmt::skip]pub const VK_FORMAT_R32G32B32A32_SINT:VkFormat=108;
+#[rustfmt::skip]pub const VK_FORMAT_R32G32B32A32_UINT:VkFormat=107;
+#[rustfmt::skip]pub const VK_FORMAT_R32G32B32_SFLOAT:VkFormat=106;
+#[rustfmt::skip]pub const VK_FORMAT_R32G32B32_SINT:VkFormat=105;
+#[rustfmt::skip]pub const VK_FORMAT_R32G32B32_UINT:VkFormat=104;
+#[rustfmt::skip]pub const VK_FORMAT_R32G32_SFLOAT:VkFormat=103;
+#[rustfmt::skip]pub const VK_FORMAT_R32G32_SINT:VkFormat=102;
+#[rustfmt::skip]pub const VK_FORMAT_R32G32_UINT:VkFormat=101;
+#[rustfmt::skip]pub const VK_FORMAT_R32_SFLOAT:VkFormat=100;
+#[rustfmt::skip]pub const VK_FORMAT_R32_SINT:VkFormat=99;
+#[rustfmt::skip]pub const VK_FORMAT_R32_UINT:VkFormat=98;
+#[rustfmt::skip]pub const VK_FORMAT_R4G4B4A4_UNORM_PACK16:VkFormat=2;
+#[rustfmt::skip]pub const VK_FORMAT_R4G4_UNORM_PACK8:VkFormat=1;
+#[rustfmt::skip]pub const VK_FORMAT_R5G5B5A1_UNORM_PACK16:VkFormat=6;
+#[rustfmt::skip]pub const VK_FORMAT_R5G6B5_UNORM_PACK16:VkFormat=4;
+#[rustfmt::skip]pub const VK_FORMAT_R64G64B64A64_SFLOAT:VkFormat=121;
+#[rustfmt::skip]pub const VK_FORMAT_R64G64B64A64_SINT:VkFormat=120;
+#[rustfmt::skip]pub const VK_FORMAT_R64G64B64A64_UINT:VkFormat=119;
+#[rustfmt::skip]pub const VK_FORMAT_R64G64B64_SFLOAT:VkFormat=118;
+#[rustfmt::skip]pub const VK_FORMAT_R64G64B64_SINT:VkFormat=117;
+#[rustfmt::skip]pub const VK_FORMAT_R64G64B64_UINT:VkFormat=116;
+#[rustfmt::skip]pub const VK_FORMAT_R64G64_SFLOAT:VkFormat=115;
+#[rustfmt::skip]pub const VK_FORMAT_R64G64_SINT:VkFormat=114;
+#[rustfmt::skip]pub const VK_FORMAT_R64G64_UINT:VkFormat=113;
+#[rustfmt::skip]pub const VK_FORMAT_R64_SFLOAT:VkFormat=112;
+#[rustfmt::skip]pub const VK_FORMAT_R64_SINT:VkFormat=111;
+#[rustfmt::skip]pub const VK_FORMAT_R64_UINT:VkFormat=110;
+#[rustfmt::skip]pub const VK_FORMAT_R8G8B8A8_SINT:VkFormat=42;
+#[rustfmt::skip]pub const VK_FORMAT_R8G8B8A8_SNORM:VkFormat=38;
+#[rustfmt::skip]pub const VK_FORMAT_R8G8B8A8_SRGB:VkFormat=43;
+#[rustfmt::skip]pub const VK_FORMAT_R8G8B8A8_SSCALED:VkFormat=40;
+#[rustfmt::skip]pub const VK_FORMAT_R8G8B8A8_UINT:VkFormat=41;
+#[rustfmt::skip]pub const VK_FORMAT_R8G8B8A8_UNORM:VkFormat=37;
+#[rustfmt::skip]pub const VK_FORMAT_R8G8B8A8_USCALED:VkFormat=39;
+#[rustfmt::skip]pub const VK_FORMAT_R8G8B8_SINT:VkFormat=28;
+#[rustfmt::skip]pub const VK_FORMAT_R8G8B8_SNORM:VkFormat=24;
+#[rustfmt::skip]pub const VK_FORMAT_R8G8B8_SRGB:VkFormat=29;
+#[rustfmt::skip]pub const VK_FORMAT_R8G8B8_SSCALED:VkFormat=26;
+#[rustfmt::skip]pub const VK_FORMAT_R8G8B8_UINT:VkFormat=27;
+#[rustfmt::skip]pub const VK_FORMAT_R8G8B8_UNORM:VkFormat=23;
+#[rustfmt::skip]pub const VK_FORMAT_R8G8B8_USCALED:VkFormat=25;
+#[rustfmt::skip]pub const VK_FORMAT_R8G8_SINT:VkFormat=21;
+#[rustfmt::skip]pub const VK_FORMAT_R8G8_SNORM:VkFormat=17;
+#[rustfmt::skip]pub const VK_FORMAT_R8G8_SRGB:VkFormat=22;
+#[rustfmt::skip]pub const VK_FORMAT_R8G8_SSCALED:VkFormat=19;
+#[rustfmt::skip]pub const VK_FORMAT_R8G8_UINT:VkFormat=20;
+#[rustfmt::skip]pub const VK_FORMAT_R8G8_UNORM:VkFormat=16;
+#[rustfmt::skip]pub const VK_FORMAT_R8G8_USCALED:VkFormat=18;
+#[rustfmt::skip]pub const VK_FORMAT_R8_SINT:VkFormat=14;
+#[rustfmt::skip]pub const VK_FORMAT_R8_SNORM:VkFormat=10;
+#[rustfmt::skip]pub const VK_FORMAT_R8_SRGB:VkFormat=15;
+#[rustfmt::skip]pub const VK_FORMAT_R8_SSCALED:VkFormat=12;
+#[rustfmt::skip]pub const VK_FORMAT_R8_UINT:VkFormat=13;
+#[rustfmt::skip]pub const VK_FORMAT_R8_UNORM:VkFormat=9;
+#[rustfmt::skip]pub const VK_FORMAT_R8_USCALED:VkFormat=11;
+#[rustfmt::skip]pub const VK_FORMAT_S8_UINT:VkFormat=127;
+#[rustfmt::skip]pub const VK_FORMAT_UNDEFINED:VkFormat=0;
+#[rustfmt::skip]pub const VK_FORMAT_X8_D24_UNORM_PACK32:VkFormat=125;
 #[rustfmt::skip]pub const VK_FRONT_FACE_CLOCKWISE:VkFrontFace=1;
 #[rustfmt::skip]pub const VK_FRONT_FACE_COUNTER_CLOCKWISE:VkFrontFace=0;
 #[cfg(feature = "VK_EXT_full_screen_exclusive")]#[rustfmt::skip]pub const VK_FULL_SCREEN_EXCLUSIVE_ALLOWED_EXT:VkFullScreenExclusiveEXT=1;
@@ -1834,9 +1747,7 @@ pub const VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION: usize = 1;
 #[cfg(all(feature = "VK_EXT_pipeline_protected_access", feature = "VK_EXT_pipeline_robustness"))]#[rustfmt::skip]pub const VK_PIPELINE_ROBUSTNESS_IMAGE_BEHAVIOR_ROBUST_IMAGE_ACCESS_EXT:VkPipelineRobustnessImageBehaviorEXT=2;
 #[cfg(all(feature = "VK_EXT_pipeline_protected_access", feature = "Allow1_4APIs"))]#[rustfmt::skip]pub const VK_PIPELINE_ROBUSTNESS_IMAGE_BEHAVIOR_ROBUST_IMAGE_ACCESS_2:VkPipelineRobustnessImageBehaviorEXT=3;
 #[cfg(all(feature = "VK_EXT_pipeline_protected_access", feature = "VK_EXT_pipeline_robustness"))]#[rustfmt::skip]pub const VK_PIPELINE_ROBUSTNESS_IMAGE_BEHAVIOR_ROBUST_IMAGE_ACCESS_2_EXT:VkPipelineRobustnessImageBehaviorEXT=3;
-#[cfg(all(feature = "VK_KHR_maintenance2", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_POINT_CLIPPING_BEHAVIOR_ALL_CLIP_PLANES:VkPointClippingBehaviorKHR=0;
 #[cfg(feature = "VK_KHR_maintenance2")]#[rustfmt::skip]pub const VK_POINT_CLIPPING_BEHAVIOR_ALL_CLIP_PLANES_KHR:VkPointClippingBehaviorKHR=0;
-#[cfg(all(feature = "VK_KHR_maintenance2", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_POINT_CLIPPING_BEHAVIOR_USER_CLIP_PLANES:VkPointClippingBehaviorKHR=1;
 #[cfg(feature = "VK_KHR_maintenance2")]#[rustfmt::skip]pub const VK_POINT_CLIPPING_BEHAVIOR_USER_CLIP_PLANES_KHR:VkPointClippingBehaviorKHR=1;
 #[rustfmt::skip]pub const VK_POLYGON_MODE_FILL:VkPolygonMode=0;
 #[cfg(feature = "VK_NV_fill_rectangle")]#[rustfmt::skip]pub const VK_POLYGON_MODE_FILL_RECTANGLE_NV:VkPolygonMode=1000153000;
@@ -2455,9 +2366,7 @@ pub const VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION: usize = 1;
 #[rustfmt::skip]pub const VK_SYSTEM_ALLOCATION_SCOPE_DEVICE:VkSystemAllocationScope=3;
 #[rustfmt::skip]pub const VK_SYSTEM_ALLOCATION_SCOPE_INSTANCE:VkSystemAllocationScope=4;
 #[rustfmt::skip]pub const VK_SYSTEM_ALLOCATION_SCOPE_OBJECT:VkSystemAllocationScope=1;
-#[cfg(all(feature = "VK_KHR_maintenance2", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_TESSELLATION_DOMAIN_ORIGIN_LOWER_LEFT:VkTessellationDomainOriginKHR=1;
 #[cfg(feature = "VK_KHR_maintenance2")]#[rustfmt::skip]pub const VK_TESSELLATION_DOMAIN_ORIGIN_LOWER_LEFT_KHR:VkTessellationDomainOriginKHR=1;
-#[cfg(all(feature = "VK_KHR_maintenance2", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_TESSELLATION_DOMAIN_ORIGIN_UPPER_LEFT:VkTessellationDomainOriginKHR=0;
 #[cfg(feature = "VK_KHR_maintenance2")]#[rustfmt::skip]pub const VK_TESSELLATION_DOMAIN_ORIGIN_UPPER_LEFT_KHR:VkTessellationDomainOriginKHR=0;
 #[cfg(feature = "VK_EXT_validation_cache")]#[rustfmt::skip]pub const VK_VALIDATION_CACHE_HEADER_VERSION_ONE_EXT:VkValidationCacheHeaderVersionEXT=1;
 #[cfg(feature = "VK_EXT_validation_flags")]#[rustfmt::skip]pub const VK_VALIDATION_CHECK_ALL_EXT:VkValidationCheckEXT=0;
@@ -3758,6 +3667,7 @@ pub const VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION: usize = 1;
 #[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub type VkFenceImportFlags=VkFlags;
 #[cfg(feature = "VK_KHR_external_fence")]#[rustfmt::skip]pub type VkFenceImportFlagsKHR=VkFlags;
 #[rustfmt::skip]pub type VkFilter=i32;
+#[rustfmt::skip]pub type VkFormat=i32;
 #[rustfmt::skip]pub type VkFormatFeatureFlagBits=VkFlags;
 #[cfg(feature = "Allow1_3APIs")]#[rustfmt::skip]pub type VkFormatFeatureFlagBits2=VkFlags64;
 #[cfg(feature = "VK_KHR_format_feature_flags2")]#[rustfmt::skip]pub type VkFormatFeatureFlagBits2KHR=VkFlags64;
@@ -4673,6 +4583,7 @@ pub const VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_KHR_depth_stencil_resolve")]#[rustfmt::skip]pub type VkResolveModeFlagBitsKHR=VkFlags;
 #[cfg(feature = "Allow1_2APIs")]#[rustfmt::skip]pub type VkResolveModeFlags=VkFlags;
 #[cfg(feature = "VK_KHR_depth_stencil_resolve")]#[rustfmt::skip]pub type VkResolveModeFlagsKHR=VkFlags;
+#[rustfmt::skip]pub type VkResult=i32;
 #[rustfmt::skip]pub type VkSampleCountFlagBits=VkFlags;
 #[rustfmt::skip]pub type VkSampleCountFlags=VkFlags;
 #[cfg(feature = "VK_EXT_sample_locations")]#[derive(Debug,Clone,)]#[rustfmt::skip]#[repr(C)]pub struct VkSampleLocationEXT{pub x:core::ffi::c_float,pub y:core::ffi::c_float,}

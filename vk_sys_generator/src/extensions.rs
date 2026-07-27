@@ -6,12 +6,16 @@ use crate::{
     vk_ext_enum,
 };
 
+pub fn emit(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+    emit_debug_report(emitter);
+    emit_debug_utils(emitter);
+}
+
 pub const VK_KHR_SURFACE: &Extension = &Extension::khr("surface", 25, 1);
 pub const VK_KHR_WIN32_SURFACE: &Extension = &Extension::khr("win32_surface", 6, 10);
 pub const VK_KHR_SWAPCHAIN: &Extension = &Extension::khr("swapchain", 70, 2);
 pub const VK_EXT_VALIDATION_CACHE: &Extension = &Extension::ext("validation_cache", 1, 161);
 pub const VK_EXT_VALIDATION_FLAGS: &Extension = &Extension::ext("validation_flags", 1, 62);
-pub const VK_EXT_DEBUG_UTILS: &Extension = &Extension::ext("debug_utils", 2, 129);
 pub const VK_EXT_BLEND_OPERATION_ADVANCED: &Extension = &Extension::ext("blend_operation_advanced", 2, 149);
 const VK_EXT_ACQUIRE_DRM_DISPLAY: &Extension = &Extension::ext("acquire_drm_display", 1, 286);
 const VK_EXT_ACQUIRE_XLIB_DISPLAY: &Extension = &Extension::ext("acquire_xlib_display", 1, 90);
@@ -25,7 +29,7 @@ const VK_MVK_MACOS_SURFACE: &Extension = &Extension::new("MVK", "macos_surface",
 const VK_MVK_IOS_SURFACE: &Extension = &Extension::new("MVK", "ios_surface", 2, 123);
 const VK_EXT_DEPTH_RANGE_UNRESTRICTED: &Extension = &Extension::ext("depth_range_unrestricted", 1, 14);
 const VK_EXT_DIRECT_MODE_DISPLAY: &Extension = &Extension::ext("direct_mode_display", 1, 89);
-const VK_KHR_DISPLAY_SWAPCHAIN: &Extension = &Extension::khr("display_swapchain", 10, 4);
+pub const VK_KHR_DISPLAY_SWAPCHAIN: &Extension = &Extension::khr("display_swapchain", 10, 4);
 const VK_AMD_DRAW_INDIRECT_COUNT: &Extension = &Extension::new("AMD", "draw_indirect_count", 1, 34);
 const VK_EXT_EXTERNAL_MEMORY_DMA_BUF: &Extension = &Extension::ext("external_memory_dma_buf", 1, 126);
 const VK_IMG_FILTER_CUBIC: &Extension = &Extension::new("IMG", "filter_cubic", 1, 16);
@@ -66,6 +70,18 @@ const DEBUG_REPORT_FLAGS: BitmaskType =
     BitmaskType::new("DebugReportFlags", "DebugReportFlagBits", "DEBUG_REPORT").extension(VK_EXT_DEBUG_REPORT);
 pub const DEBUG_REPORT_OBJECT_TYPE: EnumType =
     EnumType::new("DebugReportObjectType", "DEBUG_REPORT_OBJECT_TYPE").extension(VK_EXT_DEBUG_REPORT);
+const DEBUG_REPORT_CALLBACK_CREATE_INFO: Struct = Struct::typed(
+    "DebugReportCallbackCreateInfo",
+    "DEBUG_REPORT_CALLBACK_CREATE_INFO",
+    VK_EXT_DEBUG_REPORT.ext_enum(0) as _,
+    StructUsage::Source,
+    &[
+        Struct::member("flags", "VkDebugReportFlagsEXT"),
+        Struct::member("pfnCallback", "PFN_vkDebugReportCallbackEXT"),
+        Struct::member("pUserData", "*mut core::ffi::c_void"),
+    ],
+)
+.extensions(&[VK_EXT_DEBUG_REPORT]);
 pub fn emit_debug_report(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     VK_EXT_DEBUG_REPORT.header_constants().emit(emitter);
 
@@ -77,64 +93,145 @@ pub fn emit_debug_report(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     DEBUG_REPORT_FLAGS.entry("DEBUG", 4).emit(emitter);
 
     DEBUG_REPORT_OBJECT_TYPE.emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("UNKNOWN", 0).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("INSTANCE", 1).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("PHYSICAL_DEVICE", 2).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("DEVICE", 3).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("QUEUE", 4).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("SEMAPHORE", 5).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("COMMAND_BUFFER", 6).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("FENCE", 7).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("DEVICE_MEMORY", 8).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("BUFFER", 9).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("IMAGE", 10).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("EVENT", 11).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("QUERY_POOL", 12).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("BUFFER_VIEW", 13).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("IMAGE_VIEW", 14).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("SHADER_MODULE", 15).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("PIPELINE_CACHE", 16).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("PIPELINE_LAYOUT", 17).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("RENDER_PASS", 18).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("PIPELINE", 19).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("UNKNOWN", 0)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("INSTANCE", 1)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("PHYSICAL_DEVICE", 2)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("DEVICE", 3)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("QUEUE", 4)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("SEMAPHORE", 5)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("COMMAND_BUFFER", 6)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("FENCE", 7)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("DEVICE_MEMORY", 8)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("BUFFER", 9)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("IMAGE", 10)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("EVENT", 11)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("QUERY_POOL", 12)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("BUFFER_VIEW", 13)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("IMAGE_VIEW", 14)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("SHADER_MODULE", 15)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("PIPELINE_CACHE", 16)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("PIPELINE_LAYOUT", 17)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("RENDER_PASS", 18)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("PIPELINE", 19)
+        .override_extension_number(0)
+        .emit(emitter);
     DEBUG_REPORT_OBJECT_TYPE
         .member("DESCRIPTOR_SET_LAYOUT", 20)
+        .override_extension_number(0)
         .emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("SAMPLER", 21).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("DESCRIPTOR_POOL", 22).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("DESCRIPTOR_SET", 23).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("FRAMEBUFFER", 24).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("COMMAND_POOL", 25).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("SURFACE_KHR", 26).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("SWAPCHAIN_KHR", 27).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("SAMPLER", 21)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("DESCRIPTOR_POOL", 22)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("DESCRIPTOR_SET", 23)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("FRAMEBUFFER", 24)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("COMMAND_POOL", 25)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("SURFACE_KHR", 26)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("SWAPCHAIN_KHR", 27)
+        .override_extension_number(0)
+        .emit(emitter);
     DEBUG_REPORT_OBJECT_TYPE
         .member("DEBUG_REPORT_CALLBACK_EXT", 28)
+        .override_extension_number(0)
         .emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("DISPLAY_KHR", 29).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("DISPLAY_MODE_KHR", 30).emit(emitter);
-    DEBUG_REPORT_OBJECT_TYPE.member("OBJECT_TABLE_NVX", 31).emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("DISPLAY_KHR", 29)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("DISPLAY_MODE_KHR", 30)
+        .override_extension_number(0)
+        .emit(emitter);
+    DEBUG_REPORT_OBJECT_TYPE
+        .member("OBJECT_TABLE_NVX", 31)
+        .override_extension_number(0)
+        .emit(emitter);
     DEBUG_REPORT_OBJECT_TYPE
         .member("INDIRECT_COMMANDS_LAYOUT_NVX", 32)
+        .override_extension_number(0)
         .emit(emitter);
     DEBUG_REPORT_OBJECT_TYPE
         .member("VALIDATION_CACHE_EXT", 33)
+        .override_extension_number(0)
         .emit(emitter);
 
-    Struct::typed(
-        "DebugReportCallbackCreateInfo",
-        "DEBUG_REPORT_CALLBACK_CREATE_INFO",
-        VK_EXT_DEBUG_REPORT.ext_enum(0) as _,
-        StructUsage::Source,
-        &const {
-            [
-                Struct::member("flags", "VkDebugReportFlagsEXT"),
-                Struct::member("pfnCallback", "PFN_vkDebugReportCallbackEXT"),
-                Struct::member("pUserData", "*mut core::ffi::c_void"),
-            ]
-        },
-    )
-    .extensions(&[VK_EXT_DEBUG_REPORT])
-    .emit(emitter);
+    DEBUG_REPORT_CALLBACK_CREATE_INFO.emit(emitter);
+
     Command::new(
         "CreateDebugReportCallback",
         &const {
@@ -180,6 +277,206 @@ pub fn emit_debug_report(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     .emit(emitter);
 }
 
+pub const VK_EXT_DEBUG_UTILS: &Extension = &Extension::ext("debug_utils", 2, 129);
+const DEBUG_UTILS_MESSAGE_SEVERITY_FLAGS: BitmaskType = BitmaskType::new(
+    "DebugUtilsMessageSeverityFlags",
+    "DebugUtilsMessageSeverityFlagBits",
+    "DEBUG_UTILS_MESSAGE_SEVERITY",
+)
+.extension(VK_EXT_DEBUG_UTILS);
+const DEBUG_UTILS_MESSAGE_TYPE_FLAGS: BitmaskType = BitmaskType::new(
+    "DebugUtilsMessageTypeFlags",
+    "DebugUtilsMessageTypeFlagBits",
+    "DEBUG_UTILS_MESSAGE_TYPE",
+)
+.extension(VK_EXT_DEBUG_UTILS);
+const DEBUG_UTILS_MESSENGER_CALLBACK_DATA_FLAGS: BitmaskType = BitmaskType::new(
+    "DebugUtilsMessengerCallbackDataFlags",
+    "DebugUtilsMessengerCallbackDataFlagBits",
+    "DEBUG_UTILS_MESSENGER_CALLBACK_DATA",
+)
+.extension(VK_EXT_DEBUG_UTILS);
+const DEBUG_UTILS_MESSENGER_CREATE_FLAGS: BitmaskType = BitmaskType::new(
+    "DebugUtilsMessengerCreateFlags",
+    "DebugUtilsMessengerCreateFlagBits",
+    "DEBUG_UTILS_MESSENGER_CREATE",
+)
+.extension(VK_EXT_DEBUG_UTILS);
+const DEBUG_UTILS_OBJECT_NAME_INFO: Struct = Struct::typed(
+    "DebugUtilsObjectNameInfo",
+    "DEBUG_UTILS_OBJECT_NAME_INFO",
+    VK_EXT_DEBUG_UTILS.ext_enum(0) as _,
+    StructUsage::Source,
+    &[
+        Struct::member("objectType", "VkObjectType"),
+        Struct::member("objectHandle", "u64"),
+        Struct::member("pObjectName", "*const core::ffi::c_char"),
+    ],
+)
+.extensions(&[VK_EXT_DEBUG_UTILS]);
+const DEBUG_UTILS_OBJECT_TAG_INFO: Struct = Struct::typed(
+    "DebugUtilsObjectTagInfo",
+    "DEBUG_UTILS_OBJECT_TAG_INFO",
+    VK_EXT_DEBUG_UTILS.ext_enum(1) as _,
+    StructUsage::Source,
+    &[
+        Struct::member("objectType", "VkObjectType"),
+        Struct::member("objectHandle", "u64"),
+        Struct::member("tagName", "u64"),
+        Struct::member("tagSize", "u64"),
+        Struct::member("pTag", "*const core::ffi::c_void"),
+    ],
+)
+.extensions(&[VK_EXT_DEBUG_UTILS]);
+const DEBUG_UTILS_LABEL: Struct = Struct::typed(
+    "DebugUtilsLabel",
+    "DEBUG_UTILS_LABEL",
+    VK_EXT_DEBUG_UTILS.ext_enum(2) as _,
+    StructUsage::Source,
+    &[
+        Struct::member("pLabelName", "*const core::ffi::c_char"),
+        Struct::member("pColor", "[core::ffi::c_float; 4]"),
+    ],
+)
+.extensions(&[VK_EXT_DEBUG_UTILS]);
+const DEBUG_UTILS_MESSENGER_CALLBACK_DATA: Struct = Struct::typed(
+    "DebugUtilsMessengerCallbackData",
+    "DEBUG_UTILS_MESSENGER_CALLBACK_DATA",
+    VK_EXT_DEBUG_UTILS.ext_enum(3) as _,
+    StructUsage::Source,
+    &[
+        Struct::member("flags", "VkDebugUtilsMessengerCallbackDataFlagsEXT"),
+        Struct::member("pMessageIdName", "*const core::ffi::c_char"),
+        Struct::member("messageIdNumber", "i32"),
+        Struct::member("pMessage", "*const core::ffi::c_char"),
+        Struct::member("queueLabelCount", "u32"),
+        Struct::member("pQueueLabels", "*const VkDebugUtilsLabelEXT"),
+        Struct::member("cmdBufLabelCount", "u32"),
+        Struct::member("pCmdBufLabels", "*const VkDebugUtilsLabelEXT"),
+        Struct::member("objectCount", "u32"),
+        Struct::member("pObjects", "*const VkDebugUtilsObjectNameInfoEXT"),
+    ],
+)
+.extensions(&[VK_EXT_DEBUG_UTILS]);
+const DEBUG_UTILS_MESSENGER_CREATE_INFO: Struct = Struct::typed(
+    "DebugUtilsMessengerCreateInfo",
+    "DEBUG_UTILS_MESSENGER_CREATE_INFO",
+    VK_EXT_DEBUG_UTILS.ext_enum(4) as _,
+    StructUsage::Source,
+    &[
+        Struct::member("flags", "VkDebugUtilsMessengerCreateFlagsEXT"),
+        Struct::member("messageSeverity", "VkDebugUtilsMessageSeverityFlagsEXT"),
+        Struct::member("messageType", "VkDebugUtilsMessageTypeFlagsEXT"),
+        Struct::member("pfnUserCallback", "PFN_vkDebugUtilsMessengerCallbackEXT"),
+        Struct::member("pUserData", "*mut core::ffi::c_void"),
+    ],
+)
+.extensions(&[VK_EXT_DEBUG_UTILS]);
+pub fn emit_debug_utils(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+    VK_EXT_DEBUG_UTILS.header_constants().emit(emitter);
+
+    DEBUG_UTILS_MESSAGE_SEVERITY_FLAGS.emit(emitter);
+    DEBUG_UTILS_MESSAGE_SEVERITY_FLAGS.entry("VERBOSE", 0).emit(emitter);
+    DEBUG_UTILS_MESSAGE_SEVERITY_FLAGS.entry("INFO", 4).emit(emitter);
+    DEBUG_UTILS_MESSAGE_SEVERITY_FLAGS.entry("WARNING", 8).emit(emitter);
+    DEBUG_UTILS_MESSAGE_SEVERITY_FLAGS.entry("ERROR", 12).emit(emitter);
+
+    DEBUG_UTILS_MESSAGE_TYPE_FLAGS.emit(emitter);
+    DEBUG_UTILS_MESSAGE_TYPE_FLAGS.entry("GENERAL", 0).emit(emitter);
+    DEBUG_UTILS_MESSAGE_TYPE_FLAGS.entry("VALIDATION", 1).emit(emitter);
+    DEBUG_UTILS_MESSAGE_TYPE_FLAGS.entry("PERFORMANCE", 2).emit(emitter);
+
+    DEBUG_UTILS_MESSENGER_CALLBACK_DATA_FLAGS.emit(emitter);
+    DEBUG_UTILS_MESSENGER_CREATE_FLAGS.emit(emitter);
+
+    DEBUG_UTILS_OBJECT_NAME_INFO.emit(emitter);
+    DEBUG_UTILS_OBJECT_TAG_INFO.emit(emitter);
+    DEBUG_UTILS_LABEL.emit(emitter);
+    DEBUG_UTILS_MESSENGER_CALLBACK_DATA.emit(emitter);
+    DEBUG_UTILS_MESSENGER_CREATE_INFO.emit(emitter);
+
+    Command::new(
+        "SetDebugUtilsObjectTag",
+        &[
+            ("device", "VkDevice"),
+            ("pTagInfo", "*const VkDebugUtilsObjectTagInfoEXT"),
+        ],
+    )
+    .failable()
+    .extension(VK_EXT_DEBUG_UTILS)
+    .emit(emitter);
+    Command::new(
+        "QueueBeginDebugUtilsLabel",
+        &[("queue", "VkQueue"), ("pLabelInfo", "*const VkDebugUtilsLabelEXT")],
+    )
+    .extension(VK_EXT_DEBUG_UTILS)
+    .emit(emitter);
+    Command::new("QueueEndDebugUtilsLabel", &[("queue", "VkQueue")])
+        .extension(VK_EXT_DEBUG_UTILS)
+        .emit(emitter);
+    Command::new(
+        "QueueInsertDebugUtilsLabel",
+        &[("queue", "VkQueue"), ("pLabelInfo", "*const VkDebugUtilsLabelEXT")],
+    )
+    .extension(VK_EXT_DEBUG_UTILS)
+    .emit(emitter);
+    Command::new(
+        "CreateDebugUtilsMessenger",
+        &[
+            ("instance", "VkInstance"),
+            ("pCreateInfo", "*const VkDebugUtilsMessengerCreateInfoEXT"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+            ("pDebugUtilsMessenger", "*mut VkDebugUtilsMessengerEXT"),
+        ],
+    )
+    .failable()
+    .extension(VK_EXT_DEBUG_UTILS)
+    .emit(emitter);
+    Command::new(
+        "DestroyDebugUtilsMessenger",
+        &[
+            ("instance", "VkInstance"),
+            ("debugUtilsMessenger", "VkDebugUtilsMessengerEXT"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+        ],
+    )
+    .extension(VK_EXT_DEBUG_UTILS)
+    .emit(emitter);
+    Command::new(
+        "SubmitDebugUtilsMessage",
+        &[
+            ("instance", "VkInstance"),
+            ("messageSeverity", "VkDebugUtilsMessageSeverityFlagBitsEXT"),
+            ("messageTypes", "VkDebugUtilsMessageTypeFlagsEXT"),
+            ("pCallbackData", "*const VkDebugUtilsMessengerCallbackDataEXT"),
+        ],
+    )
+    .extension(VK_EXT_DEBUG_UTILS)
+    .emit(emitter);
+    Command::new(
+        "SetDebugUtilsObjectName",
+        &[
+            ("device", "VkDevice"),
+            ("pNameInfo", "*const VkDebugUtilsObjectNameInfoEXT"),
+        ],
+    )
+    .failable()
+    .extension(VK_EXT_DEBUG_UTILS)
+    .emit(emitter);
+    Command::inst("BeginDebugUtilsLabel", &[("pLabelInfo", "*const VkDebugUtilsLabelEXT")])
+        .extension(VK_EXT_DEBUG_UTILS)
+        .emit(emitter);
+    Command::inst("EndDebugUtilsLabel", &[])
+        .extension(VK_EXT_DEBUG_UTILS)
+        .emit(emitter);
+    Command::inst(
+        "InsertDebugUtilsLabel",
+        &[("pLabelInfo", "*const VkDebugUtilsLabelEXT")],
+    )
+    .extension(VK_EXT_DEBUG_UTILS)
+    .emit(emitter);
+}
+
 pub const ELEMENTS: &[Element] = &[
     // VK_EXT_debug_report
     FuncPointer::new(
@@ -199,123 +496,6 @@ pub const ELEMENTS: &[Element] = &[
     .extension(VK_EXT_DEBUG_REPORT)
     .into_element(),
     // VK_EXT_debug_utils
-    VK_EXT_DEBUG_UTILS.header_constants().into_element(),
-    Bitmask::new(
-        "DebugUtilsMessageSeverityFlags",
-        "DebugUtilsMessageSeverityFlagBits",
-        "DEBUG_UTILS_MESSAGE_SEVERITY",
-        &[
-            Bitmask::entry("VERBOSE", 0).extension(VK_EXT_DEBUG_UTILS),
-            Bitmask::entry("INFO", 4).extension(VK_EXT_DEBUG_UTILS),
-            Bitmask::entry("WARNING", 8).extension(VK_EXT_DEBUG_UTILS),
-            Bitmask::entry("ERROR", 12).extension(VK_EXT_DEBUG_UTILS),
-        ],
-    )
-    .extension(VK_EXT_DEBUG_UTILS)
-    .into_element(),
-    Bitmask::new(
-        "DebugUtilsMessageTypeFlags",
-        "DebugUtilsMessageTypeFlagBits",
-        "DEBUG_UTILS_MESSAGE_TYPE",
-        &[
-            Bitmask::entry("GENERAL", 0).extension(VK_EXT_DEBUG_UTILS),
-            Bitmask::entry("VALIDATION", 1).extension(VK_EXT_DEBUG_UTILS),
-            Bitmask::entry("PERFORMANCE", 2).extension(VK_EXT_DEBUG_UTILS),
-        ],
-    )
-    .extension(VK_EXT_DEBUG_UTILS)
-    .into_element(),
-    Bitmask::new(
-        "DebugUtilsMessengerCallbackDataFlags",
-        "DebugUtilsMessengerCallbackDataFlagBits",
-        "DEBUG_UTILS_MESSENGER_CALLBACK_DATA",
-        &[],
-    )
-    .extension(VK_EXT_DEBUG_UTILS)
-    .into_element(),
-    Bitmask::new(
-        "DebugUtilsMessengerCreateFlags",
-        "DebugUtilsMessengerCreateFlagBits",
-        "DEBUG_UTILS_MESSENGER_CREATE",
-        &[],
-    )
-    .extension(VK_EXT_DEBUG_UTILS)
-    .into_element(),
-    Struct::typed(
-        "DebugUtilsObjectNameInfo",
-        "DEBUG_UTILS_OBJECT_NAME_INFO",
-        VK_EXT_DEBUG_UTILS.ext_enum(0) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("objectType", "VkObjectType"),
-            Struct::member("objectHandle", "u64"),
-            Struct::member("pObjectName", "*const core::ffi::c_char"),
-        ],
-    )
-    .extensions(&[VK_EXT_DEBUG_UTILS])
-    .into_element(),
-    Struct::typed(
-        "DebugUtilsObjectTagInfo",
-        "DEBUG_UTILS_OBJECT_TAG_INFO",
-        VK_EXT_DEBUG_UTILS.ext_enum(1) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("objectType", "VkObjectType"),
-            Struct::member("objectHandle", "u64"),
-            Struct::member("tagName", "u64"),
-            Struct::member("tagSize", "u64"),
-            Struct::member("pTag", "*const core::ffi::c_void"),
-        ],
-    )
-    .extensions(&[VK_EXT_DEBUG_UTILS])
-    .into_element(),
-    Struct::typed(
-        "DebugUtilsLabel",
-        "DEBUG_UTILS_LABEL",
-        VK_EXT_DEBUG_UTILS.ext_enum(2) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("pLabelName", "*const core::ffi::c_char"),
-            Struct::member("pColor", "[core::ffi::c_float; 4]"),
-        ],
-    )
-    .extensions(&[VK_EXT_DEBUG_UTILS])
-    .into_element(),
-    Struct::typed(
-        "DebugUtilsMessengerCallbackData",
-        "DEBUG_UTILS_MESSENGER_CALLBACK_DATA",
-        VK_EXT_DEBUG_UTILS.ext_enum(3) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("flags", "VkDebugUtilsMessengerCallbackDataFlagsEXT"),
-            Struct::member("pMessageIdName", "*const core::ffi::c_char"),
-            Struct::member("messageIdNumber", "i32"),
-            Struct::member("pMessage", "*const core::ffi::c_char"),
-            Struct::member("queueLabelCount", "u32"),
-            Struct::member("pQueueLabels", "*const VkDebugUtilsLabelEXT"),
-            Struct::member("cmdBufLabelCount", "u32"),
-            Struct::member("pCmdBufLabels", "*const VkDebugUtilsLabelEXT"),
-            Struct::member("objectCount", "u32"),
-            Struct::member("pObjects", "*const VkDebugUtilsObjectNameInfoEXT"),
-        ],
-    )
-    .extensions(&[VK_EXT_DEBUG_UTILS])
-    .into_element(),
-    Struct::typed(
-        "DebugUtilsMessengerCreateInfo",
-        "DEBUG_UTILS_MESSENGER_CREATE_INFO",
-        VK_EXT_DEBUG_UTILS.ext_enum(4) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("flags", "VkDebugUtilsMessengerCreateFlagsEXT"),
-            Struct::member("messageSeverity", "VkDebugUtilsMessageSeverityFlagsEXT"),
-            Struct::member("messageType", "VkDebugUtilsMessageTypeFlagsEXT"),
-            Struct::member("pfnUserCallback", "PFN_vkDebugUtilsMessengerCallbackEXT"),
-            Struct::member("pUserData", "*mut core::ffi::c_void"),
-        ],
-    )
-    .extensions(&[VK_EXT_DEBUG_UTILS])
-    .into_element(),
     FuncPointer::new(
         "DebugUtilsMessengerCallback",
         &[
@@ -326,86 +506,6 @@ pub const ELEMENTS: &[Element] = &[
         ],
     )
     .returns("VkBool32")
-    .extension(VK_EXT_DEBUG_UTILS)
-    .into_element(),
-    Command::new(
-        "SetDebugUtilsObjectTag",
-        &[
-            ("device", "VkDevice"),
-            ("pTagInfo", "*const VkDebugUtilsObjectTagInfoEXT"),
-        ],
-    )
-    .failable()
-    .extension(VK_EXT_DEBUG_UTILS)
-    .into_element(),
-    Command::new(
-        "QueueBeginDebugUtilsLabel",
-        &[("queue", "VkQueue"), ("pLabelInfo", "*const VkDebugUtilsLabelEXT")],
-    )
-    .extension(VK_EXT_DEBUG_UTILS)
-    .into_element(),
-    Command::new("QueueEndDebugUtilsLabel", &[("queue", "VkQueue")])
-        .extension(VK_EXT_DEBUG_UTILS)
-        .into_element(),
-    Command::new(
-        "QueueInsertDebugUtilsLabel",
-        &[("queue", "VkQueue"), ("pLabelInfo", "*const VkDebugUtilsLabelEXT")],
-    )
-    .extension(VK_EXT_DEBUG_UTILS)
-    .into_element(),
-    Command::new(
-        "CreateDebugUtilsMessenger",
-        &[
-            ("instance", "VkInstance"),
-            ("pCreateInfo", "*const VkDebugUtilsMessengerCreateInfoEXT"),
-            ("pAllocator", "*const VkAllocationCallbacks"),
-            ("pDebugUtilsMessenger", "*mut VkDebugUtilsMessengerEXT"),
-        ],
-    )
-    .failable()
-    .extension(VK_EXT_DEBUG_UTILS)
-    .into_element(),
-    Command::new(
-        "DestroyDebugUtilsMessenger",
-        &[
-            ("instance", "VkInstance"),
-            ("debugUtilsMessenger", "VkDebugUtilsMessengerEXT"),
-            ("pAllocator", "*const VkAllocationCallbacks"),
-        ],
-    )
-    .extension(VK_EXT_DEBUG_UTILS)
-    .into_element(),
-    Command::new(
-        "SubmitDebugUtilsMessage",
-        &[
-            ("instance", "VkInstance"),
-            ("messageSeverity", "VkDebugUtilsMessageSeverityFlagBitsEXT"),
-            ("messageTypes", "VkDebugUtilsMessageTypeFlagsEXT"),
-            ("pCallbackData", "*const VkDebugUtilsMessengerCallbackDataEXT"),
-        ],
-    )
-    .extension(VK_EXT_DEBUG_UTILS)
-    .into_element(),
-    Command::new(
-        "SetDebugUtilsObjectName",
-        &[
-            ("device", "VkDevice"),
-            ("pNameInfo", "*const VkDebugUtilsObjectNameInfoEXT"),
-        ],
-    )
-    .failable()
-    .extension(VK_EXT_DEBUG_UTILS)
-    .into_element(),
-    Command::inst("BeginDebugUtilsLabel", &[("pLabelInfo", "*const VkDebugUtilsLabelEXT")])
-        .extension(VK_EXT_DEBUG_UTILS)
-        .into_element(),
-    Command::inst("EndDebugUtilsLabel", &[])
-        .extension(VK_EXT_DEBUG_UTILS)
-        .into_element(),
-    Command::inst(
-        "InsertDebugUtilsLabel",
-        &[("pLabelInfo", "*const VkDebugUtilsLabelEXT")],
-    )
     .extension(VK_EXT_DEBUG_UTILS)
     .into_element(),
     // VK_EXT_blend_operation_advanced
