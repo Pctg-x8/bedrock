@@ -46,7 +46,6 @@ pub const VK_API_VERSION_1_0: u32 = VK_MAKE_VERSION(0, 1, 0, 0);
 /// Version of this file
 pub const VK_HEADER_VERSION: u16 = 305;
 pub const VK_HEADER_VERSION_COMPLETE: u32 = VK_MAKE_VERSION(0, 1, 4, VK_HEADER_VERSION);
-
 #[rustfmt::skip]
 pub type VkSampleMask = u32;
 #[rustfmt::skip]
@@ -1253,55 +1252,6 @@ pub const VK_KHR_SYNCHRONIZATION2_EXTENSION_NAME: &str = "VK_KHR_synchronization
 #[rustfmt::skip]
 pub const VK_KHR_SYNCHRONIZATION2_SPEC_VERSION: usize = 1;
 
-#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-#[rustfmt::skip]
-pub const VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES2_EXTENSION_NAME: &str = "VK_KHR_get_physical_device_properties2";
-#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-#[rustfmt::skip]
-pub const VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES2_SPEC_VERSION: usize = 2;
-
-#[cfg(feature = "VK_KHR_device_group")]
-#[rustfmt::skip]
-pub const VK_KHR_DEVICE_GROUP_EXTENSION_NAME: &str = "VK_KHR_device_group";
-#[cfg(feature = "VK_KHR_device_group")]
-#[rustfmt::skip]
-pub const VK_KHR_DEVICE_GROUP_SPEC_VERSION: usize = 4;
-
-#[cfg(feature = "VK_EXT_shader_subgroup_vote")]
-#[rustfmt::skip]
-pub const VK_EXT_SHADER_SUBGROUP_VOTE_EXTENSION_NAME: &str = "VK_EXT_shader_subgroup_vote";
-#[cfg(feature = "VK_EXT_shader_subgroup_vote")]
-#[rustfmt::skip]
-pub const VK_EXT_SHADER_SUBGROUP_VOTE_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_descriptor_update_template")]
-#[rustfmt::skip]
-pub const VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE_EXTENSION_NAME: &str = "VK_KHR_descriptor_update_template";
-#[cfg(feature = "VK_KHR_descriptor_update_template")]
-#[rustfmt::skip]
-pub const VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_dedicated_allocation")]
-#[rustfmt::skip]
-pub const VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME: &str = "VK_KHR_dedicated_allocation";
-#[cfg(feature = "VK_KHR_dedicated_allocation")]
-#[rustfmt::skip]
-pub const VK_KHR_DEDICATED_ALLOCATION_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_get_memory_requirements2")]
-#[rustfmt::skip]
-pub const VK_KHR_GET_MEMORY_REQUIREMENTS2_EXTENSION_NAME: &str = "VK_KHR_get_memory_requirements2";
-#[cfg(feature = "VK_KHR_get_memory_requirements2")]
-#[rustfmt::skip]
-pub const VK_KHR_GET_MEMORY_REQUIREMENTS2_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_KHR_SAMPLER_YCBCR_CONVERSION_EXTENSION_NAME: &str = "VK_KHR_sampler_ycbcr_conversion";
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
-#[rustfmt::skip]
-pub const VK_KHR_SAMPLER_YCBCR_CONVERSION_SPEC_VERSION: usize = 14;
-
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 #[repr(transparent)]
@@ -1327,300 +1277,13 @@ pub type VkSamplerYcbcrConversion = VkSamplerYcbcrConversionKHR;
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION: VkObjectType = 1000156000;
 
-#[cfg(feature = "VK_KHR_bind_memory2")]
-#[rustfmt::skip]
-pub const VK_KHR_BIND_MEMORY2_EXTENSION_NAME: &str = "VK_KHR_bind_memory2";
-#[cfg(feature = "VK_KHR_bind_memory2")]
-#[rustfmt::skip]
-pub const VK_KHR_BIND_MEMORY2_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_external_memory")]
-#[rustfmt::skip]
-pub const VK_KHR_EXTERNAL_MEMORY_EXTENSION_NAME: &str = "VK_KHR_external_memory";
-#[cfg(feature = "VK_KHR_external_memory")]
-#[rustfmt::skip]
-pub const VK_KHR_EXTERNAL_MEMORY_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_external_memory_capabilities")]
-#[rustfmt::skip]
-pub const VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME: &str = "VK_KHR_external_memory_capabilities";
-#[cfg(feature = "VK_KHR_external_memory_capabilities")]
-#[rustfmt::skip]
-pub const VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_external_semaphore")]
-#[rustfmt::skip]
-pub const VK_KHR_EXTERNAL_SEMAPHORE_EXTENSION_NAME: &str = "VK_KHR_external_semaphore";
-#[cfg(feature = "VK_KHR_external_semaphore")]
-#[rustfmt::skip]
-pub const VK_KHR_EXTERNAL_SEMAPHORE_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
-#[rustfmt::skip]
-pub const VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES_EXTENSION_NAME: &str = "VK_KHR_external_semaphore_capabilities";
-#[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
-#[rustfmt::skip]
-pub const VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_external_fence")]
-#[rustfmt::skip]
-pub const VK_KHR_EXTERNAL_FENCE_EXTENSION_NAME: &str = "VK_KHR_external_fence";
-#[cfg(feature = "VK_KHR_external_fence")]
-#[rustfmt::skip]
-pub const VK_KHR_EXTERNAL_FENCE_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_external_fence_capabilities")]
-#[rustfmt::skip]
-pub const VK_KHR_EXTERNAL_FENCE_CAPABILITIES_EXTENSION_NAME: &str = "VK_KHR_external_fence_capabilities";
-#[cfg(feature = "VK_KHR_external_fence_capabilities")]
-#[rustfmt::skip]
-pub const VK_KHR_EXTERNAL_FENCE_CAPABILITIES_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_buffer_device_address")]
-#[rustfmt::skip]
-pub const VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME: &str = "VK_KHR_buffer_device_address";
-#[cfg(feature = "VK_KHR_buffer_device_address")]
-#[rustfmt::skip]
-pub const VK_KHR_BUFFER_DEVICE_ADDRESS_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-pub const VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME: &str = "VK_KHR_timeline_semaphore";
-#[cfg(feature = "VK_KHR_timeline_semaphore")]
-#[rustfmt::skip]
-pub const VK_KHR_TIMELINE_SEMAPHORE_SPEC_VERSION: usize = 2;
-
-#[cfg(feature = "VK_KHR_image_format_list")]
-#[rustfmt::skip]
-pub const VK_KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME: &str = "VK_KHR_image_format_list";
-#[cfg(feature = "VK_KHR_image_format_list")]
-#[rustfmt::skip]
-pub const VK_KHR_IMAGE_FORMAT_LIST_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
-#[rustfmt::skip]
-pub const VK_EXT_SAMPLER_FILTER_MINMAX_EXTENSION_NAME: &str = "VK_EXT_sampler_filter_minmax";
-#[cfg(feature = "VK_EXT_sampler_filter_minmax")]
-#[rustfmt::skip]
-pub const VK_EXT_SAMPLER_FILTER_MINMAX_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_sampler_mirror_clamp_to_edge")]
-#[rustfmt::skip]
-pub const VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE_EXTENSION_NAME: &str = "VK_KHR_sampler_mirror_clamp_to_edge";
-#[cfg(feature = "VK_KHR_sampler_mirror_clamp_to_edge")]
-#[rustfmt::skip]
-pub const VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE_SPEC_VERSION: usize = 3;
-
-#[cfg(feature = "VK_KHR_shader_float_controls")]
-#[rustfmt::skip]
-pub const VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME: &str = "VK_KHR_shader_float_controls";
-#[cfg(feature = "VK_KHR_shader_float_controls")]
-#[rustfmt::skip]
-pub const VK_KHR_SHADER_FLOAT_CONTROLS_SPEC_VERSION: usize = 4;
-
-#[cfg(feature = "VK_EXT_shader_viewport_index_layer")]
-#[rustfmt::skip]
-pub const VK_EXT_SHADER_VIEWPORT_INDEX_LAYER_EXTENSION_NAME: &str = "VK_EXT_shader_viewport_index_layer";
-#[cfg(feature = "VK_EXT_shader_viewport_index_layer")]
-#[rustfmt::skip]
-pub const VK_EXT_SHADER_VIEWPORT_INDEX_LAYER_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_create_renderpass2")]
-#[rustfmt::skip]
-pub const VK_KHR_CREATE_RENDERPASS2_EXTENSION_NAME: &str = "VK_KHR_create_renderpass2";
-#[cfg(feature = "VK_KHR_create_renderpass2")]
-#[rustfmt::skip]
-pub const VK_KHR_CREATE_RENDERPASS2_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_depth_stencil_resolve")]
-#[rustfmt::skip]
-pub const VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME: &str = "VK_KHR_depth_stencil_resolve";
-#[cfg(feature = "VK_KHR_depth_stencil_resolve")]
-#[rustfmt::skip]
-pub const VK_KHR_DEPTH_STENCIL_RESOLVE_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_EXT_descriptor_indexing")]
-#[rustfmt::skip]
-pub const VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME: &str = "VK_EXT_descriptor_indexing";
-#[cfg(feature = "VK_EXT_descriptor_indexing")]
-#[rustfmt::skip]
-pub const VK_EXT_DESCRIPTOR_INDEXING_SPEC_VERSION: usize = 2;
-
-#[cfg(feature = "VK_KHR_maintenance4")]
-#[rustfmt::skip]
-pub const VK_KHR_MAINTENANCE4_EXTENSION_NAME: &str = "VK_KHR_maintenance4";
-#[cfg(feature = "VK_KHR_maintenance4")]
-#[rustfmt::skip]
-pub const VK_KHR_MAINTENANCE4_SPEC_VERSION: usize = 2;
-
-#[cfg(feature = "VK_KHR_format_feature_flags2")]
-#[rustfmt::skip]
-pub const VK_KHR_FORMAT_FEATURE_FLAGS2_EXTENSION_NAME: &str = "VK_KHR_format_feature_flags2";
-#[cfg(feature = "VK_KHR_format_feature_flags2")]
-#[rustfmt::skip]
-pub const VK_KHR_FORMAT_FEATURE_FLAGS2_SPEC_VERSION: usize = 2;
-
-#[cfg(feature = "VK_KHR_copy_commands2")]
-#[rustfmt::skip]
-pub const VK_KHR_COPY_COMMANDS2_EXTENSION_NAME: &str = "VK_KHR_copy_commands2";
-#[cfg(feature = "VK_KHR_copy_commands2")]
-#[rustfmt::skip]
-pub const VK_KHR_COPY_COMMANDS2_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_dynamic_rendering")]
-#[rustfmt::skip]
-pub const VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME: &str = "VK_KHR_dynamic_rendering";
-#[cfg(feature = "VK_KHR_dynamic_rendering")]
-#[rustfmt::skip]
-pub const VK_KHR_DYNAMIC_RENDERING_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_maintenance5")]
-#[rustfmt::skip]
-pub const VK_KHR_MAINTENANCE5_EXTENSION_NAME: &str = "VK_KHR_maintenance5";
-#[cfg(feature = "VK_KHR_maintenance5")]
-#[rustfmt::skip]
-pub const VK_KHR_MAINTENANCE5_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_maintenance6")]
-#[rustfmt::skip]
-pub const VK_KHR_MAINTENANCE6_EXTENSION_NAME: &str = "VK_KHR_maintenance6";
-#[cfg(feature = "VK_KHR_maintenance6")]
-#[rustfmt::skip]
-pub const VK_KHR_MAINTENANCE6_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
-#[rustfmt::skip]
-pub const VK_KHR_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME: &str = "VK_KHR_vertex_attribute_divisor";
-#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
-#[rustfmt::skip]
-pub const VK_KHR_VERTEX_ATTRIBUTE_DIVISOR_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_global_priority")]
-#[rustfmt::skip]
-pub const VK_KHR_GLOBAL_PRIORITY_EXTENSION_NAME: &str = "VK_KHR_global_priority";
-#[cfg(feature = "VK_KHR_global_priority")]
-#[rustfmt::skip]
-pub const VK_KHR_GLOBAL_PRIORITY_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_load_store_op_none")]
-#[rustfmt::skip]
-pub const VK_KHR_LOAD_STORE_OP_NONE_EXTENSION_NAME: &str = "VK_KHR_load_store_op_none";
-#[cfg(feature = "VK_KHR_load_store_op_none")]
-#[rustfmt::skip]
-pub const VK_KHR_LOAD_STORE_OP_NONE_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_shader_expect_assume")]
-#[rustfmt::skip]
-pub const VK_KHR_SHADER_EXPECT_ASSUME_EXTENSION_NAME: &str = "VK_KHR_shader_expect_assume";
-#[cfg(feature = "VK_KHR_shader_expect_assume")]
-#[rustfmt::skip]
-pub const VK_KHR_SHADER_EXPECT_ASSUME_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_shader_float_controls2")]
-#[rustfmt::skip]
-pub const VK_KHR_SHADER_FLOAT_CONTROLS2_EXTENSION_NAME: &str = "VK_KHR_shader_float_controls2";
-#[cfg(feature = "VK_KHR_shader_float_controls2")]
-#[rustfmt::skip]
-pub const VK_KHR_SHADER_FLOAT_CONTROLS2_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_push_descriptor")]
-#[rustfmt::skip]
-pub const VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME: &str = "VK_KHR_push_descriptor";
-#[cfg(feature = "VK_KHR_push_descriptor")]
-#[rustfmt::skip]
-pub const VK_KHR_PUSH_DESCRIPTOR_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_dynamic_rendering_local_read")]
-#[rustfmt::skip]
-pub const VK_KHR_DYNAMIC_RENDERING_LOCAL_READ_EXTENSION_NAME: &str = "VK_KHR_dynamic_rendering_local_read";
-#[cfg(feature = "VK_KHR_dynamic_rendering_local_read")]
-#[rustfmt::skip]
-pub const VK_KHR_DYNAMIC_RENDERING_LOCAL_READ_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_index_type_uint8")]
-#[rustfmt::skip]
-pub const VK_KHR_INDEX_TYPE_UINT8_EXTENSION_NAME: &str = "VK_KHR_index_type_uint8";
-#[cfg(feature = "VK_KHR_index_type_uint8")]
-#[rustfmt::skip]
-pub const VK_KHR_INDEX_TYPE_UINT8_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_line_rasterization")]
-#[rustfmt::skip]
-pub const VK_KHR_LINE_RASTERIZATION_EXTENSION_NAME: &str = "VK_KHR_line_rasterization";
-#[cfg(feature = "VK_KHR_line_rasterization")]
-#[rustfmt::skip]
-pub const VK_KHR_LINE_RASTERIZATION_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_map_memory2")]
-#[rustfmt::skip]
-pub const VK_KHR_MAP_MEMORY2_EXTENSION_NAME: &str = "VK_KHR_map_memory2";
-#[cfg(feature = "VK_KHR_map_memory2")]
-#[rustfmt::skip]
-pub const VK_KHR_MAP_MEMORY2_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_shader_subgroup_rotate")]
-#[rustfmt::skip]
-pub const VK_KHR_SHADER_SUBGROUP_ROTATE_EXTENSION_NAME: &str = "VK_KHR_shader_subgroup_rotate";
-#[cfg(feature = "VK_KHR_shader_subgroup_rotate")]
-#[rustfmt::skip]
-pub const VK_KHR_SHADER_SUBGROUP_ROTATE_SPEC_VERSION: usize = 2;
-
-#[cfg(feature = "VK_EXT_host_image_copy")]
-#[rustfmt::skip]
-pub const VK_EXT_HOST_IMAGE_COPY_EXTENSION_NAME: &str = "VK_EXT_host_image_copy";
-#[cfg(feature = "VK_EXT_host_image_copy")]
-#[rustfmt::skip]
-pub const VK_EXT_HOST_IMAGE_COPY_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_EXT_pipeline_protected_access")]
-#[rustfmt::skip]
-pub const VK_EXT_PIPELINE_PROTECTED_ACCESS_EXTENSION_NAME: &str = "VK_EXT_pipeline_protected_access";
-#[cfg(feature = "VK_EXT_pipeline_protected_access")]
-#[rustfmt::skip]
-pub const VK_EXT_PIPELINE_PROTECTED_ACCESS_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_EXT_pipeline_robustness")]
-#[rustfmt::skip]
-pub const VK_EXT_PIPELINE_ROBUSTNESS_EXTENSION_NAME: &str = "VK_EXT_pipeline_robustness";
-#[cfg(feature = "VK_EXT_pipeline_robustness")]
-#[rustfmt::skip]
-pub const VK_EXT_PIPELINE_ROBUSTNESS_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_EXT_debug_report")]
-#[rustfmt::skip]
-pub const VK_EXT_DEBUG_REPORT_EXTENSION_NAME: &str = "VK_EXT_debug_report";
-#[cfg(feature = "VK_EXT_debug_report")]
-#[rustfmt::skip]
-pub const VK_EXT_DEBUG_REPORT_SPEC_VERSION: usize = 10;
-
 #[cfg(feature = "VK_EXT_debug_report")]
 #[rustfmt::skip]
 pub type PFN_vkDebugReportCallbackEXT = extern "system" fn(flags: VkDebugReportFlagsEXT, objectType: VkDebugReportObjectTypeEXT, object: u64, location: usize, messageCode: i32, pLayerPrefix: *const core::ffi::c_char, pMessage: *const core::ffi::c_char, pUserData: *mut core::ffi::c_void) -> VkBool32;
 
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[rustfmt::skip]
-pub const VK_EXT_DEBUG_UTILS_EXTENSION_NAME: &str = "VK_EXT_debug_utils";
-#[cfg(feature = "VK_EXT_debug_utils")]
-#[rustfmt::skip]
-pub const VK_EXT_DEBUG_UTILS_SPEC_VERSION: usize = 2;
-
-#[cfg(feature = "VK_EXT_debug_utils")]
-#[rustfmt::skip]
 pub type PFN_vkDebugUtilsMessengerCallbackEXT = extern "system" fn(messageSeverity: VkDebugUtilsMessageSeverityFlagBitsEXT, messageTypes: VkDebugUtilsMessageTypeFlagsEXT, pCallbackData: *const VkDebugUtilsMessengerCallbackDataEXT, pUserData: *mut core::ffi::c_void) -> VkBool32;
-
-#[cfg(feature = "VK_EXT_blend_operation_advanced")]
-#[rustfmt::skip]
-pub const VK_EXT_BLEND_OPERATION_ADVANCED_EXTENSION_NAME: &str = "VK_EXT_blend_operation_advanced";
-#[cfg(feature = "VK_EXT_blend_operation_advanced")]
-#[rustfmt::skip]
-pub const VK_EXT_BLEND_OPERATION_ADVANCED_SPEC_VERSION: usize = 2;
-
-#[cfg(feature = "VK_EXT_validation_cache")]
-#[rustfmt::skip]
-pub const VK_EXT_VALIDATION_CACHE_EXTENSION_NAME: &str = "VK_EXT_validation_cache";
-#[cfg(feature = "VK_EXT_validation_cache")]
-#[rustfmt::skip]
-pub const VK_EXT_VALIDATION_CACHE_SPEC_VERSION: usize = 1;
 
 #[cfg(feature = "VK_EXT_validation_cache")]
 #[rustfmt::skip]
@@ -1640,55 +1303,6 @@ impl crate::VkRawHandle for VkValidationCacheEXT {
 #[cfg(feature = "VK_EXT_validation_cache")]
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_VALIDATION_CACHE_EXT: VkObjectType = 1000160000;
-
-#[cfg(feature = "VK_EXT_validation_flags")]
-#[rustfmt::skip]
-pub const VK_EXT_VALIDATION_FLAGS_EXTENSION_NAME: &str = "VK_EXT_validation_flags";
-#[cfg(feature = "VK_EXT_validation_flags")]
-#[rustfmt::skip]
-pub const VK_EXT_VALIDATION_FLAGS_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_EXT_acquire_drm_display")]
-#[rustfmt::skip]
-pub const VK_EXT_ACQUIRE_DRM_DISPLAY_EXTENSION_NAME: &str = "VK_EXT_acquire_drm_display";
-#[cfg(feature = "VK_EXT_acquire_drm_display")]
-#[rustfmt::skip]
-pub const VK_EXT_ACQUIRE_DRM_DISPLAY_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_EXT_acquire_xlib_display")]
-#[rustfmt::skip]
-pub const VK_EXT_ACQUIRE_XLIB_DISPLAY_EXTENSION_NAME: &str = "VK_EXT_acquire_xlib_display";
-#[cfg(feature = "VK_EXT_acquire_xlib_display")]
-#[rustfmt::skip]
-pub const VK_EXT_ACQUIRE_XLIB_DISPLAY_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_NV_acquire_winrt_display")]
-#[rustfmt::skip]
-pub const VK_NV_ACQUIRE_WINRT_DISPLAY_EXTENSION_NAME: &str = "VK_NV_acquire_winrt_display";
-#[cfg(feature = "VK_NV_acquire_winrt_display")]
-#[rustfmt::skip]
-pub const VK_NV_ACQUIRE_WINRT_DISPLAY_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_AMD_buffer_marker")]
-#[rustfmt::skip]
-pub const VK_AMD_BUFFER_MARKER_EXTENSION_NAME: &str = "VK_AMD_buffer_marker";
-#[cfg(feature = "VK_AMD_buffer_marker")]
-#[rustfmt::skip]
-pub const VK_AMD_BUFFER_MARKER_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_EXT_layer_settings")]
-#[rustfmt::skip]
-pub const VK_EXT_LAYER_SETTINGS_EXTENSION_NAME: &str = "VK_EXT_layer_settings";
-#[cfg(feature = "VK_EXT_layer_settings")]
-#[rustfmt::skip]
-pub const VK_EXT_LAYER_SETTINGS_SPEC_VERSION: usize = 2;
-
-#[cfg(feature = "VK_EXT_descriptor_buffer")]
-#[rustfmt::skip]
-pub const VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME: &str = "VK_EXT_descriptor_buffer";
-#[cfg(feature = "VK_EXT_descriptor_buffer")]
-#[rustfmt::skip]
-pub const VK_EXT_DESCRIPTOR_BUFFER_SPEC_VERSION: usize = 1;
 
 #[cfg(feature = "VK_EXT_descriptor_buffer")]
 #[derive(Clone, Copy)]
@@ -1898,286 +1512,6 @@ pub const VK_EXT_DISCARD_RECTANGLES_EXTENSION_NAME: &str = "VK_EXT_discard_recta
 #[cfg(feature = "VK_EXT_discard_rectangles")]
 #[rustfmt::skip]
 pub const VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
-#[rustfmt::skip]
-pub const VK_EXT_IMAGE_DRM_FORMAT_MODIFIER_EXTENSION_NAME: &str = "VK_EXT_image_drm_format_modifier";
-#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
-#[rustfmt::skip]
-pub const VK_EXT_IMAGE_DRM_FORMAT_MODIFIER_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_EXT_metal_objects")]
-#[rustfmt::skip]
-pub const VK_EXT_METAL_OBJECTS_EXTENSION_NAME: &str = "VK_EXT_metal_objects";
-#[cfg(feature = "VK_EXT_metal_objects")]
-#[rustfmt::skip]
-pub const VK_EXT_METAL_OBJECTS_SPEC_VERSION: usize = 2;
-
-#[cfg(feature = "VK_MVK_macos_surface")]
-#[rustfmt::skip]
-pub const VK_MVK_MACOS_SURFACE_EXTENSION_NAME: &str = "VK_MVK_macos_surface";
-#[cfg(feature = "VK_MVK_macos_surface")]
-#[rustfmt::skip]
-pub const VK_MVK_MACOS_SURFACE_SPEC_VERSION: usize = 2;
-
-#[cfg(feature = "VK_MVK_ios_surface")]
-#[rustfmt::skip]
-pub const VK_MVK_IOS_SURFACE_EXTENSION_NAME: &str = "VK_MVK_ios_surface";
-#[cfg(feature = "VK_MVK_ios_surface")]
-#[rustfmt::skip]
-pub const VK_MVK_IOS_SURFACE_SPEC_VERSION: usize = 2;
-
-#[cfg(feature = "VK_EXT_depth_range_unrestricted")]
-#[rustfmt::skip]
-pub const VK_EXT_DEPTH_RANGE_UNRESTRICTED_EXTENSION_NAME: &str = "VK_EXT_depth_range_unrestricted";
-#[cfg(feature = "VK_EXT_depth_range_unrestricted")]
-#[rustfmt::skip]
-pub const VK_EXT_DEPTH_RANGE_UNRESTRICTED_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_EXT_direct_mode_display")]
-#[rustfmt::skip]
-pub const VK_EXT_DIRECT_MODE_DISPLAY_EXTENSION_NAME: &str = "VK_EXT_direct_mode_display";
-#[cfg(feature = "VK_EXT_direct_mode_display")]
-#[rustfmt::skip]
-pub const VK_EXT_DIRECT_MODE_DISPLAY_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_display_swapchain")]
-#[rustfmt::skip]
-pub const VK_KHR_DISPLAY_SWAPCHAIN_EXTENSION_NAME: &str = "VK_KHR_display_swapchain";
-#[cfg(feature = "VK_KHR_display_swapchain")]
-#[rustfmt::skip]
-pub const VK_KHR_DISPLAY_SWAPCHAIN_SPEC_VERSION: usize = 10;
-
-#[cfg(feature = "VK_AMD_draw_indirect_count")]
-#[rustfmt::skip]
-pub const VK_AMD_DRAW_INDIRECT_COUNT_EXTENSION_NAME: &str = "VK_AMD_draw_indirect_count";
-#[cfg(feature = "VK_AMD_draw_indirect_count")]
-#[rustfmt::skip]
-pub const VK_AMD_DRAW_INDIRECT_COUNT_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_EXT_external_memory_dma_buf")]
-#[rustfmt::skip]
-pub const VK_EXT_EXTERNAL_MEMORY_DMA_BUF_EXTENSION_NAME: &str = "VK_EXT_external_memory_dma_buf";
-#[cfg(feature = "VK_EXT_external_memory_dma_buf")]
-#[rustfmt::skip]
-pub const VK_EXT_EXTERNAL_MEMORY_DMA_BUF_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_IMG_filter_cubic")]
-#[rustfmt::skip]
-pub const VK_IMG_FILTER_CUBIC_EXTENSION_NAME: &str = "VK_IMG_filter_cubic";
-#[cfg(feature = "VK_IMG_filter_cubic")]
-#[rustfmt::skip]
-pub const VK_IMG_FILTER_CUBIC_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_IMG_format_pvrtc")]
-#[rustfmt::skip]
-pub const VK_IMG_FORMAT_PVRTC_EXTENSION_NAME: &str = "VK_IMG_format_pvrtc";
-#[cfg(feature = "VK_IMG_format_pvrtc")]
-#[rustfmt::skip]
-pub const VK_IMG_FORMAT_PVRTC_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_AMD_gcn_shader")]
-#[rustfmt::skip]
-pub const VK_AMD_GCN_SHADER_EXTENSION_NAME: &str = "VK_AMD_gcn_shader";
-#[cfg(feature = "VK_AMD_gcn_shader")]
-#[rustfmt::skip]
-pub const VK_AMD_GCN_SHADER_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_NV_geometry_shader_passthrough")]
-#[rustfmt::skip]
-pub const VK_NV_GEOMETRY_SHADER_PASSTHROUGH_EXTENSION_NAME: &str = "VK_NV_geometry_shader_passthrough";
-#[cfg(feature = "VK_NV_geometry_shader_passthrough")]
-#[rustfmt::skip]
-pub const VK_NV_GEOMETRY_SHADER_PASSTHROUGH_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_NV_glsl_shader")]
-#[rustfmt::skip]
-pub const VK_NV_GLSL_SHADER_EXTENSION_NAME: &str = "VK_NV_glsl_shader";
-#[cfg(feature = "VK_NV_glsl_shader")]
-#[rustfmt::skip]
-pub const VK_NV_GLSL_SHADER_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_AMD_gpu_shader_half_float")]
-#[rustfmt::skip]
-pub const VK_AMD_GPU_SHADER_HALF_FLOAT_EXTENSION_NAME: &str = "VK_AMD_gpu_shader_half_float";
-#[cfg(feature = "VK_AMD_gpu_shader_half_float")]
-#[rustfmt::skip]
-pub const VK_AMD_GPU_SHADER_HALF_FLOAT_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_AMD_gpu_shader_int16")]
-#[rustfmt::skip]
-pub const VK_AMD_GPU_SHADER_INT16_EXTENSION_NAME: &str = "VK_AMD_gpu_shader_int16";
-#[cfg(feature = "VK_AMD_gpu_shader_int16")]
-#[rustfmt::skip]
-pub const VK_AMD_GPU_SHADER_INT16_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_AMD_mixed_attachment_samples")]
-#[rustfmt::skip]
-pub const VK_AMD_MIXED_ATTACHMENT_SAMPLES_EXTENSION_NAME: &str = "VK_AMD_mixed_attachment_samples";
-#[cfg(feature = "VK_AMD_mixed_attachment_samples")]
-#[rustfmt::skip]
-pub const VK_AMD_MIXED_ATTACHMENT_SAMPLES_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
-#[rustfmt::skip]
-pub const VK_NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES_EXTENSION_NAME: &str = "VK_NVX_multiview_per_view_attributes";
-#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
-#[rustfmt::skip]
-pub const VK_NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_AMD_negative_viewport_height")]
-#[rustfmt::skip]
-pub const VK_AMD_NEGATIVE_VIEWPORT_HEIGHT_EXTENSION_NAME: &str = "VK_AMD_negative_viewport_height";
-#[cfg(feature = "VK_AMD_negative_viewport_height")]
-#[rustfmt::skip]
-pub const VK_AMD_NEGATIVE_VIEWPORT_HEIGHT_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_EXT_post_depth_coverage")]
-#[rustfmt::skip]
-pub const VK_EXT_POST_DEPTH_COVERAGE_EXTENSION_NAME: &str = "VK_EXT_post_depth_coverage";
-#[cfg(feature = "VK_EXT_post_depth_coverage")]
-#[rustfmt::skip]
-pub const VK_EXT_POST_DEPTH_COVERAGE_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_EXT_queue_family_foreign")]
-#[rustfmt::skip]
-pub const VK_EXT_QUEUE_FAMILY_FOREIGN_EXTENSION_NAME: &str = "VK_EXT_queue_family_foreign";
-#[cfg(feature = "VK_EXT_queue_family_foreign")]
-#[rustfmt::skip]
-pub const VK_EXT_QUEUE_FAMILY_FOREIGN_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_NV_sample_mask_override_coverage")]
-#[rustfmt::skip]
-pub const VK_NV_SAMPLE_MASK_OVERRIDE_COVERAGE_EXTENSION_NAME: &str = "VK_NV_sample_mask_override_coverage";
-#[cfg(feature = "VK_NV_sample_mask_override_coverage")]
-#[rustfmt::skip]
-pub const VK_NV_SAMPLE_MASK_OVERRIDE_COVERAGE_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_AMD_shader_ballot")]
-#[rustfmt::skip]
-pub const VK_AMD_SHADER_BALLOT_EXTENSION_NAME: &str = "VK_AMD_shader_ballot";
-#[cfg(feature = "VK_AMD_shader_ballot")]
-#[rustfmt::skip]
-pub const VK_AMD_SHADER_BALLOT_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_AMD_shader_explicit_vertex_parameter")]
-#[rustfmt::skip]
-pub const VK_AMD_SHADER_EXPLICIT_VERTEX_PARAMETER_EXTENSION_NAME: &str = "VK_AMD_shader_explicit_vertex_parameter";
-#[cfg(feature = "VK_AMD_shader_explicit_vertex_parameter")]
-#[rustfmt::skip]
-pub const VK_AMD_SHADER_EXPLICIT_VERTEX_PARAMETER_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_AMD_shader_fragment_mask")]
-#[rustfmt::skip]
-pub const VK_AMD_SHADER_FRAGMENT_MASK_EXTENSION_NAME: &str = "VK_AMD_shader_fragment_mask";
-#[cfg(feature = "VK_AMD_shader_fragment_mask")]
-#[rustfmt::skip]
-pub const VK_AMD_SHADER_FRAGMENT_MASK_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_AMD_shader_image_load_store_lod")]
-#[rustfmt::skip]
-pub const VK_AMD_SHADER_IMAGE_LOAD_STORE_LOD_EXTENSION_NAME: &str = "VK_AMD_shader_image_load_store_lod";
-#[cfg(feature = "VK_AMD_shader_image_load_store_lod")]
-#[rustfmt::skip]
-pub const VK_AMD_SHADER_IMAGE_LOAD_STORE_LOD_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_AMD_shader_trinary_minmax")]
-#[rustfmt::skip]
-pub const VK_AMD_SHADER_TRINARY_MINMAX_EXTENSION_NAME: &str = "VK_AMD_shader_trinary_minmax";
-#[cfg(feature = "VK_AMD_shader_trinary_minmax")]
-#[rustfmt::skip]
-pub const VK_AMD_SHADER_TRINARY_MINMAX_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_EXT_swapchain_colorspace")]
-#[rustfmt::skip]
-pub const VK_EXT_SWAPCHAIN_COLORSPACE_EXTENSION_NAME: &str = "VK_EXT_swapchain_colorspace";
-#[cfg(feature = "VK_EXT_swapchain_colorspace")]
-#[rustfmt::skip]
-pub const VK_EXT_SWAPCHAIN_COLORSPACE_SPEC_VERSION: usize = 3;
-
-#[cfg(feature = "VK_NV_viewport_array2")]
-#[rustfmt::skip]
-pub const VK_NV_VIEWPORT_ARRAY2_EXTENSION_NAME: &str = "VK_NV_viewport_array2";
-#[cfg(feature = "VK_NV_viewport_array2")]
-#[rustfmt::skip]
-pub const VK_NV_VIEWPORT_ARRAY2_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_maintenance7")]
-#[rustfmt::skip]
-pub const VK_KHR_MAINTENANCE7_EXTENSION_NAME: &str = "VK_KHR_maintenance7";
-#[cfg(feature = "VK_KHR_maintenance7")]
-#[rustfmt::skip]
-pub const VK_KHR_MAINTENANCE7_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_maintenance8")]
-#[rustfmt::skip]
-pub const VK_KHR_MAINTENANCE8_EXTENSION_NAME: &str = "VK_KHR_maintenance8";
-#[cfg(feature = "VK_KHR_maintenance8")]
-#[rustfmt::skip]
-pub const VK_KHR_MAINTENANCE8_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_maintenance9")]
-#[rustfmt::skip]
-pub const VK_KHR_MAINTENANCE9_EXTENSION_NAME: &str = "VK_KHR_maintenance9";
-#[cfg(feature = "VK_KHR_maintenance9")]
-#[rustfmt::skip]
-pub const VK_KHR_MAINTENANCE9_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_EXT_full_screen_exclusive")]
-#[rustfmt::skip]
-pub const VK_EXT_FULL_SCREEN_EXCLUSIVE_EXTENSION_NAME: &str = "VK_EXT_full_screen_exclusive";
-#[cfg(feature = "VK_EXT_full_screen_exclusive")]
-#[rustfmt::skip]
-pub const VK_EXT_FULL_SCREEN_EXCLUSIVE_SPEC_VERSION: usize = 4;
-
-#[cfg(feature = "VK_AMD_shader_info")]
-#[rustfmt::skip]
-pub const VK_AMD_SHADER_INFO_EXTENSION_NAME: &str = "VK_AMD_shader_info";
-#[cfg(feature = "VK_AMD_shader_info")]
-#[rustfmt::skip]
-pub const VK_AMD_SHADER_INFO_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_external_memory_win32")]
-#[rustfmt::skip]
-pub const VK_KHR_EXTERNAL_MEMORY_WIN32_EXTENSION_NAME: &str = "VK_KHR_external_memory_win32";
-#[cfg(feature = "VK_KHR_external_memory_win32")]
-#[rustfmt::skip]
-pub const VK_KHR_EXTERNAL_MEMORY_WIN32_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_external_memory_fd")]
-#[rustfmt::skip]
-pub const VK_KHR_EXTERNAL_MEMORY_FD_EXTENSION_NAME: &str = "VK_KHR_external_memory_fd";
-#[cfg(feature = "VK_KHR_external_memory_fd")]
-#[rustfmt::skip]
-pub const VK_KHR_EXTERNAL_MEMORY_FD_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_external_semaphore_win32")]
-#[rustfmt::skip]
-pub const VK_KHR_EXTERNAL_SEMAPHORE_WIN32_EXTENSION_NAME: &str = "VK_KHR_external_semaphore_win32";
-#[cfg(feature = "VK_KHR_external_semaphore_win32")]
-#[rustfmt::skip]
-pub const VK_KHR_EXTERNAL_SEMAPHORE_WIN32_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_external_semaphore_fd")]
-#[rustfmt::skip]
-pub const VK_KHR_EXTERNAL_SEMAPHORE_FD_EXTENSION_NAME: &str = "VK_KHR_external_semaphore_fd";
-#[cfg(feature = "VK_KHR_external_semaphore_fd")]
-#[rustfmt::skip]
-pub const VK_KHR_EXTERNAL_SEMAPHORE_FD_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_external_fence_win32")]
-#[rustfmt::skip]
-pub const VK_KHR_EXTERNAL_FENCE_WIN32_EXTENSION_NAME: &str = "VK_KHR_external_fence_win32";
-#[cfg(feature = "VK_KHR_external_fence_win32")]
-#[rustfmt::skip]
-pub const VK_KHR_EXTERNAL_FENCE_WIN32_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_external_fence_fd")]
-#[rustfmt::skip]
-pub const VK_KHR_EXTERNAL_FENCE_FD_EXTENSION_NAME: &str = "VK_KHR_external_fence_fd";
-#[cfg(feature = "VK_KHR_external_fence_fd")]
-#[rustfmt::skip]
-pub const VK_KHR_EXTERNAL_FENCE_FD_SPEC_VERSION: usize = 1;
 #[rustfmt::skip]pub const VK_ATTACHMENT_LOAD_OP_CLEAR:VkAttachmentLoadOp=1;
 #[rustfmt::skip]pub const VK_ATTACHMENT_LOAD_OP_DONT_CARE:VkAttachmentLoadOp=2;
 #[rustfmt::skip]pub const VK_ATTACHMENT_LOAD_OP_LOAD:VkAttachmentLoadOp=0;
@@ -3666,6 +3000,196 @@ pub const VK_KHR_EXTERNAL_FENCE_FD_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_KHR_surface")]#[rustfmt::skip]pub const VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR:VkSurfaceTransformFlagBitsKHR=0x00000002;
 #[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_SWAPCHAIN_CREATE_SPLIT_INSTNACE_BIND_REGIONS_BIT:VkSwapchainCreateFlagBitsKHR=0x00000001;
 #[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]#[rustfmt::skip]pub const VK_SWAPCHAIN_CREATE_SPLIT_INSTNACE_BIND_REGIONS_BIT_KHR:VkSwapchainCreateFlagBitsKHR=0x00000001;
+#[cfg(feature = "VK_AMD_buffer_marker")]#[rustfmt::skip]pub const VK_AMD_BUFFER_MARKER_EXTENSION_NAME:&str="VK_AMD_buffer_marker";
+#[cfg(feature = "VK_AMD_buffer_marker")]#[rustfmt::skip]pub const VK_AMD_BUFFER_MARKER_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_AMD_draw_indirect_count")]#[rustfmt::skip]pub const VK_AMD_DRAW_INDIRECT_COUNT_EXTENSION_NAME:&str="VK_AMD_draw_indirect_count";
+#[cfg(feature = "VK_AMD_draw_indirect_count")]#[rustfmt::skip]pub const VK_AMD_DRAW_INDIRECT_COUNT_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_AMD_gcn_shader")]#[rustfmt::skip]pub const VK_AMD_GCN_SHADER_EXTENSION_NAME:&str="VK_AMD_gcn_shader";
+#[cfg(feature = "VK_AMD_gcn_shader")]#[rustfmt::skip]pub const VK_AMD_GCN_SHADER_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_AMD_gpu_shader_half_float")]#[rustfmt::skip]pub const VK_AMD_GPU_SHADER_HALF_FLOAT_EXTENSION_NAME:&str="VK_AMD_gpu_shader_half_float";
+#[cfg(feature = "VK_AMD_gpu_shader_half_float")]#[rustfmt::skip]pub const VK_AMD_GPU_SHADER_HALF_FLOAT_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_AMD_gpu_shader_int16")]#[rustfmt::skip]pub const VK_AMD_GPU_SHADER_INT16_EXTENSION_NAME:&str="VK_AMD_gpu_shader_int16";
+#[cfg(feature = "VK_AMD_gpu_shader_int16")]#[rustfmt::skip]pub const VK_AMD_GPU_SHADER_INT16_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_AMD_mixed_attachment_samples")]#[rustfmt::skip]pub const VK_AMD_MIXED_ATTACHMENT_SAMPLES_EXTENSION_NAME:&str="VK_AMD_mixed_attachment_samples";
+#[cfg(feature = "VK_AMD_mixed_attachment_samples")]#[rustfmt::skip]pub const VK_AMD_MIXED_ATTACHMENT_SAMPLES_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_AMD_negative_viewport_height")]#[rustfmt::skip]pub const VK_AMD_NEGATIVE_VIEWPORT_HEIGHT_EXTENSION_NAME:&str="VK_AMD_negative_viewport_height";
+#[cfg(feature = "VK_AMD_negative_viewport_height")]#[rustfmt::skip]pub const VK_AMD_NEGATIVE_VIEWPORT_HEIGHT_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_AMD_shader_ballot")]#[rustfmt::skip]pub const VK_AMD_SHADER_BALLOT_EXTENSION_NAME:&str="VK_AMD_shader_ballot";
+#[cfg(feature = "VK_AMD_shader_ballot")]#[rustfmt::skip]pub const VK_AMD_SHADER_BALLOT_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_AMD_shader_explicit_vertex_parameter")]#[rustfmt::skip]pub const VK_AMD_SHADER_EXPLICIT_VERTEX_PARAMETER_EXTENSION_NAME:&str="VK_AMD_shader_explicit_vertex_parameter";
+#[cfg(feature = "VK_AMD_shader_explicit_vertex_parameter")]#[rustfmt::skip]pub const VK_AMD_SHADER_EXPLICIT_VERTEX_PARAMETER_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_AMD_shader_fragment_mask")]#[rustfmt::skip]pub const VK_AMD_SHADER_FRAGMENT_MASK_EXTENSION_NAME:&str="VK_AMD_shader_fragment_mask";
+#[cfg(feature = "VK_AMD_shader_fragment_mask")]#[rustfmt::skip]pub const VK_AMD_SHADER_FRAGMENT_MASK_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_AMD_shader_image_load_store_lod")]#[rustfmt::skip]pub const VK_AMD_SHADER_IMAGE_LOAD_STORE_LOD_EXTENSION_NAME:&str="VK_AMD_shader_image_load_store_lod";
+#[cfg(feature = "VK_AMD_shader_image_load_store_lod")]#[rustfmt::skip]pub const VK_AMD_SHADER_IMAGE_LOAD_STORE_LOD_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_AMD_shader_info")]#[rustfmt::skip]pub const VK_AMD_SHADER_INFO_EXTENSION_NAME:&str="VK_AMD_shader_info";
+#[cfg(feature = "VK_AMD_shader_info")]#[rustfmt::skip]pub const VK_AMD_SHADER_INFO_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_AMD_shader_trinary_minmax")]#[rustfmt::skip]pub const VK_AMD_SHADER_TRINARY_MINMAX_EXTENSION_NAME:&str="VK_AMD_shader_trinary_minmax";
+#[cfg(feature = "VK_AMD_shader_trinary_minmax")]#[rustfmt::skip]pub const VK_AMD_SHADER_TRINARY_MINMAX_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_EXT_acquire_drm_display")]#[rustfmt::skip]pub const VK_EXT_ACQUIRE_DRM_DISPLAY_EXTENSION_NAME:&str="VK_EXT_acquire_drm_display";
+#[cfg(feature = "VK_EXT_acquire_drm_display")]#[rustfmt::skip]pub const VK_EXT_ACQUIRE_DRM_DISPLAY_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_EXT_acquire_xlib_display")]#[rustfmt::skip]pub const VK_EXT_ACQUIRE_XLIB_DISPLAY_EXTENSION_NAME:&str="VK_EXT_acquire_xlib_display";
+#[cfg(feature = "VK_EXT_acquire_xlib_display")]#[rustfmt::skip]pub const VK_EXT_ACQUIRE_XLIB_DISPLAY_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_EXT_blend_operation_advanced")]#[rustfmt::skip]pub const VK_EXT_BLEND_OPERATION_ADVANCED_EXTENSION_NAME:&str="VK_EXT_blend_operation_advanced";
+#[cfg(feature = "VK_EXT_blend_operation_advanced")]#[rustfmt::skip]pub const VK_EXT_BLEND_OPERATION_ADVANCED_SPEC_VERSION:usize=2;
+#[cfg(feature = "VK_EXT_debug_report")]#[rustfmt::skip]pub const VK_EXT_DEBUG_REPORT_EXTENSION_NAME:&str="VK_EXT_debug_report";
+#[cfg(feature = "VK_EXT_debug_report")]#[rustfmt::skip]pub const VK_EXT_DEBUG_REPORT_SPEC_VERSION:usize=10;
+#[cfg(feature = "VK_EXT_debug_utils")]#[rustfmt::skip]pub const VK_EXT_DEBUG_UTILS_EXTENSION_NAME:&str="VK_EXT_debug_utils";
+#[cfg(feature = "VK_EXT_debug_utils")]#[rustfmt::skip]pub const VK_EXT_DEBUG_UTILS_SPEC_VERSION:usize=2;
+#[cfg(feature = "VK_EXT_depth_range_unrestricted")]#[rustfmt::skip]pub const VK_EXT_DEPTH_RANGE_UNRESTRICTED_EXTENSION_NAME:&str="VK_EXT_depth_range_unrestricted";
+#[cfg(feature = "VK_EXT_depth_range_unrestricted")]#[rustfmt::skip]pub const VK_EXT_DEPTH_RANGE_UNRESTRICTED_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_EXT_descriptor_buffer")]#[rustfmt::skip]pub const VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME:&str="VK_EXT_descriptor_buffer";
+#[cfg(feature = "VK_EXT_descriptor_buffer")]#[rustfmt::skip]pub const VK_EXT_DESCRIPTOR_BUFFER_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_EXT_descriptor_indexing")]#[rustfmt::skip]pub const VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME:&str="VK_EXT_descriptor_indexing";
+#[cfg(feature = "VK_EXT_descriptor_indexing")]#[rustfmt::skip]pub const VK_EXT_DESCRIPTOR_INDEXING_SPEC_VERSION:usize=2;
+#[cfg(feature = "VK_EXT_direct_mode_display")]#[rustfmt::skip]pub const VK_EXT_DIRECT_MODE_DISPLAY_EXTENSION_NAME:&str="VK_EXT_direct_mode_display";
+#[cfg(feature = "VK_EXT_direct_mode_display")]#[rustfmt::skip]pub const VK_EXT_DIRECT_MODE_DISPLAY_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_EXT_external_memory_dma_buf")]#[rustfmt::skip]pub const VK_EXT_EXTERNAL_MEMORY_DMA_BUF_EXTENSION_NAME:&str="VK_EXT_external_memory_dma_buf";
+#[cfg(feature = "VK_EXT_external_memory_dma_buf")]#[rustfmt::skip]pub const VK_EXT_EXTERNAL_MEMORY_DMA_BUF_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_EXT_full_screen_exclusive")]#[rustfmt::skip]pub const VK_EXT_FULL_SCREEN_EXCLUSIVE_EXTENSION_NAME:&str="VK_EXT_full_screen_exclusive";
+#[cfg(feature = "VK_EXT_full_screen_exclusive")]#[rustfmt::skip]pub const VK_EXT_FULL_SCREEN_EXCLUSIVE_SPEC_VERSION:usize=4;
+#[cfg(feature = "VK_EXT_host_image_copy")]#[rustfmt::skip]pub const VK_EXT_HOST_IMAGE_COPY_EXTENSION_NAME:&str="VK_EXT_host_image_copy";
+#[cfg(feature = "VK_EXT_host_image_copy")]#[rustfmt::skip]pub const VK_EXT_HOST_IMAGE_COPY_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]#[rustfmt::skip]pub const VK_EXT_IMAGE_DRM_FORMAT_MODIFIER_EXTENSION_NAME:&str="VK_EXT_image_drm_format_modifier";
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]#[rustfmt::skip]pub const VK_EXT_IMAGE_DRM_FORMAT_MODIFIER_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_EXT_layer_settings")]#[rustfmt::skip]pub const VK_EXT_LAYER_SETTINGS_EXTENSION_NAME:&str="VK_EXT_layer_settings";
+#[cfg(feature = "VK_EXT_layer_settings")]#[rustfmt::skip]pub const VK_EXT_LAYER_SETTINGS_SPEC_VERSION:usize=2;
+#[cfg(feature = "VK_EXT_metal_objects")]#[rustfmt::skip]pub const VK_EXT_METAL_OBJECTS_EXTENSION_NAME:&str="VK_EXT_metal_objects";
+#[cfg(feature = "VK_EXT_metal_objects")]#[rustfmt::skip]pub const VK_EXT_METAL_OBJECTS_SPEC_VERSION:usize=2;
+#[cfg(feature = "VK_EXT_pipeline_protected_access")]#[rustfmt::skip]pub const VK_EXT_PIPELINE_PROTECTED_ACCESS_EXTENSION_NAME:&str="VK_EXT_pipeline_protected_access";
+#[cfg(feature = "VK_EXT_pipeline_protected_access")]#[rustfmt::skip]pub const VK_EXT_PIPELINE_PROTECTED_ACCESS_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_EXT_pipeline_robustness")]#[rustfmt::skip]pub const VK_EXT_PIPELINE_ROBUSTNESS_EXTENSION_NAME:&str="VK_EXT_pipeline_robustness";
+#[cfg(feature = "VK_EXT_pipeline_robustness")]#[rustfmt::skip]pub const VK_EXT_PIPELINE_ROBUSTNESS_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_EXT_post_depth_coverage")]#[rustfmt::skip]pub const VK_EXT_POST_DEPTH_COVERAGE_EXTENSION_NAME:&str="VK_EXT_post_depth_coverage";
+#[cfg(feature = "VK_EXT_post_depth_coverage")]#[rustfmt::skip]pub const VK_EXT_POST_DEPTH_COVERAGE_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_EXT_queue_family_foreign")]#[rustfmt::skip]pub const VK_EXT_QUEUE_FAMILY_FOREIGN_EXTENSION_NAME:&str="VK_EXT_queue_family_foreign";
+#[cfg(feature = "VK_EXT_queue_family_foreign")]#[rustfmt::skip]pub const VK_EXT_QUEUE_FAMILY_FOREIGN_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_EXT_sampler_filter_minmax")]#[rustfmt::skip]pub const VK_EXT_SAMPLER_FILTER_MINMAX_EXTENSION_NAME:&str="VK_EXT_sampler_filter_minmax";
+#[cfg(feature = "VK_EXT_sampler_filter_minmax")]#[rustfmt::skip]pub const VK_EXT_SAMPLER_FILTER_MINMAX_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_EXT_shader_subgroup_vote")]#[rustfmt::skip]pub const VK_EXT_SHADER_SUBGROUP_VOTE_EXTENSION_NAME:&str="VK_EXT_shader_subgroup_vote";
+#[cfg(feature = "VK_EXT_shader_subgroup_vote")]#[rustfmt::skip]pub const VK_EXT_SHADER_SUBGROUP_VOTE_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_EXT_shader_viewport_index_layer")]#[rustfmt::skip]pub const VK_EXT_SHADER_VIEWPORT_INDEX_LAYER_EXTENSION_NAME:&str="VK_EXT_shader_viewport_index_layer";
+#[cfg(feature = "VK_EXT_shader_viewport_index_layer")]#[rustfmt::skip]pub const VK_EXT_SHADER_VIEWPORT_INDEX_LAYER_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_EXT_swapchain_colorspace")]#[rustfmt::skip]pub const VK_EXT_SWAPCHAIN_COLORSPACE_EXTENSION_NAME:&str="VK_EXT_swapchain_colorspace";
+#[cfg(feature = "VK_EXT_swapchain_colorspace")]#[rustfmt::skip]pub const VK_EXT_SWAPCHAIN_COLORSPACE_SPEC_VERSION:usize=3;
+#[cfg(feature = "VK_EXT_validation_cache")]#[rustfmt::skip]pub const VK_EXT_VALIDATION_CACHE_EXTENSION_NAME:&str="VK_EXT_validation_cache";
+#[cfg(feature = "VK_EXT_validation_cache")]#[rustfmt::skip]pub const VK_EXT_VALIDATION_CACHE_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_EXT_validation_flags")]#[rustfmt::skip]pub const VK_EXT_VALIDATION_FLAGS_EXTENSION_NAME:&str="VK_EXT_validation_flags";
+#[cfg(feature = "VK_EXT_validation_flags")]#[rustfmt::skip]pub const VK_EXT_VALIDATION_FLAGS_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_IMG_filter_cubic")]#[rustfmt::skip]pub const VK_IMG_FILTER_CUBIC_EXTENSION_NAME:&str="VK_IMG_filter_cubic";
+#[cfg(feature = "VK_IMG_filter_cubic")]#[rustfmt::skip]pub const VK_IMG_FILTER_CUBIC_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_IMG_format_pvrtc")]#[rustfmt::skip]pub const VK_IMG_FORMAT_PVRTC_EXTENSION_NAME:&str="VK_IMG_format_pvrtc";
+#[cfg(feature = "VK_IMG_format_pvrtc")]#[rustfmt::skip]pub const VK_IMG_FORMAT_PVRTC_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_bind_memory2")]#[rustfmt::skip]pub const VK_KHR_BIND_MEMORY2_EXTENSION_NAME:&str="VK_KHR_bind_memory2";
+#[cfg(feature = "VK_KHR_bind_memory2")]#[rustfmt::skip]pub const VK_KHR_BIND_MEMORY2_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_buffer_device_address")]#[rustfmt::skip]pub const VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME:&str="VK_KHR_buffer_device_address";
+#[cfg(feature = "VK_KHR_buffer_device_address")]#[rustfmt::skip]pub const VK_KHR_BUFFER_DEVICE_ADDRESS_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_copy_commands2")]#[rustfmt::skip]pub const VK_KHR_COPY_COMMANDS2_EXTENSION_NAME:&str="VK_KHR_copy_commands2";
+#[cfg(feature = "VK_KHR_copy_commands2")]#[rustfmt::skip]pub const VK_KHR_COPY_COMMANDS2_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_create_renderpass2")]#[rustfmt::skip]pub const VK_KHR_CREATE_RENDERPASS2_EXTENSION_NAME:&str="VK_KHR_create_renderpass2";
+#[cfg(feature = "VK_KHR_create_renderpass2")]#[rustfmt::skip]pub const VK_KHR_CREATE_RENDERPASS2_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_dedicated_allocation")]#[rustfmt::skip]pub const VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME:&str="VK_KHR_dedicated_allocation";
+#[cfg(feature = "VK_KHR_dedicated_allocation")]#[rustfmt::skip]pub const VK_KHR_DEDICATED_ALLOCATION_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_depth_stencil_resolve")]#[rustfmt::skip]pub const VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME:&str="VK_KHR_depth_stencil_resolve";
+#[cfg(feature = "VK_KHR_depth_stencil_resolve")]#[rustfmt::skip]pub const VK_KHR_DEPTH_STENCIL_RESOLVE_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_descriptor_update_template")]#[rustfmt::skip]pub const VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE_EXTENSION_NAME:&str="VK_KHR_descriptor_update_template";
+#[cfg(feature = "VK_KHR_descriptor_update_template")]#[rustfmt::skip]pub const VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_device_group")]#[rustfmt::skip]pub const VK_KHR_DEVICE_GROUP_EXTENSION_NAME:&str="VK_KHR_device_group";
+#[cfg(feature = "VK_KHR_device_group")]#[rustfmt::skip]pub const VK_KHR_DEVICE_GROUP_SPEC_VERSION:usize=4;
+#[cfg(feature = "VK_KHR_display_swapchain")]#[rustfmt::skip]pub const VK_KHR_DISPLAY_SWAPCHAIN_EXTENSION_NAME:&str="VK_KHR_display_swapchain";
+#[cfg(feature = "VK_KHR_display_swapchain")]#[rustfmt::skip]pub const VK_KHR_DISPLAY_SWAPCHAIN_SPEC_VERSION:usize=10;
+#[cfg(feature = "VK_KHR_dynamic_rendering")]#[rustfmt::skip]pub const VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME:&str="VK_KHR_dynamic_rendering";
+#[cfg(feature = "VK_KHR_dynamic_rendering")]#[rustfmt::skip]pub const VK_KHR_DYNAMIC_RENDERING_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_dynamic_rendering_local_read")]#[rustfmt::skip]pub const VK_KHR_DYNAMIC_RENDERING_LOCAL_READ_EXTENSION_NAME:&str="VK_KHR_dynamic_rendering_local_read";
+#[cfg(feature = "VK_KHR_dynamic_rendering_local_read")]#[rustfmt::skip]pub const VK_KHR_DYNAMIC_RENDERING_LOCAL_READ_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_external_fence")]#[rustfmt::skip]pub const VK_KHR_EXTERNAL_FENCE_EXTENSION_NAME:&str="VK_KHR_external_fence";
+#[cfg(feature = "VK_KHR_external_fence")]#[rustfmt::skip]pub const VK_KHR_EXTERNAL_FENCE_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_external_fence_capabilities")]#[rustfmt::skip]pub const VK_KHR_EXTERNAL_FENCE_CAPABILITIES_EXTENSION_NAME:&str="VK_KHR_external_fence_capabilities";
+#[cfg(feature = "VK_KHR_external_fence_capabilities")]#[rustfmt::skip]pub const VK_KHR_EXTERNAL_FENCE_CAPABILITIES_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_external_fence_fd")]#[rustfmt::skip]pub const VK_KHR_EXTERNAL_FENCE_FD_EXTENSION_NAME:&str="VK_KHR_external_fence_fd";
+#[cfg(feature = "VK_KHR_external_fence_fd")]#[rustfmt::skip]pub const VK_KHR_EXTERNAL_FENCE_FD_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_external_fence_win32")]#[rustfmt::skip]pub const VK_KHR_EXTERNAL_FENCE_WIN32_EXTENSION_NAME:&str="VK_KHR_external_fence_win32";
+#[cfg(feature = "VK_KHR_external_fence_win32")]#[rustfmt::skip]pub const VK_KHR_EXTERNAL_FENCE_WIN32_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_external_memory")]#[rustfmt::skip]pub const VK_KHR_EXTERNAL_MEMORY_EXTENSION_NAME:&str="VK_KHR_external_memory";
+#[cfg(feature = "VK_KHR_external_memory")]#[rustfmt::skip]pub const VK_KHR_EXTERNAL_MEMORY_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_external_memory_capabilities")]#[rustfmt::skip]pub const VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME:&str="VK_KHR_external_memory_capabilities";
+#[cfg(feature = "VK_KHR_external_memory_capabilities")]#[rustfmt::skip]pub const VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_external_memory_fd")]#[rustfmt::skip]pub const VK_KHR_EXTERNAL_MEMORY_FD_EXTENSION_NAME:&str="VK_KHR_external_memory_fd";
+#[cfg(feature = "VK_KHR_external_memory_fd")]#[rustfmt::skip]pub const VK_KHR_EXTERNAL_MEMORY_FD_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_external_memory_win32")]#[rustfmt::skip]pub const VK_KHR_EXTERNAL_MEMORY_WIN32_EXTENSION_NAME:&str="VK_KHR_external_memory_win32";
+#[cfg(feature = "VK_KHR_external_memory_win32")]#[rustfmt::skip]pub const VK_KHR_EXTERNAL_MEMORY_WIN32_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_external_semaphore")]#[rustfmt::skip]pub const VK_KHR_EXTERNAL_SEMAPHORE_EXTENSION_NAME:&str="VK_KHR_external_semaphore";
+#[cfg(feature = "VK_KHR_external_semaphore")]#[rustfmt::skip]pub const VK_KHR_EXTERNAL_SEMAPHORE_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_external_semaphore_capabilities")]#[rustfmt::skip]pub const VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES_EXTENSION_NAME:&str="VK_KHR_external_semaphore_capabilities";
+#[cfg(feature = "VK_KHR_external_semaphore_capabilities")]#[rustfmt::skip]pub const VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_external_semaphore_fd")]#[rustfmt::skip]pub const VK_KHR_EXTERNAL_SEMAPHORE_FD_EXTENSION_NAME:&str="VK_KHR_external_semaphore_fd";
+#[cfg(feature = "VK_KHR_external_semaphore_fd")]#[rustfmt::skip]pub const VK_KHR_EXTERNAL_SEMAPHORE_FD_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_external_semaphore_win32")]#[rustfmt::skip]pub const VK_KHR_EXTERNAL_SEMAPHORE_WIN32_EXTENSION_NAME:&str="VK_KHR_external_semaphore_win32";
+#[cfg(feature = "VK_KHR_external_semaphore_win32")]#[rustfmt::skip]pub const VK_KHR_EXTERNAL_SEMAPHORE_WIN32_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_format_feature_flags2")]#[rustfmt::skip]pub const VK_KHR_FORMAT_FEATURE_FLAGS2_EXTENSION_NAME:&str="VK_KHR_format_feature_flags2";
+#[cfg(feature = "VK_KHR_format_feature_flags2")]#[rustfmt::skip]pub const VK_KHR_FORMAT_FEATURE_FLAGS2_SPEC_VERSION:usize=2;
+#[cfg(feature = "VK_KHR_get_memory_requirements2")]#[rustfmt::skip]pub const VK_KHR_GET_MEMORY_REQUIREMENTS2_EXTENSION_NAME:&str="VK_KHR_get_memory_requirements2";
+#[cfg(feature = "VK_KHR_get_memory_requirements2")]#[rustfmt::skip]pub const VK_KHR_GET_MEMORY_REQUIREMENTS2_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_get_physical_device_properties2")]#[rustfmt::skip]pub const VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES2_EXTENSION_NAME:&str="VK_KHR_get_physical_device_properties2";
+#[cfg(feature = "VK_KHR_get_physical_device_properties2")]#[rustfmt::skip]pub const VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES2_SPEC_VERSION:usize=2;
+#[cfg(feature = "VK_KHR_global_priority")]#[rustfmt::skip]pub const VK_KHR_GLOBAL_PRIORITY_EXTENSION_NAME:&str="VK_KHR_global_priority";
+#[cfg(feature = "VK_KHR_global_priority")]#[rustfmt::skip]pub const VK_KHR_GLOBAL_PRIORITY_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_image_format_list")]#[rustfmt::skip]pub const VK_KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME:&str="VK_KHR_image_format_list";
+#[cfg(feature = "VK_KHR_image_format_list")]#[rustfmt::skip]pub const VK_KHR_IMAGE_FORMAT_LIST_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_index_type_uint8")]#[rustfmt::skip]pub const VK_KHR_INDEX_TYPE_UINT8_EXTENSION_NAME:&str="VK_KHR_index_type_uint8";
+#[cfg(feature = "VK_KHR_index_type_uint8")]#[rustfmt::skip]pub const VK_KHR_INDEX_TYPE_UINT8_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_line_rasterization")]#[rustfmt::skip]pub const VK_KHR_LINE_RASTERIZATION_EXTENSION_NAME:&str="VK_KHR_line_rasterization";
+#[cfg(feature = "VK_KHR_line_rasterization")]#[rustfmt::skip]pub const VK_KHR_LINE_RASTERIZATION_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_load_store_op_none")]#[rustfmt::skip]pub const VK_KHR_LOAD_STORE_OP_NONE_EXTENSION_NAME:&str="VK_KHR_load_store_op_none";
+#[cfg(feature = "VK_KHR_load_store_op_none")]#[rustfmt::skip]pub const VK_KHR_LOAD_STORE_OP_NONE_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_maintenance4")]#[rustfmt::skip]pub const VK_KHR_MAINTENANCE4_EXTENSION_NAME:&str="VK_KHR_maintenance4";
+#[cfg(feature = "VK_KHR_maintenance4")]#[rustfmt::skip]pub const VK_KHR_MAINTENANCE4_SPEC_VERSION:usize=2;
+#[cfg(feature = "VK_KHR_maintenance5")]#[rustfmt::skip]pub const VK_KHR_MAINTENANCE5_EXTENSION_NAME:&str="VK_KHR_maintenance5";
+#[cfg(feature = "VK_KHR_maintenance5")]#[rustfmt::skip]pub const VK_KHR_MAINTENANCE5_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_maintenance6")]#[rustfmt::skip]pub const VK_KHR_MAINTENANCE6_EXTENSION_NAME:&str="VK_KHR_maintenance6";
+#[cfg(feature = "VK_KHR_maintenance6")]#[rustfmt::skip]pub const VK_KHR_MAINTENANCE6_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_maintenance7")]#[rustfmt::skip]pub const VK_KHR_MAINTENANCE7_EXTENSION_NAME:&str="VK_KHR_maintenance7";
+#[cfg(feature = "VK_KHR_maintenance7")]#[rustfmt::skip]pub const VK_KHR_MAINTENANCE7_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_maintenance8")]#[rustfmt::skip]pub const VK_KHR_MAINTENANCE8_EXTENSION_NAME:&str="VK_KHR_maintenance8";
+#[cfg(feature = "VK_KHR_maintenance8")]#[rustfmt::skip]pub const VK_KHR_MAINTENANCE8_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_maintenance9")]#[rustfmt::skip]pub const VK_KHR_MAINTENANCE9_EXTENSION_NAME:&str="VK_KHR_maintenance9";
+#[cfg(feature = "VK_KHR_maintenance9")]#[rustfmt::skip]pub const VK_KHR_MAINTENANCE9_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_map_memory2")]#[rustfmt::skip]pub const VK_KHR_MAP_MEMORY2_EXTENSION_NAME:&str="VK_KHR_map_memory2";
+#[cfg(feature = "VK_KHR_map_memory2")]#[rustfmt::skip]pub const VK_KHR_MAP_MEMORY2_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_push_descriptor")]#[rustfmt::skip]pub const VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME:&str="VK_KHR_push_descriptor";
+#[cfg(feature = "VK_KHR_push_descriptor")]#[rustfmt::skip]pub const VK_KHR_PUSH_DESCRIPTOR_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_sampler_mirror_clamp_to_edge")]#[rustfmt::skip]pub const VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE_EXTENSION_NAME:&str="VK_KHR_sampler_mirror_clamp_to_edge";
+#[cfg(feature = "VK_KHR_sampler_mirror_clamp_to_edge")]#[rustfmt::skip]pub const VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE_SPEC_VERSION:usize=3;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_KHR_SAMPLER_YCBCR_CONVERSION_EXTENSION_NAME:&str="VK_KHR_sampler_ycbcr_conversion";
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]#[rustfmt::skip]pub const VK_KHR_SAMPLER_YCBCR_CONVERSION_SPEC_VERSION:usize=14;
+#[cfg(feature = "VK_KHR_shader_expect_assume")]#[rustfmt::skip]pub const VK_KHR_SHADER_EXPECT_ASSUME_EXTENSION_NAME:&str="VK_KHR_shader_expect_assume";
+#[cfg(feature = "VK_KHR_shader_expect_assume")]#[rustfmt::skip]pub const VK_KHR_SHADER_EXPECT_ASSUME_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_shader_float_controls")]#[rustfmt::skip]pub const VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME:&str="VK_KHR_shader_float_controls";
+#[cfg(feature = "VK_KHR_shader_float_controls")]#[rustfmt::skip]pub const VK_KHR_SHADER_FLOAT_CONTROLS_SPEC_VERSION:usize=4;
+#[cfg(feature = "VK_KHR_shader_float_controls2")]#[rustfmt::skip]pub const VK_KHR_SHADER_FLOAT_CONTROLS2_EXTENSION_NAME:&str="VK_KHR_shader_float_controls2";
+#[cfg(feature = "VK_KHR_shader_float_controls2")]#[rustfmt::skip]pub const VK_KHR_SHADER_FLOAT_CONTROLS2_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_shader_subgroup_rotate")]#[rustfmt::skip]pub const VK_KHR_SHADER_SUBGROUP_ROTATE_EXTENSION_NAME:&str="VK_KHR_shader_subgroup_rotate";
+#[cfg(feature = "VK_KHR_shader_subgroup_rotate")]#[rustfmt::skip]pub const VK_KHR_SHADER_SUBGROUP_ROTATE_SPEC_VERSION:usize=2;
+#[cfg(feature = "VK_KHR_timeline_semaphore")]#[rustfmt::skip]pub const VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME:&str="VK_KHR_timeline_semaphore";
+#[cfg(feature = "VK_KHR_timeline_semaphore")]#[rustfmt::skip]pub const VK_KHR_TIMELINE_SEMAPHORE_SPEC_VERSION:usize=2;
+#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]#[rustfmt::skip]pub const VK_KHR_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME:&str="VK_KHR_vertex_attribute_divisor";
+#[cfg(feature = "VK_KHR_vertex_attribute_divisor")]#[rustfmt::skip]pub const VK_KHR_VERTEX_ATTRIBUTE_DIVISOR_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_MVK_ios_surface")]#[rustfmt::skip]pub const VK_MVK_IOS_SURFACE_EXTENSION_NAME:&str="VK_MVK_ios_surface";
+#[cfg(feature = "VK_MVK_ios_surface")]#[rustfmt::skip]pub const VK_MVK_IOS_SURFACE_SPEC_VERSION:usize=2;
+#[cfg(feature = "VK_MVK_macos_surface")]#[rustfmt::skip]pub const VK_MVK_MACOS_SURFACE_EXTENSION_NAME:&str="VK_MVK_macos_surface";
+#[cfg(feature = "VK_MVK_macos_surface")]#[rustfmt::skip]pub const VK_MVK_MACOS_SURFACE_SPEC_VERSION:usize=2;
+#[cfg(feature = "VK_NV_acquire_winrt_display")]#[rustfmt::skip]pub const VK_NV_ACQUIRE_WINRT_DISPLAY_EXTENSION_NAME:&str="VK_NV_acquire_winrt_display";
+#[cfg(feature = "VK_NV_acquire_winrt_display")]#[rustfmt::skip]pub const VK_NV_ACQUIRE_WINRT_DISPLAY_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_NV_geometry_shader_passthrough")]#[rustfmt::skip]pub const VK_NV_GEOMETRY_SHADER_PASSTHROUGH_EXTENSION_NAME:&str="VK_NV_geometry_shader_passthrough";
+#[cfg(feature = "VK_NV_geometry_shader_passthrough")]#[rustfmt::skip]pub const VK_NV_GEOMETRY_SHADER_PASSTHROUGH_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_NV_glsl_shader")]#[rustfmt::skip]pub const VK_NV_GLSL_SHADER_EXTENSION_NAME:&str="VK_NV_glsl_shader";
+#[cfg(feature = "VK_NV_glsl_shader")]#[rustfmt::skip]pub const VK_NV_GLSL_SHADER_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_NV_sample_mask_override_coverage")]#[rustfmt::skip]pub const VK_NV_SAMPLE_MASK_OVERRIDE_COVERAGE_EXTENSION_NAME:&str="VK_NV_sample_mask_override_coverage";
+#[cfg(feature = "VK_NV_sample_mask_override_coverage")]#[rustfmt::skip]pub const VK_NV_SAMPLE_MASK_OVERRIDE_COVERAGE_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_NV_viewport_array2")]#[rustfmt::skip]pub const VK_NV_VIEWPORT_ARRAY2_EXTENSION_NAME:&str="VK_NV_viewport_array2";
+#[cfg(feature = "VK_NV_viewport_array2")]#[rustfmt::skip]pub const VK_NV_VIEWPORT_ARRAY2_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]#[rustfmt::skip]pub const VK_NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES_EXTENSION_NAME:&str="VK_NVX_multiview_per_view_attributes";
+#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]#[rustfmt::skip]pub const VK_NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES_SPEC_VERSION:usize=1;
 #[rustfmt::skip]pub type VkAccessFlagBits=VkFlags;
 #[cfg(feature = "Allow1_3APIs")]#[rustfmt::skip]pub type VkAccessFlagBits2=VkFlags64;
 #[cfg(feature = "VK_KHR_synchronization2")]#[rustfmt::skip]pub type VkAccessFlagBits2KHR=VkFlags64;

@@ -334,6 +334,11 @@ pub enum ConstantSymbol<'s> {
         stem: &'s str,
         suffix: Option<&'s str>,
     },
+    Extension {
+        tag: &'s str,
+        name: &'s str,
+        suffix: &'s str,
+    },
 }
 impl core::fmt::Display for ConstantSymbol<'_> {
     #[inline]
@@ -359,26 +364,31 @@ impl core::fmt::Display for ConstantSymbol<'_> {
                 stem,
                 suffix: Some(suffix),
             } => write!(f, "VK_{prefix}_{stem}_BIT_{suffix}"),
+            Self::Extension { tag, name, suffix } => write!(f, "VK_{tag}_{}_{suffix}", name.to_uppercase()),
         }
     }
 }
 
-#[derive(Debug, Clone, Copy)]
-pub enum ConstantValue {
+#[derive(Debug, Clone)]
+pub enum ConstantValue<'s> {
     UnsignedLong(u64),
     Signed(isize),
+    Unsigned(usize),
     Bits64(u64),
     Bits32(u32),
+    ExtensionNameStr { tag: &'s str, name: &'s str },
 }
-impl core::fmt::Display for ConstantValue {
+impl core::fmt::Display for ConstantValue<'_> {
     #[inline]
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::UnsignedLong(v) => write!(f, "{v}"),
             Self::Signed(v) => write!(f, "{v}"),
+            Self::Unsigned(v) => write!(f, "{v}"),
             // +2 for heading "0x"
             Self::Bits64(v) => write!(f, "{v:#018x}"),
             Self::Bits32(v) => write!(f, "{v:#010x}"),
+            Self::ExtensionNameStr { tag, name } => write!(f, "\"VK_{tag}_{name}\""),
         }
     }
 }
@@ -387,7 +397,7 @@ pub struct Constant<'s> {
     pub compilation_condition: CompilationCondition<'s>,
     pub name: ConstantSymbol<'s>,
     pub ty: Type<'s>,
-    pub value: ConstantValue,
+    pub value: ConstantValue<'s>,
 }
 impl Constant<'_> {
     pub fn emit(&self, w: &mut (impl std::io::Write + ?Sized)) -> std::io::Result<()> {

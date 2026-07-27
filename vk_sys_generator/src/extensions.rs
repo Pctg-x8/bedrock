@@ -1,5 +1,6 @@
 use crate::{
     parts::*,
+    rs_item::RustCodeEmitter,
     v1_1::{VK_KHR_DEVICE_GROUP, VK_KHR_EXTERNAL_MEMORY, VK_KHR_EXTERNAL_MEMORY_CAPABILITIES},
     v1_3::VK_KHR_FORMAT_FEATURE_FLAGS_2,
     vk_ext_enum,
@@ -10,7 +11,6 @@ pub const VK_KHR_WIN32_SURFACE: &Extension = &Extension::khr("win32_surface", 6,
 pub const VK_KHR_SWAPCHAIN: &Extension = &Extension::khr("swapchain", 70, 2);
 pub const VK_EXT_VALIDATION_CACHE: &Extension = &Extension::ext("validation_cache", 1, 161);
 pub const VK_EXT_VALIDATION_FLAGS: &Extension = &Extension::ext("validation_flags", 1, 62);
-pub const VK_EXT_DEBUG_REPORT: &Extension = &Extension::ext("debug_report", 10, 12);
 pub const VK_EXT_DEBUG_UTILS: &Extension = &Extension::ext("debug_utils", 2, 129);
 pub const VK_EXT_BLEND_OPERATION_ADVANCED: &Extension = &Extension::ext("blend_operation_advanced", 2, 149);
 const VK_EXT_ACQUIRE_DRM_DISPLAY: &Extension = &Extension::ext("acquire_drm_display", 1, 286);
@@ -61,78 +61,131 @@ pub const VK_KHR_EXTERNAL_SEMAPHORE_FD: &Extension = &Extension::khr("external_s
 pub const VK_KHR_EXTERNAL_FENCE_WIN32: &Extension = &Extension::khr("external_fence_win32", 1, 115);
 pub const VK_KHR_EXTERNAL_FENCE_FD: &Extension = &Extension::khr("external_fence_fd", 1, 116);
 
-pub const ELEMENTS: &[Element] = &[
-    // VK_EXT_debug_report
-    VK_EXT_DEBUG_REPORT.header_constants().into_element(),
+pub const VK_EXT_DEBUG_REPORT: &Extension = &Extension::ext("debug_report", 10, 12);
+pub fn emit_debug_report(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+    VK_EXT_DEBUG_REPORT.header_constants().emit(emitter);
     Bitmask::new(
         "DebugReportFlags",
         "DebugReportFlagBits",
         "DEBUG_REPORT",
-        &[
-            Bitmask::entry("INFORMATION", 0).extension(VK_EXT_DEBUG_REPORT),
-            Bitmask::entry("WARNING", 1).extension(VK_EXT_DEBUG_REPORT),
-            Bitmask::entry("PERFORMANCE_WARNING", 2).extension(VK_EXT_DEBUG_REPORT),
-            Bitmask::entry("ERROR", 3).extension(VK_EXT_DEBUG_REPORT),
-            Bitmask::entry("DEBUG", 4).extension(VK_EXT_DEBUG_REPORT),
-        ],
+        &const {
+            [
+                Bitmask::entry("INFORMATION", 0).extension(VK_EXT_DEBUG_REPORT),
+                Bitmask::entry("WARNING", 1).extension(VK_EXT_DEBUG_REPORT),
+                Bitmask::entry("PERFORMANCE_WARNING", 2).extension(VK_EXT_DEBUG_REPORT),
+                Bitmask::entry("ERROR", 3).extension(VK_EXT_DEBUG_REPORT),
+                Bitmask::entry("DEBUG", 4).extension(VK_EXT_DEBUG_REPORT),
+            ]
+        },
     )
     .extension(VK_EXT_DEBUG_REPORT)
-    .into_element(),
+    .emit(emitter);
     Enum::new(
         "DebugReportObjectType",
         "DEBUG_REPORT_OBJECT_TYPE",
-        &[
-            Enum::member("UNKNOWN", 0).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("INSTANCE", 1).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("PHYSICAL_DEVICE", 2).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("DEVICE", 3).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("QUEUE", 4).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("SEMAPHORE", 5).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("COMMAND_BUFFER", 6).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("FENCE", 7).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("DEVICE_MEMORY", 8).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("BUFFER", 9).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("IMAGE", 10).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("EVENT", 11).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("QUERY_POOL", 12).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("BUFFER_VIEW", 13).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("IMAGE_VIEW", 14).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("SHADER_MODULE", 15).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("PIPELINE_CACHE", 16).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("PIPELINE_LAYOUT", 17).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("RENDER_PASS", 18).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("PIPELINE", 19).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("DESCRIPTOR_SET_LAYOUT", 20).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("SAMPLER", 21).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("DESCRIPTOR_POOL", 22).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("DESCRIPTOR_SET", 23).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("FRAMEBUFFER", 24).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("COMMAND_POOL", 25).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("SURFACE_KHR", 26).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("SWAPCHAIN_KHR", 27).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("DEBUG_REPORT_CALLBACK_EXT", 28).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("DISPLAY_KHR", 29).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("DISPLAY_MODE_KHR", 30).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("OBJECT_TABLE_NVX", 31).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("INDIRECT_COMMANDS_LAYOUT_NVX", 32).extension(VK_EXT_DEBUG_REPORT),
-            Enum::member("VALIDATION_CACHE_EXT", 33).extension(VK_EXT_DEBUG_REPORT),
-        ],
+        &const {
+            [
+                Enum::member("UNKNOWN", 0).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("INSTANCE", 1).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("PHYSICAL_DEVICE", 2).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("DEVICE", 3).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("QUEUE", 4).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("SEMAPHORE", 5).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("COMMAND_BUFFER", 6).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("FENCE", 7).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("DEVICE_MEMORY", 8).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("BUFFER", 9).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("IMAGE", 10).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("EVENT", 11).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("QUERY_POOL", 12).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("BUFFER_VIEW", 13).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("IMAGE_VIEW", 14).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("SHADER_MODULE", 15).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("PIPELINE_CACHE", 16).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("PIPELINE_LAYOUT", 17).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("RENDER_PASS", 18).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("PIPELINE", 19).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("DESCRIPTOR_SET_LAYOUT", 20).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("SAMPLER", 21).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("DESCRIPTOR_POOL", 22).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("DESCRIPTOR_SET", 23).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("FRAMEBUFFER", 24).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("COMMAND_POOL", 25).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("SURFACE_KHR", 26).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("SWAPCHAIN_KHR", 27).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("DEBUG_REPORT_CALLBACK_EXT", 28).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("DISPLAY_KHR", 29).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("DISPLAY_MODE_KHR", 30).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("OBJECT_TABLE_NVX", 31).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("INDIRECT_COMMANDS_LAYOUT_NVX", 32).extension(VK_EXT_DEBUG_REPORT),
+                Enum::member("VALIDATION_CACHE_EXT", 33).extension(VK_EXT_DEBUG_REPORT),
+            ]
+        },
     )
     .extension(VK_EXT_DEBUG_REPORT)
-    .into_element(),
+    .emit(emitter);
     Struct::typed(
         "DebugReportCallbackCreateInfo",
         "DEBUG_REPORT_CALLBACK_CREATE_INFO",
         VK_EXT_DEBUG_REPORT.ext_enum(0) as _,
         StructUsage::Source,
-        &[
-            Struct::member("flags", "VkDebugReportFlagsEXT"),
-            Struct::member("pfnCallback", "PFN_vkDebugReportCallbackEXT"),
-            Struct::member("pUserData", "*mut core::ffi::c_void"),
-        ],
+        &const {
+            [
+                Struct::member("flags", "VkDebugReportFlagsEXT"),
+                Struct::member("pfnCallback", "PFN_vkDebugReportCallbackEXT"),
+                Struct::member("pUserData", "*mut core::ffi::c_void"),
+            ]
+        },
     )
     .extensions(&[VK_EXT_DEBUG_REPORT])
-    .into_element(),
+    .emit(emitter);
+    Command::new(
+        "CreateDebugReportCallback",
+        &const {
+            [
+                ("instance", "VkInstance"),
+                ("pCreateInfo", "*const VkDebugReportCallbackCreateInfoEXT"),
+                ("pAllocator", "*const VkAllocationCallbacks"),
+                ("pCallback", "*mut VkDebugReportCallbackEXT"),
+            ]
+        },
+    )
+    .failable()
+    .extension(VK_EXT_DEBUG_REPORT)
+    .emit(emitter);
+    Command::new(
+        "DestroyDebugReportCallback",
+        &const {
+            [
+                ("instance", "VkInstance"),
+                ("callback", "VkDebugReportCallbackEXT"),
+                ("pAllocator", "*const VkAllocationCallbacks"),
+            ]
+        },
+    )
+    .extension(VK_EXT_DEBUG_REPORT)
+    .emit(emitter);
+    Command::new(
+        "DebugReportMessage",
+        &const {
+            [
+                ("instance", "VkInstance"),
+                ("flags", "VkDebugReportFlagsEXT"),
+                ("objectType", "VkDebugReportObjectTypeEXT"),
+                ("object", "u64"),
+                ("location", "usize"),
+                ("messageCode", "i32"),
+                ("pLayerPrefix", "*const core::ffi::c_char"),
+                ("pMessage", "*const core::ffi::c_char"),
+            ]
+        },
+    )
+    .extension(VK_EXT_DEBUG_REPORT)
+    .emit(emitter);
+}
+
+pub const ELEMENTS: &[Element] = &[
+    // VK_EXT_debug_report
     FuncPointer::new(
         "DebugReportCallback",
         &[
@@ -147,43 +200,6 @@ pub const ELEMENTS: &[Element] = &[
         ],
     )
     .returns("VkBool32")
-    .extension(VK_EXT_DEBUG_REPORT)
-    .into_element(),
-    Command::new(
-        "CreateDebugReportCallback",
-        &[
-            ("instance", "VkInstance"),
-            ("pCreateInfo", "*const VkDebugReportCallbackCreateInfoEXT"),
-            ("pAllocator", "*const VkAllocationCallbacks"),
-            ("pCallback", "*mut VkDebugReportCallbackEXT"),
-        ],
-    )
-    .failable()
-    .extension(VK_EXT_DEBUG_REPORT)
-    .into_element(),
-    Command::new(
-        "DestroyDebugReportCallback",
-        &[
-            ("instance", "VkInstance"),
-            ("callback", "VkDebugReportCallbackEXT"),
-            ("pAllocator", "*const VkAllocationCallbacks"),
-        ],
-    )
-    .extension(VK_EXT_DEBUG_REPORT)
-    .into_element(),
-    Command::new(
-        "DebugReportMessage",
-        &[
-            ("instance", "VkInstance"),
-            ("flags", "VkDebugReportFlagsEXT"),
-            ("objectType", "VkDebugReportObjectTypeEXT"),
-            ("object", "u64"),
-            ("location", "usize"),
-            ("messageCode", "i32"),
-            ("pLayerPrefix", "*const core::ffi::c_char"),
-            ("pMessage", "*const core::ffi::c_char"),
-        ],
-    )
     .extension(VK_EXT_DEBUG_REPORT)
     .into_element(),
     // VK_EXT_debug_utils

@@ -308,7 +308,7 @@ impl Enum {
                         suffix: member.extension.map(|x| x.tag).or(self.extension.map(|x| x.tag)),
                     },
                     ty: ty.clone(),
-                    value,
+                    value: value.clone(),
                 });
             } else {
                 // use old(deprecated) extension specifier
@@ -331,7 +331,7 @@ impl Enum {
                         suffix: member.extension_old.map(|x| x.1).or(self.extension_old.map(|x| x.1)),
                     },
                     ty: ty.clone(),
-                    value,
+                    value: value.clone(),
                 });
             }
 
@@ -636,7 +636,7 @@ impl Bitmask {
                     suffix: e.extension.map(|x| x.tag).or(e.extension_old.map(|(tag, _)| tag)),
                 },
                 ty: ty.clone(),
-                value,
+                value: value.clone(),
             });
 
             if let Some(p) = e.promoted.or_else(|| e.extension?.promoted_since()) {
@@ -1523,26 +1523,35 @@ impl ExtensionHeaderConstants2<'static, 'static> {
         Element::ExtensionHeaderConstants2(self)
     }
 }
-impl<'e, 's> ExtensionHeaderConstants2<'e, 's> {
-    pub fn emit(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
-        let Extension {
+impl<'e> ExtensionHeaderConstants2<'e, 'static> {
+    pub fn emit(&self, emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+        let &Extension {
             tag,
             name,
             revision: version,
             ..
         } = self.0;
-        let name_up = name.to_uppercase();
 
-        writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
-        writeln!(w, "#[rustfmt::skip]")?;
-        writeln!(
-            w,
-            "pub const VK_{tag}_{name_up}_EXTENSION_NAME: &str = \"VK_{tag}_{name}\";",
-        )?;
-        writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
-        writeln!(w, "#[rustfmt::skip]")?;
-        writeln!(w, "pub const VK_{tag}_{name_up}_SPEC_VERSION: usize = {version};",)?;
-        Ok(())
+        emitter.emit_const(Constant {
+            compilation_condition: CompilationCondition::Feature(FeatureName::VulkanExt { tag, name }),
+            name: ConstantSymbol::Extension {
+                tag,
+                name,
+                suffix: "EXTENSION_NAME",
+            },
+            ty: Type::Raw("&str"),
+            value: ConstantValue::ExtensionNameStr { tag, name },
+        });
+        emitter.emit_const(Constant {
+            compilation_condition: CompilationCondition::Feature(FeatureName::VulkanExt { tag, name }),
+            name: ConstantSymbol::Extension {
+                tag,
+                name,
+                suffix: "SPEC_VERSION",
+            },
+            ty: Type::Raw("usize"),
+            value: ConstantValue::Unsigned(version as _),
+        });
     }
 }
 
@@ -1599,8 +1608,8 @@ impl Element {
                 x.emit(w)
             }
             Self::ExtensionHeaderConstants2(x) => {
-                w.write_all(b"\n")?;
-                x.emit(w)
+                x.emit(emitter);
+                Ok(())
             }
             Self::Bitmask(x) => {
                 x.emit(emitter);

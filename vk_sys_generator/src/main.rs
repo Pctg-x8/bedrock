@@ -26,21 +26,12 @@ mod v1_4;
 fn main() -> std::io::Result<()> {
     let mut generator = CodeGenerator::new();
     let mut o = std::io::stdout().lock();
-    o.write_all(HEADER.replace("**VER**", "1.4.305").as_bytes())?;
-
-    o.write_all(b"\n")?;
-    writeln!(o, "/// Vulkan 1.0 version number")?;
-    writeln!(o, "pub const VK_API_VERSION_1_0: u32 = VK_MAKE_VERSION(0, 1, 0, 0);")?;
-    o.write_all(b"\n")?;
-    writeln!(o, "/// Version of this file")?;
-    writeln!(o, "pub const VK_HEADER_VERSION: u16 = {};", 305)?;
-    writeln!(
-        o,
-        "pub const VK_HEADER_VERSION_COMPLETE: u32 = VK_MAKE_VERSION(0, 1, {}, VK_HEADER_VERSION);",
-        4
+    o.write_all(
+        HEADER
+            .replace("**HEADER_MINOR_VERSION**", "4")
+            .replace("**HEADER_VERSION**", "305")
+            .as_bytes(),
     )?;
-
-    o.write_all(b"\n")?;
 
     for ta in TYPE_ALIASES {
         ta.emit(&mut o)?;
@@ -252,6 +243,8 @@ fn main() -> std::io::Result<()> {
         x.emit(&mut generator, &mut o)?;
     }
 
+    extensions::emit_debug_report(&mut generator);
+
     generator.generate(&mut o)?;
 
     Ok(())
@@ -413,7 +406,7 @@ const fn vk_ext_enum(extnumber: i32, offset: i32) -> i32 {
     100_0000_000 + (extnumber - 1) * 1000 + offset
 }
 
-const HEADER: &str = include_str!("../res/common_header.rs");
+const HEADER: &str = include_str!("../res/common_header.rs.txt");
 
 const DEVICE_SIZE_TYPE: &str = "VkDeviceSize";
 const DEVICE_ADDR_TYPE: &str = "VkDeviceAddress";

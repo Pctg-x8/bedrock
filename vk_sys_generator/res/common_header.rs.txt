@@ -1,7 +1,7 @@
 #![allow(clippy::inconsistent_digit_grouping)]
 #![allow(non_upper_case_globals, non_camel_case_types, non_snake_case, dead_code)]
 
-//! Vulkan API Definitions **VER** with some extensions
+//! Vulkan API Definitions 1.**HEADER_MINOR_VERSION**.**HEADER_VERSION** with some extensions
 
 /*
 ** Copyright 2025 S.Percentage.
@@ -39,3 +39,10 @@ pub const fn VK_PATCH_VERSION(v: u32) -> u16 {
 pub const fn vk_deserialize_version(v: u32) -> (u16, u16, u16) {
     (VK_MAJOR_VERSION(v), VK_MINOR_VERSION(v), VK_PATCH_VERSION(v))
 }
+
+/// Vulkan 1.0 version number
+pub const VK_API_VERSION_1_0: u32 = VK_MAKE_VERSION(0, 1, 0, 0);
+
+/// Version of this file
+pub const VK_HEADER_VERSION: u16 = **HEADER_VERSION**;
+pub const VK_HEADER_VERSION_COMPLETE: u32 = VK_MAKE_VERSION(0, 1, **HEADER_MINOR_VERSION**, VK_HEADER_VERSION);
