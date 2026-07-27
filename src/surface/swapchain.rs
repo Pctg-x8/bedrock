@@ -115,10 +115,9 @@ pub trait SwapchainImageExt: Swapchain {
         }
 
         let mut xs = crate::alloc::reserve(n);
-        let res = self.images(xs.spare_capacity_mut())?;
-        assert!(!res.is_incomplete);
+        let res = self.images(xs.spare_capacity_mut())?.assert_complete();
         unsafe {
-            xs.set_len(res.result as _);
+            xs.set_len(res as _);
         }
 
         Ok(crate::alloc::collect_vec(xs.into_iter().map(move |r| {

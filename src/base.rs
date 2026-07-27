@@ -113,10 +113,9 @@ pub fn instance_layer_properties_alloc() -> crate::Result<Vec<brvk::VkLayerPrope
     }
 
     let mut xs = crate::alloc::reserve(n as _);
-    let r = crate::vkfn_wrapper::instance_layer_properties(xs.spare_capacity_mut())?;
-    assert!(!r.is_incomplete);
+    let r = crate::vkfn_wrapper::instance_layer_properties(xs.spare_capacity_mut())?.assert_complete();
     unsafe {
-        xs.set_len(r.result as _);
+        xs.set_len(r as _);
     }
 
     Ok(xs)
@@ -140,10 +139,9 @@ pub fn instance_extension_properties_alloc(
     }
 
     let mut xs = crate::alloc::reserve(n);
-    let r = crate::vkfn_wrapper::instance_extension_properties(layer_name, xs.spare_capacity_mut())?;
-    assert!(!r.is_incomplete);
+    let r = crate::vkfn_wrapper::instance_extension_properties(layer_name, xs.spare_capacity_mut())?.assert_complete();
     unsafe {
-        xs.set_len(r.result as _);
+        xs.set_len(r as _);
     }
 
     Ok(xs)
@@ -405,10 +403,11 @@ pub trait Instance: VkHandle<Handle = brvk::VkInstance> {
         }
 
         let mut xs = Vec::with_capacity(n);
-        let r = self.enumerate_physical_devices(xs.spare_capacity_mut())?;
-        assert!(!r.is_incomplete);
+        let r = self
+            .enumerate_physical_devices(xs.spare_capacity_mut())?
+            .assert_complete();
         unsafe {
-            xs.set_len(r.result as _);
+            xs.set_len(r as _);
         }
 
         Ok(IterPhysicalDevices(xs, 0, self))
@@ -1068,10 +1067,11 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
         }
 
         let mut xs = crate::alloc::reserve(count);
-        let r = self.enumerate_layer_properties(xs.spare_capacity_mut())?;
-        assert!(!r.is_incomplete);
+        let r = self
+            .enumerate_layer_properties(xs.spare_capacity_mut())?
+            .assert_complete();
         unsafe {
-            xs.set_len(r.result as _);
+            xs.set_len(r as _);
         }
 
         Ok(xs)
@@ -1126,10 +1126,11 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
         }
 
         let mut xs = crate::alloc::reserve(n);
-        let r = self.enumerate_extension_properties(layer_name, xs.spare_capacity_mut())?;
-        assert!(!r.is_incomplete);
+        let r = self
+            .enumerate_extension_properties(layer_name, xs.spare_capacity_mut())?
+            .assert_complete();
         unsafe {
-            xs.set_len(r.result as _);
+            xs.set_len(r as _);
         }
 
         Ok(xs)
@@ -1559,10 +1560,11 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
         }
 
         let mut xs = crate::alloc::reserve(n as _);
-        let filled = self.surface_formats(surface, xs.spare_capacity_mut())?;
-        assert!(!filled.is_incomplete);
+        let filled = self
+            .surface_formats(surface, xs.spare_capacity_mut())?
+            .assert_complete();
         unsafe {
-            xs.set_len(filled.result as _);
+            xs.set_len(filled as _);
         }
 
         Ok(xs)
@@ -1628,10 +1630,11 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
         }
 
         let mut xs = crate::alloc::reserve(n as _);
-        let filled = self.surface_present_modes(surface, xs.spare_capacity_mut())?;
-        assert!(!filled.is_incomplete);
+        let filled = self
+            .surface_present_modes(surface, xs.spare_capacity_mut())?
+            .assert_complete();
         unsafe {
-            xs.set_len(filled.result as _);
+            xs.set_len(filled as _);
         }
 
         Ok(xs)
@@ -1753,10 +1756,11 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
         }
 
         let mut xs = crate::alloc::reserve(n as _);
-        let res = self.display_mode_properties(display, xs.spare_capacity_mut())?;
-        assert!(!res.is_incomplete);
+        let res = self
+            .display_mode_properties(display, xs.spare_capacity_mut())?
+            .assert_complete();
         unsafe {
-            xs.set_len(res.result as _);
+            xs.set_len(res as _);
         }
 
         Ok(xs)
@@ -1858,10 +1862,9 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
         }
 
         let mut xs = crate::alloc::reserve(n as _);
-        let r = self.display_properties(xs.spare_capacity_mut())?;
-        assert!(!r.is_incomplete);
+        let r = self.display_properties(xs.spare_capacity_mut())?.assert_complete();
         unsafe {
-            xs.set_len(r.result as _);
+            xs.set_len(r as _);
         }
 
         Ok(crate::alloc::collect_vec(
@@ -1912,10 +1915,11 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
         }
 
         let mut xs = crate::alloc::reserve(n as _);
-        let r = self.display_plane_properties(xs.spare_capacity_mut())?;
-        assert!(!r.is_incomplete);
+        let r = self
+            .display_plane_properties(xs.spare_capacity_mut())?
+            .assert_complete();
         unsafe {
-            xs.set_len(r.result as _);
+            xs.set_len(r as _);
         }
 
         Ok(crate::alloc::collect_vec(
@@ -1967,10 +1971,11 @@ pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceCh
         }
 
         let mut xs = crate::alloc::reserve(n as _);
-        let r = self.display_plane_supported_displays(plane_index, xs.spare_capacity_mut())?;
-        assert!(!r.is_incomplete);
+        let r = self
+            .display_plane_supported_displays(plane_index, xs.spare_capacity_mut())?
+            .assert_complete();
         unsafe {
-            xs.set_len(r.result as _);
+            xs.set_len(r as _);
         }
 
         Ok(crate::alloc::collect_vec(xs.into_iter().map(move |x| Display(x, self))))
