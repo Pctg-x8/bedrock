@@ -1,4 +1,5 @@
 use crate::{
+    ERROR,
     parts::*,
     rs_item::RustCodeEmitter,
     v1_1::{VK_KHR_DEVICE_GROUP, VK_KHR_EXTERNAL_MEMORY, VK_KHR_EXTERNAL_MEMORY_CAPABILITIES},
@@ -7,13 +8,18 @@ use crate::{
 };
 
 pub fn emit(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+    emit_surface(emitter);
+    emit_win32_surface(emitter);
+    emit_xlib_surface(emitter);
+    emit_xcb_surface(emitter);
+    emit_wayland_surface(emitter);
+    emit_android_surface(emitter);
+    emit_metal_surface(emitter);
+    emit_swapchain(emitter);
     emit_debug_report(emitter);
     emit_debug_utils(emitter);
 }
 
-pub const VK_KHR_SURFACE: &Extension = &Extension::khr("surface", 25, 1);
-pub const VK_KHR_WIN32_SURFACE: &Extension = &Extension::khr("win32_surface", 6, 10);
-pub const VK_KHR_SWAPCHAIN: &Extension = &Extension::khr("swapchain", 70, 2);
 pub const VK_EXT_VALIDATION_CACHE: &Extension = &Extension::ext("validation_cache", 1, 161);
 pub const VK_EXT_VALIDATION_FLAGS: &Extension = &Extension::ext("validation_flags", 1, 62);
 pub const VK_EXT_BLEND_OPERATION_ADVANCED: &Extension = &Extension::ext("blend_operation_advanced", 2, 149);
@@ -65,12 +71,545 @@ pub const VK_KHR_EXTERNAL_SEMAPHORE_FD: &Extension = &Extension::khr("external_s
 pub const VK_KHR_EXTERNAL_FENCE_WIN32: &Extension = &Extension::khr("external_fence_win32", 1, 115);
 pub const VK_KHR_EXTERNAL_FENCE_FD: &Extension = &Extension::khr("external_fence_fd", 1, 116);
 
+pub const VK_KHR_SURFACE: &Extension = &Extension::khr("surface", 25, 1);
+const COMPOSITE_ALPHA_FLAGS: &BitmaskType =
+    &BitmaskType::new("CompositeAlphaFlags", "CompositeAlphaFlagBits", "COMPOSITE_ALPHA").extension(VK_KHR_SURFACE);
+const SURFACE_TRANSFORM_FLAGS: &BitmaskType =
+    &BitmaskType::new("SurfaceTransformFlags", "SurfaceTransformFlagBits", "SURFACE_TRANSFORM")
+        .extension(VK_KHR_SURFACE);
+const SURFACE_CAPABILITIES: &Struct = &Struct::new(
+    "SurfaceCapabilities",
+    &[
+        Struct::member("minImageCount", "u32"),
+        Struct::member("maxImageCount", "u32"),
+        Struct::member("currentExtent", "VkExtent2D"),
+        Struct::member("minImageExtent", "VkExtent2D"),
+        Struct::member("maxImageExtent", "VkExtent2D"),
+        Struct::member("maxImageArrayLayers", "u32"),
+        Struct::member("supportedTransforms", "VkSurfaceTransformFlagsKHR"),
+        Struct::member("currentTransform", "VkSurfaceTransformFlagBitsKHR"),
+        Struct::member("supportedCompositeAlpha", "VkCompositeAlphaFlagsKHR"),
+        Struct::member("supportedUsageFlags", "VkImageUsageFlags"),
+    ],
+)
+.extensions(&[VK_KHR_SURFACE]);
+const SURFACE_FORMAT: &Struct = &Struct::new(
+    "SurfaceFormat",
+    &[
+        Struct::member("format", "VkFormat"),
+        Struct::member("colorSpace", "VkColorSpaceKHR"),
+    ],
+)
+.copyable()
+.extensions(&[VK_KHR_SURFACE]);
+fn emit_surface(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+    VK_KHR_SURFACE.header_constants().emit(emitter);
+
+    ERROR
+        .member("SURFACE_LOST", 0)
+        .neg()
+        .extension(VK_KHR_SURFACE)
+        .emit(emitter);
+    ERROR
+        .member("NATIVE_WINDOW_IN_USE", 1)
+        .neg()
+        .extension(VK_KHR_SURFACE)
+        .emit(emitter);
+
+    COMPOSITE_ALPHA_FLAGS.emit(emitter);
+    COMPOSITE_ALPHA_FLAGS.entry("OPAQUE", 0).emit(emitter);
+    COMPOSITE_ALPHA_FLAGS.entry("PRE_MULTIPLIED", 1).emit(emitter);
+    COMPOSITE_ALPHA_FLAGS.entry("POST_MULTIPLIED", 2).emit(emitter);
+    COMPOSITE_ALPHA_FLAGS.entry("INHERIT", 3).emit(emitter);
+
+    SURFACE_TRANSFORM_FLAGS.emit(emitter);
+    SURFACE_TRANSFORM_FLAGS.entry("IDENTITY", 0).emit(emitter);
+    SURFACE_TRANSFORM_FLAGS.entry("ROTATE_90", 1).emit(emitter);
+    SURFACE_TRANSFORM_FLAGS.entry("ROTATE_180", 2).emit(emitter);
+    SURFACE_TRANSFORM_FLAGS.entry("ROTATE_270", 3).emit(emitter);
+    SURFACE_TRANSFORM_FLAGS.entry("HORIZONTAL_MIRROR", 4).emit(emitter);
+    SURFACE_TRANSFORM_FLAGS
+        .entry("HORIZONTAL_MIRROR_ROTATE_90", 5)
+        .emit(emitter);
+    SURFACE_TRANSFORM_FLAGS
+        .entry("HORIZONTAL_MIRROR_ROTATE_180", 6)
+        .emit(emitter);
+    SURFACE_TRANSFORM_FLAGS
+        .entry("HORIZONTAL_MIRROR_ROTATE_270", 7)
+        .emit(emitter);
+    SURFACE_TRANSFORM_FLAGS.entry("INHERIT", 8).emit(emitter);
+
+    SURFACE_CAPABILITIES.emit(emitter);
+    SURFACE_FORMAT.emit(emitter);
+
+    Command::new(
+        "DestroySurface",
+        &[
+            ("instance", "VkInstance"),
+            ("surface", "VkSurfaceKHR"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+        ],
+    )
+    .static_callable()
+    .extension(VK_KHR_SURFACE)
+    .emit(emitter);
+    Command::new(
+        "GetPhysicalDeviceSurfaceSupport",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("queueFamilyIndex", "u32"),
+            ("surface", "VkSurfaceKHR"),
+            ("pSupported", "*mut VkBool32"),
+        ],
+    )
+    .failable()
+    .static_callable()
+    .extension(VK_KHR_SURFACE)
+    .emit(emitter);
+    Command::new(
+        "GetPhysicalDeviceSurfaceCapabilities",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("surface", "VkSurfaceKHR"),
+            ("pSurfaceCapabilities", "*mut VkSurfaceCapabilitiesKHR"),
+        ],
+    )
+    .failable()
+    .static_callable()
+    .extension(VK_KHR_SURFACE)
+    .emit(emitter);
+    Command::new(
+        "GetPhysicalDeviceSurfaceFormats",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("surface", "VkSurfaceKHR"),
+            ("pSurfaceFormatsCount", "*mut u32"),
+            ("pSurfaceFormats", "*mut VkSurfaceFormatKHR"),
+        ],
+    )
+    .failable()
+    .static_callable()
+    .extension(VK_KHR_SURFACE)
+    .emit(emitter);
+    Command::new(
+        "GetPhysicalDeviceSurfacePresentModes",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("surface", "VkSurfaceKHR"),
+            ("pPresentModeCount", "*mut u32"),
+            ("pPresentModes", "*mut VkPresentModeKHR"),
+        ],
+    )
+    .failable()
+    .static_callable()
+    .extension(VK_KHR_SURFACE)
+    .emit(emitter);
+}
+
+pub const VK_KHR_WIN32_SURFACE: &Extension = &Extension::khr("win32_surface", 6, 10);
+const WIN32_SURFACE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "Win32SurfaceCreateFlags",
+    "Win32SurfaceCreateFlagBits",
+    "WIN32_SURFACE_CREATE",
+)
+.extension(VK_KHR_WIN32_SURFACE);
+const WIN32_SURFACE_CREATE_INFO: &Struct = &Struct::typed(
+    "Win32SurfaceCreateInfo",
+    "WIN32_SURFACE_CREATE_INFO",
+    VK_KHR_WIN32_SURFACE.ext_enum(0) as _,
+    StructUsage::Source,
+    &[
+        Struct::member("flags", "VkWin32SurfaceCreateFlagsKHR"),
+        Struct::member("hinstance", "windows::Win32::Foundation::HINSTANCE"),
+        Struct::member("hwnd", "windows::Win32::Foundation::HWND"),
+    ],
+)
+.extensions(&[VK_KHR_WIN32_SURFACE]);
+fn emit_win32_surface(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+    VK_KHR_WIN32_SURFACE.header_constants().emit(emitter);
+
+    WIN32_SURFACE_CREATE_FLAGS.emit(emitter);
+    WIN32_SURFACE_CREATE_INFO.emit(emitter);
+
+    Command::new(
+        "GetPhysicalDeviceWin32PresentationSupport",
+        &[("physicalDevice", "VkPhysicalDevice"), ("queueFamilyIndex", "u32")],
+    )
+    .returns("VkBool32")
+    .static_callable()
+    .extension(VK_KHR_WIN32_SURFACE)
+    .emit(emitter);
+    Command::new(
+        "CreateWin32Surface",
+        &[
+            ("instance", "VkInstance"),
+            ("pCreateInfo", "*const VkWin32SurfaceCreateInfoKHR"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+            ("pSurface", "*mut VkSurfaceKHR"),
+        ],
+    )
+    .failable()
+    .static_callable()
+    .extension(VK_KHR_WIN32_SURFACE)
+    .emit(emitter);
+}
+
+pub const VK_KHR_XLIB_SURFACE: &Extension = &Extension::khr("xlib_surface", 6, 5);
+const XLIB_SURFACE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "XlibSurfaceCreateFlags",
+    "XlibSurfaceCreateFlagBits",
+    "XLIB_SURFACE_CREATE",
+)
+.extension(VK_KHR_XLIB_SURFACE);
+const XLIB_SURFACE_CREATE_INFO: &Struct = &Struct::typed(
+    "XlibSurfaceCreateInfo",
+    "XLIB_SURFACE_CREATE_INFO",
+    VK_KHR_XLIB_SURFACE.ext_enum(0) as _,
+    StructUsage::Source,
+    &[
+        Struct::member("flags", "VkXlibSurfaceCreateFlagsKHR"),
+        Struct::member("dpy", "*mut x11::xlib::Display"),
+        Struct::member("window", "x11::xlib::Window"),
+    ],
+)
+.extensions(&[VK_KHR_XLIB_SURFACE]);
+fn emit_xlib_surface(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+    VK_KHR_XLIB_SURFACE.header_constants().emit(emitter);
+
+    XLIB_SURFACE_CREATE_FLAGS.emit(emitter);
+    XLIB_SURFACE_CREATE_INFO.emit(emitter);
+
+    Command::new(
+        "GetPhysicalDeviceXlibPresentationSupport",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("queueFamilyIndex", "u32"),
+            ("dpy", "*mut x11::xlib::Display"),
+            ("visualID", "x11::xlib::VisualID"),
+        ],
+    )
+    .returns("VkBool32")
+    .static_callable()
+    .extension(VK_KHR_XLIB_SURFACE)
+    .emit(emitter);
+    Command::new(
+        "CreateXlibSurface",
+        &[
+            ("instance", "VkInstance"),
+            ("pCreateInfo", "*const VkXlibSurfaceCreateInfoKHR"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+            ("pSurface", "*mut VkSurfaceKHR"),
+        ],
+    )
+    .failable()
+    .static_callable()
+    .extension(VK_KHR_XLIB_SURFACE)
+    .emit(emitter);
+}
+
+pub const VK_KHR_XCB_SURFACE: &Extension = &Extension::khr("xcb_surface", 6, 6);
+const XCB_SURFACE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "XcbSurfaceCreateFlags",
+    "XcbSurfaceCreateFlagBits",
+    "XCB_SURFACE_CREATE",
+)
+.extension(VK_KHR_XCB_SURFACE);
+const XCB_SURFACE_CREATE_INFO: &Struct = &Struct::typed(
+    "XcbSurfaceCreateInfo",
+    "XCB_SURFACE_CREATE_INFO",
+    VK_KHR_XCB_SURFACE.ext_enum(0) as _,
+    StructUsage::Source,
+    &[
+        Struct::member("flags", "VkXcbSurfaceCreateFlagsKHR"),
+        Struct::member("connection", "*mut xcb::ffi::xcb_connection_t"),
+        Struct::member("window", "xcb::x::Window"),
+    ],
+)
+.extensions(&[VK_KHR_XCB_SURFACE]);
+fn emit_xcb_surface(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+    VK_KHR_XCB_SURFACE.header_constants().emit(emitter);
+
+    XCB_SURFACE_CREATE_FLAGS.emit(emitter);
+    XCB_SURFACE_CREATE_INFO.emit(emitter);
+
+    Command::new(
+        "GetPhysicalDeviceXcbPresentationSupport",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("queueFamilyIndex", "u32"),
+            ("connection", "*mut xcb::ffi::xcb_connection_t"),
+            ("visual_id", "xcb::x::Visualid"),
+        ],
+    )
+    .returns("VkBool32")
+    .static_callable()
+    .extension(VK_KHR_XCB_SURFACE)
+    .emit(emitter);
+    Command::new(
+        "CreateXcbSurface",
+        &[
+            ("instance", "VkInstance"),
+            ("pCreateInfo", "*const VkXcbSurfaceCreateInfoKHR"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+            ("pSurface", "*mut VkSurfaceKHR"),
+        ],
+    )
+    .failable()
+    .static_callable()
+    .extension(VK_KHR_XCB_SURFACE)
+    .emit(emitter);
+}
+
+pub const VK_KHR_WAYLAND_SURFACE: &Extension = &Extension::khr("wayland_surface", 6, 7);
+const WAYLAND_SURFACE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "WaylandSurfaceCreateFlags",
+    "WaylandSurfaceCreateFlagBits",
+    "WAYLAND_SURFACE_CREATE",
+)
+.extension(VK_KHR_WAYLAND_SURFACE);
+const WAYLAND_SURFACE_CREATE_INFO: &Struct = &Struct::typed(
+    "WaylandSurfaceCreateInfo",
+    "WAYLAND_SURFACE_CREATE_INFO",
+    VK_KHR_WAYLAND_SURFACE.ext_enum(0) as _,
+    StructUsage::Source,
+    &[
+        Struct::member("flags", "VkWaylandSurfaceCreateFlagsKHR"),
+        Struct::member("display", "*mut core::ffi::c_void"),
+        Struct::member("surface", "*mut core::ffi::c_void"),
+    ],
+)
+.extensions(&[VK_KHR_WAYLAND_SURFACE]);
+fn emit_wayland_surface(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+    VK_KHR_WAYLAND_SURFACE.header_constants().emit(emitter);
+
+    WAYLAND_SURFACE_CREATE_FLAGS.emit(emitter);
+    WAYLAND_SURFACE_CREATE_INFO.emit(emitter);
+
+    Command::new(
+        "GetPhysicalDeviceWaylandPresentationSupport",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("queueFamilyIndex", "u32"),
+            ("display", "*mut core::ffi::c_void"),
+        ],
+    )
+    .returns("VkBool32")
+    .static_callable()
+    .extension(VK_KHR_WAYLAND_SURFACE)
+    .emit(emitter);
+    Command::new(
+        "CreateWaylandSurface",
+        &[
+            ("instance", "VkInstance"),
+            ("pCreateInfo", "*const VkWaylandSurfaceCreateInfoKHR"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+            ("pSurface", "*mut VkSurfaceKHR"),
+        ],
+    )
+    .failable()
+    .static_callable()
+    .extension(VK_KHR_WAYLAND_SURFACE)
+    .emit(emitter);
+}
+
+pub const VK_KHR_ANDROID_SURFACE: &Extension = &Extension::khr("android_surface", 6, 9);
+const ANDROID_SURFACE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "AndroidSurfaceCreateFlags",
+    "AndroidSurfaceCreateFlagBits",
+    "ANDROID_SURFACE_CREATE",
+)
+.extension(VK_KHR_ANDROID_SURFACE);
+const ANDROID_SURFACE_CREATE_INFO: &Struct = &Struct::typed(
+    "AndroidSurfaceCreateInfo",
+    "ANDROID_SURFACE_CREATE_INFO",
+    VK_KHR_ANDROID_SURFACE.ext_enum(0) as _,
+    StructUsage::Source,
+    &[
+        Struct::member("flags", "VkAndroidSurfaceCreateFlagsKHR"),
+        Struct::member("window", "*mut android::ANativeWindow"),
+    ],
+)
+.extensions(&[VK_KHR_ANDROID_SURFACE]);
+fn emit_android_surface(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+    VK_KHR_ANDROID_SURFACE.header_constants().emit(emitter);
+
+    ANDROID_SURFACE_CREATE_FLAGS.emit(emitter);
+    ANDROID_SURFACE_CREATE_INFO.emit(emitter);
+
+    Command::new(
+        "CreateAndroidSurface",
+        &[
+            ("instance", "VkInstance"),
+            ("pCreateInfo", "*const VkAndroidSurfaceCreateInfoKHR"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+            ("pSurface", "*mut VkSurfaceKHR"),
+        ],
+    )
+    .failable()
+    .static_callable()
+    .extension(VK_KHR_ANDROID_SURFACE)
+    .emit(emitter);
+}
+
+pub const VK_EXT_METAL_SURFACE: &Extension = &Extension::ext("metal_surface", 1, 218);
+const METAL_SURFACE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "MetalSurfaceCreateFlags",
+    "MetalSurfaceCreateFlagBits",
+    "METAL_SURFACE_CREATE",
+)
+.extension(VK_EXT_METAL_SURFACE);
+const METAL_SURFACE_CREATE_INFO: &Struct = &Struct::typed(
+    "MetalSurfaceCreateInfo",
+    "METAL_SURFACE_CREATE_INFO",
+    VK_EXT_METAL_SURFACE.ext_enum(0) as _,
+    StructUsage::Source,
+    &[
+        Struct::member("flags", "VkMetalSurfaceCreateFlagsEXT"),
+        Struct::member("pLayer", "*const core::ffi::c_void"),
+    ],
+)
+.extensions(&[VK_EXT_METAL_SURFACE]);
+fn emit_metal_surface(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+    VK_EXT_METAL_SURFACE.header_constants().emit(emitter);
+
+    METAL_SURFACE_CREATE_FLAGS.emit(emitter);
+    METAL_SURFACE_CREATE_INFO.emit(emitter);
+
+    Command::new(
+        "CreateMetalSurface",
+        &[
+            ("instance", "VkInstance"),
+            ("pCreateInfo", "*const VkMetalSurfaceCreateInfoEXT"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+            ("pSurface", "*mut VkSurfaceKHR"),
+        ],
+    )
+    .failable()
+    .static_callable()
+    .extension(VK_EXT_METAL_SURFACE)
+    .emit(emitter);
+}
+
+pub const VK_KHR_SWAPCHAIN: &Extension = &Extension::khr("swapchain", 70, 2);
+const SWAPCHAIN_CREATE_FLAGS: &BitmaskType =
+    &BitmaskType::new("SwapchainCreateFlags", "SwapchainCreateFlagBits", "SWAPCHAIN_CREATE")
+        .extension(VK_KHR_SWAPCHAIN);
+const SWAPCHAIN_CREATE_INFO: &Struct = &Struct::typed(
+    "SwapchainCreateInfo",
+    "SWAPCHAIN_CREATE_INFO",
+    VK_KHR_SWAPCHAIN.ext_enum(0) as _,
+    StructUsage::Source,
+    &[
+        Struct::member("flags", "VkSwapchainCreateFlagsKHR"),
+        Struct::member("surface", "VkSurfaceKHR"),
+        Struct::member("minImageCount", "u32"),
+        Struct::member("imageFormat", "VkFormat"),
+        Struct::member("imageColorSpace", "VkColorSpaceKHR"),
+        Struct::member("imageExtent", "VkExtent2D"),
+        Struct::member("imageArrayLayers", "u32"),
+        Struct::member("imageUsage", "VkImageUsageFlags"),
+        Struct::member("imageSharingMode", "VkSharingMode"),
+        Struct::member("queueFamilyIndexCount", "u32"),
+        Struct::member("pQueueFamilyIndices", "*const u32"),
+        Struct::member("preTransform", "VkSurfaceTransformFlagBitsKHR"),
+        Struct::member("compositeAlpha", "VkCompositeAlphaFlagBitsKHR"),
+        Struct::member("presentMode", "VkPresentModeKHR"),
+        Struct::member("clipped", "VkBool32"),
+        Struct::member("oldSwapchain", "Option<VkSwapchainKHR>"),
+    ],
+)
+.extensions(&[VK_KHR_SWAPCHAIN]);
+const PRESENT_INFO: &Struct = &Struct::typed(
+    "PresentInfo",
+    "PRESENT_INFO",
+    VK_KHR_SWAPCHAIN.ext_enum(1) as _,
+    StructUsage::Source,
+    &[
+        Struct::member("waitSemaphoreCount", "u32"),
+        Struct::member("pWaitSemaphores", "*const VkSemaphore"),
+        Struct::member("swapchainCount", "u32"),
+        Struct::member("pSwapchains", "*const VkSwapchainKHR"),
+        Struct::member("pImageIndices", "*const u32"),
+        Struct::member("pResults", "*mut VkResult"),
+    ],
+)
+.extensions(&[VK_KHR_SWAPCHAIN]);
+fn emit_swapchain(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+    VK_KHR_SWAPCHAIN.header_constants().emit(emitter);
+
+    SWAPCHAIN_CREATE_FLAGS.emit(emitter);
+
+    SWAPCHAIN_CREATE_INFO.emit(emitter);
+    PRESENT_INFO.emit(emitter);
+
+    Command::new(
+        "CreateSwapchain",
+        &[
+            ("device", "VkDevice"),
+            ("pCreateInfo", "*const VkSwapchainCreateInfoKHR"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+            ("pSwapchain", "*mut VkSwapchainKHR"),
+        ],
+    )
+    .failable()
+    .static_callable()
+    .extension(VK_KHR_SWAPCHAIN)
+    .emit(emitter);
+    Command::new(
+        "DestroySwapchain",
+        &[
+            ("device", "VkDevice"),
+            ("swapchain", "VkSwapchainKHR"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+        ],
+    )
+    .static_callable()
+    .extension(VK_KHR_SWAPCHAIN)
+    .emit(emitter);
+    Command::new(
+        "GetSwapchainImages",
+        &[
+            ("device", "VkDevice"),
+            ("swapchain", "VkSwapchainKHR"),
+            ("pSwapchainImageCount", "*mut u32"),
+            ("pSwapchainImages", "*mut VkImage"),
+        ],
+    )
+    .failable()
+    .static_callable()
+    .extension(VK_KHR_SWAPCHAIN)
+    .emit(emitter);
+    Command::new(
+        "AcquireNextImage",
+        &[
+            ("device", "VkDevice"),
+            ("swapchain", "VkSwapchainKHR"),
+            ("timeout", "u64"),
+            ("semaphore", "Option<VkSemaphore>"),
+            ("fence", "Option<VkFence>"),
+            ("pImageIndex", "*mut u32"),
+        ],
+    )
+    .failable()
+    .static_callable()
+    .extension(VK_KHR_SWAPCHAIN)
+    .emit(emitter);
+    Command::new(
+        "QueuePresent",
+        &[("queue", "VkQueue"), ("pPresentInfo", "*const VkPresentInfoKHR")],
+    )
+    .failable()
+    .static_callable()
+    .extension(VK_KHR_SWAPCHAIN)
+    .emit(emitter);
+}
+
 pub const VK_EXT_DEBUG_REPORT: &Extension = &Extension::ext("debug_report", 10, 12);
-const DEBUG_REPORT_FLAGS: BitmaskType =
-    BitmaskType::new("DebugReportFlags", "DebugReportFlagBits", "DEBUG_REPORT").extension(VK_EXT_DEBUG_REPORT);
-pub const DEBUG_REPORT_OBJECT_TYPE: EnumType =
-    EnumType::new("DebugReportObjectType", "DEBUG_REPORT_OBJECT_TYPE").extension(VK_EXT_DEBUG_REPORT);
-const DEBUG_REPORT_CALLBACK_CREATE_INFO: Struct = Struct::typed(
+const DEBUG_REPORT_FLAGS: &BitmaskType =
+    &BitmaskType::new("DebugReportFlags", "DebugReportFlagBits", "DEBUG_REPORT").extension(VK_EXT_DEBUG_REPORT);
+pub const DEBUG_REPORT_OBJECT_TYPE: &EnumType =
+    &EnumType::new("DebugReportObjectType", "DEBUG_REPORT_OBJECT_TYPE").extension(VK_EXT_DEBUG_REPORT);
+const DEBUG_REPORT_CALLBACK_CREATE_INFO: &Struct = &Struct::typed(
     "DebugReportCallbackCreateInfo",
     "DEBUG_REPORT_CALLBACK_CREATE_INFO",
     VK_EXT_DEBUG_REPORT.ext_enum(0) as _,
@@ -82,7 +621,7 @@ const DEBUG_REPORT_CALLBACK_CREATE_INFO: Struct = Struct::typed(
     ],
 )
 .extensions(&[VK_EXT_DEBUG_REPORT]);
-pub fn emit_debug_report(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+fn emit_debug_report(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     VK_EXT_DEBUG_REPORT.header_constants().emit(emitter);
 
     DEBUG_REPORT_FLAGS.emit(emitter);
@@ -278,31 +817,31 @@ pub fn emit_debug_report(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
 }
 
 pub const VK_EXT_DEBUG_UTILS: &Extension = &Extension::ext("debug_utils", 2, 129);
-const DEBUG_UTILS_MESSAGE_SEVERITY_FLAGS: BitmaskType = BitmaskType::new(
+const DEBUG_UTILS_MESSAGE_SEVERITY_FLAGS: &BitmaskType = &BitmaskType::new(
     "DebugUtilsMessageSeverityFlags",
     "DebugUtilsMessageSeverityFlagBits",
     "DEBUG_UTILS_MESSAGE_SEVERITY",
 )
 .extension(VK_EXT_DEBUG_UTILS);
-const DEBUG_UTILS_MESSAGE_TYPE_FLAGS: BitmaskType = BitmaskType::new(
+const DEBUG_UTILS_MESSAGE_TYPE_FLAGS: &BitmaskType = &BitmaskType::new(
     "DebugUtilsMessageTypeFlags",
     "DebugUtilsMessageTypeFlagBits",
     "DEBUG_UTILS_MESSAGE_TYPE",
 )
 .extension(VK_EXT_DEBUG_UTILS);
-const DEBUG_UTILS_MESSENGER_CALLBACK_DATA_FLAGS: BitmaskType = BitmaskType::new(
+const DEBUG_UTILS_MESSENGER_CALLBACK_DATA_FLAGS: &BitmaskType = &BitmaskType::new(
     "DebugUtilsMessengerCallbackDataFlags",
     "DebugUtilsMessengerCallbackDataFlagBits",
     "DEBUG_UTILS_MESSENGER_CALLBACK_DATA",
 )
 .extension(VK_EXT_DEBUG_UTILS);
-const DEBUG_UTILS_MESSENGER_CREATE_FLAGS: BitmaskType = BitmaskType::new(
+const DEBUG_UTILS_MESSENGER_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
     "DebugUtilsMessengerCreateFlags",
     "DebugUtilsMessengerCreateFlagBits",
     "DEBUG_UTILS_MESSENGER_CREATE",
 )
 .extension(VK_EXT_DEBUG_UTILS);
-const DEBUG_UTILS_OBJECT_NAME_INFO: Struct = Struct::typed(
+const DEBUG_UTILS_OBJECT_NAME_INFO: &Struct = &Struct::typed(
     "DebugUtilsObjectNameInfo",
     "DEBUG_UTILS_OBJECT_NAME_INFO",
     VK_EXT_DEBUG_UTILS.ext_enum(0) as _,
@@ -314,7 +853,7 @@ const DEBUG_UTILS_OBJECT_NAME_INFO: Struct = Struct::typed(
     ],
 )
 .extensions(&[VK_EXT_DEBUG_UTILS]);
-const DEBUG_UTILS_OBJECT_TAG_INFO: Struct = Struct::typed(
+const DEBUG_UTILS_OBJECT_TAG_INFO: &Struct = &Struct::typed(
     "DebugUtilsObjectTagInfo",
     "DEBUG_UTILS_OBJECT_TAG_INFO",
     VK_EXT_DEBUG_UTILS.ext_enum(1) as _,
@@ -328,7 +867,7 @@ const DEBUG_UTILS_OBJECT_TAG_INFO: Struct = Struct::typed(
     ],
 )
 .extensions(&[VK_EXT_DEBUG_UTILS]);
-const DEBUG_UTILS_LABEL: Struct = Struct::typed(
+const DEBUG_UTILS_LABEL: &Struct = &Struct::typed(
     "DebugUtilsLabel",
     "DEBUG_UTILS_LABEL",
     VK_EXT_DEBUG_UTILS.ext_enum(2) as _,
@@ -339,7 +878,7 @@ const DEBUG_UTILS_LABEL: Struct = Struct::typed(
     ],
 )
 .extensions(&[VK_EXT_DEBUG_UTILS]);
-const DEBUG_UTILS_MESSENGER_CALLBACK_DATA: Struct = Struct::typed(
+const DEBUG_UTILS_MESSENGER_CALLBACK_DATA: &Struct = &Struct::typed(
     "DebugUtilsMessengerCallbackData",
     "DEBUG_UTILS_MESSENGER_CALLBACK_DATA",
     VK_EXT_DEBUG_UTILS.ext_enum(3) as _,
@@ -358,7 +897,7 @@ const DEBUG_UTILS_MESSENGER_CALLBACK_DATA: Struct = Struct::typed(
     ],
 )
 .extensions(&[VK_EXT_DEBUG_UTILS]);
-const DEBUG_UTILS_MESSENGER_CREATE_INFO: Struct = Struct::typed(
+const DEBUG_UTILS_MESSENGER_CREATE_INFO: &Struct = &Struct::typed(
     "DebugUtilsMessengerCreateInfo",
     "DEBUG_UTILS_MESSENGER_CREATE_INFO",
     VK_EXT_DEBUG_UTILS.ext_enum(4) as _,
@@ -372,7 +911,7 @@ const DEBUG_UTILS_MESSENGER_CREATE_INFO: Struct = Struct::typed(
     ],
 )
 .extensions(&[VK_EXT_DEBUG_UTILS]);
-pub fn emit_debug_utils(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+fn emit_debug_utils(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     VK_EXT_DEBUG_UTILS.header_constants().emit(emitter);
 
     DEBUG_UTILS_MESSAGE_SEVERITY_FLAGS.emit(emitter);

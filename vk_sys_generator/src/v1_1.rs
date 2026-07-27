@@ -7,9 +7,14 @@ use crate::{
     vk_ext_enum,
 };
 
+pub fn emit(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+    emit_maintenance1(emitter);
+    emit_maintenance2(emitter);
+
+    emit_descriptor_update_template(emitter);
+}
+
 const VERSION: &str = "1_1";
-pub const VK_KHR_MAINTENANCE_1: &Extension = &Extension::khr("maintenance1", 2, 70).promoted(VERSION);
-pub const VK_KHR_MAINTENANCE_2: &Extension = &Extension::khr("maintenance2", 1, 118).promoted(VERSION);
 pub const VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2: &Extension =
     &Extension::khr("get_physical_device_properties2", 2, 60).promoted(VERSION);
 pub const VK_KHR_DEVICE_GROUP: &Extension = &Extension::khr("device_group", 4, 61).promoted(VERSION);
@@ -30,9 +35,93 @@ pub const VK_KHR_EXTERNAL_FENCE: &Extension = &Extension::khr("external_fence", 
 pub const VK_KHR_EXTERNAL_FENCE_CAPABILITIES: &Extension =
     &Extension::khr("external_fence_capabilities", 1, 113).promoted(VERSION);
 
+pub const VK_KHR_MAINTENANCE_1: &Extension = &Extension::khr("maintenance1", 2, 70).promoted(VERSION);
+const COMMAND_POOL_TRIM_FLAGS: &BitmaskType =
+    &BitmaskType::new("CommandPoolTrimFlags", "CommandPoolTrimFlagBits", "COMMAND_POOL_TRIM")
+        .extension(VK_KHR_MAINTENANCE_1);
+fn emit_maintenance1(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+    VK_KHR_MAINTENANCE_1.header_constants().emit(emitter);
+
+    COMMAND_POOL_TRIM_FLAGS.emit(emitter);
+
+    Command::new(
+        "TrimCommandPool",
+        &[
+            ("device", "VkDevice"),
+            ("commandPool", "VkCommandPool"),
+            ("flags", "VkCommandPoolTrimFlagsKHR"),
+        ],
+    )
+    .extension(VK_KHR_MAINTENANCE_1)
+    .emit(emitter);
+}
+
+pub const VK_KHR_MAINTENANCE_2: &Extension = &Extension::khr("maintenance2", 1, 118).promoted(VERSION);
+const PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES: &Struct = &Struct::typed(
+    "PhysicalDevicePointClippingProperties",
+    "PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES",
+    VK_KHR_MAINTENANCE_2.ext_enum(0) as _,
+    StructUsage::Sink,
+    &[Struct::member("pointClippingBehavior", "VkPointClippingBehaviorKHR")],
+)
+.extensions(&[VK_KHR_MAINTENANCE_2])
+.promoted(VERSION);
+const RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO: &Struct = &Struct::typed(
+    "RenderPassInputAttachmentAspectCreateInfo",
+    "RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO",
+    VK_KHR_MAINTENANCE_2.ext_enum(1) as _,
+    StructUsage::Source,
+    &[
+        Struct::member("aspectReferenceCount", "u32"),
+        Struct::member("pAspectReferences", "*const VkInputAttachmentAspectReferenceKHR"),
+    ],
+)
+.extensions(&[VK_KHR_MAINTENANCE_2])
+.promoted(VERSION);
+const IMAGE_VIEW_USAGE_CREATE_INFO: &Struct = &Struct::typed(
+    "ImageViewUsageCreateInfo",
+    "IMAGE_VIEW_USAGE_CREATE_INFO",
+    VK_KHR_MAINTENANCE_2.ext_enum(2) as _,
+    StructUsage::Source,
+    &[
+        Struct::member("sliceOffset", "u32"),
+        Struct::member("sliceCount", "u32"),
+    ],
+)
+.extensions(&[VK_KHR_MAINTENANCE_2])
+.promoted(VERSION);
+const PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO: &Struct = &Struct::typed(
+    "PipelineTessellationDomainOriginStateCreateInfo",
+    "PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO",
+    VK_KHR_MAINTENANCE_2.ext_enum(3) as _,
+    StructUsage::Source,
+    &[Struct::member("domainOrigin", "VkTessellationDomainOriginKHR")],
+)
+.extensions(&[VK_KHR_MAINTENANCE_2])
+.promoted(VERSION);
+const INPUT_ATTACHMENT_ASPECT_REFERENCE: &Struct = &Struct::new(
+    "InputAttachmentAspectReference",
+    &[
+        Struct::member("subpass", "u32"),
+        Struct::member("inputAttachmentIndex", "u32"),
+        Struct::member("aspectMask", "VkImageAspectFlags"),
+    ],
+)
+.extensions(&[VK_KHR_MAINTENANCE_2])
+.promoted(VERSION);
+fn emit_maintenance2(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+    VK_KHR_MAINTENANCE_2.header_constants().emit(emitter);
+
+    PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES.emit(emitter);
+    RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO.emit(emitter);
+    IMAGE_VIEW_USAGE_CREATE_INFO.emit(emitter);
+    PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO.emit(emitter);
+    INPUT_ATTACHMENT_ASPECT_REFERENCE.emit(emitter);
+}
+
 pub const VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE: &Extension =
     &Extension::khr("descriptor_update_template", 1, 86).promoted(VERSION);
-pub fn emit_descriptor_update_template(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+fn emit_descriptor_update_template(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE.header_constants().emit(emitter);
     DEBUG_REPORT_OBJECT_TYPE
         .member("DESCRIPTOR_UPDATE_TEMPLATE", 0)
@@ -238,7 +327,7 @@ pub const ELEMENTS: &[Element] = &[
         "SWAPCHAIN_CREATE",
         &[Bitmask::entry("SPLIT_INSTNACE_BIND_REGIONS", 0).extension(VK_KHR_DEVICE_GROUP)],
     )
-    .extension(VK_KHR_SWAPCHAIN)
+    .extension(&VK_KHR_SWAPCHAIN)
     .into_element(),
     Bitmask::new(
         "MemoryAllocateFlags",
@@ -800,7 +889,7 @@ pub const ELEMENTS: &[Element] = &[
         &[Enum::member("SAMPLER_YCBCR_CONVERSION", vk_ext_enum(157, 0) as _)
             .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)],
     )
-    .extension(VK_EXT_DEBUG_REPORT)
+    .extension(&VK_EXT_DEBUG_REPORT)
     .into_element(),
     Struct::typed(
         "SamplerYcbcrConversionCreateInfo",

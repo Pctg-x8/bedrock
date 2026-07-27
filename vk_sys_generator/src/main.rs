@@ -220,7 +220,7 @@ fn main() -> std::io::Result<()> {
         c.emit(&mut o)?;
     }
 
-    v1_1::emit_descriptor_update_template(&mut generator);
+    v1_1::emit(&mut generator);
     for x in v1_1::ELEMENTS {
         x.emit(&mut generator, &mut o)?;
     }
@@ -505,7 +505,7 @@ pub static ATTACHMENT_STORE_OP: EnumType = EnumType::new("AttachmentStoreOp", "A
 pub static BLEND_FACTOR: EnumType = EnumType::new("BlendFactor", "BLEND_FACTOR");
 pub static BLEND_OP: EnumType = EnumType::new("BlendOp", "BLEND_OP");
 pub static BORDER_COLOR: EnumType = EnumType::new("BorderColor", "BORDER_COLOR");
-pub static COLOR_SPACE: EnumType = EnumType::new("ColorSpace", "COLOR_SPACE").extension(VK_KHR_SURFACE);
+pub static COLOR_SPACE: EnumType = EnumType::new("ColorSpace", "COLOR_SPACE").extension(&VK_KHR_SURFACE);
 pub static COMMAND_BUFFER_LEVEL: EnumType = EnumType::new("CommandBufferLevel", "COMMAND_BUFFER_LEVEL");
 pub static COMPARE_OP: EnumType = EnumType::new("CompareOp", "COMPARE_OP");
 pub static COMPONENT_SWIZZLE: EnumType = EnumType::new("ComponentSwizzle", "COMPONENT_SWIZZLE");
@@ -525,7 +525,7 @@ pub static PIPELINE_BIND_POINT: EnumType = EnumType::new("PipelineBindPoint", "P
 pub static POINT_CLIPPING_BEHAVIOR: EnumType =
     EnumType::new("PointClippingBehavior", "POINT_CLIPPING_BEHAVIOR").extension(VK_KHR_MAINTENANCE_2);
 pub static POLYGON_MODE: EnumType = EnumType::new("PolygonMode", "POLYGON_MODE");
-pub static PRESENT_MODE: EnumType = EnumType::new("PresentMode", "PRESENT_MODE").extension(VK_KHR_SURFACE);
+pub static PRESENT_MODE: EnumType = EnumType::new("PresentMode", "PRESENT_MODE").extension(&VK_KHR_SURFACE);
 pub static PRIMITIVE_TOPOLOGY: EnumType = EnumType::new("PrimitiveTopology", "PRIMITIVE_TOPOLOGY");
 pub static QUERY_TYPE: EnumType = EnumType::new("QueryType", "QUERY_TYPE");
 pub static SAMPLER_ADDRESS_MODE: EnumType = EnumType::new("SamplerAddressMode", "SAMPLER_ADDRESS_MODE");
@@ -657,7 +657,7 @@ fn emit_enums(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     IMAGE_LAYOUT.member("PREINITIALIZED", 8).emit(emitter);
     IMAGE_LAYOUT
         .member("PRESENT_SRC", 2)
-        .extension(VK_KHR_SWAPCHAIN)
+        .extension(&VK_KHR_SWAPCHAIN)
         .emit(emitter);
     IMAGE_LAYOUT
         .member("DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL", 0)
@@ -924,13 +924,6 @@ const FLAGS: &[Bitmask] = &[
     .extension_old("KHR", "synchronization2")
     .promoted("1_3"),
     Bitmask::new(
-        "AndroidSurfaceCreateFlags",
-        "AndroidSurfaceCreateFlagBits",
-        "ANDROID_SURFACE_CREATE",
-        &[],
-    )
-    .extension_old("KHR", "android_surface"),
-    Bitmask::new(
         "AttachmentDescriptionFlags",
         "AttachmentDescriptionFlagBits",
         "ATTACHMENT_DESCRIPTION",
@@ -1012,26 +1005,6 @@ const FLAGS: &[Bitmask] = &[
         "COMMAND_POOL_RESET",
         &[Bitmask::entry("RELEASE_RESOURCES", 0)],
     ),
-    Bitmask::new(
-        "CommandPoolTrimFlags",
-        "CommandPoolTrimFlagBits",
-        "COMMAND_POOL_TRIM",
-        &[],
-    )
-    .extension_old("KHR", "maintenance1")
-    .promoted("1_1"),
-    Bitmask::new(
-        "CompositeAlphaFlags",
-        "CompositeAlphaFlagBits",
-        "COMPOSITE_ALPHA",
-        &[
-            Bitmask::entry("OPAQUE", 0).extension_old("KHR", "surface"),
-            Bitmask::entry("PRE_MULTIPLIED", 1).extension_old("KHR", "surface"),
-            Bitmask::entry("POST_MULTIPLIED", 2).extension_old("KHR", "surface"),
-            Bitmask::entry("INHERIT", 3).extension_old("KHR", "surface"),
-        ],
-    )
-    .extension_old("KHR", "surface"),
     Bitmask::new(
         "CullModeFlags",
         "CullModeFlagBits",
@@ -1237,13 +1210,6 @@ const FLAGS: &[Bitmask] = &[
         ],
     ),
     Bitmask::new("MemoryMapFlags", "MemoryMapFlagBits", "MEMORY_MAP", &[]),
-    Bitmask::new(
-        "MetalSurfaceCreateFlags",
-        "MetalSurfaceCreateFlagBits",
-        "METAL_SURFACE_CREATE",
-        &[],
-    )
-    .extension_old("EXT", "metal_surface"),
     Bitmask::new(
         "PipelineCacheCreateFlags",
         "PipelineCacheCreateFlagBits",
@@ -1585,58 +1551,6 @@ const FLAGS: &[Bitmask] = &[
         "SUBPASS_DESCRIPTION",
         &[],
     ),
-    Bitmask::new(
-        "SurfaceTransformFlags",
-        "SurfaceTransformFlagBits",
-        "SURFACE_TRANSFORM",
-        &[
-            Bitmask::entry("IDENTITY", 0).extension_old("KHR", "surface"),
-            Bitmask::entry("ROTATE_90", 1).extension_old("KHR", "surface"),
-            Bitmask::entry("ROTATE_180", 2).extension_old("KHR", "surface"),
-            Bitmask::entry("ROTATE_270", 3).extension_old("KHR", "surface"),
-            Bitmask::entry("HORIZONTAL_MIRROR", 4).extension_old("KHR", "surface"),
-            Bitmask::entry("HORIZONTAL_MIRROR_ROTATE_90", 5).extension_old("KHR", "surface"),
-            Bitmask::entry("HORIZONTAL_MIRROR_ROTATE_180", 6).extension_old("KHR", "surface"),
-            Bitmask::entry("HORIZONTAL_MIRROR_ROTATE_270", 7).extension_old("KHR", "surface"),
-            Bitmask::entry("INHERIT", 8).extension_old("KHR", "surface"),
-        ],
-    )
-    .extension_old("KHR", "surface"),
-    Bitmask::new(
-        "SwapchainCreateFlags",
-        "SwapchainCreateFlagBits",
-        "SWAPCHAIN_CREATE",
-        &[],
-    )
-    .extension_old("KHR", "swapchain"),
-    Bitmask::new(
-        "WaylandSurfaceCreateFlags",
-        "WaylandSurfaceCreateFlagBits",
-        "WAYLAND_SURFACE_CREATE",
-        &[],
-    )
-    .extension_old("KHR", "wayland_surface"),
-    Bitmask::new(
-        "Win32SurfaceCreateFlags",
-        "Win32SurfaceCreateFlagBits",
-        "WIN32_SURFACE_CREATE",
-        &[],
-    )
-    .extension_old("KHR", "win32_surface"),
-    Bitmask::new(
-        "XcbSurfaceCreateFlags",
-        "XcbSurfaceCreateFlagBits",
-        "XCB_SURFACE_CREATE",
-        &[],
-    )
-    .extension_old("KHR", "xcb_surface"),
-    Bitmask::new(
-        "XlibSurfaceCreateFlags",
-        "XlibSurfaceCreateFlagBits",
-        "XLIB_SURFACE_CREATE",
-        &[],
-    )
-    .extension_old("KHR", "xlib_surface"),
 ];
 
 const FUNC_POINTERS: &[FuncPointer] = &[
@@ -1701,19 +1615,6 @@ const STRUCTS: &[Struct] = &[
             Struct::member("pfnInternalFree", "Option<PFN_vkInternalFreeNotification>"),
         ],
     ),
-    Struct::new(
-        "AndroidSurfaceCreateInfo",
-        &[
-            Struct::member("flags", "VkAndroidSurfaceCreateFlagsKHR"),
-            Struct::member("window", "*mut android::ANativeWindow"),
-        ],
-    )
-    .stype(
-        "ANDROID_SURFACE_CREATE_INFO",
-        vk_ext_enum(9, 0) as _,
-        StructUsage::Source,
-    )
-    .extensions_old(&[("KHR", "android_surface")]),
     Struct::new(
         "ApplicationInfo",
         &[
@@ -2319,28 +2220,6 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .stype("IMAGE_VIEW_CREATE_INFO", 15, StructUsage::Source),
-    Struct::typed(
-        "ImageViewUsageCreateInfo",
-        "IMAGE_VIEW_USAGE_CREATE_INFO",
-        vk_ext_enum(118, 2) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("sliceOffset", "u32"),
-            Struct::member("sliceCount", "u32"),
-        ],
-    )
-    .extensions_old(&[("KHR", "maintenance2")])
-    .promoted("1_1"),
-    Struct::new(
-        "InputAttachmentAspectReference",
-        &[
-            Struct::member("subpass", "u32"),
-            Struct::member("inputAttachmentIndex", "u32"),
-            Struct::member("aspectMask", "VkImageAspectFlags"),
-        ],
-    )
-    .extensions_old(&[("KHR", "maintenance2")])
-    .promoted("1_1"),
     Struct::new(
         "InstanceCreateInfo",
         &[
@@ -2409,17 +2288,6 @@ const STRUCTS: &[Struct] = &[
             Struct::member("flags", "VkMemoryHeapFlags"),
         ],
     ),
-    Struct::typed(
-        "MetalSurfaceCreateInfo",
-        "METAL_SURFACE_CREATE_INFO",
-        vk_ext_enum(218, 0) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("flags", "VkMetalSurfaceCreateFlagsEXT"),
-            Struct::member("pLayer", "*const core::ffi::c_void"),
-        ],
-    )
-    .extensions_old(&[("EXT", "metal_surface")]),
     Struct::new("Offset2D", &[Struct::member("x", "i32"), Struct::member("y", "i32")])
         .copyable()
         .equatable()
@@ -2680,15 +2548,6 @@ const STRUCTS: &[Struct] = &[
     )
     .extensions_old(&[("KHR", "multiview")])
     .promoted("1_1"),
-    Struct::typed(
-        "PhysicalDevicePointClippingProperties",
-        "PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES",
-        vk_ext_enum(118, 0) as _,
-        StructUsage::Sink,
-        &[Struct::member("pointClippingBehavior", "VkPointClippingBehaviorKHR")],
-    )
-    .extensions_old(&[("KHR", "maintenance2")])
-    .promoted("1_1"),
     Struct::new(
         "PhysicalDeviceProperties",
         &[
@@ -2855,15 +2714,6 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .stype("PIPELINE_SHADER_STAGE_CREATE_INFO", 18, StructUsage::Source),
-    Struct::typed(
-        "PipelineTessellationDomainOriginStateCreateInfo",
-        "PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO",
-        vk_ext_enum(118, 3) as _,
-        StructUsage::Source,
-        &[Struct::member("domainOrigin", "VkTessellationDomainOriginKHR")],
-    )
-    .extensions_old(&[("KHR", "maintenance2")])
-    .promoted("1_1"),
     Struct::new(
         "PipelineTessellationStateCreateInfo",
         &[
@@ -2897,19 +2747,6 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .stype("PIPELINE_VIEWPORT_STATE_CREATE_INFO", 22, StructUsage::Source),
-    Struct::new(
-        "PresentInfo",
-        &[
-            Struct::member("waitSemaphoreCount", "u32"),
-            Struct::member("pWaitSemaphores", "*const VkSemaphore"),
-            Struct::member("swapchainCount", "u32"),
-            Struct::member("pSwapchains", "*const VkSwapchainKHR"),
-            Struct::member("pImageIndices", "*const u32"),
-            Struct::member("pResults", "*mut VkResult"),
-        ],
-    )
-    .stype("PRESENT_INFO", vk_ext_enum(2, 1) as _, StructUsage::Source)
-    .extensions_old(&[("KHR", "swapchain")]),
     Struct::new(
         "PushConstantRange",
         &[
@@ -2971,18 +2808,6 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .stype("RENDER_PASS_CREATE_INFO", 38, StructUsage::Source),
-    Struct::typed(
-        "RenderPassInputAttachmentAspectCreateInfo",
-        "RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO",
-        vk_ext_enum(118, 1) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("aspectReferenceCount", "u32"),
-            Struct::member("pAspectReferences", "*const VkInputAttachmentAspectReferenceKHR"),
-        ],
-    )
-    .extensions_old(&[("KHR", "maintenance2")])
-    .promoted("1_1"),
     Struct::typed(
         "RenderPassMultiviewCreateInfo",
         "RENDER_PASS_MULTIVIEW_CREATE_INFO",
@@ -3177,22 +3002,6 @@ const STRUCTS: &[Struct] = &[
             Struct::member("depthPitch", DEVICE_SIZE_TYPE),
         ],
     ),
-    Struct::new(
-        "SurfaceCapabilities",
-        &[
-            Struct::member("minImageCount", "u32"),
-            Struct::member("maxImageCount", "u32"),
-            Struct::member("currentExtent", "VkExtent2D"),
-            Struct::member("minImageExtent", "VkExtent2D"),
-            Struct::member("maxImageExtent", "VkExtent2D"),
-            Struct::member("maxImageArrayLayers", "u32"),
-            Struct::member("supportedTransforms", "VkSurfaceTransformFlagsKHR"),
-            Struct::member("currentTransform", "VkSurfaceTransformFlagBitsKHR"),
-            Struct::member("supportedCompositeAlpha", "VkCompositeAlphaFlagsKHR"),
-            Struct::member("supportedUsageFlags", "VkImageUsageFlags"),
-        ],
-    )
-    .extensions_old(&[("KHR", "surface")]),
     Struct::typed(
         "SurfaceCapabilities2",
         "SURFACE_CAPABILITIES_2",
@@ -3201,15 +3010,6 @@ const STRUCTS: &[Struct] = &[
         &[Struct::member("surfaceCapabilities", "VkSurfaceCapabilitiesKHR")],
     )
     .extensions_old(&[("KHR", "get_surface_capabilities2")]),
-    Struct::new(
-        "SurfaceFormat",
-        &[
-            Struct::member("format", "VkFormat"),
-            Struct::member("colorSpace", "VkColorSpaceKHR"),
-        ],
-    )
-    .copyable()
-    .extensions_old(&[("KHR", "surface")]),
     Struct::typed(
         "SurfaceFormat2",
         "SURFACE_FORMAT_2",
@@ -3218,29 +3018,6 @@ const STRUCTS: &[Struct] = &[
         &[Struct::member("surfaceFormat", "VkSurfaceFormatKHR")],
     )
     .extensions_old(&[("KHR", "get_surface_capabilities2")]),
-    Struct::new(
-        "SwapchainCreateInfo",
-        &[
-            Struct::member("flags", "VkSwapchainCreateFlagsKHR"),
-            Struct::member("surface", "VkSurfaceKHR"),
-            Struct::member("minImageCount", "u32"),
-            Struct::member("imageFormat", "VkFormat"),
-            Struct::member("imageColorSpace", "VkColorSpaceKHR"),
-            Struct::member("imageExtent", "VkExtent2D"),
-            Struct::member("imageArrayLayers", "u32"),
-            Struct::member("imageUsage", "VkImageUsageFlags"),
-            Struct::member("imageSharingMode", "VkSharingMode"),
-            Struct::member("queueFamilyIndexCount", "u32"),
-            Struct::member("pQueueFamilyIndices", "*const u32"),
-            Struct::member("preTransform", "VkSurfaceTransformFlagBitsKHR"),
-            Struct::member("compositeAlpha", "VkCompositeAlphaFlagBitsKHR"),
-            Struct::member("presentMode", "VkPresentModeKHR"),
-            Struct::member("clipped", "VkBool32"),
-            Struct::member("oldSwapchain", "Option<VkSwapchainKHR>"),
-        ],
-    )
-    .stype("SWAPCHAIN_CREATE_INFO", vk_ext_enum(2, 0) as _, StructUsage::Source)
-    .extensions_old(&[("KHR", "swapchain")]),
     Struct::new(
         "VertexInputAttributeDescription",
         &[
@@ -3272,20 +3049,6 @@ const STRUCTS: &[Struct] = &[
         ],
     ),
     Struct::new(
-        "WaylandSurfaceCreateInfo",
-        &[
-            Struct::member("flags", "VkWaylandSurfaceCreateFlagsKHR"),
-            Struct::member("display", "*mut core::ffi::c_void"),
-            Struct::member("surface", "*mut core::ffi::c_void"),
-        ],
-    )
-    .stype(
-        "WAYLAND_SURFACE_CREATE_INFO",
-        vk_ext_enum(7, 0) as _,
-        StructUsage::Source,
-    )
-    .extensions_old(&[("KHR", "wayland_surface")]),
-    Struct::new(
         "Win32KeyedMutexAcquireReleaseInfo",
         &[
             Struct::member("acquireCount", "u32"),
@@ -3304,20 +3067,6 @@ const STRUCTS: &[Struct] = &[
     )
     .extensions_old(&[("KHR", "win32_keyed_mutex")]),
     Struct::new(
-        "Win32SurfaceCreateInfo",
-        &[
-            Struct::member("flags", "VkWin32SurfaceCreateFlagsKHR"),
-            Struct::member("hinstance", "windows::Win32::Foundation::HINSTANCE"),
-            Struct::member("hwnd", "windows::Win32::Foundation::HWND"),
-        ],
-    )
-    .stype(
-        "WIN32_SURFACE_CREATE_INFO",
-        vk_ext_enum(10, 0) as _,
-        StructUsage::Source,
-    )
-    .extensions_old(&[("KHR", "win32_surface")]),
-    Struct::new(
         "WriteDescriptorSet",
         &[
             Struct::member("dstSet", "VkDescriptorSet"),
@@ -3331,26 +3080,6 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .stype("WRITE_DESCRIPTOR_SET", 35, StructUsage::Source),
-    Struct::new(
-        "XcbSurfaceCreateInfo",
-        &[
-            Struct::member("flags", "VkXcbSurfaceCreateFlagsKHR"),
-            Struct::member("connection", "*mut xcb::ffi::xcb_connection_t"),
-            Struct::member("window", "xcb::x::Window"),
-        ],
-    )
-    .stype("XCB_SURFACE_CREATE_INFO", vk_ext_enum(6, 0) as _, StructUsage::Source)
-    .extensions_old(&[("KHR", "xcb_surface")]),
-    Struct::new(
-        "XlibSurfaceCreateInfo",
-        &[
-            Struct::member("flags", "VkXlibSurfaceCreateFlagsKHR"),
-            Struct::member("dpy", "*mut x11::xlib::Display"),
-            Struct::member("window", "x11::xlib::Window"),
-        ],
-    )
-    .stype("XLIB_SURFACE_CREATE_INFO", vk_ext_enum(5, 0) as _, StructUsage::Source)
-    .extensions_old(&[("KHR", "xlib_surface")]),
     Struct::typed(
         "MemoryBarrier2",
         "MEMORY_BARRIER_2",
@@ -4374,118 +4103,6 @@ const COMMANDS: &[Command] = &[
         .static_callable()
         .version_since("1_1"),
     Command::new(
-        "DestroySurface",
-        &[
-            ("instance", "VkInstance"),
-            ("surface", "VkSurfaceKHR"),
-            ("pAllocator", "*const VkAllocationCallbacks"),
-        ],
-    )
-    .static_callable()
-    .extension_old("KHR", "surface"),
-    Command::new(
-        "GetPhysicalDeviceSurfaceSupport",
-        &[
-            ("physicalDevice", "VkPhysicalDevice"),
-            ("queueFamilyIndex", "u32"),
-            ("surface", "VkSurfaceKHR"),
-            ("pSupported", "*mut VkBool32"),
-        ],
-    )
-    .failable()
-    .static_callable()
-    .extension_old("KHR", "surface"),
-    Command::new(
-        "GetPhysicalDeviceSurfaceCapabilities",
-        &[
-            ("physicalDevice", "VkPhysicalDevice"),
-            ("surface", "VkSurfaceKHR"),
-            ("pSurfaceCapabilities", "*mut VkSurfaceCapabilitiesKHR"),
-        ],
-    )
-    .failable()
-    .static_callable()
-    .extension_old("KHR", "surface"),
-    Command::new(
-        "GetPhysicalDeviceSurfaceFormats",
-        &[
-            ("physicalDevice", "VkPhysicalDevice"),
-            ("surface", "VkSurfaceKHR"),
-            ("pSurfaceFormatsCount", "*mut u32"),
-            ("pSurfaceFormats", "*mut VkSurfaceFormatKHR"),
-        ],
-    )
-    .failable()
-    .static_callable()
-    .extension_old("KHR", "surface"),
-    Command::new(
-        "GetPhysicalDeviceSurfacePresentModes",
-        &[
-            ("physicalDevice", "VkPhysicalDevice"),
-            ("surface", "VkSurfaceKHR"),
-            ("pPresentModeCount", "*mut u32"),
-            ("pPresentModes", "*mut VkPresentModeKHR"),
-        ],
-    )
-    .failable()
-    .static_callable()
-    .extension_old("KHR", "surface"),
-    Command::new(
-        "CreateSwapchain",
-        &[
-            ("device", "VkDevice"),
-            ("pCreateInfo", "*const VkSwapchainCreateInfoKHR"),
-            ("pAllocator", "*const VkAllocationCallbacks"),
-            ("pSwapchain", "*mut VkSwapchainKHR"),
-        ],
-    )
-    .failable()
-    .static_callable()
-    .extension_old("KHR", "swapchain"),
-    Command::new(
-        "DestroySwapchain",
-        &[
-            ("device", "VkDevice"),
-            ("swapchain", "VkSwapchainKHR"),
-            ("pAllocator", "*const VkAllocationCallbacks"),
-        ],
-    )
-    .static_callable()
-    .extension_old("KHR", "swapchain"),
-    Command::new(
-        "GetSwapchainImages",
-        &[
-            ("device", "VkDevice"),
-            ("swapchain", "VkSwapchainKHR"),
-            ("pSwapchainImageCount", "*mut u32"),
-            ("pSwapchainImages", "*mut VkImage"),
-        ],
-    )
-    .failable()
-    .static_callable()
-    .extension_old("KHR", "swapchain"),
-    Command::new(
-        "AcquireNextImage",
-        &[
-            ("device", "VkDevice"),
-            ("swapchain", "VkSwapchainKHR"),
-            ("timeout", "u64"),
-            ("semaphore", "Option<VkSemaphore>"),
-            ("fence", "Option<VkFence>"),
-            ("pImageIndex", "*mut u32"),
-        ],
-    )
-    .failable()
-    .static_callable()
-    .extension_old("KHR", "swapchain"),
-    Command::new(
-        "QueuePresent",
-        &[("queue", "VkQueue"), ("pPresentInfo", "*const VkPresentInfoKHR")],
-    )
-    .failable()
-    .static_callable()
-    .extension_old("KHR", "swapchain"),
-    Command::new(
         "GetPhysicalDeviceDisplayProperties",
         &[
             ("physicalDevice", "VkPhysicalDevice"),
@@ -4569,120 +4186,6 @@ const COMMANDS: &[Command] = &[
     .static_callable()
     .extension_old("KHR", "display"),
     Command::new(
-        "CreateXlibSurface",
-        &[
-            ("instance", "VkInstance"),
-            ("pCreateInfo", "*const VkXlibSurfaceCreateInfoKHR"),
-            ("pAllocator", "*const VkAllocationCallbacks"),
-            ("pSurface", "*mut VkSurfaceKHR"),
-        ],
-    )
-    .failable()
-    .static_callable()
-    .extension_old("KHR", "xlib_surface"),
-    Command::new(
-        "GetPhysicalDeviceXlibPresentationSupport",
-        &[
-            ("physicalDevice", "VkPhysicalDevice"),
-            ("queueFamilyIndex", "u32"),
-            ("dpy", "*mut x11::xlib::Display"),
-            ("visualID", "x11::xlib::VisualID"),
-        ],
-    )
-    .returns("VkBool32")
-    .static_callable()
-    .extension_old("KHR", "xlib_surface"),
-    Command::new(
-        "CreateXcbSurface",
-        &[
-            ("instance", "VkInstance"),
-            ("pCreateInfo", "*const VkXcbSurfaceCreateInfoKHR"),
-            ("pAllocator", "*const VkAllocationCallbacks"),
-            ("pSurface", "*mut VkSurfaceKHR"),
-        ],
-    )
-    .failable()
-    .static_callable()
-    .extension_old("KHR", "xcb_surface"),
-    Command::new(
-        "GetPhysicalDeviceXcbPresentationSupport",
-        &[
-            ("physicalDevice", "VkPhysicalDevice"),
-            ("queueFamilyIndex", "u32"),
-            ("connection", "*mut xcb::ffi::xcb_connection_t"),
-            ("visual_id", "xcb::x::Visualid"),
-        ],
-    )
-    .returns("VkBool32")
-    .static_callable()
-    .extension_old("KHR", "xcb_surface"),
-    Command::new(
-        "CreateWaylandSurface",
-        &[
-            ("instance", "VkInstance"),
-            ("pCreateInfo", "*const VkWaylandSurfaceCreateInfoKHR"),
-            ("pAllocator", "*const VkAllocationCallbacks"),
-            ("pSurface", "*mut VkSurfaceKHR"),
-        ],
-    )
-    .failable()
-    .static_callable()
-    .extension_old("KHR", "wayland_surface"),
-    Command::new(
-        "GetPhysicalDeviceWaylandPresentationSupport",
-        &[
-            ("physicalDevice", "VkPhysicalDevice"),
-            ("queueFamilyIndex", "u32"),
-            ("display", "*mut core::ffi::c_void"),
-        ],
-    )
-    .returns("VkBool32")
-    .static_callable()
-    .extension_old("KHR", "wayland_surface"),
-    Command::new(
-        "CreateAndroidSurface",
-        &[
-            ("instance", "VkInstance"),
-            ("pCreateInfo", "*const VkAndroidSurfaceCreateInfoKHR"),
-            ("pAllocator", "*const VkAllocationCallbacks"),
-            ("pSurface", "*mut VkSurfaceKHR"),
-        ],
-    )
-    .failable()
-    .static_callable()
-    .extension_old("KHR", "android_surface"),
-    Command::new(
-        "CreateWin32Surface",
-        &[
-            ("instance", "VkInstance"),
-            ("pCreateInfo", "*const VkWin32SurfaceCreateInfoKHR"),
-            ("pAllocator", "*const VkAllocationCallbacks"),
-            ("pSurface", "*mut VkSurfaceKHR"),
-        ],
-    )
-    .failable()
-    .static_callable()
-    .extension_old("KHR", "win32_surface"),
-    Command::new(
-        "GetPhysicalDeviceWin32PresentationSupport",
-        &[("physicalDevice", "VkPhysicalDevice"), ("queueFamilyIndex", "u32")],
-    )
-    .returns("VkBool32")
-    .static_callable()
-    .extension_old("KHR", "win32_surface"),
-    Command::new(
-        "CreateMetalSurface",
-        &[
-            ("instance", "VkInstance"),
-            ("pCreateInfo", "*const VkMetalSurfaceCreateInfoEXT"),
-            ("pAllocator", "*const VkAllocationCallbacks"),
-            ("pSurface", "*mut VkSurfaceKHR"),
-        ],
-    )
-    .failable()
-    .static_callable()
-    .extension_old("EXT", "metal_surface"),
-    Command::new(
         "GetPhysicalDeviceSurfaceCapabilities2",
         &[
             ("physicalDevice", "VkPhysicalDevice"),
@@ -4716,16 +4219,6 @@ const COMMANDS: &[Command] = &[
     )
     .failable()
     .extension_old("KHR", "device_group_creation")
-    .promoted("1_1"),
-    Command::new(
-        "TrimCommandPool",
-        &[
-            ("device", "VkDevice"),
-            ("commandPool", "VkCommandPool"),
-            ("flags", "VkCommandPoolTrimFlagsKHR"),
-        ],
-    )
-    .extension_old("KHR", "maintenance1")
     .promoted("1_1"),
     Command::new(
         "GetDescriptorSetLayoutSupport",
@@ -5186,21 +4679,14 @@ fn emit_result_type(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     ERROR.member("UNKNOWN", 13).neg().emit(emitter);
 
     // from extensions
-    ERROR
-        .member("SURFACE_LOST", 0)
-        .neg()
-        .extension(VK_KHR_SURFACE)
+    RESULT
+        .member("SUBOPTIMAL", 3)
+        .extension(&VK_KHR_SWAPCHAIN)
         .emit(emitter);
-    ERROR
-        .member("NATIVE_WINDOW_IN_USE", 1)
-        .neg()
-        .extension(VK_KHR_SURFACE)
-        .emit(emitter);
-    RESULT.member("SUBOPTIMAL", 3).extension(VK_KHR_SWAPCHAIN).emit(emitter);
     ERROR
         .member("OUT_OF_DATE", 4)
         .neg()
-        .extension(VK_KHR_SWAPCHAIN)
+        .extension(&VK_KHR_SWAPCHAIN)
         .emit(emitter);
     ERROR
         .member("INCOMPATIBLE_DISPLAY", 1)
