@@ -1,7 +1,7 @@
 //! Vulkan Synchronization Primitives(Fence, Semaphore, Event)
 use bedrock_vk::{self as brvk, TypedVulkanStructure, VkRawHandle};
 
-use crate::{error::translate_vk_result, *};
+use crate::*;
 use derives::implements;
 
 pub trait Fence: VkHandle<Handle = brvk::VkFence> + DeviceChildHandle + Status {
@@ -103,7 +103,9 @@ pub trait EventMut: Event + VkHandleMut {
     #[implements]
     #[inline]
     fn set(&mut self) -> crate::Result<()> {
-        translate_vk_result(unsafe { brvk::fns::set_event(self.device().native_ptr(), self.native_ptr_mut()) })?;
+        crate::error::translate_vk_result(unsafe {
+            brvk::fns::set_event(self.device().native_ptr(), self.native_ptr_mut())
+        })?;
 
         Ok(())
     }
@@ -117,7 +119,9 @@ pub trait EventMut: Event + VkHandleMut {
     #[implements]
     #[inline]
     fn reset(&mut self) -> crate::Result<()> {
-        translate_vk_result(unsafe { brvk::fns::reset_event(self.device().native_ptr(), self.native_ptr_mut()) })?;
+        crate::error::translate_vk_result(unsafe {
+            brvk::fns::reset_event(self.device().native_ptr(), self.native_ptr_mut())
+        })?;
 
         Ok(())
     }

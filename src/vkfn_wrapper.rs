@@ -1545,18 +1545,6 @@ pub unsafe fn destroy_framebuffer(
     unsafe { brvk::fns::destroy_framebuffer(device.0, framebuffer.0, opt_pointer(allocation_callbacks)) }
 }
 
-/// # Safety
-///
-/// `render_pass` must be created from `device`.
-#[inline]
-pub unsafe fn destroy_render_pass(
-    device: VkHandleRef<brvk::VkDevice>,
-    render_pass: VkHandleRefMut<brvk::VkRenderPass>,
-    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
-) {
-    unsafe { brvk::fns::destroy_render_pass(device.0, render_pass.0, opt_pointer(allocation_callbacks)) }
-}
-
 #[inline]
 pub fn create_shader_module(
     device: VkHandleRef<brvk::VkDevice>,
@@ -1628,6 +1616,51 @@ pub unsafe fn create_graphics_pipeline_array<const N: usize>(
     let mut results = [MaybeUninit::uninit(); N];
     unsafe {
         create_graphics_pipelines(device, pipeline_cache, create_infos, allocation_callbacks, &mut results)?;
+    }
+
+    Ok(core::array::from_fn(|n| unsafe { results[n].assume_init() }))
+}
+
+/// # Safety
+///
+/// `pipeline_cache` must be created from `device`.
+#[inline]
+pub unsafe fn create_compute_pipelines(
+    device: VkHandleRef<brvk::VkDevice>,
+    pipeline_cache: Option<VkHandleRef<brvk::VkPipelineCache>>,
+    create_infos: &[ComputePipelineCreateInfo],
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+    results: &mut [MaybeUninit<brvk::VkPipeline>],
+) -> crate::Result<()> {
+    debug_assert!(results.len() >= create_infos.len());
+
+    translate_vk_result(unsafe {
+        brvk::fns::create_compute_pipelines(
+            device.0,
+            pipeline_cache.map(|x| x.0),
+            create_infos.len() as _,
+            create_infos.as_ptr().cast(),
+            opt_pointer(allocation_callbacks),
+            results.as_mut_ptr().cast(),
+        )
+    })?;
+
+    Ok(())
+}
+
+/// # Safety
+///
+/// `pipeline_cache` must be created from `device`.
+#[inline]
+pub unsafe fn create_compute_pipeline_array<const N: usize>(
+    device: VkHandleRef<brvk::VkDevice>,
+    pipeline_cache: Option<VkHandleRef<brvk::VkPipelineCache>>,
+    create_infos: &[ComputePipelineCreateInfo; N],
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) -> crate::Result<[brvk::VkPipeline; N]> {
+    let mut results = [MaybeUninit::uninit(); N];
+    unsafe {
+        create_compute_pipelines(device, pipeline_cache, create_infos, allocation_callbacks, &mut results)?;
     }
 
     Ok(core::array::from_fn(|n| unsafe { results[n].assume_init() }))
@@ -1872,6 +1905,26 @@ pub unsafe fn free_descriptor_sets(
     Ok(())
 }
 
+/// # Safety
+///
+/// `writes` and `copies` must be a valid array of [`VkWriteDescriptorSet`] and [`VkCopyDescriptorSet`] structs, respectively.
+#[inline]
+pub unsafe fn update_descriptor_sets(
+    device: VkHandleRef<brvk::VkDevice>,
+    writes: &[brvk::VkWriteDescriptorSet],
+    copies: &[brvk::VkCopyDescriptorSet],
+) {
+    unsafe {
+        brvk::fns::update_descriptor_sets(
+            device.0,
+            writes.len() as _,
+            writes.as_ptr(),
+            copies.len() as _,
+            copies.as_ptr(),
+        );
+    }
+}
+
 #[inline]
 pub fn create_descriptor_set_layout(
     device: VkHandleRef<brvk::VkDevice>,
@@ -1902,5 +1955,133 @@ pub unsafe fn destroy_descriptor_set_layout(
 ) {
     unsafe {
         brvk::fns::destroy_descriptor_set_layout(device.0, descriptor_set_layout.0, opt_pointer(allocation_callbacks))
+    }
+}
+
+/// # Safety
+///
+/// `descriptorSetLayout` and `pipelineLayout` in `create_info` must be created from `device`.
+#[inline]
+#[cfg(feature = "Allow1_1APIs")]
+pub unsafe fn create_descriptor_update_template(
+    device: VkHandleRef<brvk::VkDevice>,
+    create_info: &brvk::VkDescriptorUpdateTemplateCreateInfo,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) -> crate::Result<brvk::VkDescriptorUpdateTemplate> {
+    let mut h = core::mem::MaybeUninit::uninit();
+    translate_vk_result(unsafe {
+        brvk::fns::create_descriptor_update_template(
+            device.0,
+            core::ptr::from_ref(create_info).cast(),
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+    })?;
+
+    Ok(unsafe { h.assume_init() })
+}
+
+/// # Safety
+///
+/// `descriptor_update_template` must be created from `device`.
+#[inline]
+#[cfg(feature = "Allow1_1APIs")]
+pub unsafe fn destroy_descriptor_update_template(
+    device: VkHandleRef<brvk::VkDevice>,
+    descriptor_update_template: VkHandleRefMut<brvk::VkDescriptorUpdateTemplate>,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) {
+    unsafe {
+        brvk::fns::destroy_descriptor_update_template(
+            device.0,
+            descriptor_update_template.0,
+            opt_pointer(allocation_callbacks),
+        )
+    }
+}
+
+#[inline]
+pub fn create_render_pass(
+    device: VkHandleRef<brvk::VkDevice>,
+    info: &RenderPassCreateInfo,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) -> crate::Result<brvk::VkRenderPass> {
+    let mut h = core::mem::MaybeUninit::uninit();
+    translate_vk_result(unsafe {
+        brvk::fns::create_render_pass(
+            device.0,
+            core::ptr::from_ref(info).cast(),
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+    })?;
+
+    Ok(unsafe { h.assume_init() })
+}
+
+#[inline]
+#[cfg(feature = "Allow1_2APIs")]
+pub fn create_render_pass2(
+    device: VkHandleRef<brvk::VkDevice>,
+    info: &RenderPassCreateInfo2,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) -> crate::Result<brvk::VkRenderPass> {
+    let mut h = core::mem::MaybeUninit::uninit();
+    translate_vk_result(unsafe {
+        brvk::fns::create_render_pass2(
+            device.0,
+            core::ptr::from_ref(info).cast(),
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+    })?;
+
+    Ok(unsafe { h.assume_init() })
+}
+
+/// # Safety
+///
+/// `render_pass` must be created from `device`.
+#[inline]
+pub unsafe fn destroy_render_pass(
+    device: VkHandleRef<brvk::VkDevice>,
+    render_pass: VkHandleRefMut<brvk::VkRenderPass>,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) {
+    unsafe {
+        brvk::fns::destroy_render_pass(device.0, render_pass.0, opt_pointer(allocation_callbacks));
+    }
+}
+
+#[inline]
+pub fn create_query_pool(
+    device: VkHandleRef<brvk::VkDevice>,
+    info: &QueryPoolCreateInfo,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) -> crate::Result<brvk::VkQueryPool> {
+    let mut h = core::mem::MaybeUninit::uninit();
+    translate_vk_result(unsafe {
+        brvk::fns::create_query_pool(
+            device.0,
+            core::ptr::from_ref(info).cast(),
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+    })?;
+
+    Ok(unsafe { h.assume_init() })
+}
+
+/// # Safety
+///
+/// `query_pool` must be created from `device`.
+#[inline]
+pub unsafe fn destroy_query_pool(
+    device: VkHandleRef<brvk::VkDevice>,
+    query_pool: VkHandleRefMut<brvk::VkQueryPool>,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) {
+    unsafe {
+        brvk::fns::destroy_query_pool(device.0, query_pool.0, opt_pointer(allocation_callbacks));
     }
 }

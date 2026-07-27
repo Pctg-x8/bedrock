@@ -395,3 +395,4 @@ features = ["Win32_Foundation", "Win32_Graphics_Gdi"]
 
 [lints.clippy]
 new_without_default = "allow"
+forget_non_drop = "allow"

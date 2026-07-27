@@ -128,7 +128,7 @@ pub struct ArrayQueryResult<T> {
 }
 impl ArrayQueryResult<()> {
     #[inline(always)]
-    pub(crate) fn from_vk_result(r: vk::VkResult) -> Result<Self> {
+    pub fn from_vk_result(r: vk::VkResult) -> Result<Self> {
         match r {
             vk::VK_SUCCESS => Ok(Self {
                 result: (),
@@ -186,7 +186,7 @@ pub enum TimeoutableWaitResult {
     Timeout,
 }
 impl TimeoutableWaitResult {
-    pub(crate) fn from_vk_result(r: vk::VkResult) -> Self {
+    pub fn from_vk_result(r: vk::VkResult) -> Self {
         match r {
             vk::VK_SUCCESS => Self::Success,
             vk::VK_TIMEOUT => Self::Timeout,

@@ -1,8 +1,8 @@
 //! Vulkan Shading(Shader/Pipeline)
 use bedrock_vk::{self as brvk, TypedVulkanStructure, VkRawHandle};
 
+use crate::ffi_helper::slice_as_ptr_empty_null;
 use crate::*;
-use crate::{error::translate_vk_result, ffi_helper::slice_as_ptr_empty_null};
 use core::{
     ffi::{CStr, c_void},
     marker::PhantomData,
@@ -411,7 +411,7 @@ pub trait PipelineCacheMut: PipelineCache + VkHandleMut {
     #[implements]
     #[inline]
     fn merge(&mut self, srcs: &[VkHandleRef<brvk::VkPipelineCache>]) -> crate::Result<()> {
-        translate_vk_result(unsafe {
+        crate::error::translate_vk_result(unsafe {
             brvk::fns::merge_pipeline_caches(
                 self.device_handle(),
                 self.native_ptr_mut(),

@@ -124,7 +124,7 @@ pub enum QueryResult<T> {
     NotReady,
 }
 impl QueryResult<()> {
-    pub(crate) const fn from_vk(r: brvk::VkResult) -> Self {
+    pub const fn from_vk(r: brvk::VkResult) -> Self {
         match r {
             brvk::VK_NOT_READY => Self::NotReady,
             r => match ResultCode(r) {
