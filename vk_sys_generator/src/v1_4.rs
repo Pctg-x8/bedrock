@@ -1021,7 +1021,7 @@ pub const ELEMENTS: &[Element] = &[
         &[Struct::member("subresourceLayout", "VkSubresourceLayout")],
     )
     .extensions(&[VK_EXT_HOST_IMAGE_COPY])
-    .promoted(VERSION)
+    // .promoted(VERSION) // KHR側のpromotionとかぶるのでこっちはpromoteしない
     .into_element(),
     Struct::typed(
         "ImageSubresource2",
@@ -1031,7 +1031,7 @@ pub const ELEMENTS: &[Element] = &[
         &[Struct::member("imageSubresource", "VkImageSubresource")],
     )
     .extensions(&[VK_EXT_HOST_IMAGE_COPY])
-    .promoted(VERSION)
+    // .promoted(VERSION) // KHR側のpromotionとかぶるのでこっちはpromoteしない
     .into_element(),
     Command::new(
         "CopyMemoryToImage",

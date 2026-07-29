@@ -2238,7 +2238,6 @@ pub const VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_EXT_host_image_copy")]#[rustfmt::skip]pub const VK_STRUCTURE_TYPE_SUBRESOURCE_HOST_MEMCPY_SIZE_EXT:VkStructureType=1000270008;
 #[cfg(feature = "Allow1_4APIs")]#[rustfmt::skip]pub const VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2:VkStructureType=1000338002;
 #[cfg(feature = "VK_KHR_maintenance5")]#[rustfmt::skip]pub const VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2_KHR:VkStructureType=1000338002;
-#[cfg(feature = "Allow1_4APIs")]#[rustfmt::skip]pub const VK_STRUCTURE_TYPE_SURESOURCE_LAYOUT_2:VkStructureType=1000338002;
 #[cfg(feature = "VK_EXT_host_image_copy")]#[rustfmt::skip]pub const VK_STRUCTURE_TYPE_SURESOURCE_LAYOUT_2_EXT:VkStructureType=1000338002;
 #[cfg(feature = "VK_EXT_display_surface_counter")]#[rustfmt::skip]pub const VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES2_EXT:VkStructureType=1000090000;
 #[cfg(feature = "VK_KHR_get_surface_capabilities2")]#[rustfmt::skip]pub const VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR:VkStructureType=1000119001;
