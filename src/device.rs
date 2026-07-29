@@ -373,23 +373,13 @@ pub trait Device: VkHandle<Handle = brvk::VkDevice> + InstanceChild {
     /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
-    #[inline]
+    #[inline(always)]
     fn new_event_raw(
         &self,
         info: &EventCreateInfo,
         allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
     ) -> crate::Result<brvk::VkEvent> {
-        let mut h = core::mem::MaybeUninit::uninit();
-        crate::error::translate_vk_result(unsafe {
-            brvk::fns::create_event(
-                self.native_ptr(),
-                info as *const _ as _,
-                crate::ffi_helper::opt_pointer(allocation_callbacks),
-                h.as_mut_ptr(),
-            )
-        })?;
-
-        Ok(unsafe { h.assume_init() })
+        crate::vkfn_wrapper::create_event(self.as_transparent_ref(), info, allocation_callbacks)
     }
 
     /// Allocate device memory
@@ -967,15 +957,15 @@ pub trait Device: VkHandle<Handle = brvk::VkDevice> + InstanceChild {
     /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements("VK_EXT_debug_utils")]
+    #[inline(always)]
     fn set_object_name(&self, info: &crate::DebugUtilsObjectNameInfo) -> crate::Result<()>
     where
         Self::ConcreteInstance: InstanceDebugUtilsExtension,
     {
-        translate_vk_result(unsafe {
-            self.instance().set_debug_utils_object_name_ext_fn().0(self.native_ptr(), &info.0)
-        })?;
-
-        Ok(())
+        unsafe {
+            self.instance()
+                .set_debug_utils_object_name_ext(self.as_transparent_ref(), info)
+        }
     }
 
     /// Create a new descriptor update template

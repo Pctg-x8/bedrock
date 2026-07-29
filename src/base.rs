@@ -682,7 +682,7 @@ pub trait InstanceDebugUtilsExtension: Instance {
         allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
     ) -> crate::Result<brvk::VkDebugUtilsMessengerEXT> {
         let mut h = core::mem::MaybeUninit::uninit();
-        translate_vk_result(unsafe {
+        crate::error::translate_vk_result(unsafe {
             self.create_debug_utils_messenger_ext_fn().0(
                 self.native_ptr(),
                 core::ptr::from_ref(info).cast(),
@@ -712,6 +712,31 @@ pub trait InstanceDebugUtilsExtension: Instance {
                 crate::ffi_helper::opt_pointer(allocation_callbacks),
             );
         }
+    }
+
+    /// Give an application-defined name to an object
+    ///
+    /// # Failure
+    ///
+    /// On failure, this command returns
+    ///
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_UNKNOWN`]
+    /// * [`brvk::VK_ERROR_VALIDATION_FAILED`]
+    ///
+    /// # Safety
+    ///
+    /// * `objectHandle` in `info` must be associated with the `device`
+    /// * `objectHandle` in `info` must be externally synchronizewd
+    unsafe fn set_debug_utils_object_name_ext(
+        &self,
+        device: VkHandleRef<brvk::VkDevice>,
+        info: &DebugUtilsObjectNameInfo,
+    ) -> crate::Result<()> {
+        crate::error::translate_vk_result(unsafe { self.set_debug_utils_object_name_ext_fn().0(device.0, &info.0) })?;
+
+        Ok(())
     }
 }
 #[cfg(feature = "VK_EXT_debug_utils")]

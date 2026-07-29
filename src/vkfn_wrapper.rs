@@ -1143,6 +1143,38 @@ pub unsafe fn destroy_semaphore(
 }
 
 #[inline]
+pub fn create_event(
+    device: VkHandleRef<brvk::VkDevice>,
+    create_info: &EventCreateInfo,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) -> crate::Result<brvk::VkEvent> {
+    let mut h = MaybeUninit::uninit();
+    crate::error::translate_vk_result(unsafe {
+        brvk::fns::create_event(
+            device.0,
+            core::ptr::from_ref(create_info).cast(),
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+    })?;
+
+    Ok(unsafe { h.assume_init() })
+}
+
+/// # Safety
+///
+/// * `device` and `event` must be a valid device handle and event handle, respectively.
+/// * `event` must be created from the `device`.
+#[inline]
+pub unsafe fn destroy_event(
+    device: VkHandleRef<brvk::VkDevice>,
+    event: VkHandleRefMut<brvk::VkEvent>,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) {
+    unsafe { brvk::fns::destroy_event(device.0, event.0, opt_pointer(allocation_callbacks)) }
+}
+
+#[inline]
 pub fn create_buffer(
     device: VkHandleRef<brvk::VkDevice>,
     create_info: &BufferCreateInfo,
