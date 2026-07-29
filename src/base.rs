@@ -729,6 +729,8 @@ pub trait InstanceDebugUtilsExtension: Instance {
     ///
     /// * `objectHandle` in `info` must be associated with the `device`
     /// * `objectHandle` in `info` must be externally synchronizewd
+    #[implements]
+    #[inline]
     unsafe fn set_debug_utils_object_name_ext(
         &self,
         device: VkHandleRef<brvk::VkDevice>,
