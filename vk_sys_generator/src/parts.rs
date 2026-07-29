@@ -211,6 +211,8 @@ impl EnumMember2 {
     }
 
     pub fn emit(&self, emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+        let primary_extension = self.extension.as_ref().or(self.ty.extension.as_ref());
+
         let ty = Type::Defined(self.ty.rs_typesym());
         let val = ConstantValue::Signed(self.real_value());
 
@@ -218,7 +220,7 @@ impl EnumMember2 {
             compilation_condition: self
                 .ty
                 .rs_requirements()
-                .and(CompilationCondition::all(self.extension.map(|x| {
+                .and(CompilationCondition::all(primary_extension.map(|x| {
                     CompilationCondition::Feature(FeatureName::VulkanExt {
                         tag: x.tag,
                         name: x.name,
@@ -227,12 +229,12 @@ impl EnumMember2 {
             name: ConstantSymbol::Enum {
                 prefix: self.ty.prefix,
                 stem: self.name,
-                suffix: self.extension.or(self.ty.extension).map(|x| x.tag),
+                suffix: primary_extension.map(|x| x.tag),
             },
             ty: ty.clone(),
             value: val.clone(),
         });
-        if let Some(promoted) = self.extension.and_then(|x| x.promoted_since()) {
+        if let Some(promoted) = primary_extension.and_then(|x| x.promoted_since()) {
             emitter.emit_const(Constant {
                 compilation_condition: CompilationCondition::Feature(FeatureName::AllowApiVersion(promoted))
                     .and(self.ty.rs_requirements()),
@@ -633,13 +635,13 @@ impl BitmaskEntry2 {
 }
 
 pub struct BitmaskType {
-    name: &'static str,
-    bits_name: &'static str,
-    prefix: &'static str,
-    version_since: Option<&'static str>,
-    extension: Option<&'static Extension<'static>>,
-    side_extensions: &'static [&'static Extension<'static>],
-    long: bool,
+    pub name: &'static str,
+    pub bits_name: &'static str,
+    pub prefix: &'static str,
+    pub version_since: Option<&'static str>,
+    pub extension: Option<&'static Extension<'static>>,
+    pub side_extensions: &'static [&'static Extension<'static>],
+    pub long: bool,
 }
 impl BitmaskType {
     pub const fn new(name: &'static str, bits_name: &'static str, prefix: &'static str) -> Self {
@@ -678,7 +680,7 @@ impl BitmaskType {
         BitmaskEntry2::new(self, name, bitpos)
     }
 
-    fn rs_bits_typesym(&self) -> TypeSymbol<'static> {
+    pub fn rs_bits_typesym(&self) -> TypeSymbol<'static> {
         TypeSymbol {
             stem: self.bits_name,
             suffix: self.extension.map(|x| x.tag),
@@ -692,7 +694,7 @@ impl BitmaskType {
         }
     }
 
-    fn rs_typesym(&self) -> TypeSymbol<'static> {
+    pub fn rs_typesym(&self) -> TypeSymbol<'static> {
         TypeSymbol {
             stem: self.name,
             suffix: self.extension.map(|x| x.tag),

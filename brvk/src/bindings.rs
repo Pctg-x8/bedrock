@@ -68,18 +68,6 @@ pub const VK_CULL_MODE_NONE: VkCullModeFlags = 0;
 pub const VK_CULL_MODE_FRONT_AND_BACK: VkCullModeFlags = 3;
 #[rustfmt::skip]
 pub const VK_STENCIL_FACE_FRONT_AND_BACK: VkStencilFaceFlags = 3;
-#[cfg(feature = "VK_KHR_synchronization2")]
-#[rustfmt::skip]
-pub const VK_PIPELINE_STAGE_2_NONE_KHR: VkPipelineStageFlagBits2KHR = 0;
-#[cfg(feature = "Allow1_3APIs")]
-#[rustfmt::skip]
-pub const VK_PIPELINE_STAGE_2_NONE: VkPipelineStageFlagBits2 = 0;
-#[cfg(feature = "VK_KHR_synchronization2")]
-#[rustfmt::skip]
-pub const VK_ACCESS_2_NONE_KHR: VkAccessFlagBits2KHR = 0;
-#[cfg(feature = "Allow1_3APIs")]
-#[rustfmt::skip]
-pub const VK_ACCESS_2_NONE: VkAccessFlagBits2 = 0;
 
 #[rustfmt::skip]
 #[repr(transparent)]
@@ -369,31 +357,6 @@ impl crate::VkRawHandle for VkDescriptorPool {
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_DESCRIPTOR_POOL: VkObjectType = 22;
 
-#[cfg(feature = "VK_KHR_descriptor_update_template")]
-#[rustfmt::skip]
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct VkDescriptorUpdateTemplateKHR(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
-#[cfg(feature = "VK_KHR_descriptor_update_template")]
-#[rustfmt::skip]
-impl crate::VkRawHandle for VkDescriptorUpdateTemplateKHR {
-    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR;
-
-    #[inline(always)]
-    fn raw_handle_value(&self) -> u64 {
-        self.0.get()
-    }
-}
-#[cfg(feature = "VK_KHR_descriptor_update_template")]
-#[rustfmt::skip]
-pub const VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR: VkObjectType = 1000085000;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub type VkDescriptorUpdateTemplate = VkDescriptorUpdateTemplateKHR;
-#[cfg(feature = "Allow1_1APIs")]
-#[rustfmt::skip]
-pub const VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE: VkObjectType = 1000085000;
-
 #[rustfmt::skip]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -505,120 +468,6 @@ impl crate::VkRawHandle for VkPipelineCache {
 }
 #[rustfmt::skip]
 pub const VK_OBJECT_TYPE_PIPELINE_CACHE: VkObjectType = 16;
-
-#[cfg(feature = "VK_KHR_display")]
-#[rustfmt::skip]
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct VkDisplayKHR(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
-#[cfg(feature = "VK_KHR_display")]
-#[rustfmt::skip]
-impl crate::VkRawHandle for VkDisplayKHR {
-    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DISPLAY_KHR;
-
-    #[inline(always)]
-    fn raw_handle_value(&self) -> u64 {
-        self.0.get()
-    }
-}
-#[cfg(feature = "VK_KHR_display")]
-#[rustfmt::skip]
-pub const VK_OBJECT_TYPE_DISPLAY_KHR: VkObjectType = 1000002000;
-
-#[cfg(feature = "VK_KHR_display")]
-#[rustfmt::skip]
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct VkDisplayModeKHR(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
-#[cfg(feature = "VK_KHR_display")]
-#[rustfmt::skip]
-impl crate::VkRawHandle for VkDisplayModeKHR {
-    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DISPLAY_MODE_KHR;
-
-    #[inline(always)]
-    fn raw_handle_value(&self) -> u64 {
-        self.0.get()
-    }
-}
-#[cfg(feature = "VK_KHR_display")]
-#[rustfmt::skip]
-pub const VK_OBJECT_TYPE_DISPLAY_MODE_KHR: VkObjectType = 1000002001;
-
-#[cfg(feature = "VK_KHR_surface")]
-#[rustfmt::skip]
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct VkSurfaceKHR(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
-#[cfg(feature = "VK_KHR_surface")]
-#[rustfmt::skip]
-impl crate::VkRawHandle for VkSurfaceKHR {
-    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_SURFACE_KHR;
-
-    #[inline(always)]
-    fn raw_handle_value(&self) -> u64 {
-        self.0.get()
-    }
-}
-#[cfg(feature = "VK_KHR_surface")]
-#[rustfmt::skip]
-pub const VK_OBJECT_TYPE_SURFACE_KHR: VkObjectType = 1000000000;
-
-#[cfg(feature = "VK_KHR_swapchain")]
-#[rustfmt::skip]
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct VkSwapchainKHR(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
-#[cfg(feature = "VK_KHR_swapchain")]
-#[rustfmt::skip]
-impl crate::VkRawHandle for VkSwapchainKHR {
-    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_SWAPCHAIN_KHR;
-
-    #[inline(always)]
-    fn raw_handle_value(&self) -> u64 {
-        self.0.get()
-    }
-}
-#[cfg(feature = "VK_KHR_swapchain")]
-#[rustfmt::skip]
-pub const VK_OBJECT_TYPE_SWAPCHAIN_KHR: VkObjectType = 1000001000;
-
-#[cfg(feature = "VK_EXT_debug_report")]
-#[rustfmt::skip]
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct VkDebugReportCallbackEXT(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
-#[cfg(feature = "VK_EXT_debug_report")]
-#[rustfmt::skip]
-impl crate::VkRawHandle for VkDebugReportCallbackEXT {
-    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT;
-
-    #[inline(always)]
-    fn raw_handle_value(&self) -> u64 {
-        self.0.get()
-    }
-}
-#[cfg(feature = "VK_EXT_debug_report")]
-#[rustfmt::skip]
-pub const VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT: VkObjectType = 1000011000;
-
-#[cfg(feature = "VK_EXT_debug_utils")]
-#[rustfmt::skip]
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct VkDebugUtilsMessengerEXT(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
-#[cfg(feature = "VK_EXT_debug_utils")]
-#[rustfmt::skip]
-impl crate::VkRawHandle for VkDebugUtilsMessengerEXT {
-    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT;
-
-    #[inline(always)]
-    fn raw_handle_value(&self) -> u64 {
-        self.0.get()
-    }
-}
-#[cfg(feature = "VK_EXT_debug_utils")]
-#[rustfmt::skip]
-pub const VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT: VkObjectType = 1000128000;
 #[rustfmt::skip]
 pub const VK_LOD_CLAMP_NONE: f32 = 1000.0;
 #[rustfmt::skip]
@@ -719,69 +568,6 @@ pub union VkClearValue {
     pub depthStencil: VkClearDepthStencilValue,
 }
 
-#[cfg(feature = "VK_KHR_surface")]
-#[rustfmt::skip]
-pub const VK_KHR_SURFACE_EXTENSION_NAME: &str = "VK_KHR_surface";
-#[cfg(feature = "VK_KHR_surface")]
-#[rustfmt::skip]
-pub const VK_KHR_SURFACE_SPEC_VERSION: usize = 25;
-
-#[cfg(feature = "VK_KHR_swapchain")]
-#[rustfmt::skip]
-pub const VK_KHR_SWAPCHAIN_EXTENSION_NAME: &str = "VK_KHR_swapchain";
-#[cfg(feature = "VK_KHR_swapchain")]
-#[rustfmt::skip]
-pub const VK_KHR_SWAPCHAIN_SPEC_VERSION: usize = 68;
-
-#[cfg(feature = "VK_KHR_display")]
-#[rustfmt::skip]
-pub const VK_KHR_DISPLAY_EXTENSION_NAME: &str = "VK_KHR_display";
-#[cfg(feature = "VK_KHR_display")]
-#[rustfmt::skip]
-pub const VK_KHR_DISPLAY_SPEC_VERSION: usize = 21;
-
-#[cfg(feature = "VK_KHR_xlib_surface")]
-#[rustfmt::skip]
-pub const VK_KHR_XLIB_SURFACE_EXTENSION_NAME: &str = "VK_KHR_xlib_surface";
-#[cfg(feature = "VK_KHR_xlib_surface")]
-#[rustfmt::skip]
-pub const VK_KHR_XLIB_SURFACE_SPEC_VERSION: usize = 6;
-
-#[cfg(feature = "VK_KHR_xcb_surface")]
-#[rustfmt::skip]
-pub const VK_KHR_XCB_SURFACE_EXTENSION_NAME: &str = "VK_KHR_xcb_surface";
-#[cfg(feature = "VK_KHR_xcb_surface")]
-#[rustfmt::skip]
-pub const VK_KHR_XCB_SURFACE_SPEC_VERSION: usize = 6;
-
-#[cfg(feature = "VK_KHR_wayland_surface")]
-#[rustfmt::skip]
-pub const VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME: &str = "VK_KHR_wayland_surface";
-#[cfg(feature = "VK_KHR_wayland_surface")]
-#[rustfmt::skip]
-pub const VK_KHR_WAYLAND_SURFACE_SPEC_VERSION: usize = 6;
-
-#[cfg(feature = "VK_KHR_android_surface")]
-#[rustfmt::skip]
-pub const VK_KHR_ANDROID_SURFACE_EXTENSION_NAME: &str = "VK_KHR_android_surface";
-#[cfg(feature = "VK_KHR_android_surface")]
-#[rustfmt::skip]
-pub const VK_KHR_ANDROID_SURFACE_SPEC_VERSION: usize = 6;
-
-#[cfg(feature = "VK_KHR_win32_surface")]
-#[rustfmt::skip]
-pub const VK_KHR_WIN32_SURFACE_EXTENSION_NAME: &str = "VK_KHR_win32_surface";
-#[cfg(feature = "VK_KHR_win32_surface")]
-#[rustfmt::skip]
-pub const VK_KHR_WIN32_SURFACE_SPEC_VERSION: usize = 6;
-
-#[cfg(feature = "VK_EXT_metal_surface")]
-#[rustfmt::skip]
-pub const VK_EXT_METAL_SURFACE_EXTENSION_NAME: &str = "VK_EXT_metal_surface";
-#[cfg(feature = "VK_EXT_metal_surface")]
-#[rustfmt::skip]
-pub const VK_EXT_METAL_SURFACE_SPEC_VERSION: usize = 1;
-
 #[cfg(feature = "VK_KHR_win32_keyed_mutex")]
 #[rustfmt::skip]
 pub const VK_KHR_WIN32_KEYED_MUTEX_EXTENSION_NAME: &str = "VK_KHR_win32_keyed_mutex";
@@ -802,13 +588,6 @@ pub const VK_KHR_DEVICE_GROUP_CREATION_EXTENSION_NAME: &str = "VK_KHR_device_gro
 #[cfg(feature = "VK_KHR_device_group_creation")]
 #[rustfmt::skip]
 pub const VK_KHR_DEVICE_GROUP_CREATION_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_multiview")]
-#[rustfmt::skip]
-pub const VK_KHR_MULTIVIEW_EXTENSION_NAME: &str = "VK_KHR_multiview";
-#[cfg(feature = "VK_KHR_multiview")]
-#[rustfmt::skip]
-pub const VK_KHR_MULTIVIEW_SPEC_VERSION: usize = 1;
 
 #[cfg(feature = "VK_KHR_shader_draw_parameters")]
 #[rustfmt::skip]
@@ -852,34 +631,36 @@ pub const VK_KHR_16BIT_STORAGE_EXTENSION_NAME: &str = "VK_KHR_16bit_storage";
 #[rustfmt::skip]
 pub const VK_KHR_16BIT_STORAGE_SPEC_VERSION: usize = 1;
 
-#[cfg(feature = "VK_KHR_maintenance1")]
-#[rustfmt::skip]
-pub const VK_KHR_MAINTENANCE1_EXTENSION_NAME: &str = "VK_KHR_maintenance1";
-#[cfg(feature = "VK_KHR_maintenance1")]
-#[rustfmt::skip]
-pub const VK_KHR_MAINTENANCE1_SPEC_VERSION: usize = 2;
-
-#[cfg(feature = "VK_KHR_maintenance2")]
-#[rustfmt::skip]
-pub const VK_KHR_MAINTENANCE2_EXTENSION_NAME: &str = "VK_KHR_maintenance2";
-#[cfg(feature = "VK_KHR_maintenance2")]
-#[rustfmt::skip]
-pub const VK_KHR_MAINTENANCE2_SPEC_VERSION: usize = 1;
-
 #[cfg(feature = "VK_KHR_maintenance3")]
 #[rustfmt::skip]
 pub const VK_KHR_MAINTENANCE3_EXTENSION_NAME: &str = "VK_KHR_maintenance3";
 #[cfg(feature = "VK_KHR_maintenance3")]
 #[rustfmt::skip]
 pub const VK_KHR_MAINTENANCE3_SPEC_VERSION: usize = 1;
-
-#[cfg(feature = "VK_KHR_synchronization2")]
+#[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[rustfmt::skip]
-pub const VK_KHR_SYNCHRONIZATION2_EXTENSION_NAME: &str = "VK_KHR_synchronization2";
-#[cfg(feature = "VK_KHR_synchronization2")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkDescriptorUpdateTemplateKHR(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
+#[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[rustfmt::skip]
-pub const VK_KHR_SYNCHRONIZATION2_SPEC_VERSION: usize = 1;
+impl crate::VkRawHandle for VkDescriptorUpdateTemplateKHR {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR;
 
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0.get()
+    }
+}
+#[cfg(feature = "VK_KHR_descriptor_update_template")]
+#[rustfmt::skip]
+pub const VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR: VkObjectType = 1000085000;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub type VkDescriptorUpdateTemplate = VkDescriptorUpdateTemplateKHR;
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
+pub const VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE: VkObjectType = 1000085000;
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 #[repr(transparent)]
@@ -907,11 +688,125 @@ pub const VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION: VkObjectType = 1000156000;
 
 #[cfg(feature = "VK_EXT_debug_report")]
 #[rustfmt::skip]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkDebugReportCallbackEXT(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
+#[cfg(feature = "VK_EXT_debug_report")]
+#[rustfmt::skip]
+impl crate::VkRawHandle for VkDebugReportCallbackEXT {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT;
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0.get()
+    }
+}
+#[cfg(feature = "VK_EXT_debug_report")]
+#[rustfmt::skip]
+pub const VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT: VkObjectType = 1000011000;
+
+#[cfg(feature = "VK_EXT_debug_report")]
+#[rustfmt::skip]
 pub type PFN_vkDebugReportCallbackEXT = extern "system" fn(flags: VkDebugReportFlagsEXT, objectType: VkDebugReportObjectTypeEXT, object: u64, location: usize, messageCode: i32, pLayerPrefix: *const core::ffi::c_char, pMessage: *const core::ffi::c_char, pUserData: *mut core::ffi::c_void) -> VkBool32;
 
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[rustfmt::skip]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkDebugUtilsMessengerEXT(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[rustfmt::skip]
+impl crate::VkRawHandle for VkDebugUtilsMessengerEXT {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT;
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0.get()
+    }
+}
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[rustfmt::skip]
+pub const VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT: VkObjectType = 1000128000;
+
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[rustfmt::skip]
 pub type PFN_vkDebugUtilsMessengerCallbackEXT = extern "system" fn(messageSeverity: VkDebugUtilsMessageSeverityFlagBitsEXT, messageTypes: VkDebugUtilsMessageTypeFlagsEXT, pCallbackData: *const VkDebugUtilsMessengerCallbackDataEXT, pUserData: *mut core::ffi::c_void) -> VkBool32;
+
+#[cfg(feature = "VK_KHR_surface")]
+#[rustfmt::skip]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkSurfaceKHR(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
+#[cfg(feature = "VK_KHR_surface")]
+#[rustfmt::skip]
+impl crate::VkRawHandle for VkSurfaceKHR {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_SURFACE_KHR;
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0.get()
+    }
+}
+#[cfg(feature = "VK_KHR_surface")]
+#[rustfmt::skip]
+pub const VK_OBJECT_TYPE_SURFACE_KHR: VkObjectType = 1000000000;
+
+#[cfg(feature = "VK_KHR_swapchain")]
+#[rustfmt::skip]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkSwapchainKHR(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
+#[cfg(feature = "VK_KHR_swapchain")]
+#[rustfmt::skip]
+impl crate::VkRawHandle for VkSwapchainKHR {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_SWAPCHAIN_KHR;
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0.get()
+    }
+}
+#[cfg(feature = "VK_KHR_swapchain")]
+#[rustfmt::skip]
+pub const VK_OBJECT_TYPE_SWAPCHAIN_KHR: VkObjectType = 1000001000;
+
+#[cfg(feature = "VK_KHR_display")]
+#[rustfmt::skip]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkDisplayKHR(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
+#[cfg(feature = "VK_KHR_display")]
+#[rustfmt::skip]
+impl crate::VkRawHandle for VkDisplayKHR {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DISPLAY_KHR;
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0.get()
+    }
+}
+#[cfg(feature = "VK_KHR_display")]
+#[rustfmt::skip]
+pub const VK_OBJECT_TYPE_DISPLAY_KHR: VkObjectType = 1000002000;
+
+#[cfg(feature = "VK_KHR_display")]
+#[rustfmt::skip]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkDisplayModeKHR(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
+#[cfg(feature = "VK_KHR_display")]
+#[rustfmt::skip]
+impl crate::VkRawHandle for VkDisplayModeKHR {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DISPLAY_MODE_KHR;
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0.get()
+    }
+}
+#[cfg(feature = "VK_KHR_display")]
+#[rustfmt::skip]
+pub const VK_OBJECT_TYPE_DISPLAY_MODE_KHR: VkObjectType = 1000002001;
 
 #[cfg(feature = "VK_EXT_validation_cache")]
 #[rustfmt::skip]
@@ -1147,6 +1042,8 @@ pub const VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_KHR_swapchain")]#[rustfmt::skip]pub const VK_SUBOPTIMAL_KHR:VkResult=1000001003;
 #[rustfmt::skip]pub const VK_SUCCESS:VkResult=0;
 #[rustfmt::skip]pub const VK_TIMEOUT:VkResult=2;
+#[cfg(feature = "Allow1_3APIs")]#[rustfmt::skip]pub const VK_ACCESS_2_NONE:VkAccessFlagBits2KHR=0;
+#[cfg(feature = "VK_KHR_synchronization2")]#[rustfmt::skip]pub const VK_ACCESS_2_NONE_KHR:VkAccessFlagBits2KHR=0;
 #[rustfmt::skip]pub const VK_ATTACHMENT_LOAD_OP_CLEAR:VkAttachmentLoadOp=1;
 #[rustfmt::skip]pub const VK_ATTACHMENT_LOAD_OP_DONT_CARE:VkAttachmentLoadOp=2;
 #[rustfmt::skip]pub const VK_ATTACHMENT_LOAD_OP_LOAD:VkAttachmentLoadOp=0;
@@ -1747,7 +1644,11 @@ pub const VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION: usize = 1;
 #[cfg(all(feature = "VK_EXT_pipeline_protected_access", feature = "VK_EXT_pipeline_robustness"))]#[rustfmt::skip]pub const VK_PIPELINE_ROBUSTNESS_IMAGE_BEHAVIOR_ROBUST_IMAGE_ACCESS_EXT:VkPipelineRobustnessImageBehaviorEXT=2;
 #[cfg(all(feature = "VK_EXT_pipeline_protected_access", feature = "Allow1_4APIs"))]#[rustfmt::skip]pub const VK_PIPELINE_ROBUSTNESS_IMAGE_BEHAVIOR_ROBUST_IMAGE_ACCESS_2:VkPipelineRobustnessImageBehaviorEXT=3;
 #[cfg(all(feature = "VK_EXT_pipeline_protected_access", feature = "VK_EXT_pipeline_robustness"))]#[rustfmt::skip]pub const VK_PIPELINE_ROBUSTNESS_IMAGE_BEHAVIOR_ROBUST_IMAGE_ACCESS_2_EXT:VkPipelineRobustnessImageBehaviorEXT=3;
+#[cfg(feature = "Allow1_3APIs")]#[rustfmt::skip]pub const VK_PIPELINE_STAGE_2_NONE:VkPipelineStageFlagBits2KHR=0;
+#[cfg(feature = "VK_KHR_synchronization2")]#[rustfmt::skip]pub const VK_PIPELINE_STAGE_2_NONE_KHR:VkPipelineStageFlagBits2KHR=0;
+#[cfg(all(feature = "VK_KHR_maintenance2", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_POINT_CLIPPING_BEHAVIOR_ALL_CLIP_PLANES:VkPointClippingBehaviorKHR=0;
 #[cfg(feature = "VK_KHR_maintenance2")]#[rustfmt::skip]pub const VK_POINT_CLIPPING_BEHAVIOR_ALL_CLIP_PLANES_KHR:VkPointClippingBehaviorKHR=0;
+#[cfg(all(feature = "VK_KHR_maintenance2", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_POINT_CLIPPING_BEHAVIOR_USER_CLIP_PLANES:VkPointClippingBehaviorKHR=1;
 #[cfg(feature = "VK_KHR_maintenance2")]#[rustfmt::skip]pub const VK_POINT_CLIPPING_BEHAVIOR_USER_CLIP_PLANES_KHR:VkPointClippingBehaviorKHR=1;
 #[rustfmt::skip]pub const VK_POLYGON_MODE_FILL:VkPolygonMode=0;
 #[cfg(feature = "VK_NV_fill_rectangle")]#[rustfmt::skip]pub const VK_POLYGON_MODE_FILL_RECTANGLE_NV:VkPolygonMode=1000153000;
@@ -2366,7 +2267,9 @@ pub const VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION: usize = 1;
 #[rustfmt::skip]pub const VK_SYSTEM_ALLOCATION_SCOPE_DEVICE:VkSystemAllocationScope=3;
 #[rustfmt::skip]pub const VK_SYSTEM_ALLOCATION_SCOPE_INSTANCE:VkSystemAllocationScope=4;
 #[rustfmt::skip]pub const VK_SYSTEM_ALLOCATION_SCOPE_OBJECT:VkSystemAllocationScope=1;
+#[cfg(all(feature = "VK_KHR_maintenance2", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_TESSELLATION_DOMAIN_ORIGIN_LOWER_LEFT:VkTessellationDomainOriginKHR=1;
 #[cfg(feature = "VK_KHR_maintenance2")]#[rustfmt::skip]pub const VK_TESSELLATION_DOMAIN_ORIGIN_LOWER_LEFT_KHR:VkTessellationDomainOriginKHR=1;
+#[cfg(all(feature = "VK_KHR_maintenance2", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_TESSELLATION_DOMAIN_ORIGIN_UPPER_LEFT:VkTessellationDomainOriginKHR=0;
 #[cfg(feature = "VK_KHR_maintenance2")]#[rustfmt::skip]pub const VK_TESSELLATION_DOMAIN_ORIGIN_UPPER_LEFT_KHR:VkTessellationDomainOriginKHR=0;
 #[cfg(feature = "VK_EXT_validation_cache")]#[rustfmt::skip]pub const VK_VALIDATION_CACHE_HEADER_VERSION_ONE_EXT:VkValidationCacheHeaderVersionEXT=1;
 #[cfg(feature = "VK_EXT_validation_flags")]#[rustfmt::skip]pub const VK_VALIDATION_CHECK_ALL_EXT:VkValidationCheckEXT=0;
@@ -2540,58 +2443,59 @@ pub const VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_EXT_metal_objects")]#[rustfmt::skip]pub const VK_EXPORT_METAL_OBJECT_TYPE_METAL_IOSURFACE_BIT:VkExportMetalObjectTypeFlagBitsEXT=0x00000010;
 #[cfg(feature = "VK_EXT_metal_objects")]#[rustfmt::skip]pub const VK_EXPORT_METAL_OBJECT_TYPE_METAL_SHARED_EVENT_BIT:VkExportMetalObjectTypeFlagBitsEXT=0x00000020;
 #[cfg(feature = "VK_EXT_metal_objects")]#[rustfmt::skip]pub const VK_EXPORT_METAL_OBJECT_TYPE_METAL_TEXTURE_BIT:VkExportMetalObjectTypeFlagBitsEXT=0x00000008;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT:VkExternalFenceFeatureFlagBitsKHR=0x00000001;
+#[cfg(all(feature = "VK_KHR_external_fence_capabilities", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT:VkExternalFenceFeatureFlagBitsKHR=0x00000001;
 #[cfg(feature = "VK_KHR_external_fence_capabilities")]#[rustfmt::skip]pub const VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT_KHR:VkExternalFenceFeatureFlagBitsKHR=0x00000001;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT:VkExternalFenceFeatureFlagBitsKHR=0x00000002;
+#[cfg(all(feature = "VK_KHR_external_fence_capabilities", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT:VkExternalFenceFeatureFlagBitsKHR=0x00000002;
 #[cfg(feature = "VK_KHR_external_fence_capabilities")]#[rustfmt::skip]pub const VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT_KHR:VkExternalFenceFeatureFlagBitsKHR=0x00000002;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT:VkExternalFenceHandleTypeFlagBitsKHR=0x00000001;
+#[cfg(all(feature = "VK_KHR_external_fence_capabilities", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT:VkExternalFenceHandleTypeFlagBitsKHR=0x00000001;
 #[cfg(feature = "VK_KHR_external_fence_capabilities")]#[rustfmt::skip]pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT_KHR:VkExternalFenceHandleTypeFlagBitsKHR=0x00000001;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT:VkExternalFenceHandleTypeFlagBitsKHR=0x00000002;
+#[cfg(all(feature = "VK_KHR_external_fence_capabilities", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT:VkExternalFenceHandleTypeFlagBitsKHR=0x00000002;
 #[cfg(feature = "VK_KHR_external_fence_capabilities")]#[rustfmt::skip]pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT_KHR:VkExternalFenceHandleTypeFlagBitsKHR=0x00000002;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT:VkExternalFenceHandleTypeFlagBitsKHR=0x00000004;
+#[cfg(all(feature = "VK_KHR_external_fence_capabilities", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT:VkExternalFenceHandleTypeFlagBitsKHR=0x00000004;
 #[cfg(feature = "VK_KHR_external_fence_capabilities")]#[rustfmt::skip]pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_KHR:VkExternalFenceHandleTypeFlagBitsKHR=0x00000004;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT:VkExternalFenceHandleTypeFlagBitsKHR=0x00000008;
+#[cfg(all(feature = "VK_KHR_external_fence_capabilities", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT:VkExternalFenceHandleTypeFlagBitsKHR=0x00000008;
 #[cfg(feature = "VK_KHR_external_fence_capabilities")]#[rustfmt::skip]pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT_KHR:VkExternalFenceHandleTypeFlagBitsKHR=0x00000008;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT:VkExternalMemoryFeatureFlagBitsKHR=0x00000001;
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT:VkExternalMemoryFeatureFlagBitsKHR=0x00000001;
 #[cfg(feature = "VK_KHR_external_memory_capabilities")]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT_KHR:VkExternalMemoryFeatureFlagBitsKHR=0x00000001;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT:VkExternalMemoryFeatureFlagBitsKHR=0x00000002;
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT:VkExternalMemoryFeatureFlagBitsKHR=0x00000002;
 #[cfg(feature = "VK_KHR_external_memory_capabilities")]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT_KHR:VkExternalMemoryFeatureFlagBitsKHR=0x00000002;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT:VkExternalMemoryFeatureFlagBitsKHR=0x00000004;
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT:VkExternalMemoryFeatureFlagBitsKHR=0x00000004;
 #[cfg(feature = "VK_KHR_external_memory_capabilities")]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT_KHR:VkExternalMemoryFeatureFlagBitsKHR=0x00000004;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT:VkExternalMemoryHandleTypeFlagBitsKHR=0x00000008;
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT:VkExternalMemoryHandleTypeFlagBitsKHR=0x00000008;
 #[cfg(feature = "VK_KHR_external_memory_capabilities")]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT_KHR:VkExternalMemoryHandleTypeFlagBitsKHR=0x00000008;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT:VkExternalMemoryHandleTypeFlagBitsKHR=0x00000010;
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT:VkExternalMemoryHandleTypeFlagBitsKHR=0x00000010;
 #[cfg(feature = "VK_KHR_external_memory_capabilities")]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT_KHR:VkExternalMemoryHandleTypeFlagBitsKHR=0x00000010;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT:VkExternalMemoryHandleTypeFlagBitsKHR=0x00000020;
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT:VkExternalMemoryHandleTypeFlagBitsKHR=0x00000020;
 #[cfg(feature = "VK_KHR_external_memory_capabilities")]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT_KHR:VkExternalMemoryHandleTypeFlagBitsKHR=0x00000020;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT:VkExternalMemoryHandleTypeFlagBitsKHR=0x00000040;
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT:VkExternalMemoryHandleTypeFlagBitsKHR=0x00000040;
 #[cfg(feature = "VK_KHR_external_memory_capabilities")]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT_KHR:VkExternalMemoryHandleTypeFlagBitsKHR=0x00000040;
 #[cfg(all(feature = "VK_EXT_external_memory_dma_buf", feature = "VK_KHR_external_memory_capabilities"))]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT:VkExternalMemoryHandleTypeFlagBitsKHR=0x00000200;
 #[cfg(all(feature = "VK_EXT_external_memory_host", feature = "VK_KHR_external_memory"))]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT:VkExternalMemoryHandleTypeFlagBitsKHR=0x00000080;
 #[cfg(all(feature = "VK_EXT_external_memory_host", feature = "VK_KHR_external_memory"))]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT:VkExternalMemoryHandleTypeFlagBitsKHR=0x00000100;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT:VkExternalMemoryHandleTypeFlagBitsKHR=0x00000001;
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT:VkExternalMemoryHandleTypeFlagBitsKHR=0x00000001;
 #[cfg(feature = "VK_KHR_external_memory_capabilities")]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT_KHR:VkExternalMemoryHandleTypeFlagBitsKHR=0x00000001;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT:VkExternalMemoryHandleTypeFlagBitsKHR=0x00000002;
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT:VkExternalMemoryHandleTypeFlagBitsKHR=0x00000002;
 #[cfg(feature = "VK_KHR_external_memory_capabilities")]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT_KHR:VkExternalMemoryHandleTypeFlagBitsKHR=0x00000002;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT:VkExternalMemoryHandleTypeFlagBitsKHR=0x00000004;
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT:VkExternalMemoryHandleTypeFlagBitsKHR=0x00000004;
 #[cfg(feature = "VK_KHR_external_memory_capabilities")]#[rustfmt::skip]pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_KHR:VkExternalMemoryHandleTypeFlagBitsKHR=0x00000004;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT:VkExternalSemaphoreFeatureFlagBitsKHR=0x00000001;
+#[cfg(all(feature = "VK_KHR_external_semaphore_capabilities", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT:VkExternalSemaphoreFeatureFlagBitsKHR=0x00000001;
 #[cfg(feature = "VK_KHR_external_semaphore_capabilities")]#[rustfmt::skip]pub const VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT_KHR:VkExternalSemaphoreFeatureFlagBitsKHR=0x00000001;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT:VkExternalSemaphoreFeatureFlagBitsKHR=0x00000002;
+#[cfg(all(feature = "VK_KHR_external_semaphore_capabilities", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT:VkExternalSemaphoreFeatureFlagBitsKHR=0x00000002;
 #[cfg(feature = "VK_KHR_external_semaphore_capabilities")]#[rustfmt::skip]pub const VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT_KHR:VkExternalSemaphoreFeatureFlagBitsKHR=0x00000002;
 #[cfg(all(feature = "VK_KHR_external_semaphore_capabilities", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D11_FENCE_BIT:VkExternalSemaphoreHandleTypeFlagBitsKHR=0x00000008;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT:VkExternalSemaphoreHandleTypeFlagBitsKHR=0x00000008;
+#[cfg(all(feature = "VK_KHR_external_semaphore_capabilities", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D11_FENCE_BIT_KHR:VkExternalSemaphoreHandleTypeFlagBitsKHR=0x00000008;
+#[cfg(all(feature = "VK_KHR_external_semaphore_capabilities", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT:VkExternalSemaphoreHandleTypeFlagBitsKHR=0x00000008;
 #[cfg(feature = "VK_KHR_external_semaphore_capabilities")]#[rustfmt::skip]pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT_KHR:VkExternalSemaphoreHandleTypeFlagBitsKHR=0x00000008;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT:VkExternalSemaphoreHandleTypeFlagBitsKHR=0x00000001;
+#[cfg(all(feature = "VK_KHR_external_semaphore_capabilities", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT:VkExternalSemaphoreHandleTypeFlagBitsKHR=0x00000001;
 #[cfg(feature = "VK_KHR_external_semaphore_capabilities")]#[rustfmt::skip]pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT_KHR:VkExternalSemaphoreHandleTypeFlagBitsKHR=0x00000001;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT:VkExternalSemaphoreHandleTypeFlagBitsKHR=0x00000002;
+#[cfg(all(feature = "VK_KHR_external_semaphore_capabilities", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT:VkExternalSemaphoreHandleTypeFlagBitsKHR=0x00000002;
 #[cfg(feature = "VK_KHR_external_semaphore_capabilities")]#[rustfmt::skip]pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT_KHR:VkExternalSemaphoreHandleTypeFlagBitsKHR=0x00000002;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT:VkExternalSemaphoreHandleTypeFlagBitsKHR=0x00000004;
+#[cfg(all(feature = "VK_KHR_external_semaphore_capabilities", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT:VkExternalSemaphoreHandleTypeFlagBitsKHR=0x00000004;
 #[cfg(feature = "VK_KHR_external_semaphore_capabilities")]#[rustfmt::skip]pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_KHR:VkExternalSemaphoreHandleTypeFlagBitsKHR=0x00000004;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT:VkExternalSemaphoreHandleTypeFlagBitsKHR=0x00000010;
+#[cfg(all(feature = "VK_KHR_external_semaphore_capabilities", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT:VkExternalSemaphoreHandleTypeFlagBitsKHR=0x00000010;
 #[cfg(feature = "VK_KHR_external_semaphore_capabilities")]#[rustfmt::skip]pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT_KHR:VkExternalSemaphoreHandleTypeFlagBitsKHR=0x00000010;
 #[rustfmt::skip]pub const VK_FENCE_CREATE_SIGNALED_BIT:VkFenceCreateFlagBits=0x00000001;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_FENCE_IMPORT_TEMPORARY_BIT:VkFenceImportFlagBitsKHR=0x00000001;
+#[cfg(all(feature = "VK_KHR_external_fence", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_FENCE_IMPORT_TEMPORARY_BIT:VkFenceImportFlagBitsKHR=0x00000001;
 #[cfg(feature = "VK_KHR_external_fence")]#[rustfmt::skip]pub const VK_FENCE_IMPORT_TEMPORARY_BIT_KHR:VkFenceImportFlagBitsKHR=0x00000001;
 #[rustfmt::skip]pub const VK_FORMAT_FEATURE_BLIT_DST_BIT:VkFormatFeatureFlagBits=0x00000800;
 #[rustfmt::skip]pub const VK_FORMAT_FEATURE_BLIT_SRC_BIT:VkFormatFeatureFlagBits=0x00000400;
@@ -2710,7 +2614,7 @@ pub const VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_KHR_buffer_device_address")]#[rustfmt::skip]pub const VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT_KHR:VkMemoryAllocateFlagBits=0x00000002;
 #[cfg(feature = "Allow1_2APIs")]#[rustfmt::skip]pub const VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT:VkMemoryAllocateFlagBits=0x00000004;
 #[cfg(feature = "VK_KHR_buffer_device_address")]#[rustfmt::skip]pub const VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT_KHR:VkMemoryAllocateFlagBits=0x00000004;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT:VkMemoryAllocateFlagBitsKHR=0x00000001;
+#[cfg(all(feature = "VK_KHR_device_group", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT:VkMemoryAllocateFlagBitsKHR=0x00000001;
 #[cfg(feature = "VK_KHR_device_group")]#[rustfmt::skip]pub const VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT_KHR:VkMemoryAllocateFlagBitsKHR=0x00000001;
 #[rustfmt::skip]pub const VK_MEMORY_HEAP_DEVICE_LOCAL_BIT:VkMemoryHeapFlagBits=0x00000001;
 #[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_MEMORY_HEAP_MULTI_INSTANCE_BIT:VkMemoryHeapFlagBits=0x00000002;
@@ -2724,13 +2628,13 @@ pub const VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_KHR_map_memory2")]#[rustfmt::skip]pub const VK_MEMORY_UNMAP_RESERVE_BIT_KHR:VkMemoryUnmapFlagBitsKHR=0x00000001;
 #[cfg(feature = "VK_NVX_device_generated_commands")]#[rustfmt::skip]pub const VK_OBJECT_ENTRY_USAGE_COMPUTE_BIT_NVX:VkObjectEntryUsageFlagBitsNVX=0x00000002;
 #[cfg(feature = "VK_NVX_device_generated_commands")]#[rustfmt::skip]pub const VK_OBJECT_ENTRY_USAGE_GRAPHICS_BIT_NVX:VkObjectEntryUsageFlagBitsNVX=0x00000001;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_PEER_MEMORY_FEATURE_COPY_DST_BIT:VkPeerMemoryFeatureFlagBitsKHR=0x00000002;
+#[cfg(all(feature = "VK_KHR_device_group", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_PEER_MEMORY_FEATURE_COPY_DST_BIT:VkPeerMemoryFeatureFlagBitsKHR=0x00000002;
 #[cfg(feature = "VK_KHR_device_group")]#[rustfmt::skip]pub const VK_PEER_MEMORY_FEATURE_COPY_DST_BIT_KHR:VkPeerMemoryFeatureFlagBitsKHR=0x00000002;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_PEER_MEMORY_FEATURE_COPY_SRC_BIT:VkPeerMemoryFeatureFlagBitsKHR=0x00000001;
+#[cfg(all(feature = "VK_KHR_device_group", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_PEER_MEMORY_FEATURE_COPY_SRC_BIT:VkPeerMemoryFeatureFlagBitsKHR=0x00000001;
 #[cfg(feature = "VK_KHR_device_group")]#[rustfmt::skip]pub const VK_PEER_MEMORY_FEATURE_COPY_SRC_BIT_KHR:VkPeerMemoryFeatureFlagBitsKHR=0x00000001;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_PEER_MEMORY_FEATURE_GENERIC_DST_BIT:VkPeerMemoryFeatureFlagBitsKHR=0x00000008;
+#[cfg(all(feature = "VK_KHR_device_group", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_PEER_MEMORY_FEATURE_GENERIC_DST_BIT:VkPeerMemoryFeatureFlagBitsKHR=0x00000008;
 #[cfg(feature = "VK_KHR_device_group")]#[rustfmt::skip]pub const VK_PEER_MEMORY_FEATURE_GENERIC_DST_BIT_KHR:VkPeerMemoryFeatureFlagBitsKHR=0x00000008;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_PEER_MEMORY_FEATURE_GENERIC_SRC_BIT:VkPeerMemoryFeatureFlagBitsKHR=0x00000004;
+#[cfg(all(feature = "VK_KHR_device_group", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_PEER_MEMORY_FEATURE_GENERIC_SRC_BIT:VkPeerMemoryFeatureFlagBitsKHR=0x00000004;
 #[cfg(feature = "VK_KHR_device_group")]#[rustfmt::skip]pub const VK_PEER_MEMORY_FEATURE_GENERIC_SRC_BIT_KHR:VkPeerMemoryFeatureFlagBitsKHR=0x00000004;
 #[cfg(feature = "Allow1_3APIs")]#[rustfmt::skip]pub const VK_PIPELINE_CACHE_CREATE_EXTERNALLY_SYNCHRONIZED_BIT:VkPipelineCacheCreateFlagBits=0x00000001;
 #[cfg(feature = "VK_KHR_maintenance8")]#[rustfmt::skip]pub const VK_PIPELINE_CACHE_CREATE_INTERNALLY_SYNCHRONIZED_MERGE_BIT_KHR:VkPipelineCacheCreateFlagBits=0x00000008;
@@ -2864,7 +2768,7 @@ pub const VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION: usize = 1;
 #[rustfmt::skip]pub const VK_SAMPLE_COUNT_4_BIT:VkSampleCountFlagBits=0x00000004;
 #[rustfmt::skip]pub const VK_SAMPLE_COUNT_64_BIT:VkSampleCountFlagBits=0x00000040;
 #[rustfmt::skip]pub const VK_SAMPLE_COUNT_8_BIT:VkSampleCountFlagBits=0x00000008;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_SEMAPHORE_IMPORT_TEMPORARY_BIT:VkSemaphoreImportFlagBitsKHR=0x00000001;
+#[cfg(all(feature = "VK_KHR_external_semaphore", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_SEMAPHORE_IMPORT_TEMPORARY_BIT:VkSemaphoreImportFlagBitsKHR=0x00000001;
 #[cfg(feature = "VK_KHR_external_semaphore")]#[rustfmt::skip]pub const VK_SEMAPHORE_IMPORT_TEMPORARY_BIT_KHR:VkSemaphoreImportFlagBitsKHR=0x00000001;
 #[cfg(feature = "Allow1_2APIs")]#[rustfmt::skip]pub const VK_SEMAPHORE_WAIT_ANY_BIT:VkSemaphoreWaitFlagBitsKHR=0x00000001;
 #[cfg(feature = "VK_KHR_timeline_semaphore")]#[rustfmt::skip]pub const VK_SEMAPHORE_WAIT_ANY_BIT_KHR:VkSemaphoreWaitFlagBitsKHR=0x00000001;
@@ -2906,8 +2810,8 @@ pub const VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_KHR_surface")]#[rustfmt::skip]pub const VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR:VkSurfaceTransformFlagBitsKHR=0x00000004;
 #[cfg(feature = "VK_KHR_surface")]#[rustfmt::skip]pub const VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR:VkSurfaceTransformFlagBitsKHR=0x00000008;
 #[cfg(feature = "VK_KHR_surface")]#[rustfmt::skip]pub const VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR:VkSurfaceTransformFlagBitsKHR=0x00000002;
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub const VK_SWAPCHAIN_CREATE_SPLIT_INSTNACE_BIND_REGIONS_BIT:VkSwapchainCreateFlagBitsKHR=0x00000001;
-#[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]#[rustfmt::skip]pub const VK_SWAPCHAIN_CREATE_SPLIT_INSTNACE_BIND_REGIONS_BIT_KHR:VkSwapchainCreateFlagBitsKHR=0x00000001;
+#[cfg(all(feature = "VK_KHR_swapchain", feature = "Allow1_1APIs"))]#[rustfmt::skip]pub const VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT:VkSwapchainCreateFlagBitsKHR=0x00000001;
+#[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]#[rustfmt::skip]pub const VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR:VkSwapchainCreateFlagBitsKHR=0x00000001;
 #[cfg(feature = "VK_AMD_buffer_marker")]#[rustfmt::skip]pub const VK_AMD_BUFFER_MARKER_EXTENSION_NAME:&str="VK_AMD_buffer_marker";
 #[cfg(feature = "VK_AMD_buffer_marker")]#[rustfmt::skip]pub const VK_AMD_BUFFER_MARKER_SPEC_VERSION:usize=1;
 #[cfg(feature = "VK_AMD_draw_indirect_count")]#[rustfmt::skip]pub const VK_AMD_DRAW_INDIRECT_COUNT_EXTENSION_NAME:&str="VK_AMD_draw_indirect_count";
@@ -3008,6 +2912,8 @@ pub const VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_KHR_descriptor_update_template")]#[rustfmt::skip]pub const VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE_SPEC_VERSION:usize=1;
 #[cfg(feature = "VK_KHR_device_group")]#[rustfmt::skip]pub const VK_KHR_DEVICE_GROUP_EXTENSION_NAME:&str="VK_KHR_device_group";
 #[cfg(feature = "VK_KHR_device_group")]#[rustfmt::skip]pub const VK_KHR_DEVICE_GROUP_SPEC_VERSION:usize=4;
+#[cfg(feature = "VK_KHR_display")]#[rustfmt::skip]pub const VK_KHR_DISPLAY_EXTENSION_NAME:&str="VK_KHR_display";
+#[cfg(feature = "VK_KHR_display")]#[rustfmt::skip]pub const VK_KHR_DISPLAY_SPEC_VERSION:usize=23;
 #[cfg(feature = "VK_KHR_display_swapchain")]#[rustfmt::skip]pub const VK_KHR_DISPLAY_SWAPCHAIN_EXTENSION_NAME:&str="VK_KHR_display_swapchain";
 #[cfg(feature = "VK_KHR_display_swapchain")]#[rustfmt::skip]pub const VK_KHR_DISPLAY_SWAPCHAIN_SPEC_VERSION:usize=10;
 #[cfg(feature = "VK_KHR_dynamic_rendering")]#[rustfmt::skip]pub const VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME:&str="VK_KHR_dynamic_rendering";
@@ -3072,6 +2978,8 @@ pub const VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_KHR_maintenance9")]#[rustfmt::skip]pub const VK_KHR_MAINTENANCE9_SPEC_VERSION:usize=1;
 #[cfg(feature = "VK_KHR_map_memory2")]#[rustfmt::skip]pub const VK_KHR_MAP_MEMORY2_EXTENSION_NAME:&str="VK_KHR_map_memory2";
 #[cfg(feature = "VK_KHR_map_memory2")]#[rustfmt::skip]pub const VK_KHR_MAP_MEMORY2_SPEC_VERSION:usize=1;
+#[cfg(feature = "VK_KHR_multiview")]#[rustfmt::skip]pub const VK_KHR_MULTIVIEW_EXTENSION_NAME:&str="VK_KHR_multiview";
+#[cfg(feature = "VK_KHR_multiview")]#[rustfmt::skip]pub const VK_KHR_MULTIVIEW_SPEC_VERSION:usize=1;
 #[cfg(feature = "VK_KHR_push_descriptor")]#[rustfmt::skip]pub const VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME:&str="VK_KHR_push_descriptor";
 #[cfg(feature = "VK_KHR_push_descriptor")]#[rustfmt::skip]pub const VK_KHR_PUSH_DESCRIPTOR_SPEC_VERSION:usize=1;
 #[cfg(feature = "VK_KHR_sampler_mirror_clamp_to_edge")]#[rustfmt::skip]pub const VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE_EXTENSION_NAME:&str="VK_KHR_sampler_mirror_clamp_to_edge";
@@ -3090,6 +2998,8 @@ pub const VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_KHR_surface")]#[rustfmt::skip]pub const VK_KHR_SURFACE_SPEC_VERSION:usize=25;
 #[cfg(feature = "VK_KHR_swapchain")]#[rustfmt::skip]pub const VK_KHR_SWAPCHAIN_EXTENSION_NAME:&str="VK_KHR_swapchain";
 #[cfg(feature = "VK_KHR_swapchain")]#[rustfmt::skip]pub const VK_KHR_SWAPCHAIN_SPEC_VERSION:usize=70;
+#[cfg(feature = "VK_KHR_synchronization2")]#[rustfmt::skip]pub const VK_KHR_SYNCHRONIZATION2_EXTENSION_NAME:&str="VK_KHR_synchronization2";
+#[cfg(feature = "VK_KHR_synchronization2")]#[rustfmt::skip]pub const VK_KHR_SYNCHRONIZATION2_SPEC_VERSION:usize=1;
 #[cfg(feature = "VK_KHR_timeline_semaphore")]#[rustfmt::skip]pub const VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME:&str="VK_KHR_timeline_semaphore";
 #[cfg(feature = "VK_KHR_timeline_semaphore")]#[rustfmt::skip]pub const VK_KHR_TIMELINE_SEMAPHORE_SPEC_VERSION:usize=2;
 #[cfg(feature = "VK_KHR_vertex_attribute_divisor")]#[rustfmt::skip]pub const VK_KHR_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME:&str="VK_KHR_vertex_attribute_divisor";
@@ -3581,6 +3491,10 @@ pub const VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_KHR_external_fence_win32")]#[derive(Debug,Clone,)]#[rustfmt::skip]#[repr(C)]pub struct VkExportFenceWin32HandleInfoKHR{pub sType:VkStructureType,pub pNext:*const core::ffi::c_void,pub pAttributes:*const windows::Win32::Security::SECURITY_ATTRIBUTES,pub dwAccess:u32,pub name:windows::core::PCWSTR,}
 #[cfg(feature = "VK_KHR_external_fence_win32")]#[rustfmt::skip]unsafe impl crate::VulkanStructure for VkExportFenceWin32HandleInfoKHR{#[inline(always)]fn as_generic(&self)->&crate::GenericVulkanStructure{unsafe{core::mem::transmute::<&Self,&crate::GenericVulkanStructure>(self)}}#[inline(always)]fn as_generic_mut(&mut self)->&mut crate::GenericVulkanStructure{unsafe{core::mem::transmute::<&mut Self, &mut crate::GenericVulkanStructure>(self)}}}
 #[cfg(feature = "VK_KHR_external_fence_win32")]#[rustfmt::skip]impl crate::TypedVulkanStructure for VkExportFenceWin32HandleInfoKHR{const TYPE: VkStructureType=VK_STRUCTURE_TYPE_EXPORT_FENCE_WIN32_HANDLE_INFO_KHR;}
+#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub type VkExportMemoryAllocateInfo=VkExportMemoryAllocateInfoKHR;
+#[cfg(feature = "VK_KHR_external_memory")]#[derive(Debug,Clone,)]#[rustfmt::skip]#[repr(C)]pub struct VkExportMemoryAllocateInfoKHR{pub sType:VkStructureType,pub pNext:*const core::ffi::c_void,pub handleTypes:VkExternalMemoryHandleTypeFlagsKHR,}
+#[cfg(feature = "VK_KHR_external_memory")]#[rustfmt::skip]unsafe impl crate::VulkanStructure for VkExportMemoryAllocateInfoKHR{#[inline(always)]fn as_generic(&self)->&crate::GenericVulkanStructure{unsafe{core::mem::transmute::<&Self,&crate::GenericVulkanStructure>(self)}}#[inline(always)]fn as_generic_mut(&mut self)->&mut crate::GenericVulkanStructure{unsafe{core::mem::transmute::<&mut Self, &mut crate::GenericVulkanStructure>(self)}}}
+#[cfg(feature = "VK_KHR_external_memory")]#[rustfmt::skip]impl crate::TypedVulkanStructure for VkExportMemoryAllocateInfoKHR{const TYPE: VkStructureType=VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO_KHR;}
 #[cfg(feature = "VK_KHR_external_memory_win32")]#[derive(Debug,Clone,)]#[rustfmt::skip]#[repr(C)]pub struct VkExportMemoryWin32HandleInfoKHR{pub sType:VkStructureType,pub pNext:*const core::ffi::c_void,pub pAttributes:*const windows::Win32::Security::SECURITY_ATTRIBUTES,pub dwAccess:u32,pub name:windows::core::PCWSTR,}
 #[cfg(feature = "VK_KHR_external_memory_win32")]#[rustfmt::skip]unsafe impl crate::VulkanStructure for VkExportMemoryWin32HandleInfoKHR{#[inline(always)]fn as_generic(&self)->&crate::GenericVulkanStructure{unsafe{core::mem::transmute::<&Self,&crate::GenericVulkanStructure>(self)}}#[inline(always)]fn as_generic_mut(&mut self)->&mut crate::GenericVulkanStructure{unsafe{core::mem::transmute::<&mut Self, &mut crate::GenericVulkanStructure>(self)}}}
 #[cfg(feature = "VK_KHR_external_memory_win32")]#[rustfmt::skip]impl crate::TypedVulkanStructure for VkExportMemoryWin32HandleInfoKHR{const TYPE: VkStructureType=VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR;}
@@ -4844,10 +4758,6 @@ pub const VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_NV_viewport_swizzle")]#[rustfmt::skip]pub type VkViewportCoordinateSwizzleNV=i32;
 #[cfg(feature = "VK_NV_viewport_swizzle")]#[derive(Debug,Clone,)]#[rustfmt::skip]#[repr(C)]pub struct VkViewportSwizzleNV{pub x:VkViewportCoordinateSwizzleNV,pub y:VkViewportCoordinateSwizzleNV,pub z:VkViewportCoordinateSwizzleNV,pub w:VkViewportCoordinateSwizzleNV,}
 #[cfg(feature = "VK_NV_clip_space_w_scaling")]#[derive(Debug,Clone,)]#[rustfmt::skip]#[repr(C)]pub struct VkViewportWScalingNV{pub xcoeff:core::ffi::c_float,pub ycoeff:core::ffi::c_float,}
-#[cfg(feature = "Allow1_1APIs")]#[rustfmt::skip]pub type VkVkExportMemoryAllocateInfo=VkVkExportMemoryAllocateInfoKHR;
-#[cfg(feature = "VK_KHR_external_memory")]#[derive(Debug,Clone,)]#[rustfmt::skip]#[repr(C)]pub struct VkVkExportMemoryAllocateInfoKHR{pub sType:VkStructureType,pub pNext:*const core::ffi::c_void,pub handleTypes:VkExternalMemoryHandleTypeFlagsKHR,}
-#[cfg(feature = "VK_KHR_external_memory")]#[rustfmt::skip]unsafe impl crate::VulkanStructure for VkVkExportMemoryAllocateInfoKHR{#[inline(always)]fn as_generic(&self)->&crate::GenericVulkanStructure{unsafe{core::mem::transmute::<&Self,&crate::GenericVulkanStructure>(self)}}#[inline(always)]fn as_generic_mut(&mut self)->&mut crate::GenericVulkanStructure{unsafe{core::mem::transmute::<&mut Self, &mut crate::GenericVulkanStructure>(self)}}}
-#[cfg(feature = "VK_KHR_external_memory")]#[rustfmt::skip]impl crate::TypedVulkanStructure for VkVkExportMemoryAllocateInfoKHR{const TYPE: VkStructureType=VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO_KHR;}
 #[cfg(feature = "VK_KHR_wayland_surface")]#[rustfmt::skip]pub type VkWaylandSurfaceCreateFlagBitsKHR=VkFlags;
 #[cfg(feature = "VK_KHR_wayland_surface")]#[rustfmt::skip]pub type VkWaylandSurfaceCreateFlagsKHR=VkFlags;
 #[cfg(feature = "VK_KHR_wayland_surface")]#[derive(Debug,Clone,)]#[rustfmt::skip]#[repr(C)]pub struct VkWaylandSurfaceCreateInfoKHR{pub sType:VkStructureType,pub pNext:*const core::ffi::c_void,pub flags:VkWaylandSurfaceCreateFlagsKHR,pub display:*mut core::ffi::c_void,pub surface:*mut core::ffi::c_void,}

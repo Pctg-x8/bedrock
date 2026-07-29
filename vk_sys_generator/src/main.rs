@@ -6,20 +6,12 @@ use parts::{
 };
 
 use crate::{
-    extensions::{
-        VK_EXT_BLEND_OPERATION_ADVANCED, VK_KHR_DISPLAY, VK_KHR_DISPLAY_SWAPCHAIN, VK_KHR_PORTABILITY_ENUMERATION,
-        VK_KHR_SURFACE, VK_KHR_SWAPCHAIN,
-    },
+    extensions::{VK_EXT_BLEND_OPERATION_ADVANCED, VK_KHR_DISPLAY_SWAPCHAIN, VK_KHR_PORTABILITY_ENUMERATION},
     parts::{BitmaskType, EnumType},
     rs_item::{
         CompilationCondition, Constant, ConstantSymbol, FeatureName, FnSymbol, FunctionPtrNewtype, FunctionStub,
         RustCodeEmitter, TypeSymbol,
     },
-    v1_1::{
-        VK_KHR_BIND_MEMORY_2, VK_KHR_DEVICE_GROUP, VK_KHR_EXTERNAL_MEMORY, VK_KHR_MAINTENANCE_1, VK_KHR_MULTIVIEW,
-        VK_KHR_SAMPLER_YCBCR_CONVERSION,
-    },
-    v1_3::VK_KHR_SYNCHRONIZATION2,
     v1_4::VK_KHR_MAINTENANCE_5,
 };
 
@@ -56,19 +48,6 @@ fn main() -> std::io::Result<()> {
     emit_const(&mut o, "VK_CULL_MODE_NONE", "VkCullModeFlags", "0")?;
     emit_const(&mut o, "VK_CULL_MODE_FRONT_AND_BACK", "VkCullModeFlags", "3")?;
     emit_const(&mut o, "VK_STENCIL_FACE_FRONT_AND_BACK", "VkStencilFaceFlags", "3")?;
-    o.write_all(b"#[cfg(feature = \"VK_KHR_synchronization2\")]\n")?;
-    emit_const(
-        &mut o,
-        "VK_PIPELINE_STAGE_2_NONE_KHR",
-        "VkPipelineStageFlagBits2KHR",
-        "0",
-    )?;
-    o.write_all(b"#[cfg(feature = \"Allow1_3APIs\")]\n")?;
-    emit_const(&mut o, "VK_PIPELINE_STAGE_2_NONE", "VkPipelineStageFlagBits2", "0")?;
-    o.write_all(b"#[cfg(feature = \"VK_KHR_synchronization2\")]\n")?;
-    emit_const(&mut o, "VK_ACCESS_2_NONE_KHR", "VkAccessFlagBits2KHR", "0")?;
-    o.write_all(b"#[cfg(feature = \"Allow1_3APIs\")]\n")?;
-    emit_const(&mut o, "VK_ACCESS_2_NONE", "VkAccessFlagBits2", "0")?;
 
     for obj in OBJECTS {
         o.write_all(b"\n")?;
@@ -222,14 +201,13 @@ fn main() -> std::io::Result<()> {
     }
 
     v1_1::emit(&mut generator);
-    for x in v1_1::ELEMENTS {
-        x.emit(&mut generator, &mut o)?;
-    }
+    v1_1::emit_elements(&mut o)?;
 
     for x in v1_2::ELEMENTS {
         x.emit(&mut generator, &mut o)?;
     }
 
+    v1_3::emit(&mut generator);
     for x in v1_3::ELEMENTS {
         x.emit(&mut generator, &mut o)?;
     }
@@ -414,11 +392,9 @@ const DEVICE_SIZE_TYPE: &str = "VkDeviceSize";
 const DEVICE_ADDR_TYPE: &str = "VkDeviceAddress";
 
 const EXTENSION_HEADER_CONSTANTS: &[ExtensionHeaderConstants] = &[
-    ExtensionHeaderConstants::new("VK_KHR_display", 21),
     ExtensionHeaderConstants::new("VK_KHR_win32_keyed_mutex", 1),
     ExtensionHeaderConstants::new("VK_KHR_get_surface_capabilities2", 1),
     ExtensionHeaderConstants::new("VK_KHR_device_group_creation", 1),
-    ExtensionHeaderConstants::new("VK_KHR_multiview", 1),
     ExtensionHeaderConstants::new("VK_KHR_shader_draw_parameters", 1),
     ExtensionHeaderConstants::new("VK_KHR_portability_enumeration", 1),
     ExtensionHeaderConstants::new("VK_KHR_relaxed_block_layout", 1),
@@ -426,7 +402,6 @@ const EXTENSION_HEADER_CONSTANTS: &[ExtensionHeaderConstants] = &[
     ExtensionHeaderConstants::new("VK_KHR_variable_pointers", 1),
     ExtensionHeaderConstants::new("VK_KHR_16bit_storage", 1),
     ExtensionHeaderConstants::new("VK_KHR_maintenance3", 1),
-    ExtensionHeaderConstants::new("VK_KHR_synchronization2", 1),
 ];
 
 const TYPE_ALIASES: &[TypeAlias] = &[
@@ -457,13 +432,6 @@ const OBJECTS: &[Object] = &[
     Object::new("VkDescriptorSet", "DESCRIPTOR_SET", 23),
     Object::new("VkDescriptorSetLayout", "DESCRIPTOR_SET_LAYOUT", 20),
     Object::new("VkDescriptorPool", "DESCRIPTOR_POOL", 22),
-    Object::new(
-        "VkDescriptorUpdateTemplateKHR",
-        "DESCRIPTOR_UPDATE_TEMPLATE_KHR",
-        vk_ext_enum(86, 0),
-    )
-    .extension_old("VK_KHR_descriptor_update_template")
-    .promoted("1_1", "VkDescriptorUpdateTemplate", "DESCRIPTOR_UPDATE_TEMPLATE"),
     Object::new("VkFence", "FENCE", 7),
     Object::new("VkSemaphore", "SEMAPHORE", 5),
     Object::new("VkEvent", "EVENT", 11),
@@ -471,24 +439,6 @@ const OBJECTS: &[Object] = &[
     Object::new("VkFramebuffer", "FRAMEBUFFER", 24),
     Object::new("VkRenderPass", "RENDER_PASS", 18),
     Object::new("VkPipelineCache", "PIPELINE_CACHE", 16),
-    // WSI extensions
-    Object::new("VkDisplayKHR", "DISPLAY_KHR", vk_ext_enum(3, 0)).extension_old("VK_KHR_display"),
-    Object::new("VkDisplayModeKHR", "DISPLAY_MODE_KHR", vk_ext_enum(3, 1)).extension_old("VK_KHR_display"),
-    Object::new("VkSurfaceKHR", "SURFACE_KHR", vk_ext_enum(1, 0)).extension_old("VK_KHR_surface"),
-    Object::new("VkSwapchainKHR", "SWAPCHAIN_KHR", vk_ext_enum(2, 0)).extension_old("VK_KHR_swapchain"),
-    // debug report
-    Object::new(
-        "VkDebugReportCallbackEXT",
-        "DEBUG_REPORT_CALLBACK_EXT",
-        vk_ext_enum(12, 0),
-    )
-    .extension_old("VK_EXT_debug_report"),
-    Object::new(
-        "VkDebugUtilsMessengerEXT",
-        "DEBUG_UTILS_MESSENGER_EXT",
-        vk_ext_enum(129, 0),
-    )
-    .extension_old("VK_EXT_debug_utils"),
 ];
 
 pub static ATTACHMENT_LOAD_OP: EnumType = EnumType::new("AttachmentLoadOp", "ATTACHMENT_LOAD_OP");
@@ -757,9 +707,6 @@ fn emit_enums(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
 }
 
 pub const ACCESS_FLAGS: &BitmaskType = &BitmaskType::new("AccessFlags", "AccessFlagBits", "ACCESS");
-pub const ACCESS_FLAGS_2: &BitmaskType = &BitmaskType::new("AccessFlags2", "AccessFlagBits2", "ACCESS_2")
-    .long()
-    .extension(VK_KHR_SYNCHRONIZATION2);
 pub const ATTACHMENT_DESCRIPTION_FLAGS: &BitmaskType = &BitmaskType::new(
     "AttachmentDescriptionFlags",
     "AttachmentDescriptionFlagBits",
@@ -815,36 +762,11 @@ pub const DESCRIPTOR_SET_LAYOUT_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
 );
 pub const DEVICE_CREATE_FLAGS: &BitmaskType =
     &BitmaskType::new("DeviceCreateFlags", "DeviceCreateFlagBits", "DEVICE_CREATE");
-pub const DEVICE_GROUP_PRESENT_MODE_FLAGS: &BitmaskType = &BitmaskType::new(
-    "DeviceGroupPresentModeFlags",
-    "DeviceGroupPresentModeFlagBits",
-    "DEVICE_GROUP_PRESENT_MODE",
-)
-.extension(VK_KHR_DEVICE_GROUP)
-.side_extensions(&[VK_KHR_SURFACE]);
 pub const DEVICE_QUEUE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
     "DeviceQueueCreateFlags",
     "DeviceQueueCreateFlagBits",
     "DEVICE_QUEUE_CREATE",
 );
-pub const DISPLAY_MODE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
-    "DisplayModeCreateFlags",
-    "DisplayModeCreateFlagBits",
-    "DISPLAY_MODE_CREATE",
-)
-.extension(VK_KHR_DISPLAY);
-pub const DISPLAY_PLANE_ALPHA_FLAGS: &BitmaskType = &BitmaskType::new(
-    "DisplayPlaneAlphaFlags",
-    "DisplayPlaneAlphaFlagBits",
-    "DISPLAY_PLANE_ALPHA",
-)
-.extension(VK_KHR_DISPLAY);
-pub const DISPLAY_SURFACE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
-    "DisplaySurfaceCreateFlags",
-    "DisplaySurfaceCreateFlagBits",
-    "DISPLAY_SURFACE_CREATE",
-)
-.extension(VK_KHR_DISPLAY);
 pub const EVENT_CREATE_FLAGS: &BitmaskType =
     &BitmaskType::new("EventCreateFlags", "EventCreateFlagBits", "EVENT_CREATE");
 pub const FENCE_CREATE_FLAGS: &BitmaskType =
@@ -933,10 +855,6 @@ pub const PIPELINE_SHADER_STAGE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
 );
 pub const PIPELINE_STAGE_FLAGS: &BitmaskType =
     &BitmaskType::new("PipelineStageFlags", "PipelineStageFlagBits", "PIPELINE_STAGE");
-pub const PIPELINE_STAGE_FLAGS_2: &BitmaskType =
-    &BitmaskType::new("PipelineStageFlags2", "PipelineStageFlagBits2", "PIPELINE_STAGE_2")
-        .long()
-        .extension(VK_KHR_SYNCHRONIZATION2);
 pub const QUERY_CONTROL_FLAGS: &BitmaskType =
     &BitmaskType::new("QueryControlFlags", "QueryControlFlagBits", "QUERY_CONTROL");
 pub const QUERY_PIPELINE_STATISTIC_FLAGS: &BitmaskType = &BitmaskType::new(
@@ -981,8 +899,6 @@ pub const STENCIL_FACE_FLAGS: &BitmaskType =
     &BitmaskType::new("StencilFaceFlags", "StencilFaceFlagBits", "STENCIL_FACE");
 pub const SUBGROUP_FEATURE_FLAGS: &BitmaskType =
     &BitmaskType::new("SubgroupFeatureFlags", "SubgroupFeatureFlagBits", "SUBGROUP_FEATURE").version_since("1_1");
-pub const SUBMIT_FLAGS: &BitmaskType =
-    &BitmaskType::new("SubmitFlags", "SubmitFlagBits", "SUBMIT").extension(VK_KHR_SYNCHRONIZATION2);
 pub const SUBPASS_DESCRIPTION_FLAGS: &BitmaskType = &BitmaskType::new(
     "SubpassDescriptionFlags",
     "SubpassDescriptionFlagBits",
@@ -1012,28 +928,6 @@ fn emit_bitflags(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
         .entry("COLOR_ATTACHMENT_READ_NONCOHERENT", 19)
         .extension(VK_EXT_BLEND_OPERATION_ADVANCED)
         .emit(emitter);
-
-    ACCESS_FLAGS_2.emit(emitter);
-    ACCESS_FLAGS_2.entry("INDIRECT_COMMAND_READ", 0).emit(emitter);
-    ACCESS_FLAGS_2.entry("INDEX_READ", 1).emit(emitter);
-    ACCESS_FLAGS_2.entry("VERTEX_ATTRIBUTE_READ", 2).emit(emitter);
-    ACCESS_FLAGS_2.entry("UNIFORM_READ", 3).emit(emitter);
-    ACCESS_FLAGS_2.entry("INPUT_ATTACHMENT_READ", 4).emit(emitter);
-    ACCESS_FLAGS_2.entry("SHADER_READ", 5).emit(emitter);
-    ACCESS_FLAGS_2.entry("SHADER_WRITE", 6).emit(emitter);
-    ACCESS_FLAGS_2.entry("COLOR_ATTACHMENT_READ", 7).emit(emitter);
-    ACCESS_FLAGS_2.entry("COLOR_ATTACHMENT_WRITE", 8).emit(emitter);
-    ACCESS_FLAGS_2.entry("DEPTH_STENCIL_ATTACHMENT_READ", 9).emit(emitter);
-    ACCESS_FLAGS_2.entry("DEPTH_STENCIL_ATTACHMENT_WRITE", 10).emit(emitter);
-    ACCESS_FLAGS_2.entry("TRANSFER_READ", 11).emit(emitter);
-    ACCESS_FLAGS_2.entry("TRANSFER_WRITE", 12).emit(emitter);
-    ACCESS_FLAGS_2.entry("HOST_READ", 13).emit(emitter);
-    ACCESS_FLAGS_2.entry("HOST_WRITE", 14).emit(emitter);
-    ACCESS_FLAGS_2.entry("MEMORY_READ", 15).emit(emitter);
-    ACCESS_FLAGS_2.entry("MEMORY_WRITE", 16).emit(emitter);
-    ACCESS_FLAGS_2.entry("SHADER_SAMPLED_READ", 32).emit(emitter);
-    ACCESS_FLAGS_2.entry("SHADER_STORAGE_READ", 33).emit(emitter);
-    ACCESS_FLAGS_2.entry("SHADER_STORAGE_WRITE", 34).emit(emitter);
 
     ATTACHMENT_DESCRIPTION_FLAGS.emit(emitter);
     ATTACHMENT_DESCRIPTION_FLAGS.entry("MAY_ALIAS", 0).emit(emitter);
@@ -1093,10 +987,6 @@ fn emit_bitflags(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
 
     DEPENDENCY_FLAGS.emit(emitter);
     DEPENDENCY_FLAGS.entry("BY_REGION", 0).emit(emitter);
-    DEPENDENCY_FLAGS
-        .entry("VIEW_LOCAL", 1)
-        .extension(VK_KHR_MULTIVIEW)
-        .emit(emitter);
 
     DESCRIPTOR_POOL_CREATE_FLAGS.emit(emitter);
     DESCRIPTOR_POOL_CREATE_FLAGS
@@ -1106,22 +996,10 @@ fn emit_bitflags(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     DESCRIPTOR_POOL_RESET_FLAGS.emit(emitter);
     DESCRIPTOR_SET_LAYOUT_CREATE_FLAGS.emit(emitter);
     DEVICE_CREATE_FLAGS.emit(emitter);
-    DEVICE_GROUP_PRESENT_MODE_FLAGS.emit(emitter);
 
     DEVICE_QUEUE_CREATE_FLAGS.emit(emitter);
     DEVICE_QUEUE_CREATE_FLAGS.entry("PROTECTED", 0).emit(emitter);
 
-    DISPLAY_MODE_CREATE_FLAGS.emit(emitter);
-
-    DISPLAY_PLANE_ALPHA_FLAGS.emit(emitter);
-    DISPLAY_PLANE_ALPHA_FLAGS.entry("OPAQUE", 0).emit(emitter);
-    DISPLAY_PLANE_ALPHA_FLAGS.entry("GLOBAL", 1).emit(emitter);
-    DISPLAY_PLANE_ALPHA_FLAGS.entry("PER_PIXEL", 2).emit(emitter);
-    DISPLAY_PLANE_ALPHA_FLAGS
-        .entry("PER_PIXEL_PREMULTIPLIED", 3)
-        .emit(emitter);
-
-    DISPLAY_SURFACE_CREATE_FLAGS.emit(emitter);
     EVENT_CREATE_FLAGS.emit(emitter);
 
     FENCE_CREATE_FLAGS.emit(emitter);
@@ -1176,21 +1054,12 @@ fn emit_bitflags(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     IMAGE_CREATE_FLAGS.entry("SPARSE_ALIASED", 2).emit(emitter);
     IMAGE_CREATE_FLAGS.entry("MUTABLE_FORMAT", 3).emit(emitter);
     IMAGE_CREATE_FLAGS.entry("CUBE_COMPATIBLE", 4).emit(emitter);
-    IMAGE_CREATE_FLAGS
-        .entry("SPLIT_INSTANCE_BIND_REGIONS", 6)
-        .extension(VK_KHR_DEVICE_GROUP)
-        .side_extensions(&[VK_KHR_BIND_MEMORY_2])
-        .emit(emitter);
     IMAGE_CREATE_FLAGS.entry("PROTECTED", 11).emit(emitter);
 
     IMAGE_VIEW_CREATE_FLAGS.emit(emitter);
 
     MEMORY_HEAP_FLAGS.emit(emitter);
     MEMORY_HEAP_FLAGS.entry("DEVICE_LOCAL", 0).emit(emitter);
-    MEMORY_HEAP_FLAGS
-        .entry("MULTI_INSTANCE", 1)
-        .version_since("1_1")
-        .emit(emitter);
 
     MEMORY_PROPERTY_FLAGS.emit(emitter);
     MEMORY_PROPERTY_FLAGS.entry("DEVICE_LOCAL", 0).emit(emitter);
@@ -1242,40 +1111,6 @@ fn emit_bitflags(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     PIPELINE_STAGE_FLAGS.entry("HOST", 14).emit(emitter);
     PIPELINE_STAGE_FLAGS.entry("ALL_GRAPHICS", 15).emit(emitter);
     PIPELINE_STAGE_FLAGS.entry("ALL_COMMANDS", 16).emit(emitter);
-
-    PIPELINE_STAGE_FLAGS_2.emit(emitter);
-    PIPELINE_STAGE_FLAGS_2.entry("TOP_OF_PIPE", 0).emit(emitter);
-    PIPELINE_STAGE_FLAGS_2.entry("DRAW_INDIRECT", 1).emit(emitter);
-    PIPELINE_STAGE_FLAGS_2.entry("VERTEX_INPUT", 2).emit(emitter);
-    PIPELINE_STAGE_FLAGS_2.entry("VERTEX_SHADER", 3).emit(emitter);
-    PIPELINE_STAGE_FLAGS_2
-        .entry("TESSELLATION_CONTROL_SHADER", 4)
-        .emit(emitter);
-    PIPELINE_STAGE_FLAGS_2
-        .entry("TESSELLATION_EVALUATION_SHADER", 5)
-        .emit(emitter);
-    PIPELINE_STAGE_FLAGS_2.entry("GEOMETRY_SHADER", 6).emit(emitter);
-    PIPELINE_STAGE_FLAGS_2.entry("FRAGMENT_SHADER", 7).emit(emitter);
-    PIPELINE_STAGE_FLAGS_2.entry("EARLY_FRAGMENT_TESTS", 8).emit(emitter);
-    PIPELINE_STAGE_FLAGS_2.entry("LATE_FRAGMENT_TESTS", 9).emit(emitter);
-    PIPELINE_STAGE_FLAGS_2
-        .entry("COLOR_ATTACHMENT_OUTPUT", 10)
-        .emit(emitter);
-    PIPELINE_STAGE_FLAGS_2.entry("COMPUTE_SHADER", 11).emit(emitter);
-    PIPELINE_STAGE_FLAGS_2.entry("ALL_TRANSFER", 12).emit(emitter);
-    PIPELINE_STAGE_FLAGS_2.entry("BOTTOM_OF_PIPE", 13).emit(emitter);
-    PIPELINE_STAGE_FLAGS_2.entry("HOST", 14).emit(emitter);
-    PIPELINE_STAGE_FLAGS_2.entry("ALL_GRAPHICS", 15).emit(emitter);
-    PIPELINE_STAGE_FLAGS_2.entry("ALL_COMMANDS", 16).emit(emitter);
-    PIPELINE_STAGE_FLAGS_2.entry("COPY", 32).emit(emitter);
-    PIPELINE_STAGE_FLAGS_2.entry("RESOLVE", 33).emit(emitter);
-    PIPELINE_STAGE_FLAGS_2.entry("BLIT", 34).emit(emitter);
-    PIPELINE_STAGE_FLAGS_2.entry("CLEAR", 35).emit(emitter);
-    PIPELINE_STAGE_FLAGS_2.entry("INDEX_INPUT", 36).emit(emitter);
-    PIPELINE_STAGE_FLAGS_2.entry("VERTEX_ATTRIBUTE_INPUT", 37).emit(emitter);
-    PIPELINE_STAGE_FLAGS_2
-        .entry("PRE_RASTERIZATION_SHADERS", 38)
-        .emit(emitter);
 
     QUERY_CONTROL_FLAGS.emit(emitter);
     QUERY_CONTROL_FLAGS.entry("PRECISE", 0).emit(emitter);
@@ -1376,9 +1211,6 @@ fn emit_bitflags(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     SUBGROUP_FEATURE_FLAGS.entry("SHUFFLE_RELATIVE", 5).emit(emitter);
     SUBGROUP_FEATURE_FLAGS.entry("CLUSTERED", 6).emit(emitter);
     SUBGROUP_FEATURE_FLAGS.entry("QUAD", 7).emit(emitter);
-
-    SUBMIT_FLAGS.emit(emitter);
-    SUBMIT_FLAGS.entry("PROTECTED", 0).emit(emitter);
 
     SUBPASS_DESCRIPTION_FLAGS.emit(emitter);
 }
@@ -1759,86 +1591,6 @@ const STRUCTS: &[Struct] = &[
             Struct::member("z", "u32"),
         ],
     ),
-    Struct::new(
-        "DisplayModeCreateInfo",
-        &[
-            Struct::member("flags", "VkDisplayModeCreateFlagsKHR"),
-            Struct::member("parameters", "VkDisplayModeParametersKHR"),
-        ],
-    )
-    .stype("DISPLAY_MODE_CREATE_INFO", vk_ext_enum(3, 0) as _, StructUsage::Source)
-    .extensions_old(&[("KHR", "display")]),
-    Struct::new(
-        "DisplayModeParameters",
-        &[
-            Struct::member("visibleRegion", "VkExtent2D"),
-            Struct::member("refreshRate", "u32"),
-        ],
-    )
-    .extensions_old(&[("KHR", "display")]),
-    Struct::new(
-        "DisplayModeProperties",
-        &[
-            Struct::member("displayMode", "VkDisplayModeKHR"),
-            Struct::member("parameters", "VkDisplayModeParametersKHR"),
-        ],
-    )
-    .extensions_old(&[("KHR", "display")]),
-    Struct::new(
-        "DisplayPlaneCapabilities",
-        &[
-            Struct::member("supportedAlpha", "VkDisplayPlaneAlphaFlagsKHR"),
-            Struct::member("minSrcPosition", "VkOffset2D"),
-            Struct::member("maxSrcPosition", "VkOffset2D"),
-            Struct::member("minSrcExtent", "VkExtent2D"),
-            Struct::member("maxSrcExtent", "VkExtent2D"),
-            Struct::member("minDstPosition", "VkOffset2D"),
-            Struct::member("maxDstPosition", "VkOffset2D"),
-            Struct::member("minDstExtent", "VkExtent2D"),
-            Struct::member("maxDstExtent", "VkExtent2D"),
-        ],
-    )
-    .extensions_old(&[("KHR", "display")]),
-    Struct::new(
-        "DisplayPlaneProperties",
-        &[
-            Struct::member("currentDisplay", "VkDisplayKHR"),
-            Struct::member("currentStackIndex", "u32"),
-        ],
-    )
-    .extensions_old(&[("KHR", "display")]),
-    Struct::new(
-        "DisplayProperties",
-        &[
-            Struct::member("display", "VkDisplayKHR"),
-            Struct::member("displayName", "*const core::ffi::c_char"),
-            Struct::member("physicalDimensions", "VkExtent2D"),
-            Struct::member("physicalResolution", "VkExtent2D"),
-            Struct::member("supportedTransforms", "VkSurfaceTransformFlagsKHR"),
-            Struct::member("planeReorderPossible", "VkBool32"),
-            Struct::member("persistentContent", "VkBool32"),
-        ],
-    )
-    .extensions_old(&[("KHR", "display")]),
-    Struct::new(
-        "DisplaySurfaceCreateInfo",
-        &[
-            Struct::member("flags", "VkDisplaySurfaceCreateFlagsKHR"),
-            Struct::member("displayMode", "VkDisplayModeKHR"),
-            Struct::member("planeIndex", "u32"),
-            Struct::member("planeStackIndex", "u32"),
-            Struct::member("transform", "VkSurfaceTransformFlagBitsKHR"),
-            Struct::member("globalAlpha", "core::ffi::c_float"),
-            Struct::member("alphaMode", "VkDisplayPlaneAlphaFlagBitsKHR"),
-            Struct::member("imageExtent", "VkExtent2D"),
-        ],
-    )
-    .stype(
-        "DISPLAY_SURFACE_CREATE_INFO",
-        vk_ext_enum(3, 1) as _,
-        StructUsage::Source,
-    )
-    .extensions_old(&[("KHR", "display")]),
     Struct::new(
         "DrawIndexedIndirectCommand",
         &[
@@ -2353,31 +2105,6 @@ const STRUCTS: &[Struct] = &[
             Struct::member("memoryHeaps", "[VkMemoryHeap; VK_MAX_MEMORY_HEAPS]"),
         ],
     ),
-    Struct::typed(
-        "PhysicalDeviceMultiviewFeatures",
-        "PHYSICAL_DEVICE_MULTIVIEW_FEATURES",
-        vk_ext_enum(54, 1) as _,
-        StructUsage::Both,
-        &[
-            Struct::member("multiview", "VkBool32"),
-            Struct::member("multiviewGeometryShader", "VkBool32"),
-            Struct::member("multiviewTessellationShader", "VkBool32"),
-        ],
-    )
-    .extensions_old(&[("KHR", "multiview")])
-    .promoted("1_1"),
-    Struct::typed(
-        "PhysicalDeviceMultiviewProperties",
-        "PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES",
-        vk_ext_enum(54, 2) as _,
-        StructUsage::Sink,
-        &[
-            Struct::member("maxMultiviewViewCount", "u32"),
-            Struct::member("maxMultiviewInstanceIndex", "u32"),
-        ],
-    )
-    .extensions_old(&[("KHR", "multiview")])
-    .promoted("1_1"),
     Struct::new(
         "PhysicalDeviceProperties",
         &[
@@ -2638,22 +2365,6 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .stype("RENDER_PASS_CREATE_INFO", 38, StructUsage::Source),
-    Struct::typed(
-        "RenderPassMultiviewCreateInfo",
-        "RENDER_PASS_MULTIVIEW_CREATE_INFO",
-        vk_ext_enum(54, 0) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("subpassCount", "u32"),
-            Struct::member("pViewMasks", "*const u32"),
-            Struct::member("dependencyCount", "u32"),
-            Struct::member("pViewOffsets", "*const i32"),
-            Struct::member("correlationMaskCount", "u32"),
-            Struct::member("pCorrelationMasks", "*const u32"),
-        ],
-    )
-    .extensions_old(&[("KHR", "multiview")])
-    .promoted("1_1"),
     Struct::new(
         "SamplerCreateInfo",
         &[
@@ -2910,128 +2621,6 @@ const STRUCTS: &[Struct] = &[
         ],
     )
     .stype("WRITE_DESCRIPTOR_SET", 35, StructUsage::Source),
-    Struct::typed(
-        "MemoryBarrier2",
-        "MEMORY_BARRIER_2",
-        vk_ext_enum(315, 0) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("srcStageMask", "VkPipelineStageFlags2KHR"),
-            Struct::member("srcAccessMask", "VkAccessFlags2KHR"),
-            Struct::member("dstStageMask", "VkPipelineStageFlags2KHR"),
-            Struct::member("dstAccessMask", "VkAccessFlags2KHR"),
-        ],
-    )
-    .extensions_old(&[("KHR", "synchronization2")])
-    .promoted("1_3"),
-    Struct::typed(
-        "BufferMemoryBarrier2",
-        "BUFFER_MEMORY_BARRIER_2",
-        vk_ext_enum(315, 1) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("srcStageMask", "VkPipelineStageFlags2KHR"),
-            Struct::member("srcAccessMask", "VkAccessFlags2KHR"),
-            Struct::member("dstStageMask", "VkPipelineStageFlags2KHR"),
-            Struct::member("dstAccessMask", "VkAccessFlags2KHR"),
-            Struct::member("srcQueueFamilyIndex", "u32"),
-            Struct::member("dstQueueFamilyIndex", "u32"),
-            Struct::member("buffer", "VkBuffer"),
-            Struct::member("offset", DEVICE_SIZE_TYPE),
-            Struct::member("size", DEVICE_SIZE_TYPE),
-        ],
-    )
-    .extensions_old(&[("KHR", "synchronization2")])
-    .promoted("1_3"),
-    Struct::typed(
-        "ImageMemoryBarrier2",
-        "IMAGE_MEMORY_BARRIER_2",
-        vk_ext_enum(315, 2) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("srcStageMask", "VkPipelineStageFlags2KHR"),
-            Struct::member("srcAccessMask", "VkAccessFlags2KHR"),
-            Struct::member("dstStageMask", "VkPipelineStageFlags2KHR"),
-            Struct::member("dstAccessMask", "VkAccessFlags2KHR"),
-            Struct::member("oldLayout", "VkImageLayout"),
-            Struct::member("newLayout", "VkImageLayout"),
-            Struct::member("srcQueueFamilyIndex", "u32"),
-            Struct::member("dstQueueFamilyIndex", "u32"),
-            Struct::member("image", "VkImage"),
-            Struct::member("subresourceRange", "VkImageSubresourceRange"),
-        ],
-    )
-    .extensions_old(&[("KHR", "synchronization2")])
-    .promoted("1_3"),
-    Struct::typed(
-        "DependencyInfo",
-        "DEPENDENCY_INFO",
-        vk_ext_enum(315, 3) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("dependencyFlags", "VkDependencyFlags"),
-            Struct::member("memoryBarrierCount", "u32"),
-            Struct::member("pMemoryBarriers", "*const VkMemoryBarrier2KHR"),
-            Struct::member("bufferMemoryBarrierCount", "u32"),
-            Struct::member("pBufferMemoryBarriers", "*const VkBufferMemoryBarrier2KHR"),
-            Struct::member("imageMemoryBarrierCount", "u32"),
-            Struct::member("pImageMemoryBarriers", "*const VkImageMemoryBarrier2KHR"),
-        ],
-    )
-    .extensions_old(&[("KHR", "synchronization2")])
-    .promoted("1_3"),
-    Struct::typed(
-        "SubmitInfo2",
-        "SUBMIT_INFO_2",
-        vk_ext_enum(315, 4) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("flags", "VkSubmitFlagsKHR"),
-            Struct::member("waitSemaphoreInfoCount", "u32"),
-            Struct::member("pWaitSemaphoreInfos", "*const VkSemaphoreSubmitInfoKHR"),
-            Struct::member("commandBufferInfoCount", "u32"),
-            Struct::member("pCommandBufferInfos", "*const VkCommandBufferSubmitInfoKHR"),
-            Struct::member("signalSemaphoreInfoCount", "u32"),
-            Struct::member("pSignalSemaphoreInfos", "*const VkSemaphoreSubmitInfoKHR"),
-        ],
-    )
-    .extensions_old(&[("KHR", "synchronization2")])
-    .promoted("1_3"),
-    Struct::typed(
-        "SemaphoreSubmitInfo",
-        "SEMAPHORE_SUBMIT_INFO",
-        vk_ext_enum(315, 5) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("semaphore", "VkSemaphore"),
-            Struct::member("value", "u64"),
-            Struct::member("stageMask", "VkPipelineStageFlags2KHR"),
-            Struct::member("deviceIndex", "u32"),
-        ],
-    )
-    .extensions_old(&[("KHR", "synchronization2")])
-    .promoted("1_3"),
-    Struct::typed(
-        "CommandBufferSubmitInfo",
-        "COMMAND_BUFFER_SUBMIT_INFO",
-        vk_ext_enum(315, 6) as _,
-        StructUsage::Source,
-        &[
-            Struct::member("commandBuffer", "VkCommandBuffer"),
-            Struct::member("deviceMask", "u32"),
-        ],
-    )
-    .extensions_old(&[("KHR", "synchronization2")])
-    .promoted("1_3"),
-    Struct::typed(
-        "PhysicalDeviceSynchronization2Features",
-        "PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES",
-        vk_ext_enum(315, 7) as _,
-        StructUsage::Both,
-        &[Struct::member("synchronization2", "VkBool32")],
-    )
-    .extensions_old(&[("KHR", "synchronization2")])
-    .promoted("1_3"),
 ];
 
 const UNIONS: &[Union] = &[
@@ -3933,89 +3522,6 @@ const COMMANDS: &[Command] = &[
         .static_callable()
         .version_since("1_1"),
     Command::new(
-        "GetPhysicalDeviceDisplayProperties",
-        &[
-            ("physicalDevice", "VkPhysicalDevice"),
-            ("pPropertyCount", "*mut u32"),
-            ("pProperties", "*mut VkDisplayPropertiesKHR"),
-        ],
-    )
-    .failable()
-    .static_callable()
-    .extension_old("KHR", "display"),
-    Command::new(
-        "GetPhysicalDeviceDisplayPlaneProperties",
-        &[
-            ("physicalDevice", "VkPhysicalDevice"),
-            ("pPropertyCount", "*mut u32"),
-            ("pProperties", "*mut VkDisplayPlanePropertiesKHR"),
-        ],
-    )
-    .failable()
-    .static_callable()
-    .extension_old("KHR", "display"),
-    Command::new(
-        "GetDisplayPlaneSupportedDisplays",
-        &[
-            ("physicalDevice", "VkPhysicalDevice"),
-            ("planeIndex", "u32"),
-            ("pDisplayCount", "*mut u32"),
-            ("pDisplays", "*mut VkDisplayKHR"),
-        ],
-    )
-    .failable()
-    .static_callable()
-    .extension_old("KHR", "display"),
-    Command::new(
-        "GetDisplayModeProperties",
-        &[
-            ("physicalDevice", "VkPhysicalDevice"),
-            ("display", "VkDisplayKHR"),
-            ("pPropertyCount", "*mut u32"),
-            ("pProperties", "*mut VkDisplayModePropertiesKHR"),
-        ],
-    )
-    .failable()
-    .static_callable()
-    .extension_old("KHR", "display"),
-    Command::new(
-        "CreateDisplayMode",
-        &[
-            ("physicalDevice", "VkPhysicalDevice"),
-            ("display", "VkDisplayKHR"),
-            ("pCreateInfo", "*const VkDisplayModeCreateInfoKHR"),
-            ("pAllocator", "*const VkAllocationCallbacks"),
-            ("pMode", "*mut VkDisplayModeKHR"),
-        ],
-    )
-    .failable()
-    .static_callable()
-    .extension_old("KHR", "display"),
-    Command::new(
-        "GetDisplayPlaneCapabilities",
-        &[
-            ("physicalDevice", "VkPhysicalDevice"),
-            ("mode", "VkDisplayModeKHR"),
-            ("planeIndex", "u32"),
-            ("pCapabilities", "*mut VkDisplayPlaneCapabilitiesKHR"),
-        ],
-    )
-    .failable()
-    .static_callable()
-    .extension_old("KHR", "display"),
-    Command::new(
-        "CreateDisplayPlaneSurface",
-        &[
-            ("instance", "VkInstance"),
-            ("pCreateInfo", "*const VkDisplaySurfaceCreateInfoKHR"),
-            ("pAllocator", "*const VkAllocationCallbacks"),
-            ("pSurface", "*mut VkSurfaceKHR"),
-        ],
-    )
-    .failable()
-    .static_callable()
-    .extension_old("KHR", "display"),
-    Command::new(
         "GetPhysicalDeviceSurfaceCapabilities2",
         &[
             ("physicalDevice", "VkPhysicalDevice"),
@@ -4060,18 +3566,6 @@ const COMMANDS: &[Command] = &[
     )
     .extension_old("KHR", "maintenance3")
     .promoted("1_1"),
-    Command::new(
-        "QueueSubmit2",
-        &[
-            ("queue", "VkQueue"),
-            ("submitCount", "u32"),
-            ("pSubmits", "*const VkSubmitInfo2KHR"),
-            ("fence", "Option<VkFence>"),
-        ],
-    )
-    .failable()
-    .extension_old("KHR", "synchronization2")
-    .promoted("1_3"),
     // command buffer instructions
     Command::inst(
         "BindPipeline",
@@ -4445,41 +3939,6 @@ const COMMANDS: &[Command] = &[
         ],
     )
     .static_callable(),
-    Command::inst(
-        "SetEvent2",
-        &[("event", "VkEvent"), ("pDependencyInfo", "*const VkDependencyInfoKHR")],
-    )
-    .extension_old("KHR", "synchronization2")
-    .promoted("1_3"),
-    Command::inst(
-        "ResetEvent2",
-        &[("event", "VkEvent"), ("stageMask", "VkPipelineStageFlags2KHR")],
-    )
-    .extension_old("KHR", "synchronization2")
-    .promoted("1_3"),
-    Command::inst(
-        "WaitEvents2",
-        &[
-            ("eventCount", "u32"),
-            ("pEvents", "*const VkEvent"),
-            ("pDependencyInfos", "*const VkDependencyInfoKHR"),
-        ],
-    )
-    .extension_old("KHR", "synchronization2")
-    .promoted("1_3"),
-    Command::inst("PipelineBarrier2", &[("pDependencyInfo", "*const VkDependencyInfoKHR")])
-        .extension_old("KHR", "synchronization2")
-        .promoted("1_3"),
-    Command::inst(
-        "WriteTimestamp2",
-        &[
-            ("stage", "VkPipelineStageFlags2KHR"),
-            ("queryPool", "VkQueryPool"),
-            ("query", "u32"),
-        ],
-    )
-    .extension_old("KHR", "synchronization2")
-    .promoted("1_3"),
 ];
 
 pub static RESULT: EnumType = EnumType::new("Result", "");
@@ -4509,31 +3968,10 @@ fn emit_result_type(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     ERROR.member("UNKNOWN", 13).neg().emit(emitter);
 
     // from extensions
-    RESULT
-        .member("SUBOPTIMAL", 3)
-        .extension(&VK_KHR_SWAPCHAIN)
-        .emit(emitter);
-    ERROR
-        .member("OUT_OF_DATE", 4)
-        .neg()
-        .extension(&VK_KHR_SWAPCHAIN)
-        .emit(emitter);
     ERROR
         .member("INCOMPATIBLE_DISPLAY", 1)
         .neg()
         .extension(VK_KHR_DISPLAY_SWAPCHAIN)
-        .emit(emitter);
-
-    // from promoted extensions
-    ERROR
-        .member("INVALID_EXTERNAL_HANDLE", 3)
-        .neg()
-        .extension(VK_KHR_EXTERNAL_MEMORY)
-        .emit(emitter);
-    ERROR
-        .member("OUT_OF_POOL_MEMORY", 0)
-        .neg()
-        .extension(VK_KHR_MAINTENANCE_1)
         .emit(emitter);
 }
 
@@ -4742,142 +4180,4 @@ fn emit_format_enum(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     FORMAT.member("ASTC_12x10_SRGB_BLOCK", 182).emit(emitter);
     FORMAT.member("ASTC_12x12_UNORM_BLOCK", 183).emit(emitter);
     FORMAT.member("ASTC_12x12_SRGB_BLOCK", 184).emit(emitter);
-
-    // sampler_ycbcr_conversion
-    FORMAT
-        .member("G8B8G8R8_422_UNORM", 0)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("B8G8R8G8_422_UNORM", 1)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("G8_B8_R8_3PLANE_420_UNORM", 2)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("G8_B8R8_2PLANE_420_UNORM", 3)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("G8_B8_R8_3PLANE_422_UNORM", 4)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("G8_B8R8_2PLANE_422_UNORM", 5)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("G8_B8_R8_3PLANE_444_UNORM", 6)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("R10X6_UNORM_PACK16", 7)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("R10X6G10X6_UNORM_2PACK16", 8)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("R10X6G10X6B10X6A10X6_UNORM_4PACK16", 9)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("G10X6B10X6G10X6R10X6_422_UNORM_4PACK16", 10)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("B10X6G10X6R10X6G10X6_422_UNORM_4PACK16", 11)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16", 12)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16", 13)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16", 14)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16", 15)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("G10X6_B10X6_R10X6_3PLANE_444_UNORM_3PACK16", 16)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("R12X4_UNORM_PACK16", 17)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("R12X4G12X4_UNORM_2PACK16", 18)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("R12X4G12X4B12X4A12X4_UNORM_4PACK16", 19)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("G12X4B12X4G12X4R12X4_422_UNORM_4PACK16", 20)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("B12X4G12X4R12X4G12X4_422_UNORM_4PACK16", 21)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16", 22)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16", 23)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16", 24)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16", 25)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("G12X4_B12X4_R12X4_3PLANE_444_UNORM_3PACK16", 26)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("G16B16G16R16_422_UNORM", 27)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("B16G16R16G16_422_UNORM", 28)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("G16_B16_R16_3PLANE_420_UNORM", 29)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("G16_B16R16_2PLANE_420_UNORM", 30)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("G16_B16_R16_3PLANE_422_UNORM", 31)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("G16_B16R16_2PLANE_422_UNORM", 32)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
-    FORMAT
-        .member("G16_B16_R16_3PLANE_444_UNORM", 33)
-        .extension(VK_KHR_SAMPLER_YCBCR_CONVERSION)
-        .emit(emitter);
 }

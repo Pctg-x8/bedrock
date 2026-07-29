@@ -1,5 +1,5 @@
 use crate::{
-    ERROR, IMAGE_LAYOUT,
+    ERROR, IMAGE_LAYOUT, RESULT,
     parts::*,
     rs_item::RustCodeEmitter,
     v1_1::{VK_KHR_DEVICE_GROUP, VK_KHR_EXTERNAL_MEMORY, VK_KHR_EXTERNAL_MEMORY_CAPABILITIES},
@@ -15,12 +15,12 @@ pub fn emit(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     emit_wayland_surface(emitter);
     emit_android_surface(emitter);
     emit_metal_surface(emitter);
+    emit_display(emitter);
     emit_swapchain(emitter);
     emit_debug_report(emitter);
     emit_debug_utils(emitter);
 }
 
-pub const VK_KHR_DISPLAY: &Extension = &Extension::khr("display", 23, 3);
 pub const VK_EXT_VALIDATION_CACHE: &Extension = &Extension::ext("validation_cache", 1, 161);
 pub const VK_EXT_VALIDATION_FLAGS: &Extension = &Extension::ext("validation_flags", 1, 62);
 pub const VK_EXT_BLEND_OPERATION_ADVANCED: &Extension = &Extension::ext("blend_operation_advanced", 2, 149);
@@ -518,8 +518,222 @@ fn emit_metal_surface(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     .emit(emitter);
 }
 
+pub const VK_KHR_DISPLAY: &Extension = &Extension::khr("display", 23, 3);
+const DISPLAY_MODE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "DisplayModeCreateFlags",
+    "DisplayModeCreateFlagBits",
+    "DISPLAY_MODE_CREATE",
+)
+.extension(VK_KHR_DISPLAY);
+const DISPLAY_PLANE_ALPHA_FLAGS: &BitmaskType = &BitmaskType::new(
+    "DisplayPlaneAlphaFlags",
+    "DisplayPlaneAlphaFlagBits",
+    "DISPLAY_PLANE_ALPHA",
+)
+.extension(VK_KHR_DISPLAY);
+const DISPLAY_SURFACE_CREATE_FLAGS: &BitmaskType = &BitmaskType::new(
+    "DisplaySurfaceCreateFlags",
+    "DisplaySurfaceCreateFlagBits",
+    "DISPLAY_SURFACE_CREATE",
+)
+.extension(VK_KHR_DISPLAY);
+const DISPLAY_MODE_CREATE_INFO: &Struct = &Struct::typed(
+    "DisplayModeCreateInfo",
+    "DISPLAY_MODE_CREATE_INFO",
+    VK_KHR_DISPLAY.ext_enum(0) as _,
+    StructUsage::Source,
+    &[
+        Struct::member("flags", "VkDisplayModeCreateFlagsKHR"),
+        Struct::member("parameters", "VkDisplayModeParametersKHR"),
+    ],
+)
+.extensions(&[VK_KHR_DISPLAY]);
+const DISPLAY_SURFACE_CREATE_INFO: &Struct = &Struct::typed(
+    "DisplaySurfaceCreateInfo",
+    "DISPLAY_SURFACE_CREATE_INFO",
+    VK_KHR_DISPLAY.ext_enum(1) as _,
+    StructUsage::Source,
+    &[
+        Struct::member("flags", "VkDisplaySurfaceCreateFlagsKHR"),
+        Struct::member("displayMode", "VkDisplayModeKHR"),
+        Struct::member("planeIndex", "u32"),
+        Struct::member("planeStackIndex", "u32"),
+        Struct::member("transform", "VkSurfaceTransformFlagBitsKHR"),
+        Struct::member("globalAlpha", "core::ffi::c_float"),
+        Struct::member("alphaMode", "VkDisplayPlaneAlphaFlagBitsKHR"),
+        Struct::member("imageExtent", "VkExtent2D"),
+    ],
+)
+.extensions(&[VK_KHR_DISPLAY]);
+const DISPLAY_MODE_PARAMETERS: &Struct = &Struct::new(
+    "DisplayModeParameters",
+    &[
+        Struct::member("visibleRegion", "VkExtent2D"),
+        Struct::member("refreshRate", "u32"),
+    ],
+)
+.extensions(&[VK_KHR_DISPLAY]);
+const DISPLAY_MODE_PROPERTIES: &Struct = &Struct::new(
+    "DisplayModeProperties",
+    &[
+        Struct::member("displayMode", "VkDisplayModeKHR"),
+        Struct::member("parameters", "VkDisplayModeParametersKHR"),
+    ],
+)
+.extensions(&[VK_KHR_DISPLAY]);
+const DISPLAY_PLANE_CAPABILITIES: &Struct = &Struct::new(
+    "DisplayPlaneCapabilities",
+    &[
+        Struct::member("supportedAlpha", "VkDisplayPlaneAlphaFlagsKHR"),
+        Struct::member("minSrcPosition", "VkOffset2D"),
+        Struct::member("maxSrcPosition", "VkOffset2D"),
+        Struct::member("minSrcExtent", "VkExtent2D"),
+        Struct::member("maxSrcExtent", "VkExtent2D"),
+        Struct::member("minDstPosition", "VkOffset2D"),
+        Struct::member("maxDstPosition", "VkOffset2D"),
+        Struct::member("minDstExtent", "VkExtent2D"),
+        Struct::member("maxDstExtent", "VkExtent2D"),
+    ],
+)
+.extensions(&[VK_KHR_DISPLAY]);
+const DISPLAY_PLANE_PROPERTIES: &Struct = &Struct::new(
+    "DisplayPlaneProperties",
+    &[
+        Struct::member("currentDisplay", "VkDisplayKHR"),
+        Struct::member("currentStackIndex", "u32"),
+    ],
+)
+.extensions(&[VK_KHR_DISPLAY]);
+const DISPLAY_PROPERTIES: &Struct = &Struct::new(
+    "DisplayProperties",
+    &[
+        Struct::member("display", "VkDisplayKHR"),
+        Struct::member("displayName", "*const core::ffi::c_char"),
+        Struct::member("physicalDimensions", "VkExtent2D"),
+        Struct::member("physicalResolution", "VkExtent2D"),
+        Struct::member("supportedTransforms", "VkSurfaceTransformFlagsKHR"),
+        Struct::member("planeReorderPossible", "VkBool32"),
+        Struct::member("persistentContent", "VkBool32"),
+    ],
+)
+.extensions(&[VK_KHR_DISPLAY]);
+fn emit_display(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+    VK_KHR_DISPLAY.header_constants().emit(emitter);
+
+    DISPLAY_MODE_CREATE_FLAGS.emit(emitter);
+
+    DISPLAY_PLANE_ALPHA_FLAGS.emit(emitter);
+    DISPLAY_PLANE_ALPHA_FLAGS.entry("OPAQUE", 0).emit(emitter);
+    DISPLAY_PLANE_ALPHA_FLAGS.entry("GLOBAL", 1).emit(emitter);
+    DISPLAY_PLANE_ALPHA_FLAGS.entry("PER_PIXEL", 2).emit(emitter);
+    DISPLAY_PLANE_ALPHA_FLAGS
+        .entry("PER_PIXEL_PREMULTIPLIED", 3)
+        .emit(emitter);
+
+    DISPLAY_SURFACE_CREATE_FLAGS.emit(emitter);
+
+    DISPLAY_MODE_CREATE_INFO.emit(emitter);
+    DISPLAY_SURFACE_CREATE_INFO.emit(emitter);
+    DISPLAY_MODE_PARAMETERS.emit(emitter);
+    DISPLAY_MODE_PROPERTIES.emit(emitter);
+    DISPLAY_PLANE_CAPABILITIES.emit(emitter);
+    DISPLAY_PLANE_PROPERTIES.emit(emitter);
+    DISPLAY_PROPERTIES.emit(emitter);
+
+    Command::new(
+        "GetPhysicalDeviceDisplayProperties",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("pPropertyCount", "*mut u32"),
+            ("pProperties", "*mut VkDisplayPropertiesKHR"),
+        ],
+    )
+    .failable()
+    .static_callable()
+    .extension(VK_KHR_DISPLAY)
+    .emit(emitter);
+    Command::new(
+        "GetPhysicalDeviceDisplayPlaneProperties",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("pPropertyCount", "*mut u32"),
+            ("pProperties", "*mut VkDisplayPlanePropertiesKHR"),
+        ],
+    )
+    .failable()
+    .static_callable()
+    .extension(VK_KHR_DISPLAY)
+    .emit(emitter);
+    Command::new(
+        "GetDisplayPlaneSupportedDisplays",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("planeIndex", "u32"),
+            ("pDisplayCount", "*mut u32"),
+            ("pDisplays", "*mut VkDisplayKHR"),
+        ],
+    )
+    .failable()
+    .static_callable()
+    .extension(VK_KHR_DISPLAY)
+    .emit(emitter);
+    Command::new(
+        "GetDisplayModeProperties",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("display", "VkDisplayKHR"),
+            ("pPropertyCount", "*mut u32"),
+            ("pProperties", "*mut VkDisplayModePropertiesKHR"),
+        ],
+    )
+    .failable()
+    .static_callable()
+    .extension(VK_KHR_DISPLAY)
+    .emit(emitter);
+    Command::new(
+        "CreateDisplayMode",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("display", "VkDisplayKHR"),
+            ("pCreateInfo", "*const VkDisplayModeCreateInfoKHR"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+            ("pMode", "*mut VkDisplayModeKHR"),
+        ],
+    )
+    .failable()
+    .static_callable()
+    .extension(VK_KHR_DISPLAY)
+    .emit(emitter);
+    Command::new(
+        "GetDisplayPlaneCapabilities",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("mode", "VkDisplayModeKHR"),
+            ("planeIndex", "u32"),
+            ("pCapabilities", "*mut VkDisplayPlaneCapabilitiesKHR"),
+        ],
+    )
+    .failable()
+    .static_callable()
+    .extension(VK_KHR_DISPLAY)
+    .emit(emitter);
+    Command::new(
+        "CreateDisplayPlaneSurface",
+        &[
+            ("instance", "VkInstance"),
+            ("pCreateInfo", "*const VkDisplaySurfaceCreateInfoKHR"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+            ("pSurface", "*mut VkSurfaceKHR"),
+        ],
+    )
+    .failable()
+    .static_callable()
+    .extension(VK_KHR_DISPLAY)
+    .emit(emitter);
+}
+
 pub const VK_KHR_SWAPCHAIN: &Extension = &Extension::khr("swapchain", 70, 2);
-const SWAPCHAIN_CREATE_FLAGS: &BitmaskType =
+pub const SWAPCHAIN_CREATE_FLAGS: &BitmaskType =
     &BitmaskType::new("SwapchainCreateFlags", "SwapchainCreateFlagBits", "SWAPCHAIN_CREATE")
         .extension(VK_KHR_SWAPCHAIN);
 const SWAPCHAIN_CREATE_INFO: &Struct = &Struct::typed(
@@ -565,6 +779,12 @@ const PRESENT_INFO: &Struct = &Struct::typed(
 fn emit_swapchain(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     VK_KHR_SWAPCHAIN.header_constants().emit(emitter);
 
+    RESULT.member("SUBOPTIMAL", 3).extension(VK_KHR_SWAPCHAIN).emit(emitter);
+    ERROR
+        .member("OUT_OF_DATE", 4)
+        .neg()
+        .extension(VK_KHR_SWAPCHAIN)
+        .emit(emitter);
     IMAGE_LAYOUT
         .member("PRESENT_SRC", 2)
         .extension(VK_KHR_SWAPCHAIN)
@@ -1051,6 +1271,13 @@ fn emit_debug_utils(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
 
 pub const ELEMENTS: &[Element] = &[
     // VK_EXT_debug_report
+    Object::new(
+        "VkDebugReportCallbackEXT",
+        "DEBUG_REPORT_CALLBACK_EXT",
+        VK_EXT_DEBUG_REPORT.ext_enum(0),
+    )
+    .extension(VK_EXT_DEBUG_REPORT)
+    .into_element(),
     FuncPointer::new(
         "DebugReportCallback",
         &[
@@ -1068,6 +1295,13 @@ pub const ELEMENTS: &[Element] = &[
     .extension(VK_EXT_DEBUG_REPORT)
     .into_element(),
     // VK_EXT_debug_utils
+    Object::new(
+        "VkDebugUtilsMessengerEXT",
+        "DEBUG_UTILS_MESSENGER_EXT",
+        VK_EXT_DEBUG_UTILS.ext_enum(0),
+    )
+    .extension(VK_EXT_DEBUG_UTILS)
+    .into_element(),
     FuncPointer::new(
         "DebugUtilsMessengerCallback",
         &[
@@ -1080,6 +1314,21 @@ pub const ELEMENTS: &[Element] = &[
     .returns("VkBool32")
     .extension(VK_EXT_DEBUG_UTILS)
     .into_element(),
+    // VK_KHR_surface
+    Object::new("VkSurfaceKHR", "SURFACE_KHR", VK_KHR_SURFACE.ext_enum(0))
+        .extension(VK_KHR_SURFACE)
+        .into_element(),
+    // VK_KHR_swapchain
+    Object::new("VkSwapchainKHR", "SWAPCHAIN_KHR", VK_KHR_SWAPCHAIN.ext_enum(0))
+        .extension(VK_KHR_SWAPCHAIN)
+        .into_element(),
+    // VK_KHR_display
+    Object::new("VkDisplayKHR", "DISPLAY_KHR", VK_KHR_DISPLAY.ext_enum(0))
+        .extension(VK_KHR_DISPLAY)
+        .into_element(),
+    Object::new("VkDisplayModeKHR", "DISPLAY_MODE_KHR", VK_KHR_DISPLAY.ext_enum(1))
+        .extension(VK_KHR_DISPLAY)
+        .into_element(),
     // VK_EXT_blend_operation_advanced
     VK_EXT_BLEND_OPERATION_ADVANCED.header_constants().into_element(),
     Enum::extending(

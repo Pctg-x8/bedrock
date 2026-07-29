@@ -1,14 +1,321 @@
 //! v1.3 promoted elements
 
-use crate::{parts::*, vk_ext_enum};
+use crate::{
+    parts::*,
+    rs_item::{CompilationCondition, Constant, ConstantSymbol, ConstantValue, FeatureName, RustCodeEmitter, Type},
+    vk_ext_enum,
+};
 
 const VERSION: &str = "1_3";
+
+pub fn emit(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+    emit_synchronization2(emitter);
+}
 
 const VK_KHR_MAINTENANCE_4: &Extension = &Extension::khr("maintenance4", 2, 414);
 pub const VK_KHR_FORMAT_FEATURE_FLAGS_2: &Extension = &Extension::khr("format_feature_flags2", 2, 361);
 pub const VK_KHR_COPY_COMMANDS_2: &Extension = &Extension::khr("copy_commands2", 1, 338);
 pub const VK_KHR_DYNAMIC_RENDERING: &Extension = &Extension::khr("dynamic_rendering", 1, 45);
+
 pub const VK_KHR_SYNCHRONIZATION2: &Extension = &Extension::khr("synchronization2", 1, 315).promoted(VERSION);
+pub const ACCESS_FLAGS_2: &BitmaskType = &BitmaskType::new("AccessFlags2", "AccessFlagBits2", "ACCESS_2")
+    .long()
+    .extension(VK_KHR_SYNCHRONIZATION2);
+pub const PIPELINE_STAGE_FLAGS_2: &BitmaskType =
+    &BitmaskType::new("PipelineStageFlags2", "PipelineStageFlagBits2", "PIPELINE_STAGE_2")
+        .long()
+        .extension(VK_KHR_SYNCHRONIZATION2);
+pub const SUBMIT_FLAGS: &BitmaskType =
+    &BitmaskType::new("SubmitFlags", "SubmitFlagBits", "SUBMIT").extension(VK_KHR_SYNCHRONIZATION2);
+const MEMORY_BARRIER_2: &Struct = &Struct::typed(
+    "MemoryBarrier2",
+    "MEMORY_BARRIER_2",
+    VK_KHR_SYNCHRONIZATION2.ext_enum(0) as _,
+    StructUsage::Source,
+    &[
+        Struct::member("srcStageMask", "VkPipelineStageFlags2KHR"),
+        Struct::member("srcAccessMask", "VkAccessFlags2KHR"),
+        Struct::member("dstStageMask", "VkPipelineStageFlags2KHR"),
+        Struct::member("dstAccessMask", "VkAccessFlags2KHR"),
+    ],
+)
+.extensions(&[VK_KHR_SYNCHRONIZATION2])
+.promoted(VERSION);
+const BUFFER_MEMORY_BARRIER_2: &Struct = &Struct::typed(
+    "BufferMemoryBarrier2",
+    "BUFFER_MEMORY_BARRIER_2",
+    VK_KHR_SYNCHRONIZATION2.ext_enum(1) as _,
+    StructUsage::Source,
+    &[
+        Struct::member("srcStageMask", "VkPipelineStageFlags2KHR"),
+        Struct::member("srcAccessMask", "VkAccessFlags2KHR"),
+        Struct::member("dstStageMask", "VkPipelineStageFlags2KHR"),
+        Struct::member("dstAccessMask", "VkAccessFlags2KHR"),
+        Struct::member("srcQueueFamilyIndex", "u32"),
+        Struct::member("dstQueueFamilyIndex", "u32"),
+        Struct::member("buffer", "VkBuffer"),
+        Struct::member("offset", "VkDeviceSize"),
+        Struct::member("size", "VkDeviceSize"),
+    ],
+)
+.extensions(&[VK_KHR_SYNCHRONIZATION2])
+.promoted("1_3");
+const IMAGE_MEMORY_BARRIER_2: &Struct = &Struct::typed(
+    "ImageMemoryBarrier2",
+    "IMAGE_MEMORY_BARRIER_2",
+    VK_KHR_SYNCHRONIZATION2.ext_enum(2) as _,
+    StructUsage::Source,
+    &[
+        Struct::member("srcStageMask", "VkPipelineStageFlags2KHR"),
+        Struct::member("srcAccessMask", "VkAccessFlags2KHR"),
+        Struct::member("dstStageMask", "VkPipelineStageFlags2KHR"),
+        Struct::member("dstAccessMask", "VkAccessFlags2KHR"),
+        Struct::member("oldLayout", "VkImageLayout"),
+        Struct::member("newLayout", "VkImageLayout"),
+        Struct::member("srcQueueFamilyIndex", "u32"),
+        Struct::member("dstQueueFamilyIndex", "u32"),
+        Struct::member("image", "VkImage"),
+        Struct::member("subresourceRange", "VkImageSubresourceRange"),
+    ],
+)
+.extensions(&[VK_KHR_SYNCHRONIZATION2])
+.promoted("1_3");
+const DEPENDENCY_INFO: &Struct = &Struct::typed(
+    "DependencyInfo",
+    "DEPENDENCY_INFO",
+    VK_KHR_SYNCHRONIZATION2.ext_enum(3) as _,
+    StructUsage::Source,
+    &[
+        Struct::member("dependencyFlags", "VkDependencyFlags"),
+        Struct::member("memoryBarrierCount", "u32"),
+        Struct::member("pMemoryBarriers", "*const VkMemoryBarrier2KHR"),
+        Struct::member("bufferMemoryBarrierCount", "u32"),
+        Struct::member("pBufferMemoryBarriers", "*const VkBufferMemoryBarrier2KHR"),
+        Struct::member("imageMemoryBarrierCount", "u32"),
+        Struct::member("pImageMemoryBarriers", "*const VkImageMemoryBarrier2KHR"),
+    ],
+)
+.extensions(&[VK_KHR_SYNCHRONIZATION2])
+.promoted("1_3");
+const SUBMIT_INFO_2: &Struct = &Struct::typed(
+    "SubmitInfo2",
+    "SUBMIT_INFO_2",
+    VK_KHR_SYNCHRONIZATION2.ext_enum(4) as _,
+    StructUsage::Source,
+    &[
+        Struct::member("flags", "VkSubmitFlagsKHR"),
+        Struct::member("waitSemaphoreInfoCount", "u32"),
+        Struct::member("pWaitSemaphoreInfos", "*const VkSemaphoreSubmitInfoKHR"),
+        Struct::member("commandBufferInfoCount", "u32"),
+        Struct::member("pCommandBufferInfos", "*const VkCommandBufferSubmitInfoKHR"),
+        Struct::member("signalSemaphoreInfoCount", "u32"),
+        Struct::member("pSignalSemaphoreInfos", "*const VkSemaphoreSubmitInfoKHR"),
+    ],
+)
+.extensions(&[VK_KHR_SYNCHRONIZATION2])
+.promoted("1_3");
+const SEMAPHORE_SUBMIT_INFO: &Struct = &Struct::typed(
+    "SemaphoreSubmitInfo",
+    "SEMAPHORE_SUBMIT_INFO",
+    VK_KHR_SYNCHRONIZATION2.ext_enum(5) as _,
+    StructUsage::Source,
+    &[
+        Struct::member("semaphore", "VkSemaphore"),
+        Struct::member("value", "u64"),
+        Struct::member("stageMask", "VkPipelineStageFlags2KHR"),
+        Struct::member("deviceIndex", "u32"),
+    ],
+)
+.extensions(&[VK_KHR_SYNCHRONIZATION2])
+.promoted("1_3");
+const COMMAND_BUFFER_SUBMIT_INFO: &Struct = &Struct::typed(
+    "CommandBufferSubmitInfo",
+    "COMMAND_BUFFER_SUBMIT_INFO",
+    VK_KHR_SYNCHRONIZATION2.ext_enum(6) as _,
+    StructUsage::Source,
+    &[
+        Struct::member("commandBuffer", "VkCommandBuffer"),
+        Struct::member("deviceMask", "u32"),
+    ],
+)
+.extensions(&[VK_KHR_SYNCHRONIZATION2])
+.promoted("1_3");
+const PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES: &Struct = &Struct::typed(
+    "PhysicalDeviceSynchronization2Features",
+    "PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES",
+    VK_KHR_SYNCHRONIZATION2.ext_enum(7) as _,
+    StructUsage::Both,
+    &[Struct::member("synchronization2", "VkBool32")],
+)
+.extensions(&[VK_KHR_SYNCHRONIZATION2])
+.promoted("1_3");
+fn emit_synchronization2(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
+    VK_KHR_SYNCHRONIZATION2.header_constants().emit(emitter);
+
+    ACCESS_FLAGS_2.emit(emitter);
+    ACCESS_FLAGS_2.entry("INDIRECT_COMMAND_READ", 0).emit(emitter);
+    ACCESS_FLAGS_2.entry("INDEX_READ", 1).emit(emitter);
+    ACCESS_FLAGS_2.entry("VERTEX_ATTRIBUTE_READ", 2).emit(emitter);
+    ACCESS_FLAGS_2.entry("UNIFORM_READ", 3).emit(emitter);
+    ACCESS_FLAGS_2.entry("INPUT_ATTACHMENT_READ", 4).emit(emitter);
+    ACCESS_FLAGS_2.entry("SHADER_READ", 5).emit(emitter);
+    ACCESS_FLAGS_2.entry("SHADER_WRITE", 6).emit(emitter);
+    ACCESS_FLAGS_2.entry("COLOR_ATTACHMENT_READ", 7).emit(emitter);
+    ACCESS_FLAGS_2.entry("COLOR_ATTACHMENT_WRITE", 8).emit(emitter);
+    ACCESS_FLAGS_2.entry("DEPTH_STENCIL_ATTACHMENT_READ", 9).emit(emitter);
+    ACCESS_FLAGS_2.entry("DEPTH_STENCIL_ATTACHMENT_WRITE", 10).emit(emitter);
+    ACCESS_FLAGS_2.entry("TRANSFER_READ", 11).emit(emitter);
+    ACCESS_FLAGS_2.entry("TRANSFER_WRITE", 12).emit(emitter);
+    ACCESS_FLAGS_2.entry("HOST_READ", 13).emit(emitter);
+    ACCESS_FLAGS_2.entry("HOST_WRITE", 14).emit(emitter);
+    ACCESS_FLAGS_2.entry("MEMORY_READ", 15).emit(emitter);
+    ACCESS_FLAGS_2.entry("MEMORY_WRITE", 16).emit(emitter);
+    ACCESS_FLAGS_2.entry("SHADER_SAMPLED_READ", 32).emit(emitter);
+    ACCESS_FLAGS_2.entry("SHADER_STORAGE_READ", 33).emit(emitter);
+    ACCESS_FLAGS_2.entry("SHADER_STORAGE_WRITE", 34).emit(emitter);
+    // special value
+    emitter.emit_const(Constant {
+        compilation_condition: CompilationCondition::Feature(FeatureName::VulkanExt {
+            tag: VK_KHR_SYNCHRONIZATION2.tag,
+            name: VK_KHR_SYNCHRONIZATION2.name,
+        }),
+        name: ConstantSymbol::Enum {
+            prefix: ACCESS_FLAGS_2.prefix,
+            stem: "NONE",
+            suffix: Some(VK_KHR_SYNCHRONIZATION2.tag),
+        },
+        ty: Type::Defined(ACCESS_FLAGS_2.rs_bits_typesym()),
+        value: ConstantValue::Unsigned(0),
+    });
+    emitter.emit_const(Constant {
+        compilation_condition: CompilationCondition::Feature(FeatureName::AllowApiVersion(VERSION)),
+        name: ConstantSymbol::Enum {
+            prefix: ACCESS_FLAGS_2.prefix,
+            stem: "NONE",
+            suffix: None,
+        },
+        ty: Type::Defined(ACCESS_FLAGS_2.rs_bits_typesym()),
+        value: ConstantValue::Unsigned(0),
+    });
+
+    PIPELINE_STAGE_FLAGS_2.emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("TOP_OF_PIPE", 0).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("DRAW_INDIRECT", 1).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("VERTEX_INPUT", 2).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("VERTEX_SHADER", 3).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2
+        .entry("TESSELLATION_CONTROL_SHADER", 4)
+        .emit(emitter);
+    PIPELINE_STAGE_FLAGS_2
+        .entry("TESSELLATION_EVALUATION_SHADER", 5)
+        .emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("GEOMETRY_SHADER", 6).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("FRAGMENT_SHADER", 7).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("EARLY_FRAGMENT_TESTS", 8).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("LATE_FRAGMENT_TESTS", 9).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2
+        .entry("COLOR_ATTACHMENT_OUTPUT", 10)
+        .emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("COMPUTE_SHADER", 11).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("ALL_TRANSFER", 12).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("BOTTOM_OF_PIPE", 13).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("HOST", 14).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("ALL_GRAPHICS", 15).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("ALL_COMMANDS", 16).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("COPY", 32).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("RESOLVE", 33).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("BLIT", 34).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("CLEAR", 35).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("INDEX_INPUT", 36).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2.entry("VERTEX_ATTRIBUTE_INPUT", 37).emit(emitter);
+    PIPELINE_STAGE_FLAGS_2
+        .entry("PRE_RASTERIZATION_SHADERS", 38)
+        .emit(emitter);
+    // special value
+    emitter.emit_const(Constant {
+        compilation_condition: CompilationCondition::Feature(FeatureName::VulkanExt {
+            tag: VK_KHR_SYNCHRONIZATION2.tag,
+            name: VK_KHR_SYNCHRONIZATION2.name,
+        }),
+        name: ConstantSymbol::Enum {
+            prefix: PIPELINE_STAGE_FLAGS_2.prefix,
+            stem: "NONE",
+            suffix: Some(VK_KHR_SYNCHRONIZATION2.tag),
+        },
+        ty: Type::Defined(PIPELINE_STAGE_FLAGS_2.rs_bits_typesym()),
+        value: ConstantValue::Unsigned(0),
+    });
+    emitter.emit_const(Constant {
+        compilation_condition: CompilationCondition::Feature(FeatureName::AllowApiVersion(VERSION)),
+        name: ConstantSymbol::Enum {
+            prefix: PIPELINE_STAGE_FLAGS_2.prefix,
+            stem: "NONE",
+            suffix: None,
+        },
+        ty: Type::Defined(PIPELINE_STAGE_FLAGS_2.rs_bits_typesym()),
+        value: ConstantValue::Unsigned(0),
+    });
+
+    SUBMIT_FLAGS.emit(emitter);
+    SUBMIT_FLAGS.entry("PROTECTED", 0).emit(emitter);
+
+    MEMORY_BARRIER_2.emit(emitter);
+    BUFFER_MEMORY_BARRIER_2.emit(emitter);
+    IMAGE_MEMORY_BARRIER_2.emit(emitter);
+    DEPENDENCY_INFO.emit(emitter);
+    SUBMIT_INFO_2.emit(emitter);
+    SEMAPHORE_SUBMIT_INFO.emit(emitter);
+    COMMAND_BUFFER_SUBMIT_INFO.emit(emitter);
+    PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES.emit(emitter);
+
+    Command::new(
+        "QueueSubmit2",
+        &[
+            ("queue", "VkQueue"),
+            ("submitCount", "u32"),
+            ("pSubmits", "*const VkSubmitInfo2KHR"),
+            ("fence", "Option<VkFence>"),
+        ],
+    )
+    .failable()
+    .extension(VK_KHR_SYNCHRONIZATION2)
+    .emit(emitter);
+    Command::inst(
+        "SetEvent2",
+        &[("event", "VkEvent"), ("pDependencyInfo", "*const VkDependencyInfoKHR")],
+    )
+    .extension(VK_KHR_SYNCHRONIZATION2)
+    .emit(emitter);
+    Command::inst(
+        "ResetEvent2",
+        &[("event", "VkEvent"), ("stageMask", "VkPipelineStageFlags2KHR")],
+    )
+    .extension(VK_KHR_SYNCHRONIZATION2)
+    .emit(emitter);
+    Command::inst(
+        "WaitEvents2",
+        &[
+            ("eventCount", "u32"),
+            ("pEvents", "*const VkEvent"),
+            ("pDependencyInfos", "*const VkDependencyInfoKHR"),
+        ],
+    )
+    .extension(VK_KHR_SYNCHRONIZATION2)
+    .emit(emitter);
+    Command::inst("PipelineBarrier2", &[("pDependencyInfo", "*const VkDependencyInfoKHR")])
+        .extension(VK_KHR_SYNCHRONIZATION2)
+        .emit(emitter);
+    Command::inst(
+        "WriteTimestamp2",
+        &[
+            ("stage", "VkPipelineStageFlags2KHR"),
+            ("queryPool", "VkQueryPool"),
+            ("query", "u32"),
+        ],
+    )
+    .extension(VK_KHR_SYNCHRONIZATION2)
+    .emit(emitter);
+}
 
 pub const ELEMENTS: &[Element] = &[
     Bitmask::extending(
