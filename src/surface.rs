@@ -44,6 +44,20 @@ impl<Instance: crate::Instance> SurfaceObject<Instance> {
     ) -> crate::Result<Self> {
         Ok(Self(create_info.execute(pd.instance(), None)?, pd.transfer_instance()))
     }
+
+    #[inline(always)]
+    pub const unsafe fn manage(handle: brvk::VkSurfaceKHR, instance: Instance) -> Self {
+        Self(handle, instance)
+    }
+
+    #[inline(always)]
+    pub const fn unmanage(self) -> (brvk::VkSurfaceKHR, Instance) {
+        let handle = unsafe { core::ptr::read(&self.0) };
+        let instance = unsafe { core::ptr::read(&self.1) };
+        core::mem::forget(self);
+
+        (handle, instance)
+    }
 }
 impl<Instance: crate::Instance + Clone> SurfaceObject<&'_ Instance> {
     /// Owning parent object by cloning it.
