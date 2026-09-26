@@ -877,6 +877,11 @@ const DEBUG_REPORT_CALLBACK_CREATE_INFO: &Struct = &Struct::typed(
 fn emit_debug_report(emitter: &mut (impl RustCodeEmitter + ?Sized)) {
     VK_EXT_DEBUG_REPORT.header_constants().emit(emitter);
 
+    Enum::extending_error(&const { [
+        Enum::member("VALIDATION_FAILED", VK_EXT_DEBUG_REPORT.ext_enum(1) as _).extension(VK_EXT_DEBUG_REPORT)
+    ] })
+    .emit(emitter);
+
     DEBUG_REPORT_FLAGS.emit(emitter);
     DEBUG_REPORT_FLAGS.entry("INFORMATION", 0).emit(emitter);
     DEBUG_REPORT_FLAGS.entry("WARNING", 1).emit(emitter);
@@ -3872,6 +3877,10 @@ pub const ELEMENTS: &[Element] = &[
     Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_NV_GEOMETRY_SHADER_PASSTHROUGH)),
     // VK_NV_glsl_shader
     Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_NV_GLSL_SHADER)),
+    Enum::extending_error(&[
+        Enum::member("INVALID_SHADER", VK_NV_GLSL_SHADER.ext_enum(0) as _).extension(VK_NV_GLSL_SHADER)
+    ])
+    .into_element(),
     // VK_AMD_gpu_shader_half_float
     Element::ExtensionHeaderConstants2(ExtensionHeaderConstants2(VK_AMD_GPU_SHADER_HALF_FLOAT)),
     // VK_AMD_gpu_shader_int16
